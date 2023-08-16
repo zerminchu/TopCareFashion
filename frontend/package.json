@@ -10,11 +10,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.1",
     "@firebase/firestore": "^4.1.0",
+    "@mantine/core": "^6.0.19",
+    "@mantine/hooks": "^6.0.19",
     "axios": "^1.4.0",
     "firebase": "^10.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-dropzone": "^14.2.3",
     "react-router-dom": "^6.14.2"
   },
   "devDependencies": {

@@ -1,6 +1,6 @@
 from pathlib import Path
 import firebase_admin
-from firebase_admin import credentials
+from firebase_admin import credentials, storage
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -82,7 +82,9 @@ DATABASES = {
 
 
 cred = credentials.Certificate('./serviceAccountKey/serviceAccountKey.json')
-firebase_admin.initialize_app(cred)
+firebase_admin.initialize_app(cred, {
+    'storageBucket': 'topcarefashion-59a4e.appspot.com'
+})
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

@@ -10,5 +10,4 @@ function PageRoutes() {
     </Routes>
   );
 }
-
 export default PageRoutes;

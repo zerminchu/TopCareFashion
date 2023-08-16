@@ -1,30 +1,44 @@
 import { useState } from "react";
-import axios from "axios"; // Axios for making HTTP requests
+import axios from "axios";
 
-function ProductForm() {
+function CombinedUploadForm() {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
+  const [file, setFile] = useState(null);
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://localhost:8000/add-product/", {
-        name: name,
-        price: parseFloat(price),
-      });
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("name", name);
+      formData.append("price", price);
+
+      const response = await axios.post(
+        "http://localhost:8000/add-product/",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
       console.log(response.data.message);
       // You can add more handling here if needed
     } catch (error) {
-      console.error("Error adding product:", error);
+      console.error("Error:", error);
       // Handle the error state here
     }
   };
 
+  const handleFileChange = (event) => {
+    setFile(event.target.files[0]);
+  };
+
   return (
     <div>
-      <h2>Add Product</h2>
       <form onSubmit={handleFormSubmit}>
         <input
           type="text"
@@ -38,10 +52,11 @@ function ProductForm() {
           value={price}
           onChange={(e) => setPrice(e.target.value)}
         />
-        <button type="submit">Add Product</button>
+        <input type="file" onChange={handleFileChange} />
+        <button type="submit">Submit</button>
       </form>
     </div>
   );
 }
 
-export default ProductForm;
+export default CombinedUploadForm;
