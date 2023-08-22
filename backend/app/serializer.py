@@ -3,10 +3,31 @@ from .models import *
 from .models import User
 
 
-class UserSerializer (serializers.ModelSerializer):
+# class UserSerializer (serializers.ModelSerializer):
+#     class Meta:
+#         model = User
+#         fields = ['userType', 'dob']
+
+class BuyerSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['userType', 'dob']
+        exclude = (
+            'stripe_id',
+            'business_name',
+            'business_type',
+            'location',
+            'contact_info',
+            'social_media_link'
+        )
+
+class SellerSerializer (serializers.ModelSerializer):
+    class Meta:
+        model = User
+        exclude = (
+            'color',
+            'size',
+            'type'
+        )
 
 
 class ProductSerializer(serializers.Serializer):
