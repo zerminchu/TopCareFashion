@@ -5,6 +5,7 @@ from app import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('user/', UserView.as_view()),
-    path("add-product/", views.add_product, name="add-product"),
+    path("register/", views.register, name="register"),
+    path("login/", views.login, name="login"),
+    path("reset-password/", views.resetPassword, name="reset-password")
 ]

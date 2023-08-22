@@ -18,19 +18,17 @@ class User(models.Model):
 
     # General
     user_id = models.CharField(max_length=100, unique=True, default="")
-    username = models.CharField(max_length=100, blank=True, null=False)
     first_name = models.CharField(max_length=100, blank=True, null=False)
     last_name = models.CharField(max_length=100, blank=True, null=False)
-    verified_status = models.BooleanField(default=False)
-    email = models.EmailField(unique=True, null=False)
+    #verified_status = models.BooleanField(default=False)
+    email = models.EmailField(unique=True)
     date_of_birth = models.DateTimeField(null=False, blank=False)
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, null=False, blank=False)
     profile_image = models.URLField(blank=True, null=True)
-    phone_number = models.CharField(max_length=20, blank=True, null=True)
-
-    gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
-
+    gender = models.CharField(max_length=10, choices=GENDER_CHOICES, null=False ,blank=True)
+    
     # Buyer
+    phone_number = models.CharField(max_length=20, blank=True, null=True)
     color = models.CharField(max_length=50, blank=True, null=True)
     size = models.CharField(max_length=20, blank=True, null=True)
     type = models.CharField(max_length=50, blank=True, null=True)
@@ -44,10 +42,10 @@ class User(models.Model):
     social_media_link = models.URLField(blank=True, null=True)
 
     def __str__(self):
-        return self.username
+        return self.first_name
 
 
-class Product(models.Model):
-    firestore_id = models.CharField(max_length=255, unique=True)
-    name = models.CharField(max_length=255)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+# class Product(models.Model):
+#     firestore_id = models.CharField(max_length=255, unique=True)
+#     name = models.CharField(max_length=255)
+#     price = models.DecimalField(max_digits=10, decimal_places=2)

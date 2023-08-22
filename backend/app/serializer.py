@@ -12,6 +12,7 @@ class BuyerSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         exclude = (
+            'user_id',
             'stripe_id',
             'business_name',
             'business_type',
@@ -24,6 +25,8 @@ class SellerSerializer (serializers.ModelSerializer):
     class Meta:
         model = User
         exclude = (
+            'user_id',
+            'gender',
             'color',
             'size',
             'type'
