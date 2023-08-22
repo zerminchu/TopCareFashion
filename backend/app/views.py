@@ -10,8 +10,10 @@ from firebase_admin import firestore
 from firebase_admin import storage
 from firebase_admin import auth
 from django.core.validators import validate_email
+from config.firebase import firebase
 import pyrebase
 import json
+
 
 config = {
   "apiKey": "AIzaSyChB_lrOI-muB8z0LFQYQjZyVb2eNkju1s",
@@ -39,7 +41,7 @@ firebase = pyrebase.initialize_app(config)
 #             return Response(serializer.data)
 
 @api_view(["POST"])
-def register(request):
+def signUp(request):
     if request.method == 'POST':
         try:
             firebaseAuth = firebase.auth()
@@ -120,7 +122,6 @@ def register(request):
 
                     # Send email verification
                     firebaseAuth.send_email_verification(authUser['idToken'])
-                    print(authUser["idToken"])
 
                     # Store user to firestore
                     del data["password"]
@@ -144,7 +145,7 @@ def register(request):
             }, status=400)
 
 @api_view(["POST"])
-def login(request):
+def signIn(request):
     if request.method == "POST":
         try:
             firebaseAuth = firebase.auth()
@@ -186,7 +187,7 @@ def resetPassword(request):
             
             return JsonResponse({
                 'status': "success",
-                'message': "User login successfully",
+                'message': "Password reset link has been sent to your email",
                 'data': resetPassword
             }, status=200)
 
@@ -196,7 +197,6 @@ def resetPassword(request):
                 "message": str(e)
             }, status=400)
             
-
 @api_view(["POST"])
 def add_product(request):
     if request.method == "POST":

@@ -21,7 +21,7 @@ class User(models.Model):
     first_name = models.CharField(max_length=100, blank=True, null=False)
     last_name = models.CharField(max_length=100, blank=True, null=False)
     #verified_status = models.BooleanField(default=False)
-    email = models.EmailField(unique=True)
+    email = models.EmailField(unique=True, null=False, blank=True)
     date_of_birth = models.DateTimeField(null=False, blank=False)
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, null=False, blank=False)
     profile_image = models.URLField(blank=True, null=True)
