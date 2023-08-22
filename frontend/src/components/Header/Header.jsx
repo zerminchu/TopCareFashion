@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Form from "../LoginForm/Form";
+import Form from "../Form/Form";
 import "./Header.css";
 
 function Header() {
