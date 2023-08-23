@@ -4,6 +4,8 @@ from . serializer import *
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from firebase_admin import firestore
+from django.core.files.base import ContentFile
+
 from firebase_admin import storage
 
 
@@ -21,17 +23,22 @@ def add_product(request):
                 colour = validated_data["colour"]
 
                 # price = float(validated_data["price"])
+                uploaded_file = request.data.get('file')
+                if uploaded_file:
+                    content_type = uploaded_file.content_type
+                    file_name = uploaded_file.name
+                    file_content = ContentFile(uploaded_file.read())
 
-                uploaded_file = serializer.validated_data['file']
+                    # Upload file to Firebase storage
+                    bucket = storage.bucket()
+                    blob = bucket.blob(file_name)
+                    blob.upload_from_file(
+                        file_content, content_type=content_type)
 
-                bucket = storage.bucket()
-                blob = bucket.blob(uploaded_file.name)
-
-                content_type = 'image/png'
-                blob.upload_from_file(uploaded_file, content_type=content_type)
-
-                # Get the download URL of the uploaded image
-                image_url = blob.public_url
+                    # Get the download URL of the uploaded image
+                    image_url = blob.public_url
+                else:
+                    image_url = None
 
                 # Save data to Firestore
                 db = firestore.client()
