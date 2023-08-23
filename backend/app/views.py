@@ -182,6 +182,123 @@ def recoverPassword(request):
                 "status": "error",
                 "message": str(e)
             }, status=400)
+
+@api_view(["POST"])
+def verifyIdToken(request):
+    if request.method == "POST":
+        try:
+            data = request.data
+            verifyIdToken = auth.verify_id_token(data["idToken"])
+            
+            return JsonResponse({
+                'status': "success",
+                'message': "Password reset link has been sent to your email",
+                'data': verifyIdToken
+            }, status=200)
+        
+        except auth.RevokedIdTokenError:
+            return JsonResponse({
+                "status": "error",
+                "message": "Token revoked. Please reauthenticate or sign out."
+            }, status=401)
+        
+        except auth.UserDisabledError:
+            return JsonResponse({
+                "status": "error",
+                "message": "Your account is disabled"
+            }, status=401)
+        
+        except auth.InvalidIdTokenError:
+            return JsonResponse({
+                "status": "error",
+                "message": "Invalid id token"
+            }, status=400)
+
+        except Exception as e:
+            return JsonResponse({
+                "status": "error",
+                "message": str(e)
+            }, status=400)
+        
+@api_view(["GET"])
+def signOut(request):
+    if request.method == "GET":
+        try:
+            # print("test here")
+            # firebaseAuth = firebase.auth().current_user
+            # print(firebaseAuth)
+            
+            return JsonResponse({
+                'status': "success",
+                'message': "Password reset link has been sent to your email",
+                'data': "test"
+            }, status=200)
+
+        except Exception as e:
+            return JsonResponse({
+                "status": "error",
+                "message": str(e)
+            }, status=400)
+
+@api_view(["POST"])
+def retrieveUserInfoFromToken(request):
+    if request.method == "POST":
+        try:
+            data = request.data
+
+            verifyIdToken = auth.verify_id_token(data["firebaseIdToken"])
+
+            db = firestore.client()
+            docRef = db.collection("Users").document(verifyIdToken["uid"])
+
+            user = (docRef.get()).to_dict()
+            
+            return JsonResponse({
+                'status': "success",
+                'message': "User session data is retrieved successfully",
+                'data': user
+            }, status=200)
+        
+        except auth.RevokedIdTokenError:
+            return JsonResponse({
+                "status": "error",
+                "message": "Token revoked. Please reauthenticate or sign out."
+            }, status=401)
+        
+        except auth.UserDisabledError:
+            return JsonResponse({
+                "status": "error",
+                "message": "Your account is disabled"
+            }, status=401)
+        
+        except auth.InvalidIdTokenError:
+            return JsonResponse({
+                "status": "error",
+                "message": "Invalid id token"
+            }, status=400)
+
+        except Exception as e:
+            return JsonResponse({
+                "status": "error",
+                "message": str(e)
+            }, status=400)
+        
+@api_view(["POST"])
+def updateProfile(request):
+    if request.method == "POST":
+        try:
+            
+            
+            return JsonResponse({
+                'status': "success",
+                'message': "User session data is retrieved successfully",
+            }, status=200)
+
+        except Exception as e:
+            return JsonResponse({
+                "status": "error",
+                "message": str(e)
+            }, status=400)
             
 @api_view(["POST"])
 def add_product(request):
@@ -220,6 +337,9 @@ def add_product(request):
                 return Response({"errors": serializer.errors}, status=400)
         except Exception as e:
             return Response({"error": str(e)}, status=500)
+
+
+
 
 
 """ 

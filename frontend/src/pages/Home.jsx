@@ -1,5 +1,7 @@
 import Header from "../components/Header/Header";
-import React from "react";
+import React, { useEffect } from "react";
+import axios from "axios";
+import Cookies from "js-cookie";
 
 function Home() {
   return (

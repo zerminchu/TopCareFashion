@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Cookies from "js-cookie";
 import "./SignInForm.css";
 
 function SignInForm(props) {
@@ -36,6 +37,15 @@ function SignInForm(props) {
       const response = await axios.post(`http://127.0.0.1:8000/sign-in/`, data);
 
       if (response.data.status == "success") {
+        console.log("the response: ", response.data.data.idToken);
+
+        const expirationDate = new Date();
+        expirationDate.setTime(expirationDate.getTime() + 60 * 60 * 1000);
+
+        Cookies.set("firebaseIdToken", response.data.data.idToken, {
+          expires: expirationDate,
+        });
+
         window.location.reload();
       }
     } catch (error) {
