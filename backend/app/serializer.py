@@ -24,7 +24,7 @@ class BuyerSerializer(serializers.ModelSerializer):
 class UpdateProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["first_name", "last_name", "gender"]
+        fields = ["user_id", "first_name", "last_name", "gender"]
 
 class SellerSerializer (serializers.ModelSerializer):
     class Meta:

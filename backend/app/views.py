@@ -83,7 +83,7 @@ def signUp(request):
             elif(data["role"] == "seller"):
                 # Add additional data to seller
                 data["verified_status"] = False
-                data["profile_image"] = ""
+                data["profile_image_url"] = ""
                 data["stripe_id"] = ""
                 data["gender"] = ""
                 data["business_profile"] = {
@@ -319,6 +319,7 @@ def updateProfile(request):
                     # Generate public image url
                     profile_image = firebaseStorage.child(f"UserProfile/{user_id}").get_url(None)
 
+                    # Data to be updated for user
                     updatedData = {
                         "name.first_name": first_name,
                         "name.last_name": last_name,
@@ -331,18 +332,16 @@ def updateProfile(request):
                     # Update data into firestore
                     collectionRef = db.collection('Users').document(user_id)
 
+                    # Data to be updated for user
                     updatedData = {
                         "name.first_name": first_name,
                         "name.last_name": last_name,
                         "gender": gender
                     }
-                    print("here")
 
                 # Update data into firestore
                 collectionRef = db.collection('Users').document(user_id)
                 collectionRef.update(updatedData)
-
-                print(updatedData)
  
             else:
                 raise Exception(serializer.errors)

@@ -12,8 +12,18 @@
 
 /* Styles for the popup content */
 .popup-content {
+  display: flex;
+  width: 350px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
   background-color: white;
+  gap: 20px;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.element {
+  width: 100%;
 }

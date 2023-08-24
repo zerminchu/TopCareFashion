@@ -1,139 +1,133 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useForm } from "@mantine/form";
 import "./SignUpForm.css";
+import { Select, TextInput, PasswordInput, Button } from "@mantine/core";
+import { DateInput } from "@mantine/dates";
+import { useDispatch } from "react-redux";
+import { showNotifications } from "../../utils/ShowNotification";
 
-function SignUpForm() {
-  const [userType, setUserType] = useState("buyer");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+function SignUpForm(props) {
+  const dispatch = useDispatch();
 
-  const handleUserTypeChange = (event) => {
-    setUserType(event.target.value);
-  };
-
-  const handleFirstNameChange = (event) => {
-    setFirstName(event.target.value);
-  };
-
-  const handleLastNameChange = (event) => {
-    setLastName(event.target.value);
-  };
-
-  const handleDateOfBirthChange = (event) => {
-    setDateOfBirth(event.target.value);
-  };
-
-  const handleEmailChange = (event) => {
-    setEmail(event.target.value);
-  };
-
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
-  };
-
-  const handleConfirmPasswordChange = (event) => {
-    setConfirmPassword(event.target.value);
-  };
-
-  const handleForgotPasswordClick = () => {
-    console.log("Forgot Password clicked");
-  };
+  const form = useForm({
+    initialValues: {
+      userType: "buyer",
+      firstName: "",
+      lastName: "",
+      dateOfBirth: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
 
   const handleSignUpClick = async () => {
     try {
+      dispatch({ type: "SET_LOADING", value: true });
+
+      // Convert date object to YYYY-MM-DD
+      const inputDate = new Date(form.values.dateOfBirth);
+      const year = inputDate.getFullYear();
+      const month = String(inputDate.getMonth() + 1).padStart(2, "0");
+      const day = String(inputDate.getDate()).padStart(2, "0");
+      const formattedDate = `${year}-${month}-${day}`;
+
       const data = {
-        role: userType,
+        role: form.values.userType,
         name: {
-          first_name: firstName,
-          last_name: lastName,
+          first_name: form.values.firstName,
+          last_name: form.values.lastName,
         },
-        email: email,
-        date_of_birth: dateOfBirth,
-        password: password,
-        confirm_password: confirmPassword,
+        email: form.values.email,
+        date_of_birth: formattedDate,
+        password: form.values.password,
+        confirm_password: form.values.confirmPassword,
       };
-      console.log("Data: ", data);
-      const response = await axios.post(`http://127.0.0.1:8000/sign-up/`, data);
-      console.log(response);
+
+      const url =
+        import.meta.env.VITE_API_DEV == "DEV"
+          ? import.meta.env.VITE_API_DEV
+          : import.meta.env.VITE_API_PROD;
+
+      const response = await axios.post(`${url}/sign-up/`, data);
+
+      props.changeIsSignUp(false);
+      props.changeIsSignIn(false);
+
+      dispatch({ type: "SET_LOADING", value: false });
+
+      showNotifications({
+        status: "success",
+        title: "Success",
+        message: response.data.message,
+      });
     } catch (error) {
-      console.log(error);
+      dispatch({ type: "SET_LOADING", value: false });
+      showNotifications({
+        status: "error",
+        title: "Error",
+        message: error.response.data.message,
+      });
     }
   };
 
   return (
     <div className="popup-content">
-      <select value={userType} onChange={handleUserTypeChange}>
-        <option value="buyer">Buyer</option>
-        <option value="seller">Seller</option>
-        <option value="admin">Admin</option>
-      </select>
-      <br />
-
-      <label>Firstname</label>
-      <br />
-      <input
-        type="text"
-        placeholder="Firstname"
-        value={firstName}
-        onChange={handleFirstNameChange}
+      <Select
+        className="element"
+        label="Role"
+        value={form.values.userType}
+        onChange={(value) => form.setValues({ userType: value })}
+        data={[
+          { value: "buyer", label: "Buyer" },
+          { value: "seller", label: "Seller" },
+          { value: "admin", label: "Admin" },
+        ]}
       />
-      <br />
 
-      <label>Lastname</label>
-      <br />
-      <input
-        type="text"
-        placeholder="Lastname"
-        value={lastName}
-        onChange={handleLastNameChange}
+      <TextInput
+        className="element"
+        label="First name"
+        {...form.getInputProps("firstName")}
+        withAsterisk
       />
-      <br />
-
-      <label>Email</label>
-      <br />
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={handleEmailChange}
+      <TextInput
+        className="element"
+        label="Last name"
+        {...form.getInputProps("lastName")}
+        withAsterisk
       />
-      <br />
-
-      <label>Date of Birth:</label>
-      <br />
-
-      <input
-        type="date"
-        value={dateOfBirth}
-        onChange={handleDateOfBirthChange}
+      <TextInput
+        className="element"
+        label="Email"
+        {...form.getInputProps("email")}
+        withAsterisk
       />
-      <br />
-
-      <label>Password</label>
-      <br />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={handlePasswordChange}
+      <DateInput
+        className="element"
+        label="Date of birth"
+        value={form.values.dateOfBirth}
+        onChange={(value) => form.setValues({ dateOfBirth: value })}
+        withAsterisk
+        maw={400}
+        mx="auto"
       />
-      <br />
-
-      <label>Confirm password</label>
-      <br />
-      <input
-        type="password"
-        placeholder="Confirm Password"
-        value={confirmPassword}
-        onChange={handleConfirmPasswordChange}
+      <PasswordInput
+        className="element"
+        label="Password"
+        description="Password must include at least 6 words"
+        {...form.getInputProps("password")}
+        withAsterisk
       />
-      <br />
-
-      <button onClick={handleSignUpClick}>Sign Up</button>
+      <PasswordInput
+        className="element"
+        label="Confirm password"
+        description="Password must include at least 6 words"
+        {...form.getInputProps("confirmPassword")}
+        withAsterisk
+      />
+      <Button onClick={handleSignUpClick}>Sign Up</Button>
     </div>
   );
 }

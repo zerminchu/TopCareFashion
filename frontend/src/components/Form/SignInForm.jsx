@@ -3,9 +3,21 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
 import "./SignInForm.css";
+import { useForm } from "@mantine/form";
+import { useDispatch } from "react-redux";
+import { showNotifications } from "../../utils/ShowNotification";
+import { Button, PasswordInput, TextInput } from "@mantine/core";
 
 function SignInForm(props) {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const form = useForm({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+  });
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,26 +31,28 @@ function SignInForm(props) {
   };
 
   const handleForgotPasswordClick = () => {
-    console.log("Forgot Password clicked");
+    props.changeIsSignIn(false);
+    props.changeIsSignUp(false);
+    navigate("/recover-password");
   };
 
   const handleSignInClick = async () => {
     try {
-      // apiEndpoint =
-      //   process.env.NODE_ENV == "DEVELOPMENT"
-      //     ? process.env.API_DEV
-      //     : process.env.API_PROD;
+      dispatch({ type: "SET_LOADING", value: true });
+
+      const url =
+        import.meta.env.VITE_API_DEV == "DEV"
+          ? import.meta.env.VITE_API_DEV
+          : import.meta.env.VITE_API_PROD;
 
       const data = {
-        email: email,
-        password: password,
+        email: form.values.email,
+        password: form.values.password,
       };
 
-      const response = await axios.post(`http://127.0.0.1:8000/sign-in/`, data);
+      const response = await axios.post(`${url}/sign-in/`, data);
 
       if (response.data.status == "success") {
-        console.log("the response: ", response.data.data.idToken);
-
         const expirationDate = new Date();
         expirationDate.setTime(expirationDate.getTime() + 60 * 60 * 1000);
 
@@ -46,34 +60,46 @@ function SignInForm(props) {
           expires: expirationDate,
         });
 
+        dispatch({ type: "SET_LOADING", value: false });
+        showNotifications({
+          status: response.data.status,
+          title: "Success",
+          message: response.data.message,
+        });
+
         window.location.reload();
       }
     } catch (error) {
-      console.log(error);
+      dispatch({ type: "SET_LOADING", value: false });
+      showNotifications({
+        status: "error",
+        title: "Error",
+        message: error.response.data.message,
+      });
     }
   };
 
   const handleSignUpClick = () => {
     props.changeIsSignIn(false);
+    props.changeIsSignUp(true);
   };
 
   return (
-    <div className="popup-content">
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={handleEmailChange}
+    <div className="popupcontent">
+      <TextInput
+        className="element"
+        label="Email"
+        {...form.getInputProps("email")}
+        withAsterisk
       />
-      <br />
 
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={handlePasswordChange}
+      <PasswordInput
+        className="element"
+        label="Password"
+        description="Password must include at least 6 words"
+        {...form.getInputProps("password")}
+        withAsterisk
       />
-      <br />
 
       <p
         onClick={handleForgotPasswordClick}
@@ -82,9 +108,12 @@ function SignInForm(props) {
         Forgot Password?
       </p>
 
-      <button onClick={handleSignInClick}>Sign In</button>
-      <br />
-      <button onClick={handleSignUpClick}>Sign Up</button>
+      <Button className="element" onClick={handleSignInClick}>
+        Sign In
+      </Button>
+      <Button className="element" onClick={handleSignUpClick}>
+        Sign Up
+      </Button>
     </div>
   );
 }

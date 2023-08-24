@@ -1,4 +1,12 @@
-/*.container {
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  gap: 15px;
+}
+
+.menutarget {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -21,4 +29,4 @@
   background-color: brown;
   border-radius: 50%;
   overflow: hidden;
-}*/
+}

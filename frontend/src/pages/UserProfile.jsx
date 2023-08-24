@@ -1,7 +1,11 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef } from "react";
+import { useDispatch } from "react-redux";
 import { retrieveUserInfo } from "../utils/RetrieveUserInfoFromToken";
-import IlDefaultAvatar from "../assets/illustrations/il_avatar.png";
+import { showNotifications } from "../utils/ShowNotification";
+import { useForm } from "@mantine/form";
+import { Flex, TextInput, Button, Group, Radio, Image } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
+import IlDefaultAvatar from "../assets/illustrations/il_avatar.png";
 import Cookies from "js-cookie";
 import axios from "axios";
 
@@ -9,32 +13,42 @@ import "./UserProfile.css";
 
 function UserProfile() {
   const navigate = useNavigate();
-
-  const [userId, setUserId] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [gender, setGender] = useState("");
-  const [email, setEmail] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState("");
-  const [showImage, setShowImage] = useState("");
-  const [profileImage, setProfileImage] = useState("");
-
+  const dispatch = useDispatch();
   const fileInputRef = useRef(null);
+
+  const form = useForm({
+    initialValues: {
+      userId: "",
+      firstName: "",
+      lastName: "",
+      gender: "",
+      email: "",
+      dateOfBirth: "",
+      showImage: "",
+      profileImage: "",
+    },
+  });
 
   useEffect(() => {
     const setUserSessionData = async () => {
       try {
         const user = await retrieveUserInfo();
 
-        setUserId(user.user_id);
-        setFirstName(user.name.first_name);
-        setLastName(user.name.last_name);
-        setEmail(user.email);
-        setGender(user.gender);
-        setDateOfBirth(user.date_of_birth);
-        setShowImage(user.profile_image_url);
+        form.setValues({
+          userId: user.user_id,
+          firstName: user.name.first_name,
+          lastName: user.name.last_name,
+          email: user.email,
+          gender: user.gender,
+          dateOfBirth: user.date_of_birth,
+          showImage: user.profile_image_url,
+        });
       } catch (error) {
-        console.log(error);
+        showNotifications({
+          status: response.data.status,
+          title: "Success",
+          message: error.response.data.message,
+        });
       }
     };
 
@@ -46,20 +60,20 @@ function UserProfile() {
     }
   }, []);
 
-  const handleImageChange = (event) => {
+  const imageChangeHandler = (event) => {
     const file = event.target.files[0];
-    setProfileImage(file);
+    form.setValues({ profileImage: file });
 
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
-        setShowImage(reader.result);
+        form.setValues({ showImage: reader.result });
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleButtonClick = () => {
+  const imageOnClickHandler = () => {
     fileInputRef.current.click();
   };
 
@@ -67,97 +81,112 @@ function UserProfile() {
     event.preventDefault();
 
     try {
+      dispatch({ type: "SET_LOADING", value: true });
+
       const formData = new FormData();
-      formData.append("user_id", userId);
-      formData.append("first_name", firstName);
-      formData.append("last_name", lastName);
-      formData.append("gender", gender);
-      formData.append("profile_image", profileImage);
+      formData.append("user_id", form.values.userId);
+      formData.append("first_name", form.values.firstName);
+      formData.append("last_name", form.values.lastName);
+      formData.append("gender", form.values.gender);
+      formData.append("profile_image", form.values.profileImage);
 
-      const response = await axios.post(
-        "http://127.0.0.1:8000/update-profile/",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const url =
+        import.meta.env.VITE_API_DEV == "DEV"
+          ? import.meta.env.VITE_API_DEV
+          : import.meta.env.VITE_API_PROD;
 
-      console.log("Response:", response);
+      const response = await axios.post(`${url}/update-profile/`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      dispatch({ type: "SET_LOADING", value: false });
+
+      showNotifications({
+        status: response.data.status,
+        title: "Success",
+        message: response.data.message,
+      });
     } catch (error) {
-      console.error("Error:", error);
+      dispatch({ type: "SET_LOADING", value: false });
+
+      showNotifications({
+        status: "error",
+        title: "Error",
+        message: error.response.data.message,
+      });
     }
   };
 
   return (
-    <div>
-      <form onSubmit={saveOnClick}>
-        <div className="rounded-image-container">
-          <img
-            src={showImage || IlDefaultAvatar}
-            alt="Selected"
-            className="rounded-image"
-            onClick={handleButtonClick}
-          />
-        </div>
+    <form onSubmit={saveOnClick}>
+      <Flex
+        mih={50}
+        gap="xl"
+        justify="center"
+        align="center"
+        direction="column"
+        wrap="wrap"
+        onSubmit={saveOnClick}
+      >
+        <Image
+          width={100}
+          height={100}
+          radius="50% "
+          src={form.values.showImage || IlDefaultAvatar}
+          alt="Selected"
+          onClick={imageOnClickHandler}
+        />
         <input
           type="file"
           accept="image/*"
-          onChange={handleImageChange}
+          onChange={imageChangeHandler}
           ref={fileInputRef}
           style={{ display: "none" }}
         />
-        <br />
 
-        <label>Email:</label>
-        <input type="email" value={email} disabled />
-        <br />
-
-        <label>Date of Birth:</label>
-        <input type="text" value={dateOfBirth} disabled />
-        <br />
-
-        <label>First Name:</label>
-        <input
-          type="text"
-          value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
+        <TextInput
+          label="Email"
+          placeholder="Email"
+          disabled
+          {...form.getInputProps("email")}
         />
-        <br />
 
-        <label>Last Name:</label>
-        <input
-          type="text"
-          value={lastName}
-          onChange={(e) => setLastName(e.target.value)}
+        <TextInput
+          label="Date Of Birth"
+          placeholder="Date Of Birth"
+          disabled
+          {...form.getInputProps("dateOfBirth")}
         />
-        <br />
 
-        <label>Gender:</label>
-        <label>
-          <input
-            type="radio"
-            value="male"
-            checked={gender === "male"}
-            onChange={() => setGender("male")}
-          />
-          Male
-        </label>
-        <label>
-          <input
-            type="radio"
-            value="female"
-            checked={gender === "female"}
-            onChange={() => setGender("female")}
-          />
-          Female
-        </label>
-        <br />
+        <TextInput
+          label="First Name"
+          placeholder="First Name"
+          {...form.getInputProps("firstName")}
+        />
 
-        <button type="submit">Save</button>
-      </form>
-    </div>
+        <TextInput
+          label="Last Name"
+          placeholder="Last Name"
+          {...form.getInputProps("lastName")}
+        />
+
+        <Radio.Group
+          name="genderRadioGroup"
+          value={form.values.gender}
+          onChange={(value) => form.setValues({ gender: value })}
+          label="Gender"
+        >
+          <Group mt="xs">
+            <Radio value="male" label="Male" />
+            <Radio value="female" label="Female" />
+          </Group>
+        </Radio.Group>
+
+        <Button type="submit">Save</Button>
+      </Flex>
+    </form>
   );
 }
 

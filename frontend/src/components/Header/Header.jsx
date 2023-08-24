@@ -6,8 +6,11 @@ import "./Header.css";
 import AdminHeader from "./AdminHeader";
 import BuyerHeader from "./BuyerHeader";
 import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
+import { useNavigate } from "react-router-dom";
 
 function Header() {
+  const navigate = useNavigate();
+
   const [popUpForm, setPopUpForm] = useState(false);
   const [currentUser, setCurrentUser] = useState();
   const [currentRole, setcurrentRole] = useState("");
@@ -26,8 +29,14 @@ function Header() {
     // Check if user has signed in before
     if (Cookies.get("firebaseIdToken")) {
       setUserSessionData();
+    } else {
+      navigate("/", { replace: true });
     }
   }, []);
+
+  const setPopUpFormState = () => {
+    setPopUpForm(!popUpForm);
+  };
 
   const signIn = () => {
     setPopUpForm(true);
@@ -42,12 +51,23 @@ function Header() {
       return <AdminHeader currentUser={currentUser} />;
     } else {
       return (
-        <div className="header">
-          {popUpForm ? <Form /> : null}
-          <span className="business-name">TopCareFashion</span>
-          <button className="sign-in-button" onClick={signIn}>
-            Sign in
-          </button>
+        <div>
+          {popUpForm ? <Form changePopUpFormState={setPopUpFormState} /> : null}
+          <div className="header">
+            <span className="business-name">TopCareFashion</span>
+            <div>
+              <a href="#">Home</a>
+              <a href="#">Shop</a>
+              <a href="#">Sell</a>
+              <a href="#">Men</a>
+              <a href="#">Women</a>
+              <a href="#">About Us</a>
+              <a href="#">Contact us</a>
+            </div>
+            <button className="sign-in-button" onClick={signIn}>
+              Sign in
+            </button>
+          </div>
         </div>
       );
     }
