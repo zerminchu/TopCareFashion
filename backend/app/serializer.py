@@ -21,6 +21,11 @@ class BuyerSerializer(serializers.ModelSerializer):
             'social_media_link'
         )
 
+class UpdateProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["first_name", "last_name", "gender"]
+
 class SellerSerializer (serializers.ModelSerializer):
     class Meta:
         model = User

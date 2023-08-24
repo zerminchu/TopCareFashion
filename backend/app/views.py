@@ -10,9 +10,12 @@ from firebase_admin import firestore
 from firebase_admin import storage
 from firebase_admin import auth
 from django.core.validators import validate_email
+from django.core.files.storage import FileSystemStorage
 from config.firebase import firebase
 import pyrebase
 import json
+import base64
+
 
 # class UserView(APIView):
 #     def get(self, request):
@@ -287,11 +290,72 @@ def retrieveUserInfoFromToken(request):
 def updateProfile(request):
     if request.method == "POST":
         try:
-            
-            
+            # Initialize firebase variable
+            firebaseStorage = firebase.storage()
+            db = firestore.client()
+
+            data = request.data
+
+            user_id = data.get('user_id')
+            first_name = data.get('first_name')
+            last_name = data.get('last_name')
+            profile_image = data.get('profile_image')
+            gender = data.get('gender')
+
+            # Serializer
+            serializer = UpdateProfileSerializer(data=data)
+
+            if(serializer.is_valid()):
+                # User want to update profile image
+                if(profile_image):
+                    # Validate file format
+                    allowed_formats = ['image/jpeg', 'image/jpg', 'image/png']
+                    if profile_image.content_type not in allowed_formats:
+                        raise Exception("Invalid file format. Only PNG, JPEG, and JPG formats are allowed.")
+
+                    # Upload the file to Firebase Storage
+                    firebaseStorage.child(f"UserProfile/{user_id}").put(profile_image)
+
+                    # Generate public image url
+                    profile_image = firebaseStorage.child(f"UserProfile/{user_id}").get_url(None)
+
+                    updatedData = {
+                        "name.first_name": first_name,
+                        "name.last_name": last_name,
+                        "profile_image_url": profile_image,
+                        "gender": gender
+                    }
+
+                # User does not want to update profile image
+                else:
+                    # Update data into firestore
+                    collectionRef = db.collection('Users').document(user_id)
+
+                    updatedData = {
+                        "name.first_name": first_name,
+                        "name.last_name": last_name,
+                        "gender": gender
+                    }
+                    print("here")
+
+                # Update data into firestore
+                collectionRef = db.collection('Users').document(user_id)
+                collectionRef.update(updatedData)
+
+                print(updatedData)
+ 
+            else:
+                raise Exception(serializer.errors)
+
             return JsonResponse({
                 'status': "success",
-                'message': "User session data is retrieved successfully",
+                'message': "User profile updated successfully",
+                'data': {
+                    "updatedFirstName": first_name,
+                    "updatedLastName": last_name,
+                    "updatedProfileImage": profile_image,
+                    "updatedGender": gender
+                }
             }, status=200)
 
         except Exception as e:
