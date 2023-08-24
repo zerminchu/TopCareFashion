@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useRef } from "react";
-import { retrieveUserInfo } from "../utils/RetrieveUserInfoFromToken";
-import IlDefaultAvatar from "../assets/illustrations/il_avatar.png";
+import { useEffect, useState, useRef } from "react";
+import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
+import IlDefaultAvatar from "../../assets/illustrations/il_avatar.png";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import axios from "axios";

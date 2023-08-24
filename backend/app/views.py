@@ -18,18 +18,6 @@ import json
 import base64
 
 
-# class UserView(APIView):
-#     def get(self, request):
-#         output = [{"userType": output.userType, "dob": output.dob}
-#                   for output in User.objects.all()]
-#         return Response(output)
-
-#     def post(self, request):
-#         serializer = UserSerializer(data=request.data)
-#         if serializer.is_valid(raise_exception=True):
-#             serializer.save()
-#             return Response(serializer.data)
-
 @api_view(["POST"])
 def signUp(request):
     if request.method == 'POST':
@@ -425,28 +413,3 @@ def add_product(request):
                 return Response({"errors": serializer.errors}, status=400)
         except Exception as e:
             return Response({"error": str(e)}, status=500)
-
-
-""" 
-@api_view(["POST"])
-def upload_file(request):
-    if request.method == 'POST':
-        serializer = FileUploadSerializer(data=request.data)
-        if serializer.is_valid():
-            uploaded_file = serializer.validated_data['file']
-
-            try:
-                bucket = storage.bucket()
-                blob = bucket.blob(uploaded_file.name)
-                content_type = 'image/png'
-
-                blob.upload_from_file(uploaded_file, content_type=content_type)
-
-                return Response({'message': 'File uploaded successfully'})
-            except Exception as e:
-                return Response({'error': str(e)}, status=500)
-        else:
-            return Response({'errors': serializer.errors}, status=400)
-
-    return Response({'message': 'File upload failed'}, status=400)
- """
