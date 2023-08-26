@@ -12,8 +12,6 @@ import IconLogout from "../../assets/icons/ic_logout.svg";
 import classes from "./DropDownMenu.module.css";
 
 import { Text, Menu, Avatar } from "@mantine/core";
-
-import "./DropDownMenu.css";
 import { useNavigate } from "react-router-dom";
 
 function DropDownMenu(props) {

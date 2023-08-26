@@ -2,14 +2,18 @@ import React, { useState, useEffect } from "react";
 import Form from "../Form/Form";
 import Cookies from "js-cookie";
 import SellerHeader from "./SellerHeader";
-import "./Header.css";
+import classes from "./Header.module.css";
 import AdminHeader from "./AdminHeader";
 import BuyerHeader from "./BuyerHeader";
 import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
 import { useNavigate } from "react-router-dom";
+import ILLogo from "../../assets/illustrations/il_logo.png";
+import { useDispatch } from "react-redux";
+import { Button } from "@mantine/core";
 
 function Header() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [popUpForm, setPopUpForm] = useState(false);
   const [currentUser, setCurrentUser] = useState();
@@ -34,12 +38,8 @@ function Header() {
     }
   }, []);
 
-  const setPopUpFormState = () => {
-    setPopUpForm(!popUpForm);
-  };
-
   const signIn = () => {
-    setPopUpForm(true);
+    dispatch({ type: "SET_SIGN_IN", value: true });
   };
 
   const renderHeader = () => {
@@ -52,10 +52,12 @@ function Header() {
     } else {
       return (
         <div>
-          {popUpForm ? <Form changePopUpFormState={setPopUpFormState} /> : null}
-          <div className="header">
-            <span className="business-name">TopCareFashion</span>
-            <div>
+          <div className={classes.container}>
+            <div className={classes.leftside}>
+              <img src={ILLogo} width={50} height={50} />
+              <span className={classes.businessname}>TopCareFashion</span>
+            </div>
+            <div className={classes.middleside}>
               <a href="#">Home</a>
               <a href="#">Shop</a>
               <a href="#">Sell</a>
@@ -64,9 +66,7 @@ function Header() {
               <a href="#">About Us</a>
               <a href="#">Contact us</a>
             </div>
-            <button className="sign-in-button" onClick={signIn}>
-              Sign in
-            </button>
+            <Button onClick={signIn}>Sign in</Button>
           </div>
         </div>
       );

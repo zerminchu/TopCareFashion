@@ -1,6 +1,8 @@
 import { createStore } from 'redux'
 
 const initialstate = {
+  signInBool: false,
+  signUpBool: false,
   loadingBool: false,
 }
 
@@ -9,6 +11,18 @@ const reducer = (state = initialstate, action) => {
     return {
       ...state,
       loadingBool: action.value
+    }
+  }
+  else if (action.type === "SET_SIGN_IN") {
+    return {
+      ...state,
+      signInBool: action.value
+    }
+  }
+  else if (action.type === "SET_SIGN_UP") {
+    return {
+      ...state,
+      signUpBool: action.value
     }
   }
 

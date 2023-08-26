@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import *
 from .models import User
+from django.db import IntegrityError
 
 
 # class UserSerializer (serializers.ModelSerializer):

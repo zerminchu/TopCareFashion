@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
-import "./SignInForm.css";
+import classes from "./SignInForm.module.css";
 import { useForm } from "@mantine/form";
 import { useDispatch } from "react-redux";
 import { showNotifications } from "../../utils/ShowNotification";
@@ -31,8 +31,7 @@ function SignInForm(props) {
   };
 
   const handleForgotPasswordClick = () => {
-    props.changeIsSignIn(false);
-    props.changeIsSignUp(false);
+    dispatch({ type: "SET_SIGN_IN", value: false });
     navigate("/recover-password");
   };
 
@@ -80,40 +79,42 @@ function SignInForm(props) {
   };
 
   const handleSignUpClick = () => {
-    props.changeIsSignIn(false);
-    props.changeIsSignUp(true);
+    dispatch({ type: "SET_SIGN_UP", value: true });
+    dispatch({ type: "SET_SIGN_IN", value: false });
   };
 
   return (
-    <div className="popupcontent">
-      <TextInput
-        className="element"
-        label="Email"
-        {...form.getInputProps("email")}
-        withAsterisk
-      />
+    <div className={classes.popupoverlay}>
+      <div className={classes.popupcontent}>
+        <TextInput
+          className={classes.element}
+          label="Email"
+          {...form.getInputProps("email")}
+          withAsterisk
+        />
 
-      <PasswordInput
-        className="element"
-        label="Password"
-        description="Password must include at least 6 words"
-        {...form.getInputProps("password")}
-        withAsterisk
-      />
+        <PasswordInput
+          className={classes.element}
+          label="Password"
+          description="Password must include at least 6 words"
+          {...form.getInputProps("password")}
+          withAsterisk
+        />
 
-      <p
-        onClick={handleForgotPasswordClick}
-        style={{ textDecoration: "underline", cursor: "pointer" }}
-      >
-        Forgot Password?
-      </p>
+        <p
+          onClick={handleForgotPasswordClick}
+          style={{ textDecoration: "underline", cursor: "pointer" }}
+        >
+          Forgot Password?
+        </p>
 
-      <Button className="element" onClick={handleSignInClick}>
-        Sign In
-      </Button>
-      <Button className="element" onClick={handleSignUpClick}>
-        Sign Up
-      </Button>
+        <Button className={classes.element} onClick={handleSignInClick}>
+          Sign In
+        </Button>
+        <Button className={classes.element} onClick={handleSignUpClick}>
+          Sign Up
+        </Button>
+      </div>
     </div>
   );
 }

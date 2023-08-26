@@ -17,7 +17,7 @@ class User(models.Model):
     )
 
     # General
-    user_id = models.CharField(max_length=100, unique=True, default="")
+    user_id = models.CharField(max_length=100, unique=True, default="", )
     first_name = models.CharField(max_length=100, blank=True, null=False)
     last_name = models.CharField(max_length=100, blank=True, null=False)
     #verified_status = models.BooleanField(default=False)

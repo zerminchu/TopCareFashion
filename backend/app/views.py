@@ -4,6 +4,7 @@ from django.http import HttpResponse
 from rest_framework.views import APIView
 from . models import *
 from . serializer import *
+from .exceptions import *
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from firebase_admin import firestore
@@ -12,6 +13,7 @@ from firebase_admin import auth
 from django.core.validators import validate_email
 from django.core.files.storage import FileSystemStorage
 from config.firebase import firebase
+
 import pyrebase
 import json
 import base64
@@ -39,6 +41,7 @@ def signUp(request):
             # Validation
             if(data["password"] != data["confirm_password"]):
                 raise Exception("Password and confirm password should be the same")
+            
 
             db = firestore.client()
             collection_ref = db.collection('Users')
@@ -63,6 +66,7 @@ def signUp(request):
                 buyerData.update(preferences)
                 buyerData.update(name)
                 serializer = BuyerSerializer(data=buyerData)
+                print("here11111")
                 
                 if(serializer.is_valid()):
                     # Auth user first to get the user_id
@@ -78,7 +82,11 @@ def signUp(request):
 
                     collection_ref.document(authUser["localId"]).set(data)
                 else:
-                    raise Exception(serializer.errors)
+                    fieldNames = []
+                    for errorField, error in serializer.errors.items():
+                        fieldNames.append(errorField)
+
+                    raise SerializerException(fieldNames)
                 
             elif(data["role"] == "seller"):
                 # Add additional data to seller
@@ -119,15 +127,25 @@ def signUp(request):
 
                     collection_ref.document(authUser["localId"]).set(data)
                 else:
-                    raise Exception(serializer.errors)
+                    fieldNames = []
+                    for errorField, error in serializer.errors.items():
+                        fieldNames.append(errorField)
 
+                    raise SerializerException(fieldNames)
+                
             return JsonResponse({
                 'status': "success",
                 'message': "User registered successfully, please verify your email",
                 "data": data
             }, status=200)
         
-        except Exception as e:
+        except SerializerException as e:
+            return JsonResponse({
+                "status": "error",
+                "message": f'Invalid data in {str(e)}'
+            }, status=400)
+        
+        except Exception as e:    
             return JsonResponse({
                 "status": "error",
                 "message": str(e)
@@ -140,6 +158,10 @@ def signIn(request):
             firebaseAuth = firebase.auth()
 
             data = request.data
+
+            # Validate data to produce custom message
+            validate_email(data["email"])
+
             authUser = auth.get_user_by_email(data["email"])
 
             if(not authUser):
@@ -169,9 +191,7 @@ def recoverPassword(request):
             firebaseAuth = firebase.auth()
 
             data = request.data
-
-            validate_email(data["email"])
-            
+                        
             resetPassword = firebaseAuth.send_password_reset_email(data["email"])
             
             return JsonResponse({

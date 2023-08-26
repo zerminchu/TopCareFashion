@@ -39,7 +39,7 @@ function Form(props) {
     }
   };
 
-  return <div>{renderContent()}</div>;
+  return <div>awkafkwpakpf</div>;
 }
 
 export default Form;

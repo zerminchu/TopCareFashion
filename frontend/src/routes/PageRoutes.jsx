@@ -8,11 +8,11 @@ import UserProfile from "../pages/UserProfile";
 function PageRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
       <Route path="/recover-password" element={<RecoverPassword />} />;
       <Route path="/user-profile" element={<UserProfile />} />;
       <Route path="/display" element={<DataDisplay />} />;
       <Route path="/test" element={<Test />} />;
+      <Route path="/" element={<Home />} />
     </Routes>
   );
 }

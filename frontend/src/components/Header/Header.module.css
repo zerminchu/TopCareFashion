@@ -10,6 +10,24 @@
   padding-bottom: 10px;
 }
 
+.businessname {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.middleside {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+
+.signinbutton {
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
 .leftside {
   display: flex;
   flex-direction: row;

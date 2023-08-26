@@ -5,6 +5,8 @@ import { Notifications } from "@mantine/notifications";
 import Store from "./redux/Store";
 import { LoadingOverlay } from "@mantine/core";
 import Header from "./components/Header/Header";
+import SignInForm from "./components/Form/SignInForm";
+import SignUpForm from "./components/Form/SignUpForm";
 
 //import "./App.css";
 
@@ -12,6 +14,8 @@ const MainApp = () => {
   const stateGlobal = useSelector((state) => state);
   return (
     <div>
+      {stateGlobal.signInBool && <SignInForm />}
+      {stateGlobal.signUpBool && <SignUpForm />}
       {stateGlobal.loadingBool && (
         <LoadingOverlay visible={true} overlayBlur={2} />
       )}
