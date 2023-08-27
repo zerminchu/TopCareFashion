@@ -14,5 +14,7 @@ urlpatterns = [
     path("verify-id-token/", views.verifyIdToken, name="verify-id-token"),
     path("retrieve-user-info-from-token/", views.retrieveUserInfoFromToken,
          name="retrieve-user-info-from-token"),
-    path("update-profile/", views.updateProfile, name="update-profile")
+    path("update-profile/", views.updateProfile, name="update-profile"),
+    path("classify-image/", views.classify_image, name="classify-image")
+
 ]

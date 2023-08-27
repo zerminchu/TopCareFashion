@@ -25,6 +25,7 @@
     "@mantine/spotlight": "^6.0.19",
     "@mantine/tiptap": "^6.0.19",
     "@tabler/icons-react": "^2.32.0",
+    "@tailwindcss/aspect-ratio": "^0.4.2",
     "@tiptap/extension-link": "^2.1.7",
     "@tiptap/react": "^2.1.7",
     "@tiptap/starter-kit": "^2.1.7",

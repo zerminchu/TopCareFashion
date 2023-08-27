@@ -6,6 +6,7 @@ import RecoverPassword from "../pages/UserAuth/RecoverPassword";
 import UserProfile from "../pages/UserAuth/UserProfile";
 import ImageUpload from "../pages/Seller/ImageUpload";
 import ListItem from "../pages/Seller/ListItem";
+import SellerHome from "../pages/Seller/SellerHome";
 
 function PageRoutes() {
   return (
@@ -17,6 +18,7 @@ function PageRoutes() {
       <Route path="/create-listing" element={<ListItem />} />;
       <Route path="/display" element={<DataDisplay />} />;
       <Route path="/test" element={<Test />} />;
+      <Route path="/seller-home" element={<SellerHome />} />;
     </Routes>
   );
 }

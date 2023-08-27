@@ -16,6 +16,12 @@ from config.firebase import firebase
 import pyrebase
 import json
 import base64
+import os
+import uuid
+
+import tensorflow as tf
+from PIL import Image
+import numpy as np
 
 
 @api_view(["POST"])
@@ -382,22 +388,33 @@ def add_product(request):
                 colour = validated_data["colour"]
 
                 # price = float(validated_data["price"])
-                uploaded_file = request.data.get('file')
-                if uploaded_file:
+
+                uploaded_files = request.FILES.getlist(
+                    'files')  # Get a list of uploaded files
+
+                # List to store image URLs
+                image_urls = []
+
+                for uploaded_file in uploaded_files:
                     content_type = uploaded_file.content_type
-                    file_name = uploaded_file.name
+                    # file_name = uploaded_file.name
+                    # file_content = ContentFile(uploaded_file.read())
+                    file_extension = os.path.splitext(uploaded_file.name)[
+                        1]  # Get the file extension
+                    # Generate a unique filename
+                    unique_filename = f"{uuid.uuid4().hex}{file_extension}"
+
                     file_content = ContentFile(uploaded_file.read())
 
                     # Upload file to Firebase storage
                     bucket = storage.bucket()
-                    blob = bucket.blob(file_name)
+                    blob = bucket.blob(unique_filename)
                     blob.upload_from_file(
                         file_content, content_type=content_type)
 
                     # Get the download URL of the uploaded image
                     image_url = blob.public_url
-                else:
-                    image_url = None
+                    image_urls.append(image_url)  # Append the URL to the list
 
                 # Save data to Firestore
                 db = firestore.client()
@@ -406,10 +423,39 @@ def add_product(request):
                     "category": category,
                     "condition": condition,
                     "colour": colour,
-                    "image_url": image_url,
+                    "image_urls": image_urls,
                 })
+
                 return Response({"message": "Item added successfully"})
             else:
                 return Response({"errors": serializer.errors}, status=400)
         except Exception as e:
             return Response({"error": str(e)}, status=500)
+
+
+# IMAGE CLASSIFICATION
+model = tf.keras.models.load_model(
+    './ML/clothing_classification_model.h5')
+
+
+@api_view(["POST"])
+def classify_image(request):
+    if request.method == "POST":
+        try:
+            uploaded_file = request.FILES.get('image')
+
+            print(uploaded_file)
+            # Open and preprocess the uploaded image
+            image = Image.open(uploaded_file)
+            # Resize to match model input size
+            image = image.resize((224, 224))
+            image = np.array(image) / 255.0  # Normalize pixel values
+            image = np.expand_dims(image, axis=0)  # Add batch dimension
+
+            # Run the image through the model for classification
+            prediction = model.predict(image)
+            predicted_class = int(np.argmax(prediction, axis=1))
+
+            return JsonResponse({"category": predicted_class})
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)

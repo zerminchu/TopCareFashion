@@ -12,6 +12,7 @@ import { IconCloudUpload, IconX, IconDownload } from "@tabler/icons-react";
 import { useInterval } from "@mantine/hooks";
 import { useNavigate } from "react-router-dom";
 import { Container, SimpleGrid } from "@mantine/core";
+//import axios from "axios";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -75,6 +76,7 @@ function ImageUpload() {
     }
 
     setUploadedImages(newImages);
+    localStorage.setItem("uploadedImages", JSON.stringify(newImages)); // Save to local storage
   };
 
   useEffect(() => {
@@ -86,8 +88,17 @@ function ImageUpload() {
 
   const handleClick = () => {
     if (uploadedImages.length === 3) {
-      // Navigate to the ListItem component with uploaded images as state
-      navigate("/create-listing", { state: { uploadedImages } });
+      /*   if (uploadedImages[0]) {
+        classifyAndNavigate(); */
+      if (uploadedImages.length === 3) {
+        const imageFiles = uploadedImages.map((blobUrl, index) => {
+          const blob = fetch(blobUrl).then((r) => r.blob());
+          return new File([blob], `image_${index}.png`, { type: "image/png" });
+        });
+
+        // Navigate to the ListItem component with uploaded images as state
+        navigate("/create-listing", { state: { uploadedImages: imageFiles } });
+      }
     } else if (loaded) {
       setLoaded(false);
       setUploadedImages([]);
@@ -95,6 +106,27 @@ function ImageUpload() {
       interval.start();
     }
   };
+
+  /*   const classifyAndNavigate = async () => {
+    const formData = new FormData();
+    formData.append("image", uploadedImages[0]);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/classify-image/",
+        formData
+      );
+      const classifiedCategory = response.data.category;
+
+      navigate("/create-listing", {
+        state: { uploadedImages, category: classifiedCategory },
+      });
+      console.log(classifiedCategory);
+      console.log(uploadedImages);
+    } catch (error) {
+      // Handle error
+    }
+  }; */
 
   const interval = useInterval(
     () =>
@@ -221,7 +253,7 @@ function ImageUpload() {
           <Progress
             value={progress}
             className={classes.progress}
-            color={theme.colors[theme.primaryColor][2]} // Adjust this part based on your color scheme
+            color={theme.colors[theme.primaryColor][2]}
             radius="sm"
           />
         )}
