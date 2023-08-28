@@ -1,68 +1,55 @@
-const products = [
-  {
-    id: 1,
-    name: "Basic Tee",
-    href: "#",
-    imageSrc:
-      "https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-01.jpg",
-    imageAlt: "Front of men's Basic Tee in black.",
-    price: "$35",
-    color: "Black",
-  },
-  {
-    id: 2,
-    name: "Basic Tee",
-    href: "#",
-    imageSrc:
-      "https://tailwindui.com/img/ecommerce-images/product-page-01-related-product-01.jpg",
-    imageAlt: "Front of men's Basic Tee in black.",
-    price: "$35",
-    color: "Black",
-  },
-  // More products...
-];
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { Card, Text } from "@mantine/core";
+import axios from "axios";
 
-function SellerHome() {
+// Import your useStyles function here if you have it
+
+function SellerCards() {
+  const { id } = useParams();
+  // const { classes } = useStyles();
+  const [category, setCategory] = useState("");
+  const [condition, setCondition] = useState("");
+  const [products, setProducts] = useState([]);
+
+  // Fetch products when the component mounts
+  useEffect(() => {
+    axios
+      .get(`http://localhost:8000/view-item/${id}/`)
+      .then((response) => {
+        setProducts(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching products:", error);
+      });
+  }, [id]);
+
+  // Apply filtering when category or condition changes
+  useEffect(() => {
+    const filteredProducts = products.filter((product) => {
+      if (
+        (category && product.category !== category) ||
+        (condition && product.condition !== condition)
+      ) {
+        return false;
+      }
+      return true;
+    });
+
+    setProducts(filteredProducts);
+  }, [category, condition, products]);
+
   return (
-    <div className="bg-white">
-      <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-        <h2 className="text-2xl font-bold tracking-tight text-gray-900">
-          Your listings
-        </h2>
-
-        <div className="mt-6 flex flex-wrap gap-x-6 gap-y-10">
-          {products.map((product) => (
-            <div key={product.id} className="w-full sm:w-1/2 lg:w-1/4">
-              <div className="group relative">
-                <div className="aspect-h-2 aspect-w-3 w-full overflow-hidden rounded-md bg-gray-200 group-hover:opacity-75">
-                  <img
-                    src={product.imageSrc}
-                    alt={product.imageAlt}
-                    className="h-full w-full object-cover object-center"
-                  />
-                </div>
-                <div className="mt-4 flex justify-between">
-                  <div>
-                    <h3 className="text-sm text-gray-700">
-                      <a href={product.href}>
-                        <span aria-hidden="true" className="absolute inset-0" />
-                        {product.name}
-                      </a>
-                    </h3>
-                    <p className="mt-1 text-sm text-gray-500">
-                      {product.color}
-                    </p>
-                  </div>
-                  <p className="text-sm font-medium text-gray-900">
-                    {product.price}
-                  </p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+    <div>
+      {products.map((product) => (
+        <Card key={product.id}>
+          <Text>{product.category}</Text>
+          <Text>{product.condition}</Text>
+          {/* Render other product information here */}
+        </Card>
+      ))}
     </div>
   );
 }
-export default SellerHome;
+
+export default SellerCards;

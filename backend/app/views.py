@@ -376,6 +376,7 @@ def updateProfile(request):
 
 @api_view(["POST"])
 def add_product(request):
+
     if request.method == "POST":
         try:
             # Deserialize both product and file data
@@ -429,6 +430,50 @@ def add_product(request):
                 return Response({"message": "Item added successfully"})
             else:
                 return Response({"errors": serializer.errors}, status=400)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
+# GET All
+
+
+@api_view(["GET"])
+def get_all_item(request):
+    if request.method == "GET":
+        try:
+            db = firestore.Client()
+            products_ref = db.collection("Item")
+            products = products_ref.stream()
+
+            products_data = []
+
+            for product in products:
+                product_data = product.to_dict()
+                products_data.append(product_data)
+
+            return Response(products_data)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
+ # Get by User ID
+
+
+@api_view(["GET"])
+def get_by_sellerId(request, user_id):
+    if request.method == "GET":
+        try:
+            db = firestore.Client()
+            products_ref = db.collection(
+                "Item").where("user_id", "==", user_id)
+            products = products_ref.stream()
+
+            products_data = []
+
+            for product in products:
+                product_data = product.to_dict()
+                products_data.append(product_data)
+
+            return Response(products_data)
+
         except Exception as e:
             return Response({"error": str(e)}, status=500)
 

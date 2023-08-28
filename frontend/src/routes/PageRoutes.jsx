@@ -18,7 +18,7 @@ function PageRoutes() {
       <Route path="/create-listing" element={<ListItem />} />;
       <Route path="/display" element={<DataDisplay />} />;
       <Route path="/test" element={<Test />} />;
-      <Route path="/seller-home" element={<SellerHome />} />;
+      <Route path="/seller-home/:id" element={<SellerHome />} />;
     </Routes>
   );
 }

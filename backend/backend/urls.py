@@ -6,6 +6,11 @@ from app import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("add-product/", views.add_product, name="add-product"),
+    path("view-item/all/", views.get_all_item, name="view-item/all"),
+    path("view-item/<str:user_id>/",
+         views.get_by_sellerId, name="view-item/user_id"),
+
+
     path("register/", views.signUp, name="register"),
     path("sign-in/", views.signIn, name="login"),
     path("sign-up/", views.signUp, name="sign-up"),

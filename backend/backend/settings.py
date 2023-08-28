@@ -82,6 +82,7 @@ DATABASES = {
     }
 }
 
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = './serviceAccountKey/serviceAccountKey.json'
 
 cred = credentials.Certificate('./serviceAccountKey/serviceAccountKey.json')
 firebase_admin.initialize_app(cred, {

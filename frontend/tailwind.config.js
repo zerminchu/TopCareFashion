@@ -1,6 +1,5 @@
 /** @type {import('tailwindcss').Config} */
 
-import aspectRatio from '@tailwindcss/aspect-ratio';
 
 export default {
   content: [
@@ -9,6 +8,8 @@ export default {
   theme: {
     extend: {},
   },
-  plugins: [aspectRatio],
+  // eslint-disable-next-line no-undef
+  plugins: [ require('@tailwindcss/aspect-ratio'),
+],
 }
 

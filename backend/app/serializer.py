@@ -2,12 +2,6 @@ from rest_framework import serializers
 from .models import *
 
 
-class ItemSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Item
-        fields = '__all__'
-
-
 class BuyerSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -38,3 +32,13 @@ class SellerSerializer (serializers.ModelSerializer):
             'size',
             'type'
         )
+
+
+class ItemSerializer(serializers.ModelSerializer):
+
+    buyer = BuyerSerializer()
+    seller = SellerSerializer()
+
+    class Meta:
+        model = Item
+        fields = '__all__'
