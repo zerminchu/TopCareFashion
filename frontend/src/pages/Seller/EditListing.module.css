@@ -1,0 +1,51 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding-left: 20%;
+  padding-right: 20%;
+}
+
+.leftside {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.rightside {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  gap: 20px;
+}
+
+.menu {
+  display: flex;
+  gap: 15px;
+  flex-direction: column;
+  padding: 20px;
+  border: 1px solid rgb(201, 201, 201);
+  border-radius: 5px;
+}
+
+.mainimage {
+  width: 200px;
+  height: 200px;
+}
+
+.secondaryimage {
+  width: 100px;
+  height: 100px;
+}
+
+.secondaryimagewrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.uploadwrapper {
+  display: flex;
+  justify-content: space-between;
+}
