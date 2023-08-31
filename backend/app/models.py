@@ -44,8 +44,11 @@ class User(models.Model):
 
 
 class Item(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.CharField(max_length=255)
     condition = models.CharField(max_length=255)
     colour = models.CharField(max_length=255)
-    image_urls = models.JSONField(default=list)  # Store image URLs as an array
+    image_urls = models.JSONField(default=list)
+
+
+class Listing(models.Model):
+    collection_address = models.CharField(max_length=255)

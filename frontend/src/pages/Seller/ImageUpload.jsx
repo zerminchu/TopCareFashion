@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useRef, useState, useEffect } from "react";
 import {
   Text,
@@ -12,6 +13,9 @@ import { IconCloudUpload, IconX, IconDownload } from "@tabler/icons-react";
 import { useInterval } from "@mantine/hooks";
 import { useNavigate } from "react-router-dom";
 import { Container, SimpleGrid } from "@mantine/core";
+import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
+import Cookies from "js-cookie";
+
 //import axios from "axios";
 
 const useStyles = createStyles((theme) => ({
@@ -64,6 +68,7 @@ function ImageUpload() {
   const [loaded, setLoaded] = useState(false);
   const [uploadedImages, setUploadedImages] = useState([]);
   const navigate = useNavigate();
+  const [currentUser, setCurrentUser] = useState();
 
   const handleDrop = (files) => {
     const allowedFormats = ["image/jpeg", "image/png"];
@@ -83,6 +88,25 @@ function ImageUpload() {
     const storedImages = localStorage.getItem("uploadedImages");
     if (storedImages) {
       setUploadedImages(JSON.parse(storedImages));
+    }
+  }, []);
+
+  useEffect(() => {
+    const setUserSessionData = async () => {
+      try {
+        const user = await retrieveUserInfo();
+        setCurrentUser(user);
+        console.log(user);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    // Check if user has signed in before
+    if (Cookies.get("firebaseIdToken")) {
+      setUserSessionData();
+    } else {
+      navigate("/", { replace: true });
     }
   }, []);
 
@@ -107,27 +131,6 @@ function ImageUpload() {
     }
   };
 
-  /*   const classifyAndNavigate = async () => {
-    const formData = new FormData();
-    formData.append("image", uploadedImages[0]);
-
-    try {
-      const response = await axios.post(
-        "http://localhost:8000/classify-image/",
-        formData
-      );
-      const classifiedCategory = response.data.category;
-
-      navigate("/create-listing", {
-        state: { uploadedImages, category: classifiedCategory },
-      });
-      console.log(classifiedCategory);
-      console.log(uploadedImages);
-    } catch (error) {
-      // Handle error
-    }
-  }; */
-
   const interval = useInterval(
     () =>
       setProgress((current) => {
@@ -141,6 +144,14 @@ function ImageUpload() {
       }),
     20
   );
+
+  const handleImageRemove = (indexToRemove) => {
+    const newImages = uploadedImages.filter(
+      (_, index) => index !== indexToRemove
+    );
+    setUploadedImages(newImages);
+    localStorage.setItem("uploadedImages", JSON.stringify(newImages));
+  };
 
   return (
     <div>
@@ -240,13 +251,14 @@ function ImageUpload() {
         className={classes.button_1}
         onClick={handleClick}
         color={uploadedImages.length === 3 ? "teal" : theme.primaryColor}
+        disabled={uploadedImages.length !== 3} // Disable if not exactly 3 images
       >
         <div className={classes.label}>
           {uploadedImages.length === 3
             ? "Next"
             : loaded
             ? "Files uploaded"
-            : "Upload files"}
+            : "Please upload at least 3 images"}
         </div>
 
         {progress !== 0 && (
@@ -257,6 +269,14 @@ function ImageUpload() {
             radius="sm"
           />
         )}
+      </Button>
+      <Button
+        fullWidth
+        className={classes.button_1}
+        onClick={() => handleImageRemove(uploadedImages.length - 1)}
+        color="red"
+      >
+        Remove Image
       </Button>
     </div>
   );

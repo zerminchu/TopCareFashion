@@ -36,9 +36,13 @@ class SellerSerializer (serializers.ModelSerializer):
 
 class ItemSerializer(serializers.ModelSerializer):
 
-    buyer = BuyerSerializer()
-    seller = SellerSerializer()
-
     class Meta:
         model = Item
+        fields = '__all__'
+
+
+class ListingSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Listing
         fields = '__all__'

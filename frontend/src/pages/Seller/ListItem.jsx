@@ -7,9 +7,11 @@ import {
   TextInput,
   Button,
 } from "@mantine/core";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
+import Cookies from "js-cookie";
 
 const useStyles = createStyles((theme) => ({
   root: {
@@ -40,6 +42,27 @@ function ListItem() {
   const [category, setCategory] = useState("");
   const [condition, setCondition] = useState("");
   const [colour, setColour] = useState("");
+  const navigate = useNavigate();
+  const [currentUser, setCurrentUser] = useState();
+
+  useEffect(() => {
+    const setUserSessionData = async () => {
+      try {
+        const user = await retrieveUserInfo();
+        setCurrentUser(user);
+        console.log(user);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    // Check if user has signed in before
+    if (Cookies.get("firebaseIdToken")) {
+      setUserSessionData();
+    } else {
+      navigate("/", { replace: true });
+    }
+  }, []);
 
   useEffect(() => {
     if (location.state?.category) {
@@ -67,6 +90,7 @@ function ListItem() {
       formData.append("category", category);
       formData.append("condition", condition);
       formData.append("colour", colour);
+      formData.append("user_id", currentUser.user_id);
 
       // Send data to the backend using Axios
       const response = await axios.post(
@@ -74,7 +98,6 @@ function ListItem() {
         formData
       );
 
-      console.log(files);
       console.log(response.data); // Success message
     } catch (error) {
       console.error(error);

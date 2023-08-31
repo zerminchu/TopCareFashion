@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from . models import *
 from . serializer import *
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from firebase_admin import firestore
 from django.core.files.base import ContentFile
 
@@ -12,6 +12,8 @@ from firebase_admin import storage
 from firebase_admin import auth
 from django.core.validators import validate_email
 from django.core.files.storage import FileSystemStorage
+from rest_framework.permissions import IsAuthenticated
+
 from config.firebase import firebase
 import pyrebase
 import json
@@ -376,11 +378,12 @@ def updateProfile(request):
 
 @api_view(["POST"])
 def add_product(request):
-
     if request.method == "POST":
         try:
-            # Deserialize both product and file data
-            serializer = ItemSerializer(data=request.data)
+            user_id = request.data.get("user_id")
+
+            serializer = ItemSerializer(
+                data=request.data)
 
             if serializer.is_valid():
                 validated_data = serializer.validated_data
@@ -388,21 +391,13 @@ def add_product(request):
                 condition = validated_data["condition"]
                 colour = validated_data["colour"]
 
-                # price = float(validated_data["price"])
+                uploaded_files = request.FILES.getlist('files')
 
-                uploaded_files = request.FILES.getlist(
-                    'files')  # Get a list of uploaded files
-
-                # List to store image URLs
                 image_urls = []
 
                 for uploaded_file in uploaded_files:
                     content_type = uploaded_file.content_type
-                    # file_name = uploaded_file.name
-                    # file_content = ContentFile(uploaded_file.read())
-                    file_extension = os.path.splitext(uploaded_file.name)[
-                        1]  # Get the file extension
-                    # Generate a unique filename
+                    file_extension = os.path.splitext(uploaded_file.name)[1]
                     unique_filename = f"{uuid.uuid4().hex}{file_extension}"
 
                     file_content = ContentFile(uploaded_file.read())
@@ -415,23 +410,37 @@ def add_product(request):
 
                     # Get the download URL of the uploaded image
                     image_url = blob.public_url
-                    image_urls.append(image_url)  # Append the URL to the list
+                    image_urls.append(image_url)
 
                 # Save data to Firestore
                 db = firestore.client()
                 products_ref = db.collection("Item")
-                products_ref.add({
+                item_id = products_ref.document()
+                item_id.set({
+                    "item_id": item_id.id,
                     "category": category,
                     "condition": condition,
                     "colour": colour,
                     "image_urls": image_urls,
+                    "user_id": user_id
                 })
+
+                collection_address = request.data.get("collection_address")
+                if collection_address:
+                    listing_ref = db.collection("Listing")
+                    listing_id = listing_ref.document()
+                    listing_id.set({
+                        "listing_id": listing_id.id,
+                        "collection_address": collection_address,
+                        "item_id": item_id.id,
+                    })
 
                 return Response({"message": "Item added successfully"})
             else:
                 return Response({"errors": serializer.errors}, status=400)
         except Exception as e:
             return Response({"error": str(e)}, status=500)
+
 
 # GET All
 
