@@ -1,0 +1,13 @@
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.leftside {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  align-items: center;
+  justify-content: center;
+}

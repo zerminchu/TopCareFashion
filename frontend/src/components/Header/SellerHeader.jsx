@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import DropDownMenu from "./DropDownMenu";
 import classes from "./SellerHeader.module.css";
 import ILLogo from "../../assets/illustrations/il_logo.png";
+import IconChat from "../../assets/icons/ic_chat.svg";
 
 import { Button, Text } from "@mantine/core";
 
@@ -19,6 +20,7 @@ function SellerHeader(props) {
       </div>
       <div className={classes.rightside}>
         <DropDownMenu currentUser={currentUser} />
+        <img src={IconChat} width={30} height={30} />
         <Button>List now</Button>
       </div>
     </div>

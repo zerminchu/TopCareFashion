@@ -25,7 +25,7 @@ function DropDownMenu(props) {
   };
 
   const businessProfileOnClick = () => {
-    console.log("business profile click");
+    navigate("/business-profile");
   };
 
   const settingsOnClick = () => {

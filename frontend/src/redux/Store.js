@@ -1,6 +1,7 @@
 import { createStore } from 'redux'
 
 const initialstate = {
+  sellerOnBoardBool: false,
   signInBool: false,
   signUpBool: false,
   loadingBool: false,
@@ -11,6 +12,12 @@ const reducer = (state = initialstate, action) => {
     return {
       ...state,
       loadingBool: action.value
+    }
+  }
+  else if (action.type === "SET_SELLER_ON_BOARD") {
+    return {
+      ...state,
+      sellerOnBoardBool: action.value
     }
   }
   else if (action.type === "SET_SIGN_IN") {

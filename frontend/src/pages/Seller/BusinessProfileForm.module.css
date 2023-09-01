@@ -1,0 +1,24 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  gap: 20px;
+  border: 1px solid rgb(201, 201, 201);
+  border-radius: 5px;
+  margin-top: 50px;
+  width: 30%;
+  height: 30%;
+}
+
+.bottom {
+  display: flex;
+  gap: 20px;
+  align-self: flex-end;
+}
