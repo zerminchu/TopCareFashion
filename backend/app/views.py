@@ -40,9 +40,9 @@ def signUp(request):
                 raise Exception(
                     "Password and confirm password should be the same")
 
-            if(data["password"] != data["confirm_password"]):
-                raise Exception("Password and confirm password should be the same")
-            
+            if (data["password"] != data["confirm_password"]):
+                raise Exception(
+                    "Password and confirm password should be the same")
 
             db = firestore.client()
             collection_ref = db.collection('Users')
@@ -69,9 +69,6 @@ def signUp(request):
                 serializer = BuyerSerializer(data=buyerData)
 
                 if (serializer.is_valid()):
-                print("here11111")
-                
-                if(serializer.is_valid()):
                     # Auth user first to get the user_id
                     authUser = firebaseAuth.create_user_with_email_and_password(
                         data["email"], data["password"])
@@ -89,13 +86,13 @@ def signUp(request):
                     raise Exception(serializer.errors)
 
             elif (data["role"] == "seller"):
-                    fieldNames = []
-                    for errorField, error in serializer.errors.items():
-                        fieldNames.append(errorField)
+                fieldNames = []
+                for errorField, error in serializer.errors.items():
+                    fieldNames.append(errorField)
 
-                    raise SerializerException(fieldNames)
-                
-            elif(data["role"] == "seller"):
+                raise SerializerException(fieldNames)
+
+            elif (data["role"] == "seller"):
                 # Add additional data to seller
                 data["verified_status"] = False
                 data["profile_image_url"] = ""
@@ -147,15 +144,13 @@ def signUp(request):
                 "data": data
             }, status=200)
 
-        except Exception as e:
-        
         except SerializerException as e:
             return JsonResponse({
                 "status": "error",
                 "message": f'Invalid data in {str(e)}'
             }, status=400)
-        
-        except Exception as e:    
+
+        except Exception as e:
             return JsonResponse({
                 "status": "error",
                 "message": str(e)
@@ -210,9 +205,9 @@ def recoverPassword(request):
             resetPassword = firebaseAuth.send_password_reset_email(
                 data["email"])
 
-                        
-            resetPassword = firebaseAuth.send_password_reset_email(data["email"])
-            
+            resetPassword = firebaseAuth.send_password_reset_email(
+                data["email"])
+
             return JsonResponse({
                 'status': "success",
                 'message': "Password reset link has been sent to your email",
@@ -391,7 +386,6 @@ def updateProfile(request):
 
                 print(updatedData)
 
- 
             else:
                 raise Exception(serializer.errors)
 
@@ -417,61 +411,136 @@ def updateProfile(request):
 def add_product(request):
     if request.method == "POST":
         try:
-            # Deserialize both product and file data
-            serializer = ProductSerializer(data=request.data)
-            serializer_image = FileUploadSerializer(data=request.data)
+            user_id = request.data.get("user_id")
 
-            if serializer.is_valid() and serializer_image.is_valid():
+            serializer = ItemSerializer(
+                data=request.data)
+
+            if serializer.is_valid():
                 validated_data = serializer.validated_data
-                name = validated_data["name"]
-                price = float(validated_data["price"])
+                category = validated_data["category"]
+                condition = validated_data["condition"]
+                colour = validated_data["colour"]
 
-                uploaded_file = serializer_image.validated_data['file']
+                uploaded_files = request.FILES.getlist('files')
 
-                bucket = storage.bucket()
-                blob = bucket.blob(uploaded_file.name)
+                image_urls = []
 
-                content_type = 'image/png'
-                blob.upload_from_file(uploaded_file, content_type=content_type)
+                for uploaded_file in uploaded_files:
+                    content_type = uploaded_file.content_type
+                    file_extension = os.path.splitext(uploaded_file.name)[1]
+                    unique_filename = f"{uuid.uuid4().hex}{file_extension}"
 
-                # Get the download URL of the uploaded image
-                image_url = blob.public_url
+                    file_content = ContentFile(uploaded_file.read())
+
+                    # Upload file to Firebase storage
+                    bucket = storage.bucket()
+                    blob = bucket.blob(unique_filename)
+                    blob.upload_from_file(
+                        file_content, content_type=content_type)
+
+                    # Get the download URL of the uploaded image
+                    image_url = blob.public_url
+                    image_urls.append(image_url)
 
                 # Save data to Firestore
                 db = firestore.client()
-                products_ref = db.collection("products")
-                new_product_ref = products_ref.add({
-                    "name": name,
-                    "price": price,
-                    "image_url": image_url,
+                products_ref = db.collection("Item")
+                item_id = products_ref.document()
+                item_id.set({
+                    "item_id": item_id.id,
+                    "category": category,
+                    "condition": condition,
+                    "colour": colour,
+                    "image_urls": image_urls,
+                    "user_id": user_id
                 })
-                return Response({"message": "Product added successfully"})
+
+                collection_address = request.data.get("collection_address")
+                if collection_address:
+                    listing_ref = db.collection("Listing")
+                    listing_id = listing_ref.document()
+                    listing_id.set({
+                        "listing_id": listing_id.id,
+                        "collection_address": collection_address,
+                        "item_id": item_id.id,
+                    })
+
+                return Response({"message": "Item added successfully"})
             else:
                 return Response({"errors": serializer.errors}, status=400)
         except Exception as e:
             return Response({"error": str(e)}, status=500)
 
 
-""" 
+# GET All
+
+
+@api_view(["GET"])
+def get_all_item(request):
+    if request.method == "GET":
+        try:
+            db = firestore.Client()
+            products_ref = db.collection("Item")
+            products = products_ref.stream()
+
+            products_data = []
+
+            for product in products:
+                product_data = product.to_dict()
+                products_data.append(product_data)
+
+            return Response(products_data)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
+ # Get by User ID
+
+
+@api_view(["GET"])
+def get_by_sellerId(request, user_id):
+    if request.method == "GET":
+        try:
+            db = firestore.Client()
+            products_ref = db.collection(
+                "Item").where("user_id", "==", user_id)
+            products = products_ref.stream()
+
+            products_data = []
+
+            for product in products:
+                product_data = product.to_dict()
+                products_data.append(product_data)
+
+            return Response(products_data)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
+
+# IMAGE CLASSIFICATION
+model = tf.keras.models.load_model(
+    './ML/clothing_classification_model.h5')
+
+
 @api_view(["POST"])
-def upload_file(request):
-    if request.method == 'POST':
-        serializer = FileUploadSerializer(data=request.data)
-        if serializer.is_valid():
-            uploaded_file = serializer.validated_data['file']
+def classify_image(request):
+    if request.method == "POST":
+        try:
+            uploaded_file = request.FILES.get('image')
 
-            try:
-                bucket = storage.bucket()
-                blob = bucket.blob(uploaded_file.name)
-                content_type = 'image/png'
+            print(uploaded_file)
+            # Open and preprocess the uploaded image
+            image = Image.open(uploaded_file)
+            # Resize to match model input size
+            image = image.resize((224, 224))
+            image = np.array(image) / 255.0  # Normalize pixel values
+            image = np.expand_dims(image, axis=0)  # Add batch dimension
 
-                blob.upload_from_file(uploaded_file, content_type=content_type)
+            # Run the image through the model for classification
+            prediction = model.predict(image)
+            predicted_class = int(np.argmax(prediction, axis=1))
 
-                return Response({'message': 'File uploaded successfully'})
-            except Exception as e:
-                return Response({'error': str(e)}, status=500)
-        else:
-            return Response({'errors': serializer.errors}, status=400)
-
-    return Response({'message': 'File upload failed'}, status=400)
- """
+            return JsonResponse({"category": predicted_class})
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)

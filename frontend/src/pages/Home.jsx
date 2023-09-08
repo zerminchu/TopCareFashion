@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import Header from "../components/Header/Header";
 /* import { useEffect } from "react";
 import axios from "axios";
@@ -12,6 +13,7 @@ import SellerHome from "./Seller/SellerHome";
 function Home() {
   const navigate = useNavigate();
 
+  // eslint-disable-next-line no-unused-vars
   const [currentUser, setCurrentUser] = useState();
   const [currentRole, setCurrentRole] = useState();
 

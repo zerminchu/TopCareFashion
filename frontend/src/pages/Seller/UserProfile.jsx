@@ -1,11 +1,11 @@
 import { useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
-import { retrieveUserInfo } from "../utils/RetrieveUserInfoFromToken";
-import { showNotifications } from "../utils/ShowNotification";
+import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
+import { showNotifications } from "../../utils/ShowNotification";
 import { useForm } from "@mantine/form";
 import { Flex, TextInput, Button, Group, Radio, Image } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
-import IlDefaultAvatar from "../assets/illustrations/il_avatar.png";
+import IlDefaultAvatar from "../../assets/illustrations/il_avatar.png";
 import Cookies from "js-cookie";
 import axios from "axios";
 

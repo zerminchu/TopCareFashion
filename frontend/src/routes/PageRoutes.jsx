@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import Home from "../pages/Home";
-import RecoverPassword from "../pages/UserAuth/RecoverPassword";
-import UserProfile from "../pages/UserAuth/UserProfile";
+import RecoverPassword from "../pages/RecoverPassword";
+import UserProfile from "../pages/Seller/UserProfile";
 import ImageUpload from "../pages/Seller/ImageUpload";
 import ListItem from "../pages/Seller/ListItem";
 import SellerHome from "../pages/Seller/SellerHome";
