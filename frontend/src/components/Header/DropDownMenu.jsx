@@ -3,24 +3,29 @@ import IconArrowDown from "../../assets/icons/ic_arrow_down.svg";
 import IlAvatar from "../../assets/illustrations/il_avatar.png";
 import Cookies from "js-cookie";
 
-import "./DropDownMenu.css";
+import IconPerson from "../../assets/icons/ic_person.svg";
+import IconSettings from "../../assets/icons/ic_settings.svg";
+import IconAnalytics from "../../assets/icons/ic_analytics.svg";
+import IconManageListing from "../../assets/icons/ic_manage_listing.svg";
+import IconLogout from "../../assets/icons/ic_logout.svg";
+
+import classes from "./DropDownMenu.module.css";
+
+import { Text, Menu, Avatar } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 
 function DropDownMenu(props) {
   const navigate = useNavigate();
+
   const [currentUser, setCurrentUser] = useState(props.currentUser);
   const [open, setOpen] = useState(false);
-
-  const arrowDownOnClick = () => {
-    setOpen(!open);
-  };
 
   const profileOnClick = () => {
     navigate("/user-profile");
   };
 
   const businessProfileOnClick = () => {
-    console.log("business profile click");
+    navigate("/business-profile");
   };
 
   const settingsOnClick = () => {
@@ -37,26 +42,56 @@ function DropDownMenu(props) {
 
   const logoutOnClick = () => {
     Cookies.remove("firebaseIdToken");
-    navigate("/");
+    window.location.reload();
   };
 
   return (
-    <div>
-      <div className="rounded-image-container">
-        <img src={IlAvatar} alt="Rounded Image" className="rounded-image" />
-      </div>
-      <span>{props.currentUser.name.first_name}</span>
-      <img src={IconArrowDown} onClick={arrowDownOnClick} />
-      {open ? (
-        <ul className="dropdown-menu">
-          <li onClick={profileOnClick}>Profile</li>
-          <li onClick={businessProfileOnClick}>Business Profile</li>
-          <li onClick={settingsOnClick}>Settings</li>
-          <li onClick={analyticsOnClick}>Analytics</li>
-          <li onClick={manageListingsOnClick}>Manage Listings</li>
-          <li onClick={logoutOnClick}>Logout</li>
-        </ul>
-      ) : null}
+    <div className={classes.container}>
+      <Avatar src={props.currentUser.profile_image_url || IlAvatar} />
+
+      <Menu>
+        <Menu.Target>
+          <div className={classes.menutarget}>
+            <Text fz="md" fw={700}>
+              {props.currentUser.name.first_name}
+            </Text>
+            <img src={IconArrowDown} />
+          </div>
+        </Menu.Target>
+
+        <Menu.Dropdown>
+          <Menu.Item icon={<img src={IconPerson} />} onClick={profileOnClick}>
+            Profile
+          </Menu.Item>
+          <Menu.Item
+            icon={<img src={IconPerson} />}
+            onClick={businessProfileOnClick}
+          >
+            Business Profile
+          </Menu.Item>
+          <Menu.Item
+            icon={<img src={IconSettings} />}
+            onClick={settingsOnClick}
+          >
+            Settings
+          </Menu.Item>
+          <Menu.Item
+            icon={<img src={IconAnalytics} />}
+            onClick={analyticsOnClick}
+          >
+            Analytics
+          </Menu.Item>
+          <Menu.Item
+            icon={<img src={IconManageListing} />}
+            onClick={manageListingsOnClick}
+          >
+            Manage Listings
+          </Menu.Item>
+          <Menu.Item icon={<img src={IconLogout} />} onClick={logoutOnClick}>
+            Logout
+          </Menu.Item>
+        </Menu.Dropdown>
+      </Menu>
     </div>
   );
 }

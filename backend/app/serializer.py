@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import *
+from django.db import IntegrityError
 
 
 class BuyerSerializer(serializers.ModelSerializer):
@@ -19,7 +20,7 @@ class BuyerSerializer(serializers.ModelSerializer):
 class UpdateProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["first_name", "last_name", "gender"]
+        fields = ["user_id", "first_name", "last_name", "gender"]
 
 
 class SellerSerializer (serializers.ModelSerializer):

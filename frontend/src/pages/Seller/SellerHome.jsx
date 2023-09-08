@@ -13,6 +13,10 @@ import {
   rem,
 } from "@mantine/core";
 import axios from "axios";
+import BusinessProfile from "./BusinessProfile";
+import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
+import Cookies from "js-cookie";
+import classes from "./SellerHome.module.css";
 
 const useStyles = createStyles((theme) => ({
   card: {

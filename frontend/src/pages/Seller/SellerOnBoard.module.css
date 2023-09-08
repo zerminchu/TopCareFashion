@@ -1,4 +1,4 @@
-.popup-overlay {
+.popupoverlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -10,9 +10,14 @@
   align-items: center;
 }
 
-/* Styles for the popup content */
-.popup-content {
+.popupcontent {
+  display: flex;
+  width: 350px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
   background-color: white;
+  gap: 20px;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);

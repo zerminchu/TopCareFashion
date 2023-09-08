@@ -6,7 +6,7 @@ export const retrieveUserInfo = async () => {
     const firebaseIdToken = Cookies.get("firebaseIdToken");
 
     const response = await axios.post(
-      `http://127.0.0.1:8000/retrieve-user-info-from-token/`,
+      `${import.meta.env.VITE_API_DEV}/retrieve-user-info-from-token/`,
       { firebaseIdToken: firebaseIdToken }
     );
 

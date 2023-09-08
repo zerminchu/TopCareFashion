@@ -1,47 +1,67 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { Box, Button, Flex, Text, TextInput } from "@mantine/core";
+import { useForm } from "@mantine/form";
+
+import "./RecoverPassword.css";
+import { showNotifications } from "../utils/ShowNotification";
+import { useDispatch } from "react-redux";
 
 function RecoverPassword() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const [email, setEmail] = useState("");
-
-  const handleEmailChange = (event) => {
-    setEmail(event.target.value);
-  };
+  const form = useForm({
+    initialValues: {
+      email: "",
+    },
+  });
 
   const confirmHandler = async () => {
     try {
-      const data = { email: email };
+      dispatch({ type: "SET_LOADING", value: true });
 
-      const response = await axios.post(
-        `http://127.0.0.1:8000/recover-password/`,
-        data
-      );
+      const data = { email: form.values.email };
 
-      if (response.data.status == "success") {
-        navigate("/");
-      }
+      const url =
+        import.meta.env.VITE_API_DEV == "DEV"
+          ? import.meta.env.VITE_API_DEV
+          : import.meta.env.VITE_API_PROD;
+
+      const response = await axios.post(`${url}/recover-password/`, data);
+      console.log(response);
+      console.log("apong");
+
+      dispatch({ type: "SET_LOADING", value: false });
+
+      showNotifications({
+        status: "success",
+        title: "Success",
+        message: response.data.message,
+      });
+
+      navigate("/");
     } catch (error) {
-      console.log(error);
+      dispatch({ type: "SET_LOADING", value: false });
+
+      showNotifications({
+        status: "error",
+        title: "Error",
+        message: error.response.data.message,
+      });
     }
   };
 
   return (
-    <div>
-      <span>Reset Password</span>
-      <br />
-      <label>Email</label>
-      <br />
-      <input
-        type="email"
+    <div className="container">
+      <Text fw={700}>Reset Password</Text>
+      <TextInput
+        label="Email"
         placeholder="Email"
-        value={email}
-        onChange={handleEmailChange}
+        {...form.getInputProps("email")}
       />
-      <br />
-      <button onClick={confirmHandler}>Confirm</button>
+      <Button onClick={confirmHandler}>Confirm</Button>
     </div>
   );
 }

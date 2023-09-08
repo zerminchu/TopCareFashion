@@ -3,3 +3,13 @@
   height: 100%;
   object-fit: cover;
 }
+
+.rounded-image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  overflow: hidden;
+}

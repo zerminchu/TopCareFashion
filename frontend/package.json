@@ -16,10 +16,7 @@
     "@mantine/core": "^6.0.19",
     "@mantine/dates": "^6.0.19",
     "@mantine/dropzone": "^6.0.19",
-    "@mantine/form": "^6.0.19",
-    "@mantine/hooks": "^6.0.19",
     "@mantine/modals": "^6.0.19",
-    "@mantine/notifications": "^6.0.19",
     "@mantine/nprogress": "^6.0.19",
     "@mantine/prism": "^6.0.19",
     "@mantine/spotlight": "^6.0.19",
@@ -29,6 +26,9 @@
     "@tiptap/extension-link": "^2.1.7",
     "@tiptap/react": "^2.1.7",
     "@tiptap/starter-kit": "^2.1.7",
+    "@mantine/form": "^6.0.19",
+    "@mantine/hooks": "^6.0.19",
+    "@mantine/notifications": "^6.0.19",
     "axios": "^1.4.0",
     "dayjs": "^1.11.9",
     "embla-carousel-react": "^7.1.0",
@@ -40,7 +40,9 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
-    "react-router-dom": "^6.14.2"
+    "react-redux": "^8.1.2",
+    "react-router-dom": "^6.14.2",
+    "redux": "^4.2.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",

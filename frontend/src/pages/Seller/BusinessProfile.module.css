@@ -1,0 +1,48 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding-left: 5%;
+  padding-right: 5%;
+}
+
+.leftside {
+  display: flex;
+  flex-direction: column;
+  width: 40%;
+  gap: 20px;
+}
+
+.rightside {
+  display: flex;
+  width: 40%;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  gap: 20px;
+  border: 1px solid rgb(201, 201, 201);
+  border-radius: 5px;
+}
+
+.underlinetext {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.spacebetween {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.iconprofile {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
