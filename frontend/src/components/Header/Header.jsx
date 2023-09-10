@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import Form from "../Form/Form";
 import Cookies from "js-cookie";
@@ -55,7 +56,7 @@ function Header() {
           <div className={classes.container}>
             <div className={classes.leftside}>
               <img src={ILLogo} width={50} height={50} />
-              <span className={classes.businessname}>TopCareFashion</span>
+              <span className={classes.businessname}>Top Care Fashion</span>
             </div>
             <div className={classes.middleside}>
               <a href="#">Home</a>

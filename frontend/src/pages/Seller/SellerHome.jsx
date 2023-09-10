@@ -11,12 +11,25 @@ import {
   Center,
   Button,
   rem,
+  Menu,
 } from "@mantine/core";
 import axios from "axios";
 import BusinessProfile from "./BusinessProfile";
 import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
 import Cookies from "js-cookie";
 import classes from "./SellerHome.module.css";
+import { Select } from "@mantine/core";
+import { TextInput } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { Burger } from "@mantine/core";
+import {
+  IconSettings,
+  IconSearch,
+  IconPhoto,
+  IconMessageCircle,
+  IconTrash,
+  IconArrowsLeftRight,
+} from "@tabler/icons-react";
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -64,10 +77,13 @@ function SellerCards() {
   const { id } = useParams();
   const [category, setCategory] = useState("");
   const [condition, setCondition] = useState("");
-  const [colour, setColour] = useState("");
-  const [image, setImage] = useState("");
+  const [price, setPrice] = useState("");
   const { classes } = useStyles();
   const [items, setItems] = useState([]);
+  const [filteredItems, setFilteredItems] = useState([]);
+  const [searchText, setSearchText] = useState("");
+  const [opened, { toggle }] = useDisclosure(false);
+  const label = opened ? "Close navigation" : "Open navigation";
 
   useEffect(() => {
     const fetchData = async () => {
@@ -77,6 +93,7 @@ function SellerCards() {
         );
         const fetchedItems = response.data; // Array of items
         setItems(fetchedItems);
+        setFilteredItems(fetchedItems);
       } catch (error) {
         console.error("Error fetching Items:", error);
       }
@@ -85,56 +102,138 @@ function SellerCards() {
     fetchData();
   }, [id]);
 
+  const handleCategoryChange = (selectedCategory) => {
+    setCategory(selectedCategory);
+    filterItems(selectedCategory, searchText);
+  };
+
+  const handleSearchTextChange = (value) => {
+    setSearchText(value);
+    filterItems(category, value); // Update filter with category and search text
+  };
+
+  const filterItems = (selectedCategory, search) => {
+    let filtered = items;
+
+    // Filter by category
+    if (selectedCategory !== "") {
+      filtered = filtered.filter((item) => item.category === selectedCategory);
+    }
+
+    // Filter by search text
+    if (search !== "") {
+      filtered = filtered.filter((item) =>
+        item.title.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+
+    setFilteredItems(filtered);
+  };
+
   return (
-    <div style={{ display: "flex", flexWrap: "wrap" }}>
-      {items.map((item, index) => (
-        <Card
-          withBorder
-          radius="md"
-          className={classes.card}
-          key={index}
-          style={{
-            flex: "0 0 calc(25% - 1rem)",
-            margin: "0.5rem",
-            padding: "0.5rem",
-          }}
-        >
-          <Card.Section className={classes.imageSection}>
-            <Image
-              src={item.image_urls[0]}
-              alt={item.category}
-              width={150}
-              height={180}
-            />
-          </Card.Section>
+    <div>
+      <div
+        style={{
+          marginTop: "16px",
+          marginLeft: "20px",
+          marginBottom: "16px",
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        <Select
+          placeholder="Select by category"
+          searchable
+          nothingFound="No options"
+          data={["Top", "Bottom", "Footwear"]}
+          value={category}
+          onChange={(value) => handleCategoryChange(value)}
+          style={{ marginRight: "16px" }}
+        />
 
-          <Group position="apart" mt="md">
-            <div>
-              <Text>{item.condition}</Text>
-            </div>
-          </Group>
+        <TextInput
+          placeholder="Search by item"
+          icon={<IconSearch size="1rem" />}
+          rightSectionWidth={90}
+          styles={{ rightSection: { pointerEvents: "none" } }}
+          value={searchText}
+          onChange={(event) => handleSearchTextChange(event.target.value)}
+        />
+      </div>
 
-          <Card.Section className={classes.section} mt="md">
-            <Text fz="sm" c="dimmed" className={classes.label}>
-              {item.category}
-            </Text>
+      <div style={{ display: "flex", flexWrap: "wrap" }}>
+        {filteredItems.map((item, index) => (
+          <Card
+            withBorder
+            radius="md"
+            className={classes.card}
+            key={index}
+            style={{
+              flex: "0 0 calc(25% - 1rem)",
+              margin: "0.5rem",
+              padding: "0.5rem",
+            }}
+          >
+            <Card.Section className={classes.imageSection}>
+              <Image
+                src={item.image_urls[0]}
+                alt={item.category}
+                width={150}
+                height={180}
+              />
+            </Card.Section>
 
-            <Group spacing={8} mb={-8}>
-              {/* Add your features here */}
-            </Group>
-          </Card.Section>
-
-          <Card.Section className={classes.section}>
-            <Group spacing={30}>
+            <Group position="apart" mt="md">
               <div>
-                <Text fz="xl" fw={700} sx={{ lineHeight: 1 }}>
-                  $168.00
-                </Text>
+                <Text>{item.condition}</Text>
               </div>
             </Group>
-          </Card.Section>
-        </Card>
-      ))}
+
+            <Card.Section className={classes.section} mt="md">
+              <Text fz="sm" c="dimmed" className={classes.label}>
+                {item.title}
+              </Text>
+
+              <Group spacing={8} mb={-8}>
+                {/* Add your features here */}
+              </Group>
+            </Card.Section>
+
+            <Card.Section className={classes.section}>
+              <Group spacing={30}>
+                <div>
+                  <Text fz="xl" fw={700} sx={{ lineHeight: 1 }}></Text>S$
+                  {item.price}
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginLeft: "auto",
+                  }}
+                >
+                  <Burger opened={opened} onClick={toggle} aria-label={label} />
+                </div>
+                <div className={classes.optionsContainer}>
+                  {opened && (
+                    <Menu position="bottom" shadow="xs">
+                      <Menu.Item icon={<IconSettings size={14} />}>
+                        Edit
+                      </Menu.Item>
+                      <Menu.Item icon={<IconMessageCircle size={14} />}>
+                        Share
+                      </Menu.Item>
+                      <Menu.Item color="red" icon={<IconTrash size={14} />}>
+                        Delete
+                      </Menu.Item>
+                    </Menu>
+                  )}
+                </div>
+              </Group>
+            </Card.Section>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }

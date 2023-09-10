@@ -15,8 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { Container, SimpleGrid } from "@mantine/core";
 import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
 import Cookies from "js-cookie";
-
-//import axios from "axios";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -67,6 +66,7 @@ function ImageUpload() {
   const [progress, setProgress] = useState(0);
   const [loaded, setLoaded] = useState(false);
   const [uploadedImages, setUploadedImages] = useState([]);
+  const [showButtons, setShowButtons] = useState(false); // New state to control button visibility
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState();
 
@@ -82,12 +82,14 @@ function ImageUpload() {
 
     setUploadedImages(newImages);
     localStorage.setItem("uploadedImages", JSON.stringify(newImages)); // Save to local storage
+    setShowButtons(true); // Show buttons when images are uploaded
   };
 
   useEffect(() => {
     const storedImages = localStorage.getItem("uploadedImages");
     if (storedImages) {
       setUploadedImages(JSON.parse(storedImages));
+      setShowButtons(true); // Show buttons if there are stored images
     }
   }, []);
 
@@ -112,8 +114,6 @@ function ImageUpload() {
 
   const handleClick = () => {
     if (uploadedImages.length === 3) {
-      /*   if (uploadedImages[0]) {
-        classifyAndNavigate(); */
       if (uploadedImages.length === 3) {
         const imageFiles = uploadedImages.map((blobUrl, index) => {
           const blob = fetch(blobUrl).then((r) => r.blob());
@@ -126,9 +126,21 @@ function ImageUpload() {
     } else if (loaded) {
       setLoaded(false);
       setUploadedImages([]);
+      setShowButtons(false); // Hide buttons when images are cleared
     } else if (!interval.active) {
       interval.start();
     }
+  };
+
+  const handleDragEnd = (result) => {
+    if (!result.destination) return; // If dropped outside the list, do nothing
+
+    const newImages = [...uploadedImages];
+    const [reorderedItem] = newImages.splice(result.source.index, 1);
+    newImages.splice(result.destination.index, 0, reorderedItem);
+
+    setUploadedImages(newImages);
+    localStorage.setItem("uploadedImages", JSON.stringify(newImages));
   };
 
   const interval = useInterval(
@@ -151,60 +163,73 @@ function ImageUpload() {
     );
     setUploadedImages(newImages);
     localStorage.setItem("uploadedImages", JSON.stringify(newImages));
+
+    if (newImages.length === 0) {
+      setShowButtons(false); // Hide buttons when images are removed
+    }
   };
 
   return (
     <div>
       <div>
         <div className={classes.wrapper}>
-          <Dropzone
-            openRef={openRef}
-            onDrop={handleDrop}
-            className={classes.dropzone}
-            radius="md"
-            accept={["image/png", "image/jpeg"]}
-            maxSize={30 * 1024 ** 2}
+          <div
+            style={{
+              width: "500px",
+              margin: "0 auto",
+              marginTop: "80px",
+              padding: "0 20px",
+            }}
           >
-            <div style={{ pointerEvents: "none" }}>
-              <Group position="center">
-                <Dropzone.Accept>
-                  <IconDownload
-                    size={rem(50)}
-                    color={theme.colors[theme.primaryColor][6]}
-                    stroke={1.5}
-                  />
-                </Dropzone.Accept>
-                <Dropzone.Reject>
-                  <IconX
-                    size={rem(50)}
-                    color={theme.colors.red[6]}
-                    stroke={1.5}
-                  />
-                </Dropzone.Reject>
-                <Dropzone.Idle>
-                  <IconCloudUpload
-                    size={rem(50)}
-                    color={
-                      theme.colorScheme === "dark"
-                        ? theme.colors.dark[0]
-                        : theme.black
-                    }
-                    stroke={1.5}
-                  />
-                </Dropzone.Idle>
-              </Group>
+            <Dropzone
+              openRef={openRef}
+              onDrop={handleDrop}
+              className={classes.dropzone}
+              radius="md"
+              accept={["image/png", "image/jpeg"]}
+              maxSize={30 * 1024 ** 2}
+            >
+              <div style={{ pointerEvents: "none" }}>
+                <Group position="center">
+                  <Dropzone.Accept>
+                    <IconDownload
+                      size={rem(50)}
+                      color={theme.colors[theme.primaryColor][6]}
+                      stroke={1.5}
+                    />
+                  </Dropzone.Accept>
+                  <Dropzone.Reject>
+                    <IconX
+                      size={rem(50)}
+                      color={theme.colors.red[6]}
+                      stroke={1.5}
+                    />
+                  </Dropzone.Reject>
+                  <Dropzone.Idle>
+                    <IconCloudUpload
+                      size={rem(50)}
+                      color={
+                        theme.colorScheme === "dark"
+                          ? theme.colors.dark[0]
+                          : theme.black
+                      }
+                      stroke={1.5}
+                    />
+                  </Dropzone.Idle>
+                </Group>
 
-              <Text ta="center" fw={700} fz="lg" mt="xl">
-                <Dropzone.Accept>Drop files here</Dropzone.Accept>
-                <Dropzone.Reject>Pdf file less than 30mb</Dropzone.Reject>
-                <Dropzone.Idle>Upload images</Dropzone.Idle>
-              </Text>
-              <Text ta="center" fz="sm" mt="xs" c="dimmed">
-                Drag&apos;n&apos;drop files here to upload. We can accept only{" "}
-                <i>.jpg or .png</i> files that are less than 30mb in size.
-              </Text>
-            </div>
-          </Dropzone>
+                <Text ta="center" fw={700} fz="lg" mt="xl">
+                  <Dropzone.Accept>Drop files here</Dropzone.Accept>
+                  <Dropzone.Reject>Pdf file less than 30mb</Dropzone.Reject>
+                  <Dropzone.Idle>Upload images</Dropzone.Idle>
+                </Text>
+                <Text ta="center" fz="sm" mt="xs" c="dimmed">
+                  Drag&apos;n&apos;drop files here to upload. We can accept only{" "}
+                  <i>.jpg or .png</i> files that are less than 30mb in size.
+                </Text>
+              </div>
+            </Dropzone>
+          </div>
 
           <Button
             className={classes.control}
@@ -216,68 +241,109 @@ function ImageUpload() {
           </Button>
         </div>
 
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "center",
-          }}
-        >
-          {uploadedImages.map((imageSrc, index) => (
-            <Container key={index} my="md" style={{ flex: 1 }}>
-              <SimpleGrid
-                cols={2}
-                spacing="md"
-                breakpoints={[{ maxWidth: "sm", cols: 1 }]}
-                style={{ aspectRatio: "4 / 3" }} // Set a 1:1 aspect ratio
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <Droppable droppableId="uploaded-images" direction="horizontal">
+            {(provided) => (
+              <div
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  justifyContent: "center",
+                }}
               >
-                <img
-                  src={imageSrc}
-                  alt={`Uploaded ${index}`}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    objectPosition: "center", // Center the image
-                  }}
-                />
-              </SimpleGrid>
-            </Container>
-          ))}
-        </div>
-      </div>
-      <Button
-        fullWidth
-        className={classes.button_1}
-        onClick={handleClick}
-        color={uploadedImages.length === 3 ? "teal" : theme.primaryColor}
-        disabled={uploadedImages.length !== 3} // Disable if not exactly 3 images
-      >
-        <div className={classes.label}>
-          {uploadedImages.length === 3
-            ? "Next"
-            : loaded
-            ? "Files uploaded"
-            : "Please upload at least 3 images"}
-        </div>
+                {uploadedImages.map((imageSrc, index) => (
+                  <Draggable
+                    key={index}
+                    draggableId={`image-${index}`} // Use a unique identifier for each draggable item
+                    index={index}
+                  >
+                    {(provided) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        style={{
+                          width: "200px", // Set the width of each image container
+                          height: "200px", // Set the height of each image container
+                          border: `1px solid ${theme.colors.gray[3]}`, // Add a border
+                          margin: "10px", // Add margin to space out the images
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <img
+                          src={imageSrc}
+                          alt={`Uploaded ${index}`}
+                          style={{
+                            maxWidth: "100%", // Ensure the image fits within the container
+                            maxHeight: "100%", // Ensure the image fits within the container
+                          }}
+                        />
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
 
-        {progress !== 0 && (
-          <Progress
-            value={progress}
-            className={classes.progress}
-            color={theme.colors[theme.primaryColor][2]}
-            radius="sm"
-          />
+        {showButtons && uploadedImages.length === 3 && (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              marginTop: "70px",
+            }}
+          >
+            <Button
+              className={classes.button_1}
+              size="md"
+              radius="md"
+              onClick={handleClick}
+              color="teal"
+              style={{
+                width: "200px", // Set a fixed width for both buttons
+                margin: "0 auto", // Center align horizontally
+              }}
+            >
+              <div className={classes.label}>Next</div>
+            </Button>
+            <br />
+          </div>
         )}
-      </Button>
-      <Button
-        fullWidth
-        className={classes.button_1}
-        onClick={() => handleImageRemove(uploadedImages.length - 1)}
-        color="red"
-      >
-        Remove Image
-      </Button>
+
+        {showButtons && uploadedImages.length > 0 && (
+          <div
+            style={{
+              marginTop: "30px",
+              width: "200px", // Set a fixed width for both buttons
+              margin: "0 auto", // Center align horizontally
+              textAlign: "center",
+            }}
+          >
+            <Button
+              className={classes.button_1}
+              size="md"
+              radius="md"
+              onClick={() => handleImageRemove(uploadedImages.length - 1)}
+              color="red"
+              style={{
+                marginBottom: "5px",
+                width: "200px", // Set a fixed width for both buttons
+                margin: "0 auto", // Center align horizontally
+              }}
+            >
+              Remove Image
+            </Button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

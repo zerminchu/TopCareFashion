@@ -47,8 +47,13 @@ class Item(models.Model):
     category = models.CharField(max_length=255)
     condition = models.CharField(max_length=255)
     colour = models.CharField(max_length=255)
+    title = models.CharField(max_length=255)
+    price = models.CharField(max_length=255)
+    description = models.CharField(max_length=255)
     image_urls = models.JSONField(default=list)
 
 
 class Listing(models.Model):
+    avail_status = models.CharField(max_length=255)
+    quantity_available = models.CharField(max_length=255)
     collection_address = models.CharField(max_length=255)

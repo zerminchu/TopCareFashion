@@ -7,7 +7,7 @@ function BuyerHeader() {
     <div className={classes.container}>
       <div className={classes.leftside}>
         <Text fw={700} fz="xl">
-          TopCareFashion
+          Top Care Fashion
         </Text>
         <a href="#">Home</a>
         <a href="#">Shop</a>

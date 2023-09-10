@@ -36,6 +36,12 @@ function Home() {
     }
   }, []);
 
+  useEffect(() => {
+    if (currentRole === "seller") {
+      navigate(`/seller-home/${currentUser ? currentUser.user_id : ""}`);
+    }
+  }, [currentRole, currentUser, navigate]);
+
   const renderContent = () => {
     if (currentRole === "buyer") {
       return <BuyerHome />;

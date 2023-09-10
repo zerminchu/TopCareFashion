@@ -1,6 +1,5 @@
 import { TextInput, Text, Textarea, Select, Button } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import React from "react";
 
 import classes from "./BusinessProfileForm.module.css";
 import { useNavigate } from "react-router-dom";

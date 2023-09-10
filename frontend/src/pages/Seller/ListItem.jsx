@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
 import Cookies from "js-cookie";
+import { showNotifications } from "../../utils/ShowNotification";
 
 const useStyles = createStyles((theme) => ({
   root: {
@@ -21,6 +22,7 @@ const useStyles = createStyles((theme) => ({
   input: {
     height: rem(54),
     paddingTop: rem(18),
+    width: "100%",
   },
 
   label: {
@@ -42,6 +44,14 @@ function ListItem() {
   const [category, setCategory] = useState("");
   const [condition, setCondition] = useState("");
   const [colour, setColour] = useState("");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [price, setPrice] = useState("");
+  const [quantity_available, setQuantityAvailable] = useState("");
+  const [collection_address, setCollectionAddress] = useState("");
+  const [avail_status, setAvailStatus] = useState("");
+  const [submissionSuccessful, setSubmissionSuccessful] = useState(false);
+
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState();
 
@@ -50,7 +60,6 @@ function ListItem() {
       try {
         const user = await retrieveUserInfo();
         setCurrentUser(user);
-        console.log(user);
       } catch (error) {
         console.log(error);
       }
@@ -81,7 +90,6 @@ function ListItem() {
 
       const files = await Promise.all(filePromises);
 
-      // Prepare form data for the POST request
       const formData = new FormData();
       // eslint-disable-next-line no-unused-vars
       files.forEach((file, index) => {
@@ -90,17 +98,29 @@ function ListItem() {
       formData.append("category", category);
       formData.append("condition", condition);
       formData.append("colour", colour);
+      formData.append("title", title);
+      formData.append("description", description);
+      formData.append("price", price);
+      formData.append("quantity_available", quantity_available);
+      formData.append("collection_address", collection_address);
       formData.append("user_id", currentUser.user_id);
+      formData.append("avail_status", avail_status);
 
-      // Send data to the backend using Axios
-      const response = await axios.post(
-        "http://localhost:8000/add-product/",
-        formData
-      );
+      await axios.post("http://localhost:8000/add-product/", formData);
 
-      console.log(response.data); // Success message
+      showNotifications({
+        title: "Success",
+        message: "Your item have been listed onto the marketplace",
+        status: "success",
+      });
+
+      setSubmissionSuccessful(true);
+      localStorage.removeItem("uploadedImages");
     } catch (error) {
-      console.error(error);
+      showNotifications({
+        status: "error",
+        title: "Error",
+      });
     }
   };
 
@@ -112,33 +132,70 @@ function ListItem() {
   }, []);
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <Container my="md">
-          <SimpleGrid cols={4} breakpoints={[{ maxWidth: "xs", cols: 1 }]}>
+    <form onSubmit={handleSubmit}>
+      <Container my="md">
+        <div
+          style={{
+            border: "1px solid #ccc",
+            padding: "16px",
+            borderRadius: "4px",
+          }}
+        >
+          <div
+            style={{
+              marginBottom: "16px",
+              fontSize: theme.fontSizes.md,
+              fontWeight: "700px",
+            }}
+          >
+            {submissionSuccessful ? "Uploaded Images" : "Preview Images"}
+          </div>
+          <SimpleGrid cols={3} breakpoints={[{ maxWidth: "xs", cols: 1 }]}>
             {uploadedImages.map((imageSrc, index) => (
-              <Container key={index}>
+              <div
+                key={index}
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  marginBottom: "16px",
+                  padding: "16px",
+                  border: "1px solid #ccc",
+                  borderRadius: theme.radius.md,
+                  justifyContent: "center", // Center content vertically and horizontally
+                  textAlign: "center", // Center text horizontally
+                  overflow: "hidden", // Clip image to container boundaries
+                }}
+              >
                 <img
                   src={imageSrc}
                   alt={`Uploaded ${index}`}
                   style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    objectPosition: "center",
-                    borderRadius: theme.radius.md,
+                    width: "100%", // Make the image fill the container width
+                    height: "100%", // Make the image fill the container height
+                    objectFit: "cover", // Cover the entire container
                   }}
                 />
-              </Container>
+              </div>
             ))}
           </SimpleGrid>
-        </Container>
+        </div>
+      </Container>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
         <TextInput
           label="Category"
           value={category}
           onChange={(event) => setCategory(event.target.value)}
           placeholder="Top"
           classNames={classes}
+          style={{ width: "50%" }}
         />
         <br />
         {/*  <Select
@@ -158,6 +215,7 @@ function ListItem() {
           onChange={(event) => setCondition(event.target.value)}
           placeholder="New"
           classNames={classes}
+          style={{ width: "50%" }}
         />
         <br />
         <TextInput
@@ -166,11 +224,81 @@ function ListItem() {
           onChange={(event) => setColour(event.target.value)}
           placeholder="Red"
           classNames={classes}
+          style={{ width: "50%" }}
         />
         <br />
-        <Button type="submit"> Submit</Button>
-      </form>
-    </div>
+        <TextInput
+          label="Title"
+          value={title}
+          onChange={(event) => setTitle(event.target.value)}
+          placeholder="Give your item a title"
+          classNames={classes}
+          style={{ width: "50%" }}
+        />
+        <br />
+        <TextInput
+          label="Description"
+          value={description}
+          onChange={(event) => setDescription(event.target.value)}
+          placeholder="Give your item a description"
+          classNames={classes}
+          style={{ width: "50%" }}
+        />
+        <br />
+        <TextInput
+          label="Price"
+          value={price}
+          onChange={(event) => setPrice(event.target.value)}
+          placeholder="$123"
+          classNames={classes}
+          style={{ width: "50%" }}
+        />
+        <br />
+        <TextInput
+          label="Quantity"
+          value={quantity_available}
+          onChange={(event) => setQuantityAvailable(event.target.value)}
+          placeholder="10"
+          classNames={classes}
+          style={{ width: "50%" }}
+        />
+        <br />
+        <TextInput
+          label="Collection Address"
+          value={collection_address}
+          onChange={(event) => setCollectionAddress(event.target.value)}
+          placeholder="123, Clementi Road"
+          classNames={classes}
+          style={{ width: "50%" }}
+        />
+        <br />
+        <TextInput
+          label="Status"
+          value={avail_status}
+          onChange={(event) => setAvailStatus(event.target.value)}
+          classNames={classes}
+          style={{ width: "50%" }}
+        />
+        <br />
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+            marginTop: "16px",
+          }}
+        >
+          <div style={{ marginRight: "8px" }}>
+            <Button type="submit" onClick={() => navigate("/")}>
+              Submit
+            </Button>
+          </div>
+          <Button type="button" onClick={() => navigate("/")} variant="outline">
+            Cancel
+          </Button>
+        </div>
+      </div>
+    </form>
   );
 }
 

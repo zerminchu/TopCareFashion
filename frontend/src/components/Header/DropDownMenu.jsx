@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import React, { useState } from "react";
 import IconArrowDown from "../../assets/icons/ic_arrow_down.svg";
 import IlAvatar from "../../assets/illustrations/il_avatar.png";

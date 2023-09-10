@@ -411,6 +411,7 @@ def updateProfile(request):
 def add_product(request):
     if request.method == "POST":
         try:
+            firebaseStorage = firebase.storage()
             user_id = request.data.get("user_id")
 
             serializer = ItemSerializer(
@@ -421,7 +422,9 @@ def add_product(request):
                 category = validated_data["category"]
                 condition = validated_data["condition"]
                 colour = validated_data["colour"]
-
+                title = validated_data["title"]
+                description = validated_data["description"]
+                price = validated_data["price"]
                 uploaded_files = request.FILES.getlist('files')
 
                 image_urls = []
@@ -433,15 +436,25 @@ def add_product(request):
 
                     file_content = ContentFile(uploaded_file.read())
 
+                    # Upload file to Firebase Storage
+                    firebaseStorage.child(
+                        f"{unique_filename}").put(file_content, content_type=content_type)
+
+                    # Generate public image URL
+                    image_url = firebaseStorage.child(
+                        f"{unique_filename}").get_url(None)
+                    image_urls.append(image_url)
+
                     # Upload file to Firebase storage
-                    bucket = storage.bucket()
+
+                    """   bucket = storage.bucket()
                     blob = bucket.blob(unique_filename)
                     blob.upload_from_file(
                         file_content, content_type=content_type)
 
                     # Get the download URL of the uploaded image
                     image_url = blob.public_url
-                    image_urls.append(image_url)
+                    image_urls.append(image_url) """
 
                 # Save data to Firestore
                 db = firestore.client()
@@ -452,15 +465,23 @@ def add_product(request):
                     "category": category,
                     "condition": condition,
                     "colour": colour,
+                    "title": title,
+                    "description": description,
+                    "price": price,
                     "image_urls": image_urls,
                     "user_id": user_id
                 })
 
                 collection_address = request.data.get("collection_address")
+                quantity_available = request.data.get("quantity_available")
+                avail_status = request.data.get("avail_status")
+
                 if collection_address:
                     listing_ref = db.collection("Listing")
                     listing_id = listing_ref.document()
                     listing_id.set({
+                        "quantity_available": quantity_available,
+                        "avail_status": avail_status,
                         "listing_id": listing_id.id,
                         "collection_address": collection_address,
                         "item_id": item_id.id,
@@ -499,6 +520,8 @@ def get_all_item(request):
 
 @api_view(["GET"])
 def get_by_sellerId(request, user_id):
+    print(f"Received user_id: {user_id}")  # Add this line for debugging
+
     if request.method == "GET":
         try:
             db = firestore.Client()
