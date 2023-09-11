@@ -66,6 +66,10 @@ function SignInForm(props) {
           message: response.data.message,
         });
 
+        setTimeout(function () {
+          console.log("2 seconds have passed!");
+        }, 6000);
+
         window.location.reload();
       }
     } catch (error) {

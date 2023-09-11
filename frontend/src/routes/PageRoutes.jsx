@@ -15,7 +15,7 @@ function PageRoutes() {
       <Route path="/user-profile" element={<UserProfile />} />;
       <Route path="/upload-image" element={<ImageUpload />} />;
       <Route path="/create-listing" element={<ListItem />} />;
-      <Route path="/edit-listing" element={<EditListing />} />;
+      <Route path="/edit-listing" element={<EditListing />} />; //
       <Route path="/seller-home/:id" element={<SellerHome />} />;
       <Route path="/business-profile" element={<BusinessProfileForm />} />;
       <Route path="/" element={<Home />} />

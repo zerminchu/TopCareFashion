@@ -30,6 +30,7 @@ import {
   IconTrash,
   IconArrowsLeftRight,
 } from "@tabler/icons-react";
+import { useDispatch } from "react-redux";
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -74,6 +75,8 @@ const useStyles = createStyles((theme) => ({
 }));
 
 function SellerCards() {
+  const dispatch = useDispatch();
+
   const { id } = useParams();
   const [category, setCategory] = useState("");
   const [condition, setCondition] = useState("");
@@ -84,6 +87,8 @@ function SellerCards() {
   const [searchText, setSearchText] = useState("");
   const [opened, { toggle }] = useDisclosure(false);
   const label = opened ? "Close navigation" : "Open navigation";
+
+  const [currentUser, setCurrentUser] = useState();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -101,6 +106,57 @@ function SellerCards() {
 
     fetchData();
   }, [id]);
+
+  useEffect(() => {
+    const setUserSessionData = async () => {
+      try {
+        const user = await retrieveUserInfo();
+        setCurrentUser(user);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    // Check if user has signed in before
+    if (Cookies.get("firebaseIdToken")) {
+      setUserSessionData();
+    } else {
+      navigate("/", { replace: true });
+    }
+  }, []);
+
+  useEffect(() => {
+    const checkOnBoardingCompleted = async () => {
+      try {
+        const url =
+          import.meta.env.VITE_API_DEV == "DEV"
+            ? import.meta.env.VITE_API_DEV
+            : import.meta.env.VITE_API_PROD;
+
+        if (currentUser && currentUser.stripe_id) {
+          const response = await axios.post(`${url}/check-onboarding/`, {
+            stripe_id: currentUser.stripe_id,
+          });
+
+          if (!response.data.onBoardingCompleted) {
+            dispatch({ type: "SET_EXISTING_SELLER_ON_BOARD", value: true });
+          } else {
+            console.log("onboarding completed");
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    // Check if user has signed in before
+    if (currentUser && currentUser.stripe_id === "") {
+      dispatch({ type: "SET_SELLER_ON_BOARD", value: true });
+      console.log("you havent onboard");
+    } else {
+      checkOnBoardingCompleted();
+    }
+  }, [currentUser]);
 
   const handleCategoryChange = (selectedCategory) => {
     setCategory(selectedCategory);

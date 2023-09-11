@@ -8,6 +8,7 @@ import Header from "./components/Header/Header";
 import SignInForm from "./components/Form/SignInForm";
 import SignUpForm from "./components/Form/SignUpForm";
 import SellerOnBoard from "./pages/Seller/SellerOnBoard";
+import ExistingSellerOnBoard from "./pages/Seller/ExistingSellerOnBoard";
 
 //import "./App.css";
 
@@ -17,13 +18,14 @@ const MainApp = () => {
     <div>
       {stateGlobal.signInBool && <SignInForm />}
       {stateGlobal.signUpBool && <SignUpForm />}
-
       {stateGlobal.loadingBool && (
         <LoadingOverlay visible={true} overlayBlur={2} />
       )}
+
       <Header />
-      {stateGlobal.sellerOnBoardBool && <SellerOnBoard />}
       <PageRoutes />
+      {stateGlobal.sellerOnBoardBool && <SellerOnBoard />}
+      {stateGlobal.existingSellerOnBoardBool && <ExistingSellerOnBoard />}
     </div>
   );
 };

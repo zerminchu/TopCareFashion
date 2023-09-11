@@ -86,13 +86,6 @@ def signUp(request):
                     raise Exception(serializer.errors)
 
             elif (data["role"] == "seller"):
-                fieldNames = []
-                for errorField, error in serializer.errors.items():
-                    fieldNames.append(errorField)
-
-                raise SerializerException(fieldNames)
-
-            elif (data["role"] == "seller"):
                 # Add additional data to seller
                 data["verified_status"] = False
                 data["profile_image_url"] = ""
@@ -108,7 +101,7 @@ def signUp(request):
 
                 # Serialize
                 sellerData = dict(data)
-
+                
                 name = sellerData.pop("name")
                 businessProfile = sellerData.pop("business_profile")
 
@@ -251,27 +244,6 @@ def verifyIdToken(request):
                 "status": "error",
                 "message": "Invalid id token"
             }, status=400)
-
-        except Exception as e:
-            return JsonResponse({
-                "status": "error",
-                "message": str(e)
-            }, status=400)
-
-
-@api_view(["GET"])
-def signOut(request):
-    if request.method == "GET":
-        try:
-            # print("test here")
-            # firebaseAuth = firebase.auth().current_user
-            # print(firebaseAuth)
-
-            return JsonResponse({
-                'status': "success",
-                'message': "Password reset link has been sent to your email",
-                'data': "test"
-            }, status=200)
 
         except Exception as e:
             return JsonResponse({
