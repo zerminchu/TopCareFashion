@@ -34,6 +34,12 @@ class SellerSerializer (serializers.ModelSerializer):
             'type'
         )
 
+class SellerBusinessProfileSerializer (serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["business_name", "business_description", "business_type", "location", "contact_info", "social_media_link"]
+
+
 
 class ItemSerializer(serializers.ModelSerializer):
 

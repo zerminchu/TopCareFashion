@@ -11,6 +11,11 @@ class User(models.Model):
         ('seller', 'seller'),
         ('admin', 'admin'),
     )
+    BUSINESS_TYPE_CHOICES = (
+        ('retailer', 'retailer'),
+        ('manufacturer', 'manufacturer'),
+        ('distributor', 'distributor'),
+    )
 
     # General
     user_id = models.CharField(max_length=100, unique=True, default="", )
@@ -34,7 +39,8 @@ class User(models.Model):
     # Seller
     stripe_id = models.CharField(max_length=100, blank=True, null=True)
     business_name = models.CharField(max_length=100, blank=True, null=True)
-    business_type = models.CharField(max_length=50, blank=True, null=True)
+    business_description = models.CharField(max_length=1000, blank=True, null=True)
+    business_type = models.CharField(max_length=50, choices=BUSINESS_TYPE_CHOICES, blank=True, null=True)
     location = models.CharField(max_length=200, blank=True, null=True)
     contact_info = models.CharField(max_length=200, blank=True, null=True)
     social_media_link = models.URLField(blank=True, null=True)
