@@ -9,7 +9,7 @@ import IlDefaultAvatar from "../../assets/illustrations/il_avatar.png";
 import Cookies from "js-cookie";
 import axios from "axios";
 
-import "./UserProfile.css";
+import classes from "./UserProfile.module.css";
 
 function UserProfile() {
   const navigate = useNavigate();
@@ -121,7 +121,7 @@ function UserProfile() {
   };
 
   return (
-    <form onSubmit={saveOnClick}>
+    <form className={classes.container} onSubmit={saveOnClick}>
       <Flex
         mih={50}
         gap="xl"

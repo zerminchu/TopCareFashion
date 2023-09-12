@@ -7,6 +7,8 @@ import ListItem from "../pages/Seller/ListItem";
 import SellerHome from "../pages/Seller/SellerHome";
 import EditListing from "../pages/Seller/EditListing";
 import BusinessProfileForm from "../pages/Seller/BusinessProfileForm";
+import BusinessProfile from "../pages/Seller/BusinessProfile";
+import Ratings from "../pages/Seller/Ratings";
 
 function PageRoutes() {
   return (
@@ -17,7 +19,13 @@ function PageRoutes() {
       <Route path="/create-listing" element={<ListItem />} />;
       <Route path="/edit-listing" element={<EditListing />} />; //
       <Route path="/seller-home/:id" element={<SellerHome />} />;
-      <Route path="/business-profile" element={<BusinessProfileForm />} />;
+      <Route path="/seller/business-profile" element={<BusinessProfile />} />
+      <Route path="/seller/ratings" element={<Ratings />} />
+      <Route
+        path="/seller/edit-business-profile"
+        element={<BusinessProfileForm />}
+      />
+      ;
       <Route path="/" element={<Home />} />
     </Routes>
   );

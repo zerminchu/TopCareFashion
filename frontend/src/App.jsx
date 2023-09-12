@@ -9,6 +9,7 @@ import SignInForm from "./components/Form/SignInForm";
 import SignUpForm from "./components/Form/SignUpForm";
 import SellerOnBoard from "./pages/Seller/SellerOnBoard";
 import ExistingSellerOnBoard from "./pages/Seller/ExistingSellerOnBoard";
+import Footer from "./components/Footer";
 
 //import "./App.css";
 
@@ -24,6 +25,7 @@ const MainApp = () => {
 
       <Header />
       <PageRoutes />
+
       {stateGlobal.sellerOnBoardBool && <SellerOnBoard />}
       {stateGlobal.existingSellerOnBoardBool && <ExistingSellerOnBoard />}
     </div>

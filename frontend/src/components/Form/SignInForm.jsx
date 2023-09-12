@@ -60,17 +60,17 @@ function SignInForm(props) {
         });
 
         dispatch({ type: "SET_LOADING", value: false });
+        dispatch({ type: "SET_SIGN_IN", value: false });
+
         showNotifications({
           status: response.data.status,
           title: "Success",
           message: response.data.message,
         });
 
-        setTimeout(function () {
-          console.log("2 seconds have passed!");
-        }, 6000);
-
-        window.location.reload();
+        setTimeout(() => {
+          window.location.reload();
+        }, 1200); // Waits 5 seconds before reloading
       }
     } catch (error) {
       dispatch({ type: "SET_LOADING", value: false });

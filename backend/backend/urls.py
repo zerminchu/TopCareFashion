@@ -25,5 +25,6 @@ urlpatterns = [
     path("classify-image/", views.classify_image, name="classify-image"),
     path("onboarding/", sellerViews.onBoarding, name="onboarding"),
     path("check-onboarding/", sellerViews.checkOnBoardingCompleted, name="check-onboarding"),
-
+    path("seller/<str:user_id>/", sellerViews.getSellerProfile, name="get-seller-profile"),
+    path("seller/<str:user_id>/update-business-profile/", sellerViews.updateBusinessProfile, name="update-business-profile")
 ]

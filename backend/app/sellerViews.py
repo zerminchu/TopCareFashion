@@ -105,4 +105,65 @@ def checkOnBoardingCompleted(request):
           "message": str(e)
       }, status=400)
     
+@api_view(["GET"])
+def getSellerProfile(request, user_id):
+  if request.method == "GET":
+    try:
+        db = firestore.client()
+        userRef = db.collection('Users').document(user_id)
+        userDoc = userRef.get()
 
+        if not userDoc.exists:
+            raise Exception("User not found")
+            
+        userData = userDoc.to_dict()
+
+        return JsonResponse({
+          'status': "success",
+          'message': "Business profile updated successfully",
+          'data': userData
+        }, status=200)
+            
+    except Exception as e:
+      return JsonResponse({
+          "status": "error",
+          "message": str(e)
+      }, status=400)
+
+@api_view(["POST"])
+def updateBusinessProfile(request, user_id):
+  if request.method == "POST":
+    try:
+      data = request.data
+
+      # Check if seller account exists
+      db = firestore.client()
+      userRef = db.collection('Users').document(user_id)
+      userDoc = userRef.get()
+
+      if(not userDoc.exists):
+        raise Exception("User not found")
+
+      # Validation
+      if(not all(v for v in data.values())):
+        raise Exception("Please fill up all the data")
+
+      # Serializer
+      serializer = SellerBusinessProfileSerializer(data=data)
+
+      if (serializer.is_valid()):        
+        updateBusinessProfile = userRef.update({"business_profile": data})
+
+        return JsonResponse({
+          'status': "success",
+          'message': "Business profile updated successfully",
+          'data': data
+        }, status=200)
+      else:
+        raise Exception(serializer.errors)
+    
+    except Exception as e:
+      return JsonResponse({
+          "status": "error",
+          "message": str(e)
+      }, status=400)

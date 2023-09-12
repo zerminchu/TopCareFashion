@@ -13,3 +13,7 @@
   border-radius: 50%;
   overflow: hidden;
 }
+
+.container {
+  margin-top: 50px;
+}

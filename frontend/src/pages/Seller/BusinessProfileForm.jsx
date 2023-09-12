@@ -3,28 +3,109 @@ import { useForm } from "@mantine/form";
 
 import classes from "./BusinessProfileForm.module.css";
 import { useNavigate } from "react-router-dom";
+import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
+import Cookies from "js-cookie";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import { showNotifications } from "../../utils/ShowNotification";
 
 function BusinessProfileForm() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const [currentUser, setCurrentUser] = useState();
+
+  useEffect(() => {
+    const setUserSessionData = async () => {
+      try {
+        const user = await retrieveUserInfo();
+        setCurrentUser(user);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    // Check if user has signed in before
+    if (Cookies.get("firebaseIdToken")) {
+      setUserSessionData();
+    } else {
+      navigate("/", { replace: true });
+    }
+  }, []);
 
   const form = useForm({
     initialValues: {
-      businessName: "John77 Shop",
-      businessDescription:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sedeuismod, diam Lorem ipsum dolor sit amet, consectetur adipiscingelit. Sed euismod, diam. Lorem ipsum dolor sit amet, consecteturadipiscing elit. Sed euismod, diam Lorem ipsum dolor sit amet,consectetur adipiscing elit. Sed euismod, diam",
-      businessType: "retailer",
-      location: "New York, NY",
-      socialMedia: "instagram.com/sellername",
-      contactInformation: "555-666-777",
+      businessName: "",
+      businessDescription: "",
+      businessType: "",
+      location: "",
+      socialMedia: "",
+      contactInformation: "",
     },
   });
+
+  useEffect(() => {
+    if (currentUser) {
+      const businessData = currentUser.business_profile;
+      console.log(businessData);
+
+      form.setValues({ businessName: businessData.business_name || "" });
+      form.setValues({
+        businessDescription: businessData.business_description || "",
+      });
+      form.setValues({ businessType: businessData.business_type || "" });
+      form.setValues({ location: businessData.location || "" });
+      form.setValues({ socialMedia: businessData.social_media_link || "" });
+      form.setValues({
+        contactInformation: businessData.contact_info || "",
+      });
+    }
+  }, [currentUser]);
 
   const cancelOnClick = () => {
     navigate("/", { replace: true });
   };
 
-  const saveOnClick = () => {
-    console.log(form.values);
+  const saveOnClick = async () => {
+    try {
+      dispatch({ type: "SET_LOADING", value: true });
+
+      const data = {
+        business_name: form.values.businessName,
+        business_description: form.values.businessDescription,
+        business_type: form.values.businessType,
+        location: form.values.location,
+        social_media_link: form.values.socialMedia,
+        contact_info: form.values.contactInformation,
+      };
+
+      const url =
+        import.meta.env.VITE_API_DEV == "DEV"
+          ? import.meta.env.VITE_API_DEV
+          : import.meta.env.VITE_API_PROD;
+
+      const response = await axios.post(
+        `${url}/seller/${currentUser.user_id}/update-business-profile/`,
+        data
+      );
+
+      dispatch({ type: "SET_LOADING", value: false });
+
+      showNotifications({
+        status: "success",
+        title: "Success",
+        message: response.data.message,
+      });
+    } catch (error) {
+      dispatch({ type: "SET_LOADING", value: false });
+      console.log(error);
+      showNotifications({
+        status: "error",
+        title: "Error",
+        message: error.response.data.message,
+      });
+    }
   };
 
   return (
