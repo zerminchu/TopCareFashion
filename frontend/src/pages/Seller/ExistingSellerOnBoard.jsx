@@ -39,7 +39,7 @@ function ExistingSellerOnBoard() {
 
       dispatch({ type: "SET_LOADING", value: true });
       console.log(currentUser);
-      const response = await axios.post(`${url}/onboarding/`, {
+      const response = await axios.post(`${url}/seller/onboarding/`, {
         stripe_id: currentUser.stripe_id,
       });
 

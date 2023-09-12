@@ -135,7 +135,7 @@ function SellerCards() {
             : import.meta.env.VITE_API_PROD;
 
         if (currentUser && currentUser.stripe_id) {
-          const response = await axios.post(`${url}/check-onboarding/`, {
+          const response = await axios.post(`${url}/seller/check-onboarding/`, {
             stripe_id: currentUser.stripe_id,
           });
 

@@ -1,13 +1,31 @@
-import { Button, Rating, Text } from "@mantine/core";
-import React from "react";
+import { Button, Rating, Text, Textarea } from "@mantine/core";
+import React, { useState } from "react";
 
-function SellerReview() {
+function SellerReview(props) {
+  const [isReply, setIsReply] = useState(false);
+
+  const renderReply = () => {
+    return (
+      <div>
+        <Textarea placeholder="Your comment" label="Your comment" />
+        <Button>Save changes</Button>
+        <Button>Cancel</Button>
+      </div>
+    );
+  };
+
   return (
     <div>
-      <Text>Product name</Text>
-      <Text>Buyer name</Text>
-      <Rating value={3} readOnly />
-      <Button>Reply</Button>
+      <Text>{props.productName}</Text>
+      <Text>{props.buyerName}</Text>
+      <Text>{props.date}</Text>
+      <Rating value={props.rating} readOnly />
+      <Text>{props.description}</Text>
+      {props.reply === "" && (
+        <Button onClick={() => setIsReply(!isReply)}>Reply</Button>
+      )}
+      {props.reply !== "" && <Text fw={700}>{props.reply}</Text>}
+      {isReply && renderReply()}
     </div>
   );
 }

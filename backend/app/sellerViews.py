@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from firebase_admin import firestore
 from django.core.files.base import ContentFile
+from datetime import datetime
 
 from firebase_admin import storage
 from firebase_admin import auth
@@ -167,3 +168,203 @@ def updateBusinessProfile(request, user_id):
           "status": "error",
           "message": str(e)
       }, status=400)
+    
+@api_view(["GET"])
+def getReviews(request, user_id):
+    if request.method == "GET":
+        try:
+            reviewsData = [
+                {
+                    "review_id": "review_id_1",
+                    "product_name": "Vintage Sunglasses",
+                    "rating": 3,
+                    "description": "average product, nothing special",
+                    "listing_id": "listing_id_8",
+                    "buyer_id": "user_id_3",
+                    "buyer_name": "Violet Marquez",
+                    "seller_id": "1vUclhY7gUO5lBIvpOgkNTgFm6E2",
+                    "date": "2023-07-30",
+                    "reply": ""
+                },
+                {
+                    "review_id": "review_id_2",
+                    "product_name": "Leather Boots",
+                    "rating": 5,
+                    "description": "amazing quality, very comfortable",
+                    "listing_id": "listing_id_9",
+                    "buyer_id": "user_id_5",
+                    "buyer_name": "Laylani Baldwin",
+                    "seller_id": "1vUclhY7gUO5lBIvpOgkNTgFm6E2",
+                    "date": "2023-07-31",
+                    "reply": ""
+                },
+                {
+                    "review_id": "review_id_3",
+                    "product_name": "Digital Watch",
+                    "rating": 4,
+                    "description": "good value for money",
+                    "listing_id": "listing_id_10",
+                    "buyer_id": "user_id_7",
+                    "buyer_name": "Julia Graham",
+                    "seller_id": "1vUclhY7gUO5lBIvpOgkNTgFm6E2",
+                    "date": "2023-08-01",
+                    "reply": "Happy to hear that!"
+                },
+                {
+                    "review_id": "review_id_4",
+                    "product_name": "Canvas Bag",
+                    "rating": 2,
+                    "description": "not as durable as expected",
+                    "listing_id": "listing_id_11",
+                    "buyer_id": "user_id_9",
+                    "buyer_name": "Ansley Barnes",
+                    "seller_id": "1vUclhY7gUO5lBIvpOgkNTgFm6E2",
+                    "date": "2023-08-02",
+                    "reply": "We'll look into this, thanks."
+                },
+                {
+                    "review_id": "review_id_5",
+                    "product_name": "Denim Jacket",
+                    "rating": 4,
+                    "description": "looks stylish and is warm",
+                    "listing_id": "listing_id_12",
+                    "buyer_id": "user_id_11",
+                    "buyer_name": "Isla Wilkins",
+                    "seller_id": "1vUclhY7gUO5lBIvpOgkNTgFm6E2",
+                    "date": "2023-08-03",
+                    "reply": ""
+                },
+                {
+                    "review_id": "review_id_6",
+                    "product_name": "Bluetooth Headphones",
+                    "rating": 5,
+                    "description": "sound quality is top-notch",
+                    "listing_id": "listing_id_13",
+                    "buyer_id": "user_id_13",
+                    "buyer_name": "Margaret Tyler",
+                    "seller_id": "1vUclhY7gUO5lBIvpOgkNTgFm6E2",
+                    "date": "2023-08-04",
+                    "reply": ""
+                },
+                {
+                    "review_id": "review_id_7",
+                    "product_name": "Ceramic Mug",
+                    "rating": 3,
+                    "description": "design is nice but a bit fragile",
+                    "listing_id": "listing_id_14",
+                    "buyer_id": "user_id_15",
+                    "buyer_name": "Ana Flowers",
+                    "seller_id": "1vUclhY7gUO5lBIvpOgkNTgFm6E2",
+                    "date": "2023-08-05",
+                    "reply": ""
+                },
+                {
+                    "review_id": "review_id_8",
+                    "product_name": "Yoga Mat",
+                    "rating": 4,
+                    "description": "very comfortable for exercises",
+                    "listing_id": "listing_id_15",
+                    "buyer_id": "user_id_17",
+                    "buyer_name": "Aubrielle Ponce",
+                    "seller_id": "1vUclhY7gUO5lBIvpOgkNTgFm6E2",
+                    "date": "2023-08-06",
+                    "reply": "Happy to serve!"
+                },
+                {
+                    "review_id": "review_id_9",
+                    "product_name": "Acoustic Guitar",
+                    "rating": 5,
+                    "description": "lovely sound and beautiful design",
+                    "listing_id": "listing_id_16",
+                    "buyer_id": "user_id_19",
+                    "buyer_name": "Rosa Perry",
+                    "seller_id": "1vUclhY7gUO5lBIvpOgkNTgFm6E2",
+                    "date": "2023-08-07",
+                    "reply": "Enjoy your music!"
+                },
+                {
+                    "review_id": "review_id_10",
+                    "product_name": "Running Shoes",
+                    "rating": 3,
+                    "description": "a bit tight from the sides",
+                    "listing_id": "listing_id_17",
+                    "buyer_id": "user_id_21",
+                    "buyer_name": "Saul Carr",
+                    "seller_id": "1vUclhY7gUO5lBIvpOgkNTgFm6E2",
+                    "date": "2023-08-08",
+                    "reply": "Noted, we'll consider this in future designs."
+                },
+                {
+                    "review_id": "review_id_11",
+                    "product_name": "Laptop Stand",
+                    "rating": 4,
+                    "description": "makes working from home easier",
+                    "listing_id": "listing_id_18",
+                    "buyer_id": "user_id_23",
+                    "buyer_name": "Jemma Davenport",
+                    "seller_id": "1vUclhY7gUO5lBIvpOgkNTgFm6E2",
+                    "date": "2023-08-09",
+                    "reply": "Thank you for choosing us!"
+                },
+                {
+                    "review_id": "review_id_12",
+                    "product_name": "Desk Lamp",
+                    "rating": 5,
+                    "description": "perfect brightness, very flexible",
+                    "listing_id": "listing_id_19",
+                    "buyer_id": "user_id_25",
+                    "buyer_name": "Dariel Stewart",
+                    "seller_id": "1vUclhY7gUO5lBIvpOgkNTgFm6E2",
+                    "date": "2023-08-10",
+                    "reply": "Thanks for your kind words!"
+                }
+            ]
+
+            updatedReviews = list(reviewsData)
+
+            ratingQuery = request.GET.get('rating', None)
+            startDateQuery = request.GET.get('start-date', None)
+            endDateQuery = request.GET.get('end-date', None)
+            searchQuery = request.GET.get('search', None)
+
+            # Apply filter
+            if(ratingQuery is not None):
+              updatedReviews = [item for item in updatedReviews if item["rating"] == int(ratingQuery)]
+
+            if(startDateQuery is not None):
+              startDateObj = datetime.strptime(startDateQuery, "%Y-%m-%d").date()
+
+              updatedReviews = [
+                  review for review in updatedReviews 
+                  if startDateObj <= datetime.strptime(review["date"], "%Y-%m-%d").date()
+              ]
+
+            if(endDateQuery is not None):
+              endDateObj = datetime.strptime(endDateQuery, "%Y-%m-%d").date()
+
+              updatedReviews = [
+                  review for review in updatedReviews 
+                  if endDateObj >= datetime.strptime(review["date"], "%Y-%m-%d").date()
+              ]
+            
+            if(searchQuery is not None):
+              searchQuery = searchQuery.lower()
+
+              updatedReviews = [
+                  review for review in updatedReviews
+                  if searchQuery in review["buyer_name"].lower() or
+                    searchQuery in review["product_name"].lower() or
+                    searchQuery in review["description"].lower()
+              ]
+
+            return JsonResponse({
+                'status': "success",
+                'message': "Reviews data retrieved successfully",
+                'data': updatedReviews
+            }, status=200)
+
+        except Exception as e:
+            return JsonResponse({
+                "status": "error",
+                "message": str(e)
+            }, status=400)
