@@ -9,6 +9,7 @@ import EditListing from "../pages/Seller/EditListing";
 import BusinessProfileForm from "../pages/Seller/BusinessProfileForm";
 import BusinessProfile from "../pages/Seller/BusinessProfile";
 import Ratings from "../pages/Seller/Ratings";
+import FrequentlyAskQuestion from "../pages/Seller/FrequentlyAskQuestion";
 
 function PageRoutes() {
   return (
@@ -16,10 +17,11 @@ function PageRoutes() {
       <Route path="/recover-password" element={<RecoverPassword />} />;
       <Route path="/user-profile" element={<UserProfile />} />;
       <Route path="/upload-image" element={<ImageUpload />} />;
-      <Route path="/create-listing" element={<ListItem />} />;
-      <Route path="/edit-listing" element={<EditListing />} />; //
+      <Route path="seller/create-listing" element={<ListItem />} />;
+      <Route path="seller/edit-listing" element={<EditListing />} />; //
       <Route path="/seller-home/:id" element={<SellerHome />} />;
       <Route path="/seller/business-profile" element={<BusinessProfile />} />
+      <Route path="/seller/frequently-ask-question" element={<FrequentlyAskQuestion />} />
       <Route path="/seller/ratings" element={<Ratings />} />
       <Route
         path="/seller/edit-business-profile"

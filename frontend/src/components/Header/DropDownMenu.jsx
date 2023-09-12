@@ -9,6 +9,7 @@ import IconPerson from "../../assets/icons/ic_person.svg";
 import IconSettings from "../../assets/icons/ic_settings.svg";
 import IconAnalytics from "../../assets/icons/ic_analytics.svg";
 import IconManageListing from "../../assets/icons/ic_manage_listing.svg";
+import IconQuestionMark from "../../assets/icons/ic_questionmark.svg";
 import IconLogout from "../../assets/icons/ic_logout.svg";
 
 import classes from "./DropDownMenu.module.css";
@@ -32,14 +33,22 @@ function DropDownMenu(props) {
 
   const settingsOnClick = () => {
     console.log("settings click");
+    
   };
 
   const analyticsOnClick = () => {
     console.log("analytics click");
+    
   };
 
   const manageListingsOnClick = () => {
     console.log("manage listing click");
+    navigate("/seller/frequently-ask-question");
+  };
+
+  const manageFrequentlyAskQuestionOnClick = () => {
+    console.log("manage FAQ click");
+    navigate("/seller/frequently-ask-question");
   };
 
   const logoutOnClick = () => {
@@ -88,6 +97,13 @@ function DropDownMenu(props) {
             onClick={manageListingsOnClick}
           >
             Manage Listings
+          </Menu.Item>
+
+          <Menu.Item
+            icon={<img src={IconQuestionMark} />}
+            onClick={manageFrequentlyAskQuestionOnClick}
+          >
+            FAQ
           </Menu.Item>
           <Menu.Item icon={<img src={IconLogout} />} onClick={logoutOnClick}>
             Logout
