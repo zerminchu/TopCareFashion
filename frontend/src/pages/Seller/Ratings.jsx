@@ -1,20 +1,31 @@
 import React, { useState, useEffect } from "react";
-import { Button, Pagination, Select, TextInput } from "@mantine/core";
+import {
+  Button,
+  Loader,
+  Pagination,
+  Select,
+  Text,
+  TextInput,
+} from "@mantine/core";
 import SellerRating from "../../components/Rating/SellerRating";
 import { DateInput } from "@mantine/dates";
 import SellerReview from "../../components/Rating/SellerReview";
 import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
-//import { RangeCalendar } from "@mantine/dates";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router";
 import axios from "axios";
 import { showNotifications } from "../../utils/ShowNotification";
 
+import classes from "./Ratings.module.css";
+import { useDispatch } from "react-redux";
+
 function Ratings() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // General
   const [currentUser, setCurrentUser] = useState();
+  const [isRetrievingLoading, setisRetrievingLoading] = useState(false);
 
   // Pagination
   const [ratings, setRatings] = useState([]);
@@ -24,7 +35,6 @@ function Ratings() {
   const [ratingFilter, setRatingFilter] = useState();
   const [startDateFilter, setStartDateFilter] = useState();
   const [endDateFilter, setEndDateFilter] = useState();
-  const [keywordFilter, setKeywordFilter] = useState();
 
   // Search
   const [search, setSearch] = useState("");
@@ -61,56 +71,69 @@ function Ratings() {
   };
 
   const applyFilterOnClick = async () => {
-    let params = {};
+    dispatch({ type: "SET_LOADING", value: true });
 
-    if (ratingFilter) {
-      params["rating"] = ratingFilter;
+    try {
+      let params = {};
+
+      if (ratingFilter) {
+        params["rating"] = ratingFilter;
+      }
+
+      if (startDateFilter) {
+        // Convert date object to YYYY-MM-DD
+        const inputDate = new Date(startDateFilter);
+        const year = inputDate.getFullYear();
+        const month = String(inputDate.getMonth() + 1).padStart(2, "0");
+        const day = String(inputDate.getDate()).padStart(2, "0");
+        const formattedDate = `${year}-${month}-${day}`;
+
+        params["start-date"] = formattedDate;
+      }
+
+      if (endDateFilter) {
+        // Convert date object to YYYY-MM-DD
+        const inputDate = new Date(endDateFilter);
+        const year = inputDate.getFullYear();
+        const month = String(inputDate.getMonth() + 1).padStart(2, "0");
+        const day = String(inputDate.getDate()).padStart(2, "0");
+        const formattedDate = `${year}-${month}-${day}`;
+
+        params["end-date"] = formattedDate;
+      }
+
+      if (search) {
+        params["search"] = search;
+      }
+
+      const url =
+        import.meta.env.VITE_API_DEV == "DEV"
+          ? import.meta.env.VITE_API_DEV
+          : import.meta.env.VITE_API_PROD;
+
+      const response = await axios.get(
+        `${url}/seller/${currentUser.user_id}/ratings/`,
+        { params }
+      );
+
+      setRatings(response.data.data);
+      dispatch({ type: "SET_LOADING", value: false });
+    } catch (error) {
+      dispatch({ type: "SET_LOADING", value: false });
+
+      showNotifications({
+        status: "error",
+        title: "Error",
+        message: error.response.data.message,
+      });
     }
-
-    if (startDateFilter) {
-      // Convert date object to YYYY-MM-DD
-      const inputDate = new Date(startDateFilter);
-      const year = inputDate.getFullYear();
-      const month = String(inputDate.getMonth() + 1).padStart(2, "0");
-      const day = String(inputDate.getDate()).padStart(2, "0");
-      const formattedDate = `${year}-${month}-${day}`;
-
-      params["start-date"] = formattedDate;
-    }
-
-    if (endDateFilter) {
-      // Convert date object to YYYY-MM-DD
-      const inputDate = new Date(endDateFilter);
-      const year = inputDate.getFullYear();
-      const month = String(inputDate.getMonth() + 1).padStart(2, "0");
-      const day = String(inputDate.getDate()).padStart(2, "0");
-      const formattedDate = `${year}-${month}-${day}`;
-
-      params["end-date"] = formattedDate;
-    }
-
-    if (search) {
-      params["search"] = search;
-    }
-
-    console.log(params);
-
-    const url =
-      import.meta.env.VITE_API_DEV == "DEV"
-        ? import.meta.env.VITE_API_DEV
-        : import.meta.env.VITE_API_PROD;
-
-    const response = await axios.get(
-      `${url}/seller/${currentUser.user_id}/ratings/`,
-      { params }
-    );
-
-    setRatings(response.data.data);
   };
 
   useEffect(() => {
     const retrieveSellerRatings = async () => {
       try {
+        setisRetrievingLoading(true);
+
         const url =
           import.meta.env.VITE_API_DEV == "DEV"
             ? import.meta.env.VITE_API_DEV
@@ -122,6 +145,7 @@ function Ratings() {
           );
 
           setRatings(response.data.data);
+          setisRetrievingLoading(false);
         }
       } catch (error) {
         showNotifications({
@@ -137,13 +161,16 @@ function Ratings() {
 
   const renderRatings = () => {
     if (ratings.length <= 0) {
-      return <h1>You do not have ratings</h1>;
+      return !isRetrievingLoading ? (
+        <Text>You do not have any reviews!</Text>
+      ) : null;
     }
 
     return currentReviews.map((review) => {
       return (
         <SellerReview
           key={review.review_id}
+          reviewId={review.review_id}
           productName={review.product_name}
           date={review.date}
           buyerName={review.buyer_name}
@@ -155,44 +182,65 @@ function Ratings() {
     });
   };
 
+  const renderRetrievingData = () => {
+    return (
+      <div className={classes.retriveDataLoadingContainer}>
+        <Loader />
+        <Text>Retrieving reviews data</Text>
+      </div>
+    );
+  };
+
   return (
-    <div>
-      <Select
-        value={ratingFilter}
-        label="Rating"
-        placeholder="Rating"
-        data={[
-          { value: "1", label: "1" },
-          { value: "2", label: "2" },
-          { value: "3", label: "3" },
-          { value: "4", label: "4" },
-          { value: "5", label: "5" },
-        ]}
-        onChange={(value) => setRatingFilter(value)}
-      />
-      <DateInput
-        label="Start date"
-        value={startDateFilter}
-        onChange={(value) => setStartDateFilter(value)}
-      />
-      <DateInput
-        label="End date"
-        value={endDateFilter}
-        onChange={(value) => setEndDateFilter(value)}
-      />
+    <div className={classes.container}>
+      <div className={classes.filterContainer}>
+        <Select
+          value={ratingFilter}
+          label="Rating"
+          placeholder="Rating"
+          data={[
+            { value: "1", label: "1" },
+            { value: "2", label: "2" },
+            { value: "3", label: "3" },
+            { value: "4", label: "4" },
+            { value: "5", label: "5" },
+          ]}
+          onChange={(value) => setRatingFilter(value)}
+        />
+        <DateInput
+          label="Start date"
+          value={startDateFilter}
+          onChange={(value) => setStartDateFilter(value)}
+        />
+        <DateInput
+          label="End date"
+          value={endDateFilter}
+          onChange={(value) => setEndDateFilter(value)}
+        />
+        <Button onClick={applyFilterOnClick}>Apply filter</Button>
+        <Button onClick={clearFilterOnClick}>Clear filter</Button>
+        <Pagination
+          value={currentPage}
+          onChange={setCurrentPage}
+          total={totalPages}
+        />
+      </div>
 
-      <TextInput label="Search" onChange={(e) => setSearch(e.target.value)} />
+      <div className={classes.rightSide}>
+        <div className={classes.searchContainer}>
+          <TextInput
+            className={classes.search}
+            placeholder="Search review by product name, buyer name, specific keyword"
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <Button onClick={applyFilterOnClick}>Search</Button>
+        </div>
 
-      <Button onClick={applyFilterOnClick}>Apply filter</Button>
-      <Button onClick={clearFilterOnClick}>Clear filter</Button>
-      <Button>Search</Button>
-
-      <Pagination
-        value={currentPage}
-        onChange={setCurrentPage}
-        total={totalPages}
-      />
-      {renderRatings()}
+        <div className={classes.reviewList}>
+          {isRetrievingLoading ? renderRetrievingData() : null}
+          {renderRatings()}
+        </div>
+      </div>
     </div>
   );
 }

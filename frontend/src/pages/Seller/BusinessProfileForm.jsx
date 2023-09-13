@@ -1,7 +1,5 @@
 import { TextInput, Text, Textarea, Select, Button } from "@mantine/core";
 import { useForm } from "@mantine/form";
-
-import classes from "./BusinessProfileForm.module.css";
 import { useNavigate } from "react-router-dom";
 import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
 import Cookies from "js-cookie";
@@ -9,6 +7,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { showNotifications } from "../../utils/ShowNotification";
+
+import classes from "./BusinessProfileForm.module.css";
 
 function BusinessProfileForm() {
   const navigate = useNavigate();

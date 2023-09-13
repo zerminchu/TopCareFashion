@@ -237,7 +237,12 @@ function BusinessProfile() {
               <Text fw={700} fz="lg">
                 Rating & Reviews
               </Text>
-              <span className={classes.underlinetext}>View more details</span>
+              <span
+                className={classes.underlinetext}
+                onClick={() => navigate("/seller/ratings")}
+              >
+                View more details
+              </span>
             </div>
             {renderRatings()}
           </div>

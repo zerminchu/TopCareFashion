@@ -1,0 +1,36 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+  border: 1px solid rgb(201, 201, 201);
+  border-radius: 5px;
+  padding: 20px;
+}
+
+.titleContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.sellerRepliedContainer {
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(223, 240, 255);
+  gap: 5px;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.replyContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.replyButtonContainer {
+  display: flex;
+  gap: 10px;
+  flex-direction: row;
+  justify-content: end;
+}

@@ -320,7 +320,40 @@ def getReviews(request, user_id):
                 }
             ]
 
-            updatedReviews = list(reviewsData)
+            updatedReviews = []
+
+            # Retrieve all reviews from seller id
+            db = firestore.client()
+            reviewRef = db.collection('Review').where('seller_id', '==', user_id)
+            reviewData = reviewRef.get()
+
+            for doc in reviewData:
+              eachReview = {}
+
+              # Get user
+              buyerRef = db.collection('Users').document((doc.to_dict())['buyer_id'])
+              buyerData = (buyerRef.get()).to_dict()
+
+              # Get listing
+              listingRef = db.collection('Listing').document((doc.to_dict())['listing_id'])
+              listingData = (listingRef.get()).to_dict()
+              
+              # Get item
+              itemRef = db.collection('Item').document(listingData['item_id'])
+              itemData = (itemRef.get()).to_dict()
+
+              eachReview['review_id'] = (doc.to_dict())['review_id']
+              eachReview['product_name'] = itemData['title']
+              eachReview['rating'] = (doc.to_dict())['rating']
+              eachReview['description'] = (doc.to_dict())['description']
+              eachReview['listing_id'] = (doc.to_dict())['listing_id']
+              eachReview['buyer_id'] = (doc.to_dict())['buyer_id']
+              eachReview['buyer_name'] = buyerData['name']['first_name']
+              eachReview['seller_id'] = (doc.to_dict())['seller_id']
+              eachReview['date'] = (doc.to_dict())['date']
+              eachReview['reply'] = (doc.to_dict())['reply']
+
+              updatedReviews.append(eachReview)
 
             ratingQuery = request.GET.get('rating', None)
             startDateQuery = request.GET.get('start-date', None)
@@ -354,13 +387,44 @@ def getReviews(request, user_id):
                   review for review in updatedReviews
                   if searchQuery in review["buyer_name"].lower() or
                     searchQuery in review["product_name"].lower() or
-                    searchQuery in review["description"].lower()
+                    searchQuery in review["description"].lower() or
+                    searchQuery in review["reply"].lower()
               ]
 
             return JsonResponse({
                 'status': "success",
                 'message': "Reviews data retrieved successfully",
                 'data': updatedReviews
+            }, status=200)
+
+        except Exception as e:
+            return JsonResponse({
+                "status": "error",
+                "message": str(e)
+            }, status=400)
+        
+@api_view(["POST"])
+def replyReview(request):
+    if request.method == "POST":
+        try:
+            data = request.data
+
+            # Validation
+            if(data["review_id"] == ""):
+               raise Exception("Review ID cannot be empty")
+            
+            if(data["reply"] == ""):
+               raise Exception("Reply cannot be empty")
+
+            # Update review
+            db = firestore.client()
+            reviewRef = db.collection("Review").document(data["review_id"])
+            updateReview = reviewRef.update({"reply": data["reply"]})
+
+            return JsonResponse({
+                'status': "success",
+                'message': "Replied uploaded successfully",
+                'data': data["reply"]
             }, status=200)
 
         except Exception as e:

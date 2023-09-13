@@ -29,7 +29,9 @@ urlpatterns = [
     path("classify-image/", views.classify_image, name="classify-image"),
     path("seller/onboarding/", sellerViews.onBoarding, name="onboarding"),
     path("seller/check-onboarding/", sellerViews.checkOnBoardingCompleted, name="check-onboarding"),
+    path("seller/reply-review/", sellerViews.replyReview, name="reply-review"),
     path("seller/<str:user_id>/", sellerViews.getSellerProfile, name="get-seller-profile"),
     path("seller/<str:user_id>/update-business-profile/", sellerViews.updateBusinessProfile, name="update-business-profile"),
     path("seller/<str:user_id>/ratings/", sellerViews.getReviews, name="get-seller-reviews")
+    
 ]

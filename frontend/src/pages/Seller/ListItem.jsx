@@ -13,6 +13,7 @@ import axios from "axios";
 import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
 import Cookies from "js-cookie";
 import { showNotifications } from "../../utils/ShowNotification";
+import { useDispatch } from "react-redux";
 
 const useStyles = createStyles((theme) => ({
   root: {
@@ -53,6 +54,7 @@ function ListItem() {
   const [submissionSuccessful, setSubmissionSuccessful] = useState(false);
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [currentUser, setCurrentUser] = useState();
 
   useEffect(() => {
@@ -83,6 +85,8 @@ function ListItem() {
     event.preventDefault();
 
     try {
+      dispatch({ type: "SET_LOADING", value: true });
+
       // Convert blob URLs to File objects
       const filePromises = uploadedImages.map((blobUrl) =>
         fetch(blobUrl).then((response) => response.blob())
@@ -108,6 +112,9 @@ function ListItem() {
 
       await axios.post("http://localhost:8000/add-product/", formData);
 
+      navigate("/", { replace: true });
+      dispatch({ type: "SET_LOADING", value: false });
+
       showNotifications({
         title: "Success",
         message: "Your item have been listed onto the marketplace",
@@ -117,9 +124,12 @@ function ListItem() {
       setSubmissionSuccessful(true);
       localStorage.removeItem("uploadedImages");
     } catch (error) {
+      dispatch({ type: "SET_LOADING", value: false });
+
       showNotifications({
-        status: "error",
         title: "Error",
+        message: "There is error when creating listing",
+        status: "error",
       });
     }
   };
@@ -289,9 +299,7 @@ function ListItem() {
           }}
         >
           <div style={{ marginRight: "8px" }}>
-            <Button type="submit" onClick={() => navigate("/")}>
-              Submit
-            </Button>
+            <Button type="submit">Submit</Button>
           </div>
           <Button type="button" onClick={() => navigate("/")} variant="outline">
             Cancel
