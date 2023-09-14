@@ -43,12 +43,17 @@ function DropDownMenu(props) {
 
   const manageListingsOnClick = () => {
     console.log("manage listing click");
-    navigate("/seller/frequently-ask-question");
+    navigate("/seller/edit-listing");
   };
 
   const manageFrequentlyAskQuestionOnClick = () => {
     console.log("manage FAQ click");
     navigate("/seller/frequently-ask-question");
+  };
+
+  const manageFeedbackForm = () => {
+    console.log("manage Feedback Form click");
+    navigate("/seller/feedback-form");
   };
 
   const logoutOnClick = () => {
@@ -104,6 +109,13 @@ function DropDownMenu(props) {
             onClick={manageFrequentlyAskQuestionOnClick}
           >
             FAQ
+          </Menu.Item>
+
+          <Menu.Item
+            icon={<img src={IconQuestionMark} />}
+            onClick={manageFeedbackForm}
+          >
+            Feedback Form
           </Menu.Item>
           <Menu.Item icon={<img src={IconLogout} />} onClick={logoutOnClick}>
             Logout

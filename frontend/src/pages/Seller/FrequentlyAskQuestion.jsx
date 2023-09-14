@@ -54,7 +54,7 @@ export function FaqSimple() {
 
     
     
-
+    <div>
       <Title align="center" className={classes.title}>
         Frequently Asked Questions
       </Title>
@@ -85,7 +85,41 @@ export function FaqSimple() {
           <Accordion.Panel>{placeholder}</Accordion.Panel>
         </Accordion.Item>
       </Accordion>
+      </div>
+      <div>
+      <Title align="center" className={classes.title}>
+        Technical Guide
+      </Title>
+
+      <Accordion variant="separated">
+        <Accordion.Item className={classes.item} value="Tech-1">
+          <Accordion.Control>How can I reset my password?</Accordion.Control>
+          <Accordion.Panel>{placeholder}</Accordion.Panel>
+        </Accordion.Item>
+
+        <Accordion.Item className={classes.item} value="Tech-2">
+          <Accordion.Control>Can I create more that one account?</Accordion.Control>
+          <Accordion.Panel>{placeholder}</Accordion.Panel>
+        </Accordion.Item>
+
+        <Accordion.Item className={classes.item} value="Tech-3">
+          <Accordion.Control>How can I subscribe to monthly newsletter?</Accordion.Control>
+          <Accordion.Panel>{placeholder}</Accordion.Panel>
+        </Accordion.Item>
+
+        <Accordion.Item className={classes.item} value="Tech-4">
+          <Accordion.Control>Do you store credit card information securely?</Accordion.Control>
+          <Accordion.Panel>{placeholder}</Accordion.Panel>
+        </Accordion.Item>
+
+        <Accordion.Item className={classes.item} value="payment">
+          <Accordion.Control>What payment systems to you work with?</Accordion.Control>
+          <Accordion.Panel>{placeholder}</Accordion.Panel>
+        </Accordion.Item>
+      </Accordion>
+      </div>
     </Container>
+    
   );
 }
 

@@ -26,5 +26,6 @@ urlpatterns = [
     path("onboarding/", sellerViews.onBoarding, name="onboarding"),
     path("check-onboarding/", sellerViews.checkOnBoardingCompleted, name="check-onboarding"),
     path("seller/<str:user_id>/", sellerViews.getSellerProfile, name="get-seller-profile"),
-    path("seller/<str:user_id>/update-business-profile/", sellerViews.updateBusinessProfile, name="update-business-profile")
+    path("seller/<str:user_id>/update-business-profile/", sellerViews.updateBusinessProfile, name="update-business-profile"),
+    path("feedback/<str:user_id>/feedback-form/", views.feedbackForm, name="feedback-form")
 ]

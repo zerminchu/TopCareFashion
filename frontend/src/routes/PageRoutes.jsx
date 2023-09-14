@@ -10,6 +10,7 @@ import BusinessProfileForm from "../pages/Seller/BusinessProfileForm";
 import BusinessProfile from "../pages/Seller/BusinessProfile";
 import Ratings from "../pages/Seller/Ratings";
 import FrequentlyAskQuestion from "../pages/Seller/FrequentlyAskQuestion";
+import FeedbackForm from "../pages/Seller/FeedbackForm";
 
 function PageRoutes() {
   return (
@@ -22,6 +23,7 @@ function PageRoutes() {
       <Route path="/seller-home/:id" element={<SellerHome />} />;
       <Route path="/seller/business-profile" element={<BusinessProfile />} />
       <Route path="/seller/frequently-ask-question" element={<FrequentlyAskQuestion />} />
+      <Route path="/seller/feedback-form" element={<FeedbackForm />} />
       <Route path="/seller/ratings" element={<Ratings />} />
       <Route
         path="/seller/edit-business-profile"

@@ -768,5 +768,45 @@ def classify_image(request):
             return JsonResponse({"category": predicted_class})
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
+
+@api_view(["POST"])
+def feedbackForm(request, user_id):
+  if request.method == "POST":
+    try:
+      data = request.data
+
+      # Check if account exists
+      db = firestore.client()
+      userRef = db.collection('Users').document(user_id)
+      userDoc = userRef.get()
+
+      if(not userDoc.exists):
+        raise Exception("User not found")
+
+      # Validation
+      if(not all(v for v in data.values())):
+        raise Exception("Please fill up all the data")
+
+      # Serializer
+      serializer = FeedbackSerializer(data=data)
+
+      if (serializer.is_valid()):    
+        feedbackRef = db.collection('Feedback')  #create new ref   
+        feedbackForm = feedbackRef.add(data)
+
+        
+
+        return JsonResponse({
+          'status': "success",
+          'message': "Feedback Form updated successfully",
+        }, status=200)
+      else:
+        raise Exception(serializer.errors)
+    
+    except Exception as e:
+      return JsonResponse({
+          "status": "error",
+          "message": str(e)
+      }, status=400)
         
 
