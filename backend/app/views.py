@@ -57,6 +57,7 @@ def signUp(request):
                 }
                 data["verified_status"] = False
                 data["gender"] = ""
+                data["phone_number"] = ""
 
                 # Serialize
                 buyerData = dict(data)
@@ -312,9 +313,15 @@ def updateProfile(request):
             last_name = data.get('last_name')
             profile_image = data.get('profile_image')
             gender = data.get('gender')
+            phone_number = data.get('phone_number')
 
-            # Serializer
-            serializer = UpdateProfileSerializer(data=data)
+            userRef = db.collection("Users").document(user_id)
+            userData = (userRef.get()).to_dict()
+
+            if(userData and userData["role"] == "buyer"):
+                serializer = BuyerUpdateProfileSerializer(data=data)
+            elif(userData and userData["role"] == "seller"):
+                serializer = SellerUpdateProfileSerializer(data=data)
 
             if (serializer.is_valid()):
                 # User want to update profile image
@@ -353,11 +360,13 @@ def updateProfile(request):
                         "gender": gender
                     }
 
+                # Check whether it has phone number data or not
+                if(phone_number):
+                    updatedData["phone_number"] = phone_number
+
                 # Update data into firestore
                 collectionRef = db.collection('Users').document(user_id)
                 collectionRef.update(updatedData)
-
-                print(updatedData)
 
             else:
                 raise Exception(serializer.errors)
@@ -369,7 +378,8 @@ def updateProfile(request):
                     "updatedFirstName": first_name,
                     "updatedLastName": last_name,
                     "updatedProfileImage": profile_image,
-                    "updatedGender": gender
+                    "updatedGender": gender,
+                    "updatedPhoneNumber": phone_number
                 }
             }, status=200)
 
@@ -379,9 +389,6 @@ def updateProfile(request):
                 "message": str(e)
             }, status=400)
         
-
-
-
 @api_view(["POST"])
 def add_product(request):
     if request.method == "POST":

@@ -47,55 +47,104 @@ function DropDownMenu(props) {
     window.location.reload();
   };
 
-  return (
-    <div className={classes.container}>
-      <Avatar src={props.currentUser.profile_image_url || IlAvatar} />
+  const renderDropDownSeller = () => {
+    return (
+      <div className={classes.container}>
+        <Avatar src={props.currentUser.profile_image_url || IlAvatar} />
 
-      <Menu>
-        <Menu.Target>
-          <div className={classes.menutarget}>
-            <Text fz="md" fw={700}>
-              {props.currentUser.name.first_name}
-            </Text>
-            <img src={IconArrowDown} />
-          </div>
-        </Menu.Target>
+        <Menu>
+          <Menu.Target>
+            <div className={classes.menutarget}>
+              <Text fz="md" fw={700}>
+                {props.currentUser.name.first_name}
+              </Text>
+              <img src={IconArrowDown} />
+            </div>
+          </Menu.Target>
 
-        <Menu.Dropdown>
-          <Menu.Item icon={<img src={IconPerson} />} onClick={profileOnClick}>
-            Profile
-          </Menu.Item>
-          <Menu.Item
-            icon={<img src={IconPerson} />}
-            onClick={businessProfileOnClick}
-          >
-            Business Profile
-          </Menu.Item>
-          <Menu.Item
-            icon={<img src={IconSettings} />}
-            onClick={settingsOnClick}
-          >
-            Settings
-          </Menu.Item>
-          <Menu.Item
-            icon={<img src={IconAnalytics} />}
-            onClick={analyticsOnClick}
-          >
-            Analytics
-          </Menu.Item>
-          <Menu.Item
-            icon={<img src={IconManageListing} />}
-            onClick={manageListingsOnClick}
-          >
-            Manage Listings
-          </Menu.Item>
-          <Menu.Item icon={<img src={IconLogout} />} onClick={logoutOnClick}>
-            Logout
-          </Menu.Item>
-        </Menu.Dropdown>
-      </Menu>
-    </div>
-  );
+          <Menu.Dropdown>
+            <Menu.Item icon={<img src={IconPerson} />} onClick={profileOnClick}>
+              Profile
+            </Menu.Item>
+            <Menu.Item
+              icon={<img src={IconPerson} />}
+              onClick={businessProfileOnClick}
+            >
+              Business Profile
+            </Menu.Item>
+            <Menu.Item
+              icon={<img src={IconSettings} />}
+              onClick={settingsOnClick}
+            >
+              Settings
+            </Menu.Item>
+            <Menu.Item
+              icon={<img src={IconAnalytics} />}
+              onClick={analyticsOnClick}
+            >
+              Analytics
+            </Menu.Item>
+            <Menu.Item
+              icon={<img src={IconManageListing} />}
+              onClick={manageListingsOnClick}
+            >
+              Manage Listings
+            </Menu.Item>
+            <Menu.Item icon={<img src={IconLogout} />} onClick={logoutOnClick}>
+              Logout
+            </Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
+      </div>
+    );
+  };
+
+  const renderDropDownBuyer = () => {
+    return (
+      <div className={classes.container}>
+        <Avatar src={props.currentUser.profile_image_url || IlAvatar} />
+
+        <Menu>
+          <Menu.Target>
+            <div className={classes.menutarget}>
+              <Text fz="md" fw={700}>
+                {props.currentUser.name.first_name}
+              </Text>
+              <img src={IconArrowDown} />
+            </div>
+          </Menu.Target>
+
+          <Menu.Dropdown>
+            <Menu.Item icon={<img src={IconPerson} />} onClick={profileOnClick}>
+              Profile
+            </Menu.Item>
+
+            <Menu.Item
+              icon={<img src={IconSettings} />}
+              onClick={settingsOnClick}
+            >
+              Settings
+            </Menu.Item>
+            <Menu.Item icon={<img src={IconLogout} />} onClick={logoutOnClick}>
+              Logout
+            </Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
+      </div>
+    );
+  };
+
+  const renderDropDown = () => {
+    if (currentUser.role === "seller") {
+      return renderDropDownSeller();
+    } else if (currentUser.role === "buyer") {
+      return renderDropDownBuyer();
+    }
+
+    return <Text>Unknown</Text>;
+  };
+
+  return <div>{renderDropDown()}</div>;
 }
 
 export default DropDownMenu;
