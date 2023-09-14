@@ -32,7 +32,7 @@ urlpatterns = [
     path("seller/reply-review/", sellerViews.replyReview, name="reply-review"),
     path("seller/<str:user_id>/", sellerViews.getSellerProfile, name="get-seller-profile"),
     path("seller/<str:user_id>/update-business-profile/", sellerViews.updateBusinessProfile, name="update-business-profile"),
-    path("feedback/<str:user_id>/feedback-form/", views.feedbackForm, name="feedback-form")
-    path("seller/<str:user_id>/ratings/", sellerViews.getReviews, name="get-seller-reviews")
+    path("feedback/<str:user_id>/feedback-form/", views.feedbackForm, name="feedback-form"),
+    path("seller/<str:user_id>/ratings/", sellerViews.getReviews, name="get-seller-reviews"),
     
 ]

@@ -10,6 +10,7 @@ import IconSettings from "../../assets/icons/ic_settings.svg";
 import IconAnalytics from "../../assets/icons/ic_analytics.svg";
 import IconManageListing from "../../assets/icons/ic_manage_listing.svg";
 import IconLogout from "../../assets/icons/ic_logout.svg";
+import IconQuestionMark from "../../assets/icons/ic_questionmark.svg";
 
 import classes from "./DropDownMenu.module.css";
 
@@ -40,6 +41,16 @@ function DropDownMenu(props) {
 
   const manageListingsOnClick = () => {
     console.log("manage listing click");
+  };
+
+  const manageFeedbackForm = () => {
+    console.log("manage listing click");
+    navigate("/seller/feedback-form");
+  };
+
+  const manageFrequentlyAskQuestion = () => {
+    console.log("manage listing click");
+    navigate("/seller/frequently-ask-question");
   };
 
   const logoutOnClick = () => {
@@ -96,6 +107,13 @@ function DropDownMenu(props) {
             onClick={manageFeedbackForm}
           >
             Feedback Form
+          </Menu.Item>
+
+          <Menu.Item
+            icon={<img src={IconQuestionMark} />}
+            onClick={manageFrequentlyAskQuestion}
+          >
+            FAQ
           </Menu.Item>
             <Menu.Item icon={<img src={IconLogout} />} onClick={logoutOnClick}>
               Logout
