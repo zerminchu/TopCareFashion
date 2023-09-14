@@ -39,7 +39,7 @@ function SellerOnBoard(props) {
 
       dispatch({ type: "SET_LOADING", value: true });
 
-      const response = await axios.post(`${url}/onboarding/`, {
+      const response = await axios.post(`${url}/seller/onboarding/`, {
         user_id: currentUser.user_id,
       });
 

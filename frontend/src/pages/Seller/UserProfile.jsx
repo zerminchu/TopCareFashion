@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
 import { showNotifications } from "../../utils/ShowNotification";
@@ -16,6 +16,8 @@ function UserProfile() {
   const dispatch = useDispatch();
   const fileInputRef = useRef(null);
 
+  const [currentUser, setCurrentUser] = useState();
+
   const form = useForm({
     initialValues: {
       userId: "",
@@ -26,6 +28,7 @@ function UserProfile() {
       dateOfBirth: "",
       showImage: "",
       profileImage: "",
+      phoneNumber: "",
     },
   });
 
@@ -33,26 +36,15 @@ function UserProfile() {
     const setUserSessionData = async () => {
       try {
         const user = await retrieveUserInfo();
-
-        form.setValues({
-          userId: user.user_id,
-          firstName: user.name.first_name,
-          lastName: user.name.last_name,
-          email: user.email,
-          gender: user.gender,
-          dateOfBirth: user.date_of_birth,
-          showImage: user.profile_image_url,
-        });
+        setCurrentUser(user);
       } catch (error) {
         showNotifications({
-          // eslint-disable-next-line no-undef
           status: response.data.status,
           title: "Success",
           message: error.response.data.message,
         });
       }
     };
-
     // Check if user has signed in before
     if (Cookies.get("firebaseIdToken")) {
       setUserSessionData();
@@ -60,6 +52,39 @@ function UserProfile() {
       navigate("/", { replace: true });
     }
   }, []);
+
+  useEffect(() => {
+    if (currentUser) {
+      if (currentUser.role === "buyer") {
+        form.setValues({
+          userId: currentUser.user_id,
+          firstName: currentUser.name.first_name,
+          lastName: currentUser.name.last_name,
+          email: currentUser.email,
+          gender: currentUser.gender,
+          dateOfBirth: currentUser.date_of_birth,
+          showImage: currentUser.profile_image_url,
+          phoneNumber: currentUser.phone_number,
+        });
+      } else if (currentUser.role === "seller") {
+        form.setValues({
+          userId: currentUser.user_id,
+          firstName: currentUser.name.first_name,
+          lastName: currentUser.name.last_name,
+          email: currentUser.email,
+          gender: currentUser.gender,
+          dateOfBirth: currentUser.date_of_birth,
+          showImage: currentUser.profile_image_url,
+        });
+      } else {
+        showNotifications({
+          status: "error",
+          title: "Error",
+          message: "Unknown user role when retrieving data",
+        });
+      }
+    }
+  }, [currentUser]);
 
   const imageChangeHandler = (event) => {
     const file = event.target.files[0];
@@ -85,11 +110,16 @@ function UserProfile() {
       dispatch({ type: "SET_LOADING", value: true });
 
       const formData = new FormData();
+
       formData.append("user_id", form.values.userId);
       formData.append("first_name", form.values.firstName);
       formData.append("last_name", form.values.lastName);
       formData.append("gender", form.values.gender);
       formData.append("profile_image", form.values.profileImage);
+
+      if (currentUser.role === "buyer") {
+        formData.append("phone_number", form.values.phoneNumber);
+      }
 
       const url =
         import.meta.env.VITE_API_DEV == "DEV"
@@ -117,6 +147,18 @@ function UserProfile() {
         title: "Error",
         message: error.response.data.message,
       });
+    }
+  };
+
+  const renderPhoneNumber = () => {
+    if (currentUser && currentUser.role === "buyer") {
+      return (
+        <TextInput
+          label="Phone number"
+          placeholder="Phone number"
+          {...form.getInputProps("phoneNumber")}
+        />
+      );
     }
   };
 
@@ -172,6 +214,8 @@ function UserProfile() {
           placeholder="Last Name"
           {...form.getInputProps("lastName")}
         />
+
+        {renderPhoneNumber()}
 
         <Radio.Group
           name="genderRadioGroup"

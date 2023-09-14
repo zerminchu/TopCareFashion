@@ -61,19 +61,20 @@ function DropDownMenu(props) {
     window.location.reload();
   };
 
-  return (
-    <div className={classes.container}>
-      <Avatar src={props.currentUser.profile_image_url || IlAvatar} />
+  const renderDropDownSeller = () => {
+    return (
+      <div className={classes.container}>
+        <Avatar src={props.currentUser.profile_image_url || IlAvatar} />
 
-      <Menu>
-        <Menu.Target>
-          <div className={classes.menutarget}>
-            <Text fz="md" fw={700}>
-              {props.currentUser.name.first_name}
-            </Text>
-            <img src={IconArrowDown} />
-          </div>
-        </Menu.Target>
+        <Menu>
+          <Menu.Target>
+            <div className={classes.menutarget}>
+              <Text fz="md" fw={700}>
+                {props.currentUser.name.first_name}
+              </Text>
+              <img src={IconArrowDown} />
+            </div>
+          </Menu.Target>
 
         <Menu.Dropdown>
           <Menu.Item icon={<img src={IconPerson} />} onClick={profileOnClick}>
@@ -124,6 +125,6 @@ function DropDownMenu(props) {
       </Menu>
     </div>
   );
-}
 
+    }}
 export default DropDownMenu;
