@@ -70,7 +70,7 @@ function SignInForm(props) {
 
         setTimeout(() => {
           window.location.reload();
-        }, 1200); // Waits 5 seconds before reloading
+        }, 1000); // Waits 1 seconds before reloading
       }
     } catch (error) {
       dispatch({ type: "SET_LOADING", value: false });

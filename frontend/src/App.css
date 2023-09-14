@@ -1,4 +1,4 @@
-@tailwind base;
+/*@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -44,4 +44,15 @@
 
 .read-the-docs {
   color: #888;
+}*/
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.App {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }

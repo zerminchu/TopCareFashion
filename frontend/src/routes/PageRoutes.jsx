@@ -9,6 +9,7 @@ import EditListing from "../pages/Seller/EditListing";
 import BusinessProfileForm from "../pages/Seller/BusinessProfileForm";
 import BusinessProfile from "../pages/Seller/BusinessProfile";
 import Ratings from "../pages/Seller/Ratings";
+import ProductDetails from "../pages/Buyer/ProductDetails";
 
 function PageRoutes() {
   return (
@@ -21,6 +22,7 @@ function PageRoutes() {
       <Route path="/seller-home/:id" element={<SellerHome />} />;
       <Route path="/seller/business-profile" element={<BusinessProfile />} />
       <Route path="/seller/ratings" element={<Ratings />} />
+      <Route path="/buyer/product-detail" element={<ProductDetails />} />
       <Route
         path="/seller/edit-business-profile"
         element={<BusinessProfileForm />}

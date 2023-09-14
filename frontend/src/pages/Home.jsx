@@ -50,7 +50,7 @@ function Home() {
     } else if (currentRole === "admin") {
       return <h1>Admin home page</h1>;
     } else {
-      return <h1>Home page</h1>;
+      return <BuyerHome />;
     }
   };
 
