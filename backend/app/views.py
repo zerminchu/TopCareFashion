@@ -9,6 +9,7 @@ from rest_framework.decorators import api_view, permission_classes
 from firebase_admin import firestore
 from django.core.files.base import ContentFile
 
+
 from firebase_admin import storage
 from firebase_admin import auth
 from django.core.validators import validate_email
@@ -22,6 +23,8 @@ import json
 import base64
 import os
 import uuid
+import random
+import re
 
 import tensorflow as tf
 from PIL import Image
@@ -39,10 +42,9 @@ def signUp(request):
             if (data["password"] != data["confirm_password"]):
                 raise Exception(
                     "Password and confirm password should be the same")
-
-            if (data["password"] != data["confirm_password"]):
-                raise Exception(
-                    "Password and confirm password should be the same")
+            
+            if(not all(v for v in data.values())):
+                raise Exception("Please fill up all the data")
 
             db = firestore.client()
             collection_ref = db.collection('Users')
@@ -73,7 +75,7 @@ def signUp(request):
                     # Auth user first to get the user_id
                     authUser = firebaseAuth.create_user_with_email_and_password(
                         data["email"], data["password"])
-
+                    
                     # Send email verification
                     firebaseAuth.send_email_verification(authUser['idToken'])
 
@@ -146,6 +148,18 @@ def signUp(request):
             }, status=400)
 
         except Exception as e:
+            if("EMAIL_EXISTS" in str(e)):
+                return JsonResponse({
+                    "status": "error",
+                    "message": "Email already exists, please use another one"
+                }, status=400)
+            
+            if("WEAK_PASSWORD : Password should be at least 6 characters" in str(e)):
+                return JsonResponse({
+                    "status": "error",
+                    "message": "Password should be at least 6 characters"
+                }, status=400)
+            
             return JsonResponse({
                 "status": "error",
                 "message": str(e)
@@ -160,20 +174,28 @@ def signIn(request):
 
             data = request.data
 
-            # Validate data to produce custom message
-            validate_email(data["email"])
+            # Validation
+            if(not all(v for v in data.values())):
+                raise Exception("Please fill up all the data")
+            regex = r"[^@]+@[^@]+\.[^@]+"
+
+            if(not re.match(regex, data["email"]) is not None):
+                raise Exception("Email is not valid")
 
             authUser = auth.get_user_by_email(data["email"])
 
             if (not authUser):
                 raise Exception("User not found")
+            
+            if(authUser.disabled):
+                raise Exception("User has been suspended/disabled")
 
             if (not authUser.email_verified):
                 raise Exception("Please verify your email")
 
             user = firebaseAuth.sign_in_with_email_and_password(
                 data["email"], data["password"])
-
+            
             return JsonResponse({
                 'status': "success",
                 'message': "User login successfully",
@@ -181,6 +203,12 @@ def signIn(request):
             }, status=200)
 
         except Exception as e:
+            if("INVALID_PASSWORD" in str(e)):
+                return JsonResponse({
+                    "status": "error",
+                    "message": "Your password is incorrect"
+                }, status=400)
+
             return JsonResponse({
                 "status": "error",
                 "message": str(e)
@@ -549,5 +577,143 @@ def classify_image(request):
             return JsonResponse({"category": predicted_class})
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
-        
 
+@api_view(["GET"])
+def getAdvertisementListing(request):
+    if request.method == "GET":
+        try:
+            db = firestore.client()
+            itemRef = db.collection('Item')
+            
+            # Retrieving all item documents
+            totalDocs = len(list(itemRef.stream()))
+
+            # Generate 5 unique random offsets
+            randomOffsets = random.sample(range(totalDocs), 5)
+
+            randomDocuments = []
+            for offset in randomOffsets:
+                # Using offset and limit to paginate and fetch the specific document
+                document = next(iter(itemRef.offset(offset).limit(1).stream()))
+                randomDocuments.append(document.to_dict())
+
+            return JsonResponse({
+                'status': "success",
+                'message': "Listing retrieve successfully",
+                'data': randomDocuments
+            }, status=200)
+        except Exception as e:
+            return JsonResponse({
+                "status": "error",
+                "message": str(e)
+            }, status=400)
+        
+@api_view(["GET"])
+def getListingDetailByItemId(request, item_id):
+    if request.method == "GET":
+        try:
+            db = firestore.client()
+            itemRef = db.collection("Item").document(item_id)
+            itemData = itemRef.get()
+
+            if(not itemData.exists):
+                raise Exception("Item does not exists")
+
+            # Retrieving listing id for collection address
+            listingRef = db.collection("Listing").where("item_id", "==", (itemData.to_dict())["item_id"]).limit(1)
+            listingData = listingRef.get()
+
+            if(len(listingData) <= 0):
+                raise Exception("Listing does not exists")
+            
+            listingData = listingData[0]
+            
+            # Retrieving seller business profile for store name
+            sellerRef = db.collection("Users").document((itemData.to_dict())["user_id"])
+            sellerData = (sellerRef.get())
+
+            if(not sellerData.exists):
+                raise Exception("Seller does not exists")
+            
+            if(sellerData.to_dict().get("business_profile") is None):
+                raise Exception("This listing is not created using seller account")
+
+            
+            # Retrieving rating and calculate average rating
+            reviewRef = db.collection("Review").where("listing_id", "==", (listingData.to_dict())["listing_id"])
+            reviewData = reviewRef.get()
+
+            reviewList = []
+            totalRating = 0
+
+            for review in reviewData:
+                reviewItem = {}
+
+                buyerRef = db.collection("Users").document((review.to_dict())["buyer_id"])
+                buyerData = buyerRef.get()
+
+                if(not buyerData.exists):
+                    raise Exception("Buyer data does not exists in the reviews")
+                
+                reviewItem["buyer_name"] = (buyerData.to_dict())["name"]["first_name"]
+                reviewItem["buyer_image_profile"] = (buyerData.to_dict())["profile_image_url"]
+                reviewItem["rating"] = (review.to_dict())["rating"]
+                reviewItem["description"] = (review.to_dict())["description"]
+                reviewItem["reply"] = (review.to_dict())["reply"]
+
+                totalRating += int((review.to_dict())["rating"])
+                reviewList.append(reviewItem)
+                
+            averageRating = 0
+            if(len(reviewData) > 0):
+                averageRating = totalRating // len(reviewData)
+            
+            responseData = {
+                "title": (itemData.to_dict())["title"],
+                "collection_address": (listingData.to_dict())["collection_address"],
+                "size": ["S", "M", "L", "XL"],
+                "images": (itemData.to_dict())["image_urls"],
+                "price": (itemData.to_dict())["price"],
+                "quantity_available": (listingData.to_dict())["quantity_available"],
+                "total_ratings": len(reviewList),
+                "sold": 100,
+                "store_name": (sellerData.to_dict())["business_profile"]["business_name"],
+                "description": (itemData.to_dict())["description"],
+                "average_rating": averageRating,
+                "reviews": reviewList
+            }
+
+            return JsonResponse({
+                'status': "success",
+                'message': "Listing details retrieved successfully",
+                'data': responseData
+            }, status=200)
+        except Exception as e:
+            return JsonResponse({
+                "status": "error",
+                "message": str(e)
+            }, status=400)
+        
+@api_view(["GET"])
+def getAllItems(request):
+    if request.method == "GET":
+        try:
+            db = firestore.client()
+            itemRef = db.collection("Item")
+            itemData = itemRef.get()
+            
+            responseData = []
+
+            for item in itemData:
+                responseData.append(item.to_dict())
+
+            return JsonResponse({
+                'status': "success",
+                'message': "All items retrieved successfully",
+                'data': responseData
+            }, status=200)
+        except Exception as e:
+            return JsonResponse({
+                "status": "error",
+                "message": str(e)
+            }, status=400)

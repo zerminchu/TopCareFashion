@@ -1,0 +1,133 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-left: 15%;
+  padding-right: 15%;
+  gap: 20px;
+}
+
+.imageContainer {
+  display: flex;
+  flex: 3;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.secondaryImageContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.mainImage {
+  width: 100%;
+  height: 500px;
+  border-radius: 5px;
+  object-fit: cover;
+  border: 1px solid rgb(201, 201, 201);
+  border-radius: 5px;
+}
+
+.secondaryImage {
+  width: 100%;
+  border-radius: 5px;
+  height: 200px;
+  border: 1px solid rgb(201, 201, 201);
+  border-radius: 5px;
+}
+
+.ratingContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  column-gap: 5px;
+}
+
+.topContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+}
+
+.productItemAtribute {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.productDetailContainer {
+  display: flex;
+  max-height: 500px;
+  justify-content: space-between;
+  flex: 2;
+  flex-direction: column;
+  border: 1px solid rgb(201, 201, 201);
+  border-radius: 5px;
+  padding: 20px;
+}
+
+.sizeContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+}
+
+.productDetailTopContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.topButtonContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.storeContainer {
+  display: flex;
+  width: 100%;
+  padding: 20px;
+  border: 1px solid rgb(201, 201, 201);
+  border-radius: 5px;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.chatButtonContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid rgb(201, 201, 201);
+  border-radius: 5px;
+  background-color: aliceblue;
+}
+
+.productDescriptionContainer {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  border: 1px solid rgb(201, 201, 201);
+  border-radius: 5px;
+  gap: 20px;
+  padding: 20px;
+}
+
+.reviewContainer {
+  display: flex;
+  width: 100%;
+  padding: 20px;
+  flex-direction: column;
+  border: 1px solid rgb(201, 201, 201);
+  border-radius: 5px;
+  gap: 20px;
+}

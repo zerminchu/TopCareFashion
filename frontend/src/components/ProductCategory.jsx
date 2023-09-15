@@ -1,16 +1,47 @@
 import React from "react";
 import classes from "./ProductCategory.module.css";
-import { Button, Text } from "@mantine/core";
+import ILCategoryBottom from "../assets/illustrations/il_category_bottom.jpg";
+import ILCategoryTop from "../assets/illustrations/il_category_top.jpg";
+import ILCategoryFootwear from "../assets/illustrations/il_category_footwear.jpg";
+import { Text } from "@mantine/core";
 
-function ProductCategory() {
+function ProductCategory(props) {
+  const imageUrl = () => {
+    if (props.category === "Bottom") {
+      return ILCategoryBottom;
+    } else if (props.category === "Top") {
+      return ILCategoryTop;
+    } else if (props.category === "Footwear") {
+      return ILCategoryFootwear;
+    }
+
+    return ILCategoryTop;
+  };
+
+  const renderDescription = () => {
+    if (props.category === "Bottom") {
+      return <Text>Shop for the lastest tops for women and men</Text>;
+    } else if (props.category === "Top") {
+      return <Text>Find the perfect pair of patns, shorts, or skirts</Text>;
+    } else if (props.category === "Footwear") {
+      return (
+        <Text>Step up your shoe game with our collection of footwear</Text>
+      );
+    }
+
+    return <Text>Shop for the lastest clothes for women and men</Text>;
+  };
+
   return (
     <div className={classes.card}>
       <div className={classes.cardHeader}>
-        <img src="https://images.unsplash.com/photo-1434389677669-e08b4cac3105?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2010&q=80" />
+        <img src={imageUrl()} />
       </div>
       <div className={classes.cardBody}>
-        <Text>Product title</Text>
-        <Text>Product title</Text>
+        <Text size="lg" fw={500}>
+          {props.category}
+        </Text>
+        {renderDescription()}
       </div>
     </div>
   );

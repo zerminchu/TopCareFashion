@@ -102,7 +102,10 @@ function DropDownMenu(props) {
   const renderDropDownBuyer = () => {
     return (
       <div className={classes.container}>
-        <Avatar src={props.currentUser.profile_image_url || IlAvatar} />
+        <Avatar
+          src={props.currentUser.profile_image_url || IlAvatar}
+          radius="xl"
+        />
 
         <Menu>
           <Menu.Target>

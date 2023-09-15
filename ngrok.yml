@@ -1,0 +1,10 @@
+version: 1
+region: ap
+authtoken: AwMAeH3Zm4xBbEY33CUi_6LyAGbGBd9aik1fjhgyjz
+tunnels:
+  first:
+    proto: http
+    addr: http://127.0.0.1:5173
+  second:
+    proto: http
+    addr: http://127.0.0.1:8000

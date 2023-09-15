@@ -5,8 +5,13 @@ export const retrieveUserInfo = async () => {
   try {
     const firebaseIdToken = Cookies.get("firebaseIdToken");
 
+    const url =
+      import.meta.env.VITE_NODE_ENV == "DEV"
+        ? import.meta.env.VITE_API_DEV
+        : import.meta.env.VITE_API_PROD;
+
     const response = await axios.post(
-      `${import.meta.env.VITE_API_DEV}/retrieve-user-info-from-token/`,
+      `${url}/retrieve-user-info-from-token/`,
       { firebaseIdToken: firebaseIdToken }
     );
 

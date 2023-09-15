@@ -20,11 +20,16 @@ urlpatterns = [
     path("retrieve-user-info-from-token/", views.retrieveUserInfoFromToken,
          name="retrieve-user-info-from-token"),
     path("update-profile/", views.updateProfile, name="update-profile"),
+    path("listing/advertisement", views.getAdvertisementListing, name="get-listing-advertisement"),
+    path("listing/<str:item_id>", views.getListingDetailByItemId, name="get-listing-by-item-id"),
 
-    # Seller
     path("view-item/all/", views.get_by_sellerId, name="view-item/all"),
     path("view-item/<str:user_id>/",
          views.get_by_sellerId, name="view-item/user_id"),
+    path("item/", views.getAllItems, name="get-all-item"),
+
+    # Seller
+    
     path("add-product/", views.add_product, name="add-product"),
     path("classify-image/", views.classify_image, name="classify-image"),
     path("seller/onboarding/", sellerViews.onBoarding, name="onboarding"),

@@ -11,9 +11,14 @@
   z-index: 2;
 }
 
+.popupContainer {
+  display: flex;
+  flex-direction: column;
+  width: 30%;
+}
+
 .popupcontent {
   display: flex;
-  width: 350px;
   align-items: center;
   justify-content: center;
   flex-direction: column;

@@ -1,61 +1,331 @@
 import { Button, Text } from "@mantine/core";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import IconChat from "../../assets/icons/ic_chat.svg";
 import IconWishlist from "../../assets/icons/ic_wishlist.svg";
 import ProductRating from "../../components/Rating/ProductRating";
+import IconRating from "../../assets/icons/ic_rating.svg";
+import { useLocation } from "react-router-dom";
+import ILLNullImageListing from "../../assets/illustrations/il_null_image_clothes.svg";
+import axios from "axios";
 
-function ProductDetails(props) {
-  return (
-    <div>
-      <img
-        src="https://images.unsplash.com/photo-1434389677669-e08b4cac3105?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2010&q=80"
-        width={100}
-        height={100}
-      />
-      <img
-        src="https://images.unsplash.com/photo-1434389677669-e08b4cac3105?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2010&q=80"
-        width={100}
-        height={100}
-      />
-      <img
-        src="https://images.unsplash.com/photo-1434389677669-e08b4cac3105?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2010&q=80"
-        width={100}
-        height={100}
-      />
+import classes from "./ProductDetails.module.css";
+import { showNotifications } from "../../utils/ShowNotification";
 
-      <div>
-        <Text>Product name</Text>
-        <Text>Rating 4.8</Text>
-        <Text>Shipping</Text>
-        <Text>Size</Text>
-        <Text>Quantity</Text>
-        <Button>Add to cart</Button>
-        <div>
-          <img src={IconWishlist} width={30} height={30} />
-        </div>
-        <Text>Store name</Text>
-        <div>
-          <img src={IconChat} width={30} height={30} />
-          <Text>Chat with seller</Text>
-        </div>
+function ProductDetails() {
+  const location = useLocation();
 
-        <div>
-          <Text>Product Specification</Text>
-          <Text>Product Specification.......</Text>
-          <Text>Product Description</Text>
-          <Text>Product Description ......</Text>
-        </div>
+  // Dummy data
+  const data = location.state?.data;
 
-        <div>
-          <ProductRating />
-          <ProductRating />
-          <ProductRating />
-          <ProductRating />
-          <ProductRating />
+  // Real data
+  const itemId = location.state?.itemId;
+
+  const [productDetails, setProductDetails] = useState(data);
+
+  useEffect(() => {
+    console.log("ITEM ID", itemId);
+    const retrieveProductDetailByItemId = async () => {
+      try {
+        const url =
+          import.meta.env.VITE_NODE_ENV == "DEV"
+            ? import.meta.env.VITE_API_DEV
+            : import.meta.env.VITE_API_PROD;
+
+        if (itemId) {
+          const response = await axios.get(`${url}/listing/${itemId}`);
+          setProductDetails(response.data.data);
+        }
+      } catch (error) {
+        showNotifications({
+          status: "error",
+          title: "Error",
+          message: error.response.data.message,
+        });
+      }
+    };
+
+    retrieveProductDetailByItemId();
+  }, []);
+
+  const renderAvailableSize = () => {
+    if (productDetails) {
+      if (!productDetails.size) {
+        return ["S", "M", "L", "XL"].map((size) => {
+          return (
+            <Text size="lg" fw={700} align="right" color="blue">
+              {size}
+            </Text>
+          );
+        });
+      }
+
+      return productDetails.size.map((size) => {
+        return (
+          <Text size="lg" fw={700} align="right" color="blue">
+            {size}
+          </Text>
+        );
+      });
+    }
+  };
+
+  const renderReviews = () => {
+    if (productDetails && productDetails.reviews.length <= 0) {
+      return (
+        <Text size="md" fw={500}>
+          This listing does not have any reviews yet!
+        </Text>
+      );
+    }
+
+    return productDetails.reviews.map((review) => {
+      return (
+        <ProductRating
+          key={review.buyerName}
+          buyerImageProfile={review.buyer_image_profile}
+          buyerName={review.buyer_name}
+          rating={review.rating}
+          description={review.description}
+          reply={review.reply || ""}
+        />
+      );
+    });
+  };
+
+  // const renderDummy = () => {
+  //   return (
+  //     <div className={classes.container}>
+  //       <div className={classes.topContainer}>
+  //         <div className={classes.imageContainer}>
+  //           <img src={ILLNullImageListing} className={classes.mainImage} />
+
+  //           <div className={classes.secondaryImageContainer}>
+  //             <img
+  //               src={ILLNullImageListing}
+  //               className={classes.secondaryImage}
+  //             />
+  //             <img
+  //               src={ILLNullImageListing}
+  //               className={classes.secondaryImage}
+  //             />
+  //           </div>
+  //         </div>
+
+  //         <div className={classes.productDetailContainer}>
+  //           <div className={classes.productDetailTopContainer}>
+  //             <div className={classes.productItemAtribute}>
+  //               <Text size="md" fw={500}>
+  //                 Product name
+  //               </Text>
+  //               <Text size="lg" fw={700} align="right" color="blue">
+  //                 {productDetails.title}
+  //               </Text>
+  //             </div>
+
+  //             <div className={classes.productItemAtribute}>
+  //               <Text size="md" fw={500}>
+  //                 Collection address
+  //               </Text>
+  //               <Text size="lg" fw={700} align="right" color="blue">
+  //                 {productDetails.collectionAddress}
+  //               </Text>
+  //             </div>
+
+  //             <div className={classes.productItemAtribute}>
+  //               <Text size="md" fw={500}>
+  //                 Size
+  //               </Text>
+  //               <div className={classes.sizeContainer}>
+  //                 {renderAvailableSize()}
+  //               </div>
+  //             </div>
+
+  //             <div className={classes.productItemAtribute}>
+  //               <Text size="md" fw={500}>
+  //                 Stock
+  //               </Text>
+  //               <Text size="lg" fw={700} align="right" color="blue">
+  //                 {productDetails.stock} stocks left
+  //               </Text>
+  //             </div>
+
+  //             <div className={classes.ratingContainer}>
+  //               <img src={IconRating} width={25} height={25} />
+  //               <Text size="md" fw={500}>
+  //                 {productDetails.averageRating}
+  //               </Text>
+  //               <Text size="md" fw={500}>
+  //                 |
+  //               </Text>
+  //               <Text size="md" fw={500}>
+  //                 Total rating
+  //               </Text>
+  //               <Text size="md" fw={500}>
+  //                 |
+  //               </Text>
+  //               <Text size="md" fw={500}>
+  //                 {productDetails.sold} sold
+  //               </Text>
+  //             </div>
+  //           </div>
+
+  //           <div className={classes.topButtonContainer}>
+  //             <Button>Add to cart</Button>
+  //             <Button>Share</Button>
+  //             <div>
+  //               <img src={IconWishlist} width={30} height={30} />
+  //             </div>
+  //           </div>
+  //         </div>
+  //       </div>
+
+  //       <div className={classes.storeContainer}>
+  //         <Text size="xl" fw={700}>
+  //           {productDetails.storeName}
+  //         </Text>
+  //         <Button variant="outline">
+  //           <img src={IconChat} width={25} height={25} />
+  //           Chat with seller
+  //         </Button>
+  //       </div>
+
+  //       <div className={classes.productDescriptionContainer}>
+  //         <Text size="xl" fw={700}>
+  //           Product Description
+  //         </Text>
+  //         <Text>{productDetails.description}</Text>
+  //       </div>
+  //       <div className={classes.reviewContainer}>
+  //         <Text size="xl" fw={700}>
+  //           Reviews
+  //         </Text>
+  //         {renderReviews()}
+  //       </div>
+  //     </div>
+  //   );
+  // };
+
+  const renderReal = () => {
+    if (productDetails) {
+      return (
+        <div className={classes.container}>
+          <div className={classes.topContainer}>
+            <div className={classes.imageContainer}>
+              <img
+                src={productDetails.images[0] || ILLNullImageListing}
+                className={classes.mainImage}
+              />
+
+              <div className={classes.secondaryImageContainer}>
+                <img
+                  src={productDetails.images[1] || ILLNullImageListing}
+                  className={classes.secondaryImage}
+                />
+                <img
+                  src={productDetails.images[2] || ILLNullImageListing}
+                  className={classes.secondaryImage}
+                />
+              </div>
+            </div>
+
+            <div className={classes.productDetailContainer}>
+              <div className={classes.productDetailTopContainer}>
+                <div className={classes.productItemAtribute}>
+                  <Text size="md" fw={500}>
+                    Product name
+                  </Text>
+                  <Text size="lg" fw={700} align="right" color="blue">
+                    {productDetails.title}
+                  </Text>
+                </div>
+
+                <div className={classes.productItemAtribute}>
+                  <Text size="md" fw={500}>
+                    Collection address
+                  </Text>
+                  <Text size="lg" fw={700} align="right" color="blue">
+                    {productDetails.collection_address}
+                  </Text>
+                </div>
+
+                <div className={classes.productItemAtribute}>
+                  <Text size="md" fw={500}>
+                    Size
+                  </Text>
+                  <div className={classes.sizeContainer}>
+                    {renderAvailableSize()}
+                  </div>
+                </div>
+
+                <div className={classes.productItemAtribute}>
+                  <Text size="md" fw={500}>
+                    Stock
+                  </Text>
+                  <Text size="lg" fw={700} align="right" color="blue">
+                    {productDetails.quantity_available} stocks left
+                  </Text>
+                </div>
+
+                <div className={classes.ratingContainer}>
+                  <img src={IconRating} width={25} height={25} />
+                  <Text size="md" fw={500}>
+                    {productDetails.average_rating}
+                  </Text>
+                  <Text size="md" fw={500}>
+                    |
+                  </Text>
+                  <Text size="md" fw={500}>
+                    Total rating {productDetails.total_ratings}
+                  </Text>
+                  <Text size="md" fw={500}>
+                    |
+                  </Text>
+                  <Text size="md" fw={500}>
+                    {productDetails.sold} sold
+                  </Text>
+                </div>
+              </div>
+
+              <div className={classes.topButtonContainer}>
+                <Button>Add to cart</Button>
+                <Button>Share</Button>
+                <div>
+                  <img src={IconWishlist} width={30} height={30} />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className={classes.storeContainer}>
+            <Text size="xl" fw={700}>
+              {productDetails.store_name}
+            </Text>
+            <Button variant="outline">
+              <img src={IconChat} width={25} height={25} />
+              Chat with seller
+            </Button>
+          </div>
+
+          <div className={classes.productDescriptionContainer}>
+            <Text size="xl" fw={700}>
+              Product Description
+            </Text>
+            <Text>{productDetails.description}</Text>
+          </div>
+          <div className={classes.reviewContainer}>
+            <Text size="xl" fw={700}>
+              Reviews
+            </Text>
+            {renderReviews()}
+          </div>
         </div>
-      </div>
-    </div>
-  );
+      );
+    }
+
+    return <h1>Loading ..</h1>;
+  };
+
+  return <div>{renderReal()}</div>;
 }
 
 export default ProductDetails;

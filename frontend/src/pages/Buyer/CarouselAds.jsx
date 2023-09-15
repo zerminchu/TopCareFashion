@@ -1,35 +1,58 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Carousel } from "@mantine/carousel";
+import axios from "axios";
+
+import classes from "./CarouselAds.module.css";
+import CarouselItem from "../../components/CarouselItem";
 
 function CarouselAds() {
+  const [productAdvertisementList, setproductAdvertisementList] = useState([]);
+
+  const itemOnClick = () => {
+    navigate("/buyer/product-detail", {
+      state: { data: props },
+    });
+  };
+
+  useEffect(() => {
+    const retrieveAdvertisementListing = async () => {
+      try {
+        const url =
+          import.meta.env.VITE_NODE_ENV == "DEV"
+            ? import.meta.env.VITE_API_DEV
+            : import.meta.env.VITE_API_PROD;
+
+        const response = await axios.get(`${url}/listing/advertisement`);
+        setproductAdvertisementList(response.data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    retrieveAdvertisementListing();
+  }, []);
+
+  const renderListingAdvertisement = () => {
+    return productAdvertisementList.map((ads, index) => {
+      return (
+        <Carousel.Slide key={index}>
+          <CarouselItem itemId={ads.item_id} image={ads.image_urls[0]} />
+        </Carousel.Slide>
+      );
+    });
+  };
+
   return (
     <Carousel
       withIndicators
-      height={200}
+      height={250}
       slideSize="33.333333%"
       slideGap="md"
       loop
       align="start"
       slidesToScroll={3}
     >
-      <Carousel.Slide>
-        <img src="https://cf.shopee.sg/file/sg-50009109-dae6d071b38cbbc8721bc0804d37b4c0_xxhdpi" />
-      </Carousel.Slide>
-      <Carousel.Slide>
-        <img src="https://images.unsplash.com/photo-1434389677669-e08b4cac3105?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2010&q=80" />
-      </Carousel.Slide>
-      <Carousel.Slide>
-        <img src="https://images.unsplash.com/photo-1434389677669-e08b4cac3105?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2010&q=80" />
-      </Carousel.Slide>
-      <Carousel.Slide>
-        <img src="https://images.unsplash.com/photo-1434389677669-e08b4cac3105?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2010&q=80" />
-      </Carousel.Slide>
-      <Carousel.Slide>
-        <img src="https://images.unsplash.com/photo-1434389677669-e08b4cac3105?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2010&q=80" />
-      </Carousel.Slide>
-      <Carousel.Slide>
-        <img src="https://images.unsplash.com/photo-1434389677669-e08b4cac3105?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2010&q=80" />
-      </Carousel.Slide>
+      {renderListingAdvertisement()}
     </Carousel>
   );
 }

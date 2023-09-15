@@ -1,0 +1,25 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.topContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+}
+
+.rightSide {
+  display: flex;
+  flex-direction: column;
+}
+
+.sellerRepliedContainer {
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(223, 240, 255);
+  gap: 5px;
+  border-radius: 5px;
+  padding: 10px;
+}

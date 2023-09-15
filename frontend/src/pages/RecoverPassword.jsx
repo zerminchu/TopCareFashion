@@ -25,13 +25,11 @@ function RecoverPassword() {
       const data = { email: form.values.email };
 
       const url =
-        import.meta.env.VITE_API_DEV == "DEV"
+        import.meta.env.VITE_NODE_ENV == "DEV"
           ? import.meta.env.VITE_API_DEV
           : import.meta.env.VITE_API_PROD;
 
       const response = await axios.post(`${url}/recover-password/`, data);
-      console.log(response);
-      console.log("apong");
 
       dispatch({ type: "SET_LOADING", value: false });
 

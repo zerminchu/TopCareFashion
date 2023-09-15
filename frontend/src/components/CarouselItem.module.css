@@ -1,0 +1,11 @@
+.container {
+  object-fit: contain;
+  cursor: pointer;
+  border: 1px solid rgb(201, 201, 201);
+  border-radius: 5px;
+  height: 250px;
+}
+
+.image {
+  object-fit: cover;
+}

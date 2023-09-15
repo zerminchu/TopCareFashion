@@ -129,17 +129,6 @@ function BusinessProfile() {
     },
   });
 
-  // const renderRatings = ratings.slice(0, 5).map((review) => {
-  //   return (
-  //     <SellerRating
-  //       key={review.review_id}
-  //       name="Alvin"
-  //       rating={review.rating}
-  //       date={review.date}
-  //     />
-  //   );
-  // });
-
   const renderRatings = () => {
     if (ratings.length <= 0) {
       return (

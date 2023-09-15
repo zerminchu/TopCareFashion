@@ -7,6 +7,7 @@ import { useForm } from "@mantine/form";
 import { useDispatch } from "react-redux";
 import { showNotifications } from "../../utils/ShowNotification";
 import { Button, PasswordInput, TextInput } from "@mantine/core";
+import ILLogo from "../../assets/illustrations/il_logo.png";
 
 function SignInForm(props) {
   const dispatch = useDispatch();
@@ -17,18 +18,22 @@ function SignInForm(props) {
       email: "",
       password: "",
     },
+    validate: {
+      email: (value) =>
+        value.length <= 0 ? "Email should not be blank" : null,
+    },
   });
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  // const [email, setEmail] = useState("");
+  // const [password, setPassword] = useState("");
 
-  const handleEmailChange = (event) => {
-    setEmail(event.target.value);
-  };
+  // const handleEmailChange = (event) => {
+  //   setEmail(event.target.value);
+  // };
 
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
-  };
+  // const handlePasswordChange = (event) => {
+  //   setPassword(event.target.value);
+  // };
 
   const handleForgotPasswordClick = () => {
     dispatch({ type: "SET_SIGN_IN", value: false });
@@ -40,7 +45,7 @@ function SignInForm(props) {
       dispatch({ type: "SET_LOADING", value: true });
 
       const url =
-        import.meta.env.VITE_API_DEV == "DEV"
+        import.meta.env.VITE_NODE_ENV == "DEV"
           ? import.meta.env.VITE_API_DEV
           : import.meta.env.VITE_API_PROD;
 
@@ -89,35 +94,39 @@ function SignInForm(props) {
 
   return (
     <div className={classes.popupoverlay}>
-      <div className={classes.popupcontent}>
-        <TextInput
-          className={classes.element}
-          label="Email"
-          {...form.getInputProps("email")}
-          withAsterisk
-        />
+      <div className={classes.popupContainer}>
+        <div className={classes.popupcontent}>
+          <img src={ILLogo} width={70} height={70} />
+          <TextInput
+            className={classes.element}
+            label="Email"
+            {...form.getInputProps("email")}
+            withAsterisk
+          />
 
-        <PasswordInput
-          className={classes.element}
-          label="Password"
-          description="Password must include at least 6 words"
-          {...form.getInputProps("password")}
-          withAsterisk
-        />
+          <PasswordInput
+            className={classes.element}
+            label="Password"
+            description="Password must include at least 6 words"
+            {...form.getInputProps("password")}
+            withAsterisk
+          />
 
-        <p
-          onClick={handleForgotPasswordClick}
-          style={{ textDecoration: "underline", cursor: "pointer" }}
-        >
-          Forgot Password?
-        </p>
+          <p
+            className={classes.forgotPassword}
+            onClick={handleForgotPasswordClick}
+            style={{ textDecoration: "underline", cursor: "pointer" }}
+          >
+            Forgot Password?
+          </p>
 
-        <Button className={classes.element} onClick={handleSignInClick}>
-          Sign In
-        </Button>
-        <Button className={classes.element} onClick={handleSignUpClick}>
-          Sign Up
-        </Button>
+          <Button className={classes.element} onClick={handleSignInClick}>
+            Sign In
+          </Button>
+          <Button className={classes.element} onClick={handleSignUpClick}>
+            Sign Up
+          </Button>
+        </div>
       </div>
     </div>
   );

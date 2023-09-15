@@ -6,6 +6,7 @@ import { Select, TextInput, PasswordInput, Button } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { useDispatch } from "react-redux";
 import { showNotifications } from "../../utils/ShowNotification";
+import ILLogo from "../../assets/illustrations/il_logo.png";
 import IconArrowLeft from "../../assets/icons/ic_arrow_left.svg";
 
 function SignUpForm(props) {
@@ -52,7 +53,7 @@ function SignUpForm(props) {
       };
 
       const url =
-        import.meta.env.VITE_API_DEV == "DEV"
+        import.meta.env.VITE_NODE_ENV == "DEV"
           ? import.meta.env.VITE_API_DEV
           : import.meta.env.VITE_API_PROD;
 
@@ -77,68 +78,71 @@ function SignUpForm(props) {
 
   return (
     <div className={classes.popupoverlay}>
-      <div className={classes.popupcontent}>
-        <Select
-          className={classes.element}
-          label="Role"
-          value={form.values.userType}
-          onChange={(value) => form.setValues({ userType: value })}
-          data={[
-            { value: "buyer", label: "Buyer" },
-            { value: "seller", label: "Seller" },
-            { value: "admin", label: "Admin" },
-          ]}
-        />
+      <div className={classes.popupContainer}>
+        <div className={classes.popupcontent}>
+          <img src={ILLogo} width={70} height={70} />
+          <Select
+            className={classes.element}
+            label="Role"
+            value={form.values.userType}
+            onChange={(value) => form.setValues({ userType: value })}
+            data={[
+              { value: "buyer", label: "Buyer" },
+              { value: "seller", label: "Seller" },
+              { value: "admin", label: "Admin" },
+            ]}
+          />
 
-        <TextInput
-          className={classes.element}
-          label="First name"
-          {...form.getInputProps("firstName")}
-          withAsterisk
-        />
-        <TextInput
-          className={classes.element}
-          label="Last name"
-          {...form.getInputProps("lastName")}
-          withAsterisk
-        />
-        <TextInput
-          className={classes.element}
-          label="Email"
-          {...form.getInputProps("email")}
-          withAsterisk
-        />
-        <DateInput
-          className={classes.element}
-          label="Date of birth"
-          value={form.values.dateOfBirth}
-          onChange={(value) => form.setValues({ dateOfBirth: value })}
-          withAsterisk
-          maw={400}
-          mx="auto"
-        />
-        <PasswordInput
-          className={classes.element}
-          label="Password"
-          description="Password must include at least 6 words"
-          {...form.getInputProps("password")}
-          withAsterisk
-        />
-        <PasswordInput
-          className={classes.element}
-          label="Confirm password"
-          description="Password must include at least 6 words"
-          {...form.getInputProps("confirmPassword")}
-          withAsterisk
-        />
-        <div className={classes.bottom}>
-          <p
-            onClick={backOnClick}
-            style={{ textDecoration: "underline", cursor: "pointer" }}
-          >
-            Back
-          </p>
-          <Button onClick={handleSignUpClick}>Sign Up</Button>
+          <TextInput
+            className={classes.element}
+            label="First name"
+            {...form.getInputProps("firstName")}
+            withAsterisk
+          />
+          <TextInput
+            className={classes.element}
+            label="Last name"
+            {...form.getInputProps("lastName")}
+            withAsterisk
+          />
+          <TextInput
+            className={classes.element}
+            label="Email"
+            {...form.getInputProps("email")}
+            withAsterisk
+          />
+
+          <DateInput
+            className={classes.element}
+            label="Date of birth"
+            value={form.values.dateOfBirth}
+            onChange={(value) => form.setValues({ dateOfBirth: value })}
+            withAsterisk
+          />
+
+          <PasswordInput
+            className={classes.element}
+            label="Password"
+            description="Password must include at least 6 words"
+            {...form.getInputProps("password")}
+            withAsterisk
+          />
+          <PasswordInput
+            className={classes.element}
+            label="Confirm password"
+            description="Password must include at least 6 words"
+            {...form.getInputProps("confirmPassword")}
+            withAsterisk
+          />
+          <div className={classes.bottom}>
+            <p
+              onClick={backOnClick}
+              style={{ textDecoration: "underline", cursor: "pointer" }}
+            >
+              Back
+            </p>
+            <Button onClick={handleSignUpClick}>Sign Up</Button>
+          </div>
         </div>
       </div>
     </div>
