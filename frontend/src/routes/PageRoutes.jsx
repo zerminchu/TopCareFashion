@@ -11,6 +11,8 @@ import BusinessProfile from "../pages/Seller/BusinessProfile";
 import Ratings from "../pages/Seller/Ratings";
 import FrequentlyAskQuestion from "../pages/Seller/FrequentlyAskQuestion";
 import FeedbackForm from "../pages/Seller/FeedbackForm";
+import Transactions from "../pages/Buyer/Transactions";
+import BuyerCart from "../pages/Buyer/BuyerCart";
 
 function PageRoutes() {
   return (
@@ -25,6 +27,8 @@ function PageRoutes() {
       <Route path="/seller/frequently-ask-question" element={<FrequentlyAskQuestion />} />
       <Route path="/seller/feedback-form" element={<FeedbackForm />} />
       <Route path="/seller/ratings" element={<Ratings />} />
+      <Route path="/buyer/transactions" element={<Transactions />} />
+      <Route path="/buyer/buyer-cart" element={<BuyerCart />} />
       <Route
         path="/seller/edit-business-profile"
         element={<BusinessProfileForm />}
