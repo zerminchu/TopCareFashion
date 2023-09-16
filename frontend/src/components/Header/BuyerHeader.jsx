@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import React, { useState } from "react";
 import classes from "./BuyerHeader.module.css";
 import { Button, Text } from "@mantine/core";
@@ -12,7 +14,6 @@ import { useNavigate } from "react-router-dom";
 function BuyerHeader(props) {
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState(props.currentUser);
-
 
   const manageViewCart = () => {
     console.log("manage cart click");
@@ -42,15 +43,18 @@ function BuyerHeader(props) {
       </div>
       <div className={classes.rightside}>
         <DropDownMenu currentUser={currentUser} />
-        <div onClick={manageViewWishlist} style={{ cursor: "pointer" }}> {manageViewWishlist}
-        <img src={IconWishlist} width={30} height={30} />
+        <div onClick={manageViewWishlist} style={{ cursor: "pointer" }}>
+          {" "}
+          {manageViewWishlist}
+          <img src={IconWishlist} width={30} height={30} />
         </div>
-        <div onClick={manageViewCart} style={{ cursor: "pointer" }}> {manageViewCart}
-        <img src={IconCart} width={30} height={30} />
+        <div onClick={manageViewCart} style={{ cursor: "pointer" }}>
+          {" "}
+          {manageViewCart}
+          <img src={IconCart} width={30} height={30} />
         </div>
         <img src={IconChat} width={30} height={30} />
       </div>
-
     </div>
   );
 }
