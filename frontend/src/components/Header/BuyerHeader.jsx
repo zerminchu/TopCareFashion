@@ -34,7 +34,6 @@ function BuyerHeader(props) {
           Top Care Fashion
         </Text>
         <a href="#">Home</a>
-        <a href="#">Shop</a>
         <a href="#">Sell</a>
         <a href="#">Men</a>
         <a href="#">Women</a>

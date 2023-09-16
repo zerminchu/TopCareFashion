@@ -25,6 +25,13 @@ import copy from "copy-to-clipboard";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
+import algoliasearch from "algoliasearch/lite";
+import { InstantSearch, RefinementList } from "react-instantsearch";
+
+const searchClient = algoliasearch(
+  "C27B4SWDRQ",
+  "0b05800a581e49cc88d034c1dc7ebab4"
+);
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -167,7 +174,7 @@ function SellerCards() {
 
   const handleSearchTextChange = (value) => {
     setSearchText(value);
-    filterItems(category, value); // Update filter with category and search text
+    filterItems(category, value);
   };
 
   const filterItems = (selectedCategory, search) => {
@@ -242,7 +249,6 @@ function SellerCards() {
           onChange={(value) => handleCategoryChange(value)}
           style={{ marginRight: "16px" }}
         />
-
         <TextInput
           placeholder="Search by item"
           icon={<IconSearch size="1rem" />}
@@ -251,6 +257,9 @@ function SellerCards() {
           value={searchText}
           onChange={(event) => handleSearchTextChange(event.target.value)}
         />
+        {/* <InstantSearch searchClient={searchClient} indexName="instant_search">
+          <RefinementList attribute="brand" />
+        </InstantSearch> */}
       </div>
 
       <div style={{ display: "flex", flexWrap: "wrap" }}>
