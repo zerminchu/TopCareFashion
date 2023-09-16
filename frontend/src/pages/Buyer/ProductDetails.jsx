@@ -4,7 +4,7 @@ import IconChat from "../../assets/icons/ic_chat.svg";
 import IconWishlist from "../../assets/icons/ic_wishlist.svg";
 import ProductRating from "../../components/Rating/ProductRating";
 import IconRating from "../../assets/icons/ic_rating.svg";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import ILLNullImageListing from "../../assets/illustrations/il_null_image_clothes.svg";
 import axios from "axios";
 
@@ -13,6 +13,7 @@ import { showNotifications } from "../../utils/ShowNotification";
 
 function ProductDetails() {
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Dummy data
   const data = location.state?.data;
@@ -23,7 +24,6 @@ function ProductDetails() {
   const [productDetails, setProductDetails] = useState(data);
 
   useEffect(() => {
-    console.log("ITEM ID", itemId);
     const retrieveProductDetailByItemId = async () => {
       try {
         const url =
@@ -67,6 +67,33 @@ function ProductDetails() {
         );
       });
     }
+  };
+
+  const buyNowOnClick = () => {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    const today = `${year}-${month}-${day}`;
+
+    const data = [
+      {
+        store_name: productDetails.store_name,
+        title: productDetails.title,
+        color: "blue",
+        price: productDetails.price,
+        cart_quantity: 1,
+        quantity_available: productDetails.quantity_available,
+        created_at: today,
+        image_urls: productDetails.image_urls,
+      },
+    ];
+
+    console.log("data pass to checkout", data);
+
+    navigate("/buyer/checkout", {
+      state: { data: data },
+    });
   };
 
   const renderReviews = () => {
@@ -288,6 +315,7 @@ function ProductDetails() {
 
               <div className={classes.topButtonContainer}>
                 <Button>Add to cart</Button>
+                <Button onClick={buyNowOnClick}>Buy now</Button>
                 <Button>Share</Button>
                 <div>
                   <img src={IconWishlist} width={30} height={30} />

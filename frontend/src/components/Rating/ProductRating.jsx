@@ -6,7 +6,6 @@ import classes from "./ProductRating.module.css";
 
 function ProductRating(props) {
   const renderReply = () => {
-    console.log(props);
     if (props.reply.length > 0) {
       return (
         <div className={classes.sellerRepliedContainer}>
