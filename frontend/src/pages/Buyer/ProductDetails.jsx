@@ -69,6 +69,28 @@ function ProductDetails() {
     }
   };
 
+  const renderAvailableColour = () => {
+    if (productDetails) {
+      if (!productDetails.colour) {
+        return ["Blue", "Green", "Red", "Cyan"].map((colour) => {
+          return (
+            <Text size="lg" fw={700} align="right" color="blue">
+              {colour}
+            </Text>
+          );
+        });
+      }
+
+      return productDetails.colour.map((colour) => {
+        return (
+          <Text size="lg" fw={700} align="right" color="blue">
+            {colour}
+          </Text>
+        );
+      });
+    }
+  };
+
   const buyNowOnClick = () => {
     const date = new Date();
     const year = date.getFullYear();
@@ -273,6 +295,15 @@ function ProductDetails() {
                   <Text size="lg" fw={700} align="right" color="blue">
                     {productDetails.collection_address}
                   </Text>
+                </div>
+
+                <div className={classes.productItemAtribute}>
+                  <Text size="md" fw={500}>
+                    Variation
+                  </Text>
+                  <div className={classes.sizeContainer}>
+                    {renderAvailableColour()}
+                  </div>
                 </div>
 
                 <div className={classes.productItemAtribute}>
