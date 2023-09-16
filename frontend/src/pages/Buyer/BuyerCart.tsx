@@ -9,23 +9,34 @@ import {
   Center,
   TextInput,
   rem,
-} from '@mantine/core';
-import { keys } from '@mantine/utils';
-import { IconSelector, IconChevronDown, IconChevronUp, IconSearch } from '@tabler/icons-react';
+  Button,
+} from "@mantine/core";
+import { keys } from "@mantine/utils";
+import {
+  IconSelector,
+  IconChevronDown,
+  IconChevronUp,
+  IconSearch,
+} from "@tabler/icons-react";
 import blueShirt from "../../assets/images/blue_shirt.jpg";
+import { DUMMY_CART_PRODUCT } from "../../data/Products";
+import { useNavigate } from "react-router";
 //import
 
 const useStyles = createStyles((theme) => ({
   th: {
-    padding: '0 !important',
+    padding: "0 !important",
   },
 
   control: {
-    width: '100%',
+    width: "100%",
     padding: `${theme.spacing.xs} ${theme.spacing.md}`,
 
-    '&:hover': {
-      backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+    "&:hover": {
+      backgroundColor:
+        theme.colorScheme === "dark"
+          ? theme.colors.dark[6]
+          : theme.colors.gray[0],
     },
   },
 
@@ -36,29 +47,27 @@ const useStyles = createStyles((theme) => ({
   },
 
   rateButton: {
-    backgroundColor: 'black',
-    color: 'white',
-    border: 'none',
-    padding: '8px 20px',
-    cursor: 'pointer',
-    transition: 'background-color 0.3s ease', // Add a transition for hover effect
-    borderRadius: '10px',
+    backgroundColor: "black",
+    color: "white",
+    border: "none",
+    padding: "8px 20px",
+    cursor: "pointer",
+    transition: "background-color 0.3s ease", // Add a transition for hover effect
+    borderRadius: "10px",
   },
 
-  rateButtonHover: {
-    
-  },
+  rateButtonHover: {},
 
   container: {
-    maxWidth: '1200px', // Set the maximum width for the container
-    margin: '20px auto',  // Center the container horizontally and add a top margin
-    border: '1px solid #ccc', // Add an outline border
-    padding: '20px', // Add padding to the container
+    maxWidth: "1200px", // Set the maximum width for the container
+    margin: "20px auto", // Center the container horizontally and add a top margin
+    border: "1px solid #ccc", // Add an outline border
+    padding: "20px", // Add padding to the container
   },
 }));
 
 interface RowData {
-  image: string,
+  image: string;
   title: string;
   type: string;
   color: string;
@@ -81,7 +90,11 @@ interface ThProps {
 
 function Th({ children, reversed, sorted, onSort }: ThProps) {
   const { classes } = useStyles();
-  const Icon = sorted ? (reversed ? IconChevronUp : IconChevronDown) : IconSelector;
+  const Icon = sorted
+    ? reversed
+      ? IconChevronUp
+      : IconChevronDown
+    : IconSelector;
   return (
     <th className={classes.th}>
       <UnstyledButton onClick={onSort} className={classes.control}>
@@ -135,22 +148,39 @@ const dontSort = () => {
 const sampleData: RowData[] = [
   {
     image: blueShirt,
-    title: 'Blue Shirt',
-    type: 'Top Wear',
-    color: 'Blue',
-    size: '28',
-    price: '$28.00',
-    quantity: '1',
+    title: "Blue Shirt",
+    type: "Top Wear",
+    color: "Blue",
+    size: "M",
+    price: "$28.00",
+    quantity: "1",
   },
-  
-  
+  {
+    image:
+      "https://images.unsplash.com/photo-1597350584914-55bb62285896?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1964&q=80",
+    title: "Trendy White Sneakers",
+    type: "Foot Wear",
+    color: "wHITE",
+    size: "XL",
+    price: "$300.00",
+    quantity: "3",
+  },
+  {
+    image:
+      "https://images.unsplash.com/photo-1606480192262-e3b6a9f37142?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cmVkJTIwZ293bnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60",
+    title: "Retro Sunglasses",
+    type: "Top Wear",
+    color: "Red",
+    size: "L",
+    price: "$211.56",
+    quantity: "2",
+  },
 ];
 
-
-
 export function Transactions() {
+  const navigate = useNavigate();
   const { classes } = useStyles();
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
   const [sortedData, setSortedData] = useState<RowData[]>(sampleData);
   const [sortBy, setSortBy] = useState<keyof RowData | null>(null);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
@@ -163,8 +193,8 @@ export function Transactions() {
     }, {})
   );
 
-
-  const setSorting = (field: keyof RowData) => { //sorting 
+  const setSorting = (field: keyof RowData) => {
+    //sorting
     const reversed = field === sortBy ? !reverseSortDirection : false;
     setReverseSortDirection(reversed);
     setSortBy(field);
@@ -180,9 +210,8 @@ export function Transactions() {
     );
   };
 
-  
-
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => { //handle searches
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    //handle searches
     const { value } = event.currentTarget;
     setSearch(value);
     setSortedData(
@@ -196,11 +225,14 @@ export function Transactions() {
     );
   };
 
-  const handleQuantityChange = (event: React.ChangeEvent<HTMLInputElement>, title: string) => {
+  const handleQuantityChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    title: string
+  ) => {
     const { value } = event.currentTarget;
-  
+
     // Use a regular expression to check if the value is a number
-    if (/^\d+$/.test(value) || value === '') {
+    if (/^\d+$/.test(value) || value === "") {
       setEditedQuantity((prevQuantity) => ({
         ...prevQuantity,
         [title]: value,
@@ -211,9 +243,23 @@ export function Transactions() {
     }
   };
 
+  const handleBuyButtonClick = (title) => {
+    const data = DUMMY_CART_PRODUCT;
 
-  const handleBuyButtonClick= () => {
-    console.log("pressed Buy Now");
+    const filteredData = data.filter((item) => item.title === title);
+
+    navigate("/buyer/checkout", {
+      state: { data: filteredData },
+    });
+  };
+
+  const handleProceedCheckoutClick = () => {
+    // Using dummy cart product to send params to checkout page
+    const data = DUMMY_CART_PRODUCT;
+
+    navigate("/buyer/checkout", {
+      state: { data: data },
+    });
   };
 
   const rows = sortedData.map((row) => (
@@ -227,17 +273,17 @@ export function Transactions() {
       <td>{row.size}</td>
       <td>{row.price}</td>
       <td>
-      <input
-        type="text"
-        value={editedQuantity[row.title]}
-        onChange={(e) => handleQuantityChange(e, row.title)}
-        style={{ width: '40px' }} // Limit the width to 20px
-      />
-    </td>
+        <input
+          type="text"
+          value={editedQuantity[row.title]}
+          onChange={(e) => handleQuantityChange(e, row.title)}
+          style={{ width: "40px" }} // Limit the width to 20px
+        />
+      </td>
       <td>
         <UnstyledButton
           className={`${classes.rateButton} ${classes.rateButtonHover}`}
-          onClick={handleBuyButtonClick}
+          onClick={() => handleBuyButtonClick(row.title)}
         >
           Buy Now
         </UnstyledButton>
@@ -258,31 +304,68 @@ export function Transactions() {
           value={search}
           onChange={handleSearchChange}
         />
-        <Table horizontalSpacing="md" verticalSpacing="xs" miw={700} sx={{ tableLayout: 'fixed' }}>
+        <Table
+          horizontalSpacing="md"
+          verticalSpacing="xs"
+          miw={700}
+          sx={{ tableLayout: "fixed" }}
+        >
           <thead>
             <tr>
-              <Th sorted={sortBy === 'image'} reversed={reverseSortDirection} onSort={() => setSorting('image')}>
+              <Th
+                sorted={sortBy === "image"}
+                reversed={reverseSortDirection}
+                onSort={() => setSorting("image")}
+              >
                 {/* no title */}
               </Th>
-              <Th sorted={sortBy === 'title'} reversed={reverseSortDirection} onSort={() => setSorting('title')}>
+              <Th
+                sorted={sortBy === "title"}
+                reversed={reverseSortDirection}
+                onSort={() => setSorting("title")}
+              >
                 Title
               </Th>
-              <Th sorted={sortBy === 'type'} reversed={reverseSortDirection} onSort={() => setSorting('type')}>
+              <Th
+                sorted={sortBy === "type"}
+                reversed={reverseSortDirection}
+                onSort={() => setSorting("type")}
+              >
                 Type
               </Th>
-              <Th sorted={sortBy === 'color'} reversed={reverseSortDirection} onSort={() => setSorting('color')}>
+              <Th
+                sorted={sortBy === "color"}
+                reversed={reverseSortDirection}
+                onSort={() => setSorting("color")}
+              >
                 Color
               </Th>
-              <Th sorted={sortBy === 'size'} reversed={reverseSortDirection} onSort={() => setSorting('size')}>
+              <Th
+                sorted={sortBy === "size"}
+                reversed={reverseSortDirection}
+                onSort={() => setSorting("size")}
+              >
                 Size
               </Th>
-              <Th sorted={sortBy === 'price'} reversed={reverseSortDirection} onSort={() => setSorting('price')}>
+              <Th
+                sorted={sortBy === "price"}
+                reversed={reverseSortDirection}
+                onSort={() => setSorting("price")}
+              >
                 Price
               </Th>
-              <Th sorted={sortBy === 'quantity'} reversed={reverseSortDirection} onSort={() => setSorting('quantity')}>
+              <Th
+                sorted={sortBy === "quantity"}
+                reversed={reverseSortDirection}
+                onSort={() => setSorting("quantity")}
+              >
                 Quantity
               </Th>
-              <Th sorted={sortBy === null} reversed={reverseSortDirection} onSort={() => dontSort}>
+              <Th
+                sorted={sortBy === null}
+                reversed={reverseSortDirection}
+                onSort={() => dontSort}
+              >
                 {/* No title for this column */}
               </Th>
             </tr>
@@ -302,6 +385,7 @@ export function Transactions() {
           </tbody>
         </Table>
       </ScrollArea>
+      <Button onClick={handleProceedCheckoutClick}>Proceed to checkout</Button>
     </div>
   );
 }

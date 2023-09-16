@@ -98,12 +98,11 @@ function ProductDetails() {
     const day = date.getDate().toString().padStart(2, "0");
     const today = `${year}-${month}-${day}`;
 
-    console.log("from product details", productDetails);
-
     const data = [
       {
         store_name: productDetails.store_name,
         title: productDetails.title,
+        collection_address: productDetails.collection_address,
         color: "blue",
         price: productDetails.price,
         cart_quantity: 1,

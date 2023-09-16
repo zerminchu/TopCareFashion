@@ -16,12 +16,11 @@ function BuyerHeader(props) {
   const [currentUser, setCurrentUser] = useState(props.currentUser);
 
   const manageViewCart = () => {
-    console.log("manage cart click");
     navigate("/buyer/buyer-cart");
   };
 
   const manageViewWishlist = () => {
-    console.log("manage wishlist click");
+    navigate("/buyer/wishlist");
   };
 
   return (

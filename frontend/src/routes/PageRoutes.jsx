@@ -15,6 +15,7 @@ import FrequentlyAskQuestion from "../pages/Seller/FrequentlyAskQuestion";
 import FeedbackForm from "../pages/Seller/FeedbackForm";
 import Transactions from "../pages/Buyer/Transactions";
 import BuyerCart from "../pages/Buyer/BuyerCart";
+import Wishlist from "../pages/Buyer/Wishlist";
 
 function PageRoutes() {
   return (
@@ -33,6 +34,7 @@ function PageRoutes() {
       <Route path="/seller/feedback-form" element={<FeedbackForm />} />
       <Route path="/seller/ratings" element={<Ratings />} />
       <Route path="/buyer/product-detail" element={<ProductDetails />} />
+      <Route path="/buyer/wishlist" element={<Wishlist />} />
       <Route path="/buyer/checkout" element={<Checkout />} />
       <Route path="/buyer/transactions" element={<Transactions />} />
       <Route path="/buyer/buyer-cart" element={<BuyerCart />} />

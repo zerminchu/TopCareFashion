@@ -1,6 +1,30 @@
 .container {
   display: flex;
   flex-direction: column;
-  padding-left: 7%;
-  padding-right: 7%;
+  gap: 50px;
+  padding-left: 10%;
+  padding-right: 10%;
+}
+
+.itemList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.summaryContainer {
+  display: flex;
+  border-radius: 5px;
+  background-color: #def1ff;
+  padding: 20px;
+  width: 100%;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.priceContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: end;
 }

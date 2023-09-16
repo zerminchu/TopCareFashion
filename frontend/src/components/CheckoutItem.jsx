@@ -2,15 +2,30 @@ import React from "react";
 import { Stepper, Button, Group, Text, Table, TextInput } from "@mantine/core";
 import ILProductImage from "../assets/illustrations/il_category_top.jpg";
 import ILLNullImageListing from "../assets/illustrations/il_null_image_clothes.svg";
+import IconLocation from "../assets/icons/ic_location.svg";
+
+import classes from "./CheckoutItem.module.css";
 
 function CheckoutItem(props) {
+  console.log(props);
   return (
-    <div>
-      <Text>Pickup address</Text>
-      <Text>{props.collection_address}</Text>
+    <div className={classes.container}>
+      <div className={classes.locationContainer}>
+        <img src={IconLocation} width={30} height={30} />
+        <Text fw={700} size="xl">
+          Pickup Address
+        </Text>
+      </div>
+      <div className={classes.collectionAddress}>
+        <Text fw={500}>{props.collection_address}</Text>
+      </div>
 
-      <Text>{props.store_name}</Text>
-      <Button>Chat with seller</Button>
+      <div className={classes.chatWithSeller}>
+        <Text fw={500} size="lg">
+          {props.store_name}
+        </Text>
+        <Button>Chat with seller</Button>
+      </div>
 
       <div>
         <Table>
@@ -36,8 +51,8 @@ function CheckoutItem(props) {
               <td>{props.title}</td>
               <td>{props.variation}</td>
               <td>${props.price}</td>
-              <td>{props.quantity_available}</td>
-              <td>${props.price * props.quantity_available}</td>
+              <td>{props.cart_quantity}</td>
+              <td>${props.price * props.cart_quantity}</td>
             </tr>
           </tbody>
         </Table>

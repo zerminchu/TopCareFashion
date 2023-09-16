@@ -26,11 +26,13 @@ function Checkout() {
 
   const renderCheckoutItems = () => {
     return checkoutItems.map((item) => {
+      console.log("render checkout item", item);
       return (
         <CheckoutItem
           title={item.title}
           collection_address={item.collection_address}
           price={item.price}
+          cart_quantity={item.cart_quantity}
           quantity_available={item.quantity_available}
           store_name={item.store_name}
           variation={item.color}
@@ -40,6 +42,22 @@ function Checkout() {
     });
   };
 
+  const renderTotalPrice = () => {
+    let totalPrice = 0;
+
+    if (checkoutItems) {
+      checkoutItems.map((item) => {
+        totalPrice += item.price * item.cart_quantity;
+      });
+    }
+
+    return (
+      <Text fw={700} size="xl">
+        ${totalPrice}
+      </Text>
+    );
+  };
+
   const orderOnClick = () => {
     console.log("CHECKOUT !", checkoutItems);
   };
@@ -47,19 +65,25 @@ function Checkout() {
   return (
     <div className={classes.container}>
       <Stepper active={active} onStepClick={setActive} breakpoint="sm">
-        <Stepper.Step label="Shopping cart">Shopping cart</Stepper.Step>
-        <Stepper.Step label="Purchased">Purchased</Stepper.Step>
+        <Stepper.Step label="Shopping cart"></Stepper.Step>
+        <Stepper.Step label="Purchased"></Stepper.Step>
         <Stepper.Step label="Available for pickup">
           Available for pickup
         </Stepper.Step>
         <Stepper.Step label="Completed"></Stepper.Step>
       </Stepper>
-      {renderCheckoutItems()}
 
-      <div>
-        <Text>Summary</Text>
-        <Text>Total payment $56.78</Text>
-        <Button onClick={orderOnClick}>Place an order</Button>
+      <div className={classes.itemList}>{renderCheckoutItems()}</div>
+
+      <div className={classes.summaryContainer}>
+        <Text fw={700} size="xl">
+          Summary
+        </Text>
+        <div className={classes.priceContainer}>
+          <Text fw={500}>Total Price</Text>
+          {renderTotalPrice()}
+          <Button onClick={orderOnClick}>Place an order</Button>
+        </div>
       </div>
     </div>
   );
