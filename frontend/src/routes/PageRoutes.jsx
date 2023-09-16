@@ -17,6 +17,7 @@ import Transactions from "../pages/Buyer/Transactions";
 import BuyerCart from "../pages/Buyer/BuyerCart";
 import Wishlist from "../pages/Buyer/Wishlist";
 import CategoryListingsPage from "../components/CategoryListing";
+import Chatting from "../pages/Chatting";
 
 function PageRoutes() {
   return (
@@ -26,6 +27,7 @@ function PageRoutes() {
       <Route path="/upload-image" element={<ImageUpload />} />;
       <Route path="seller/create-listing" element={<ListItem />} />;
       <Route path="/edit-listing/:id/:item_id/" element={<EditListing />} />
+      <Route path="/chatting" element={<Chatting />} />
       <Route path="/seller-home/:id" element={<SellerHome />} />;
       <Route path="/seller/business-profile" element={<BusinessProfile />} />
       <Route

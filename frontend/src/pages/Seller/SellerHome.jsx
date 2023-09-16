@@ -139,7 +139,7 @@ function SellerCards() {
     const checkOnBoardingCompleted = async () => {
       try {
         const url =
-          import.meta.env.VITE_API_DEV == "DEV"
+          import.meta.env.VITE_NODE_ENV == "DEV"
             ? import.meta.env.VITE_API_DEV
             : import.meta.env.VITE_API_PROD;
 
