@@ -1,0 +1,19 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+  gap: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.container:hover {
+  background-color: #f7f7f7;
+}
+
+.rightSide {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
