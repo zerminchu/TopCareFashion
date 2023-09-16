@@ -76,6 +76,8 @@ function ProductDetails() {
     const day = date.getDate().toString().padStart(2, "0");
     const today = `${year}-${month}-${day}`;
 
+    console.log("from product details", productDetails);
+
     const data = [
       {
         store_name: productDetails.store_name,
@@ -85,11 +87,9 @@ function ProductDetails() {
         cart_quantity: 1,
         quantity_available: productDetails.quantity_available,
         created_at: today,
-        image_urls: productDetails.image_urls,
+        images: productDetails.images,
       },
     ];
-
-    console.log("data pass to checkout", data);
 
     navigate("/buyer/checkout", {
       state: { data: data },

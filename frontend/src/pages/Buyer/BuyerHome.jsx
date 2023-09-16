@@ -18,7 +18,6 @@ function BuyerHome() {
 
   useEffect(() => {
     setproductDummyList(DUMMY_PRODUCT);
-    console.log("DUMMY PRODUCT", DUMMY_PRODUCT);
   }, []);
 
   useEffect(() => {
@@ -31,7 +30,6 @@ function BuyerHome() {
 
         const response = await axios.get(`${url}/item/`);
         setproductList(response.data.data);
-        console.log("REAL PRODUCT", response.data.data);
       } catch (error) {
         console.log(error);
       }

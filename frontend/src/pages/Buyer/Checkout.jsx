@@ -34,7 +34,7 @@ function Checkout() {
           quantity_available={item.quantity_available}
           store_name={item.store_name}
           variation={item.color}
-          image_urls={item.image_urls}
+          images={item.images}
         />
       );
     });

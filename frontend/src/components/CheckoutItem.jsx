@@ -4,6 +4,7 @@ import ILProductImage from "../assets/illustrations/il_category_top.jpg";
 import ILLNullImageListing from "../assets/illustrations/il_null_image_clothes.svg";
 
 function CheckoutItem(props) {
+  console.log(props);
   return (
     <div>
       <Text>Pickup address</Text>
@@ -28,7 +29,7 @@ function CheckoutItem(props) {
             <tr key="my key">
               <td>
                 <img
-                  src={props.image_urls[0] || ILLNullImageListing}
+                  src={props.images[0] || ILLNullImageListing}
                   width={50}
                   height={50}
                 />
