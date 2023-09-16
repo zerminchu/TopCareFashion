@@ -21,19 +21,10 @@ function SignInForm(props) {
     validate: {
       email: (value) =>
         value.length <= 0 ? "Email should not be blank" : null,
+      password: (value) =>
+        value.length <= 0 ? "Password should not be blank" : null,
     },
   });
-
-  // const [email, setEmail] = useState("");
-  // const [password, setPassword] = useState("");
-
-  // const handleEmailChange = (event) => {
-  //   setEmail(event.target.value);
-  // };
-
-  // const handlePasswordChange = (event) => {
-  //   setPassword(event.target.value);
-  // };
 
   const handleForgotPasswordClick = () => {
     dispatch({ type: "SET_SIGN_IN", value: false });
@@ -42,40 +33,42 @@ function SignInForm(props) {
 
   const handleSignInClick = async () => {
     try {
-      dispatch({ type: "SET_LOADING", value: true });
+      if (!form.validate().hasErrors) {
+        dispatch({ type: "SET_LOADING", value: true });
 
-      const url =
-        import.meta.env.VITE_NODE_ENV == "DEV"
-          ? import.meta.env.VITE_API_DEV
-          : import.meta.env.VITE_API_PROD;
+        const url =
+          import.meta.env.VITE_NODE_ENV == "DEV"
+            ? import.meta.env.VITE_API_DEV
+            : import.meta.env.VITE_API_PROD;
 
-      const data = {
-        email: form.values.email,
-        password: form.values.password,
-      };
+        const data = {
+          email: form.values.email,
+          password: form.values.password,
+        };
 
-      const response = await axios.post(`${url}/sign-in/`, data);
+        const response = await axios.post(`${url}/sign-in/`, data);
 
-      if (response.data.status == "success") {
-        const expirationDate = new Date();
-        expirationDate.setTime(expirationDate.getTime() + 60 * 60 * 1000);
+        if (response.data.status == "success") {
+          const expirationDate = new Date();
+          expirationDate.setTime(expirationDate.getTime() + 60 * 60 * 1000);
 
-        Cookies.set("firebaseIdToken", response.data.data.idToken, {
-          expires: expirationDate,
-        });
+          Cookies.set("firebaseIdToken", response.data.data.idToken, {
+            expires: expirationDate,
+          });
 
-        dispatch({ type: "SET_LOADING", value: false });
-        dispatch({ type: "SET_SIGN_IN", value: false });
+          dispatch({ type: "SET_LOADING", value: false });
+          dispatch({ type: "SET_SIGN_IN", value: false });
 
-        showNotifications({
-          status: response.data.status,
-          title: "Success",
-          message: response.data.message,
-        });
+          showNotifications({
+            status: response.data.status,
+            title: "Success",
+            message: response.data.message,
+          });
 
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000); // Waits 1 seconds before reloading
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000); // Waits 1 seconds before reloading
+        }
       }
     } catch (error) {
       dispatch({ type: "SET_LOADING", value: false });
