@@ -63,3 +63,8 @@ class Listing(models.Model):
     avail_status = models.CharField(max_length=255)
     quantity_available = models.CharField(max_length=255)
     collection_address = models.CharField(max_length=255)
+
+class Feedback(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.CharField(max_length=255)
+    category = models.CharField(max_length=255)

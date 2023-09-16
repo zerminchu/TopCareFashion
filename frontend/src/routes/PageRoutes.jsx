@@ -11,6 +11,10 @@ import BusinessProfile from "../pages/Seller/BusinessProfile";
 import Ratings from "../pages/Seller/Ratings";
 import ProductDetails from "../pages/Buyer/ProductDetails";
 import Checkout from "../pages/Buyer/Checkout";
+import FrequentlyAskQuestion from "../pages/Seller/FrequentlyAskQuestion";
+import FeedbackForm from "../pages/Seller/FeedbackForm";
+import Transactions from "../pages/Buyer/Transactions";
+import BuyerCart from "../pages/Buyer/BuyerCart";
 
 function PageRoutes() {
   return (
@@ -18,13 +22,20 @@ function PageRoutes() {
       <Route path="/recover-password" element={<RecoverPassword />} />;
       <Route path="/user-profile" element={<UserProfile />} />;
       <Route path="/upload-image" element={<ImageUpload />} />;
-      <Route path="/create-listing" element={<ListItem />} />;
-      <Route path="/edit-listing" element={<EditListing />} />; //
+      <Route path="seller/create-listing" element={<ListItem />} />;
+      <Route path="seller/edit-listing" element={<EditListing />} />; //
       <Route path="/seller-home/:id" element={<SellerHome />} />;
       <Route path="/seller/business-profile" element={<BusinessProfile />} />
+      <Route
+        path="/seller/frequently-ask-question"
+        element={<FrequentlyAskQuestion />}
+      />
+      <Route path="/seller/feedback-form" element={<FeedbackForm />} />
       <Route path="/seller/ratings" element={<Ratings />} />
       <Route path="/buyer/product-detail" element={<ProductDetails />} />
       <Route path="/buyer/checkout" element={<Checkout />} />
+      <Route path="/buyer/transactions" element={<Transactions />} />
+      <Route path="/buyer/buyer-cart" element={<BuyerCart />} />
       <Route
         path="/seller/edit-business-profile"
         element={<BusinessProfileForm />}

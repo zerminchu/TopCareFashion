@@ -10,6 +10,7 @@ import IconSettings from "../../assets/icons/ic_settings.svg";
 import IconAnalytics from "../../assets/icons/ic_analytics.svg";
 import IconManageListing from "../../assets/icons/ic_manage_listing.svg";
 import IconLogout from "../../assets/icons/ic_logout.svg";
+import IconQuestionMark from "../../assets/icons/ic_questionmark.svg";
 
 import classes from "./DropDownMenu.module.css";
 
@@ -41,6 +42,22 @@ function DropDownMenu(props) {
   const manageListingsOnClick = () => {
     console.log("manage listing click");
   };
+
+  const manageFeedbackForm = () => {
+    console.log("manage feedback");
+    navigate("/seller/feedback-form");
+  };
+
+  const manageFrequentlyAskQuestion = () => {
+    console.log("manage FAQ click");
+    navigate("/seller/frequently-ask-question");
+  };
+
+  const manageTransactionsOnClick = () => {
+    console.log("manage transaction click");
+    navigate("/buyer/transactions");
+  };
+
 
   const logoutOnClick = () => {
     Cookies.remove("firebaseIdToken");
@@ -84,12 +101,27 @@ function DropDownMenu(props) {
             >
               Analytics
             </Menu.Item>
+
             <Menu.Item
               icon={<img src={IconManageListing} />}
               onClick={manageListingsOnClick}
             >
               Manage Listings
             </Menu.Item>
+
+            <Menu.Item
+            icon={<img src={IconQuestionMark} />}
+            onClick={manageFeedbackForm}
+          >
+            Feedback Form
+          </Menu.Item>
+
+          <Menu.Item
+            icon={<img src={IconQuestionMark} />}
+            onClick={manageFrequentlyAskQuestion}
+          >
+            FAQ
+          </Menu.Item>
             <Menu.Item icon={<img src={IconLogout} />} onClick={logoutOnClick}>
               Logout
             </Menu.Item>
@@ -120,6 +152,13 @@ function DropDownMenu(props) {
           <Menu.Dropdown>
             <Menu.Item icon={<img src={IconPerson} />} onClick={profileOnClick}>
               Profile
+            </Menu.Item>
+
+            <Menu.Item
+              icon={<img src={IconAnalytics} />}
+              onClick={manageTransactionsOnClick}
+            >
+              Transactions
             </Menu.Item>
 
             <Menu.Item

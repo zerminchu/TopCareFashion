@@ -7,9 +7,21 @@ import ILLogo from "../../assets/illustrations/il_logo.png";
 import IconChat from "../../assets/icons/ic_chat.svg";
 import IconCart from "../../assets/icons/ic_cart.svg";
 import IconWishlist from "../../assets/icons/ic_wishlist.svg";
+import { useNavigate } from "react-router-dom";
 
 function BuyerHeader(props) {
+  const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState(props.currentUser);
+
+
+  const manageViewCart = () => {
+    console.log("manage cart click");
+    navigate("/buyer/buyer-cart");
+  };
+
+  const manageViewWishlist = () => {
+    console.log("manage wishlist click");
+  };
 
   return (
     <div className={classes.container}>
@@ -30,10 +42,15 @@ function BuyerHeader(props) {
       </div>
       <div className={classes.rightside}>
         <DropDownMenu currentUser={currentUser} />
+        <div onClick={manageViewWishlist} style={{ cursor: "pointer" }}> {manageViewWishlist}
         <img src={IconWishlist} width={30} height={30} />
+        </div>
+        <div onClick={manageViewCart} style={{ cursor: "pointer" }}> {manageViewCart}
         <img src={IconCart} width={30} height={30} />
+        </div>
         <img src={IconChat} width={30} height={30} />
       </div>
+
     </div>
   );
 }
