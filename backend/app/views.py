@@ -5,30 +5,30 @@ from . models import *
 from . serializer import *
 from .exceptions import *
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, parser_classes
 from firebase_admin import firestore
 from django.core.files.base import ContentFile
-
 
 from firebase_admin import storage
 from firebase_admin import auth
 from django.core.validators import validate_email
 from django.core.files.storage import FileSystemStorage
 from rest_framework.permissions import IsAuthenticated
-
+from rest_framework.parsers import MultiPartParser
 from config.firebase import firebase
 
-import pyrebase
-import json
-import base64
 import os
 import uuid
 import random
 import re
+import io
 
 import tensorflow as tf
 from PIL import Image
 import numpy as np
+from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing.image import load_img
+from tensorflow.keras.preprocessing.image import img_to_array
 
 
 @api_view(["POST"])
@@ -417,166 +417,7 @@ def updateProfile(request):
                 "message": str(e)
             }, status=400)
         
-@api_view(["POST"])
-def add_product(request):
-    if request.method == "POST":
-        try:
-            firebaseStorage = firebase.storage()
-            user_id = request.data.get("user_id")
 
-            serializer = ItemSerializer(
-                data=request.data)
-
-            if serializer.is_valid():
-                validated_data = serializer.validated_data
-                category = validated_data["category"]
-                condition = validated_data["condition"]
-                colour = validated_data["colour"]
-                title = validated_data["title"]
-                description = validated_data["description"]
-                price = validated_data["price"]
-                uploaded_files = request.FILES.getlist('files')
-
-                image_urls = []
-
-                for uploaded_file in uploaded_files:
-                    content_type = uploaded_file.content_type
-                    file_extension = os.path.splitext(uploaded_file.name)[1]
-                    unique_filename = f"{uuid.uuid4().hex}{file_extension}"
-
-                    file_content = ContentFile(uploaded_file.read())
-
-                    # Upload file to Firebase Storage
-                    firebaseStorage.child(
-                        f"{unique_filename}").put(file_content, content_type=content_type)
-
-                    # Generate public image URL
-                    image_url = firebaseStorage.child(
-                        f"{unique_filename}").get_url(None)
-                    image_urls.append(image_url)
-
-                    # Upload file to Firebase storage
-
-                    """   bucket = storage.bucket()
-                    blob = bucket.blob(unique_filename)
-                    blob.upload_from_file(
-                        file_content, content_type=content_type)
-
-                    # Get the download URL of the uploaded image
-                    image_url = blob.public_url
-                    image_urls.append(image_url) """
-
-                # Save data to Firestore
-                db = firestore.client()
-                products_ref = db.collection("Item")
-                item_id = products_ref.document()
-                item_id.set({
-                    "item_id": item_id.id,
-                    "category": category,
-                    "condition": condition,
-                    "colour": colour,
-                    "title": title,
-                    "description": description,
-                    "price": price,
-                    "image_urls": image_urls,
-                    "user_id": user_id
-                })
-
-                collection_address = request.data.get("collection_address")
-                quantity_available = request.data.get("quantity_available")
-                avail_status = request.data.get("avail_status")
-
-                if collection_address:
-                    listing_ref = db.collection("Listing")
-                    listing_id = listing_ref.document()
-                    listing_id.set({
-                        "quantity_available": quantity_available,
-                        "avail_status": avail_status,
-                        "listing_id": listing_id.id,
-                        "collection_address": collection_address,
-                        "item_id": item_id.id,
-                    })
-
-                return Response({"message": "Item added successfully"})
-            else:
-                return Response({"errors": serializer.errors}, status=400)
-        except Exception as e:
-            return Response({"error": str(e)}, status=500)
-
-
-# GET All
-
-
-@api_view(["GET"])
-def get_all_item(request):
-    if request.method == "GET":
-        try:
-            db = firestore.Client()
-            products_ref = db.collection("Item")
-            products = products_ref.stream()
-
-            products_data = []
-
-            for product in products:
-                product_data = product.to_dict()
-                products_data.append(product_data)
-
-            return Response(products_data)
-        except Exception as e:
-            return Response({"error": str(e)}, status=500)
-
- # Get by User ID
-
-
-@api_view(["GET"])
-def get_by_sellerId(request, user_id):
-    print(f"Received user_id: {user_id}")  # Add this line for debugging
-
-    if request.method == "GET":
-        try:
-            db = firestore.Client()
-            products_ref = db.collection(
-                "Item").where("user_id", "==", user_id)
-            products = products_ref.stream()
-
-            products_data = []
-
-            for product in products:
-                product_data = product.to_dict()
-                products_data.append(product_data)
-
-            return Response(products_data)
-
-        except Exception as e:
-            return Response({"error": str(e)}, status=500)
-
-
-# IMAGE CLASSIFICATION
-model = tf.keras.models.load_model(
-    './ML/clothing_classification_model.h5')
-
-
-@api_view(["POST"])
-def classify_image(request):
-    if request.method == "POST":
-        try:
-            uploaded_file = request.FILES.get('image')
-
-            print(uploaded_file)
-            # Open and preprocess the uploaded image
-            image = Image.open(uploaded_file)
-            # Resize to match model input size
-            image = image.resize((224, 224))
-            image = np.array(image) / 255.0  # Normalize pixel values
-            image = np.expand_dims(image, axis=0)  # Add batch dimension
-
-            # Run the image through the model for classification
-            prediction = model.predict(image)
-            predicted_class = int(np.argmax(prediction, axis=1))
-
-            return JsonResponse({"category": predicted_class})
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
 
 @api_view(["GET"])
 def getAdvertisementListing(request):
@@ -752,7 +593,315 @@ def getAllItems(request):
                 'data': responseData
             }, status=200)
         except Exception as e:
-            return JsonResponse({
-                "status": "error",
-                "message": str(e)
-            }, status=400)
+            return Response({"error": str(e)}, status=500)
+
+
+@api_view(["POST"])
+def add_product(request):
+    if request.method == "POST":
+        try:
+            firebaseStorage = firebase.storage()
+            user_id = request.data.get("user_id")
+
+            serializer = ItemSerializer(
+                data=request.data)
+
+            if serializer.is_valid():
+                validated_data = serializer.validated_data
+                category = validated_data["category"]
+                condition = validated_data["condition"]
+                colour = validated_data["colour"]
+                title = validated_data["title"]
+                description = validated_data["description"]
+                price = validated_data["price"]
+                uploaded_files = request.FILES.getlist('files')
+
+                image_urls = []
+
+                for uploaded_file in uploaded_files:
+                    content_type = uploaded_file.content_type
+                    file_extension = os.path.splitext(uploaded_file.name)[1]
+                    unique_filename = f"{uuid.uuid4().hex}{file_extension}"
+
+                    file_content = ContentFile(uploaded_file.read())
+
+                    # Upload file to Firebase Storage
+                    firebaseStorage.child(
+                        f"{unique_filename}").put(file_content, content_type=content_type)
+
+                    # Generate public image URL
+                    image_url = firebaseStorage.child(
+                        f"{unique_filename}").get_url(None)
+                    image_urls.append(image_url)
+
+                # Save data to Firestore
+                db = firestore.client()
+                products_ref = db.collection("Item")
+                item_id = products_ref.document()
+                item_id.set({
+                    "item_id": item_id.id,
+                    "category": category,
+                    "condition": condition,
+                    "colour": colour,
+                    "title": title,
+                    "description": description,
+                    "price": price,
+                    "image_urls": image_urls,
+                    "user_id": user_id
+                })
+
+                collection_address = request.data.get("collection_address")
+                quantity_available = request.data.get("quantity_available")
+                avail_status = request.data.get("avail_status")
+
+                if collection_address:
+                    listing_ref = db.collection("Listing")
+                    listing_id = listing_ref.document()
+                    listing_id.set({
+                        "quantity_available": quantity_available,
+                        "avail_status": avail_status,
+                        "listing_id": listing_id.id,
+                        "collection_address": collection_address,
+                        "item_id": item_id.id,
+                    })
+
+                return Response({"message": "Item added successfully"})
+            else:
+                return Response({"errors": serializer.errors}, status=400)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+# GET All
+
+
+@api_view(["GET"])
+def get_all_item(request):
+    if request.method == "GET":
+        try:
+            db = firestore.Client()
+            products_ref = db.collection("Item")
+            products = products_ref.stream()
+
+            products_data = []
+
+            for product in products:
+                product_data = product.to_dict()
+                products_data.append(product_data)
+
+            return Response(products_data)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
+ # Get by User ID
+
+
+@api_view(["GET"])
+def get_by_sellerId(request, user_id):
+    if request.method == "GET":
+        try:
+            db = firestore.Client()
+            products_ref = db.collection(
+                "Item").where("user_id", "==", user_id)
+            products = products_ref.stream()
+
+            products_data = []
+
+            for product in products:
+                product_data = product.to_dict()
+                products_data.append(product_data)
+
+            return Response(products_data)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
+@api_view(["GET"])
+def get_seller_and_item(request, user_id, item_id):
+    if request.method == "GET":
+        try:
+            db = firestore.Client()
+            item_query = db.collection("Item").where(
+                "user_id", "==", user_id).where("item_id", "==", item_id)
+            item_results = item_query.stream()
+
+            listing_query = db.collection(
+                "Listing").where("item_id", "==", item_id)
+            listing_results = listing_query.stream()
+
+            item = {}
+
+            # Iterate through the "Item" collection results and add them to the combined "Item" object
+            for item_result in item_results:
+                item_result_data = item_result.to_dict()
+                item.update(item_result_data)
+
+            # Iterate through the "Listing" collection results and add them to the combined "Item" object
+            for listing_result in listing_results:
+                listing_result_data = listing_result.to_dict()
+                item.update(listing_result_data)
+
+            return Response(item)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
+@api_view(["PUT"])
+def edit_item(request, user_id, item_id):
+    if request.method == "PUT":
+        try:
+            db = firestore.Client()
+            firebaseStorage = firebase.storage()
+
+            products_ref = db.collection("Item").where(
+                "user_id", "==", user_id).where("item_id", "==", item_id)
+            products = products_ref.stream()
+
+            matching_products = list(products)
+            if len(matching_products) == 0:
+                return Response({"message": "Product not found"}, status=404)
+
+            product_doc = matching_products[0].reference
+
+            serializer = ItemSerializer(data=request.data, partial=True)
+
+            if serializer.is_valid():
+                validated_data = serializer.validated_data
+
+                product_doc.update({
+                    "category": validated_data["category"],
+                    "condition": validated_data["condition"],
+                    "colour": validated_data["colour"],
+                    "title": validated_data["title"],
+                    "description": validated_data["description"],
+                    "price": validated_data["price"],
+                    
+                })
+
+                collection_address = request.data.get("collection_address")
+                quantity_available = request.data.get("quantity_available")
+                avail_status = request.data.get("avail_status")
+
+                listing_ref = db.collection("Listing")
+                listing_query = listing_ref.where("item_id", "==", item_id)
+                listing_documents = listing_query.stream()
+
+                for listing_doc in listing_documents:
+                    listing_doc.reference.update({
+                        "collection_address": collection_address,
+                        "quantity_available": quantity_available,
+                        "avail_status": avail_status,
+                    })
+
+                uploaded_files = request.FILES.getlist('files')
+
+                image_urls = []
+
+                for uploaded_file in uploaded_files:
+                    content_type = uploaded_file.content_type
+                    file_extension = os.path.splitext(uploaded_file.name)[1]
+                    unique_filename = f"{uuid.uuid4().hex}{file_extension}"
+
+                    file_content = ContentFile(uploaded_file.read())
+
+                    # Upload file to Firebase Storage
+                    firebaseStorage.child(
+                        f"{unique_filename}").put(file_content, content_type=content_type)
+
+                    # Generate public image URL
+                    image_url = firebaseStorage.child(
+                        f"{unique_filename}").get_url(None)
+                    image_urls.append(image_url)
+
+                    product_doc.update({
+                    "image_urls": image_urls,
+                })
+
+                return Response({"message": "Product updated successfully"})
+            else:
+                return Response({"errors": serializer.errors}, status=400)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
+
+@api_view(["DELETE"])
+def delete_item(request, user_id, item_id):
+    if request.method == "DELETE":
+        try:
+            db = firestore.Client()
+            products_ref = db.collection("Item").where(
+                "user_id", "==", user_id).where("item_id", "==", item_id)
+            products = products_ref.stream()
+
+            matching_products = list(products)
+            if len(matching_products) == 0:
+                return Response({"message": "Product not found"}, status=404)
+
+            product_doc = matching_products[0].reference
+            product_doc.delete()
+
+            listing_ref = db.collection("Listing").where(
+                "item_id", "==", item_id)
+            listing_documents = listing_ref.stream()
+
+            for listing_doc in listing_documents:
+                listing_doc.reference.delete()
+
+            return Response({"message": "Product deleted successfully"})
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
+
+@api_view(["POST"])
+@parser_classes([MultiPartParser])
+def classify_image(request):
+    try:
+        image_data = request.data.get("image")
+
+        model_path = os.path.join('./ML/', "clothing_classification_model.h5")
+
+        # Load the saved model
+        model = load_model(model_path)
+
+        # Function to load and prepare the image in the right shape
+        def load_image(image_data):
+            # Read the content of the uploaded image
+            image_content = image_data.read()
+
+            # Convert the image content to a BytesIO object
+            image_stream = io.BytesIO(image_content)
+
+            img = load_img(image_stream, grayscale=True, target_size=(28, 28))
+            img = img_to_array(img)
+            img = img.reshape(1, 28, 28, 1)
+            img = img.astype('float32')
+            img = img / 255.0
+            return img
+
+        img = load_image(image_data)
+        class_prediction = np.argmax(model.predict(img), axis=-1)
+
+        categories = ["T-shirt/top", "Trouser", "Pullover", "Dress",
+                      "Coat", "Sandal", "Shirt", "Sneaker", "Bag", "Ankle boot"]
+        predicted_category = categories[class_prediction[0]]
+
+        # Narrow down to 3 categories
+        category = None
+        if class_prediction[0] in [0, 2, 3, 4, 6]:
+            category = "Top"
+        elif class_prediction[0] == 1:
+            category = "Bottom"
+        elif class_prediction[0] in [5, 7, 9]:
+            category = "Footwear"
+        elif class_prediction[0] == 8:
+            category = "Accessory"
+        else:
+            category = "Unknown"
+
+        response_data = {
+            "predicted_category": predicted_category,
+            "category": category
+        }
+        return JsonResponse(response_data)
+
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=400)
+
+

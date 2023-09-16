@@ -10,8 +10,19 @@ from app.sellerViews import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    
-    # General
+    path("add-product/", views.add_product, name="add-product"),
+    path("view-item/all/", views.get_by_sellerId, name="view-item/all"),
+    path("view-item/<str:user_id>/",
+         views.get_by_sellerId, name="view-item/user_id"),
+    path("view-item/<str:user_id>/<str:item_id>/",
+         views.get_seller_and_item, name="view-item/user_id/item_id"),
+    path("edit-item/<str:user_id>/<str:item_id>/",
+         views.edit_item, name="edit-item/user_id/item_id"),
+    path("delete-item/<str:user_id>/<str:item_id>/",
+         views.delete_item, name="delete-item/user_id/item_id"),
+
+
+    # Generals
     path("register/", views.signUp, name="register"),
     path("sign-in/", views.signIn, name="login"),
     path("sign-up/", views.signUp, name="sign-up"),
@@ -23,9 +34,7 @@ urlpatterns = [
     path("listing/advertisement", views.getAdvertisementListing, name="get-listing-advertisement"),
     path("listing/<str:item_id>", views.getListingDetailByItemId, name="get-listing-by-item-id"),
 
-    path("view-item/all/", views.get_by_sellerId, name="view-item/all"),
-    path("view-item/<str:user_id>/",
-         views.get_by_sellerId, name="view-item/user_id"),
+    
     path("item/", views.getAllItems, name="get-all-item"),
 
     # Seller

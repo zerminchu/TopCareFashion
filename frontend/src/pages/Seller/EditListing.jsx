@@ -1,170 +1,390 @@
 /* eslint-disable no-unused-vars */
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
-import Cookies from "js-cookie";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import {
-  Text,
-  Button,
+  SimpleGrid,
+  Container,
+  useMantineTheme,
+  createStyles,
+  rem,
   TextInput,
-  Radio,
-  Select,
-  Textarea,
-  NumberInput,
+  Button,
 } from "@mantine/core";
-import DummyImage from "../../assets/illustrations/il_avatar.png";
-import IconUpload from "../../assets/icons/ic_upload.svg";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useForm } from "@mantine/form";
+import { showNotifications } from "../../utils/ShowNotification";
+import { BiUpload } from "react-icons/bi";
 
-import classes from "./EditListing.module.css";
+const useStyles = createStyles((theme) => ({
+  root: {
+    position: "flex",
+  },
+
+  input: {
+    height: rem(54),
+    paddingTop: rem(18),
+    width: "100%",
+  },
+
+  label: {
+    position: "absolute",
+    pointerEvents: "none",
+    fontSize: theme.fontSizes.xs,
+    paddingLeft: theme.spacing.sm,
+    paddingTop: `calc(${theme.spacing.sm} / 2)`,
+    zIndex: 1,
+  },
+}));
 
 function EditListing() {
+  const theme = useMantineTheme();
+  const { id, item_id } = useParams();
+  const { classes } = useStyles();
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState();
+  const [selectedImageIndex, setSelectedImageIndex] = useState(null);
+  const [item, setItem] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [selectedImages, setSelectedImages] = useState(Array(3).fill(null));
+  const [selectedImageUrls, setSelectedImageUrls] = useState([]);
+  const [selectedImageFile, setSelectedImageFile] = useState(null);
 
   const form = useForm({
     initialValues: {
-      category: "top wear",
-      condition: "brand new",
-      colour: "pink",
-      title: "My best clothes",
-      description: "my description ....",
-      price: 879.88,
-      quantity: 23,
-      collection_address: "clementi rd",
-      status: "available",
+      category: "",
+      condition: "",
+      colour: "",
+      title: "",
+      description: "",
+      price: "",
+      collection_address: "",
+      quantity_available: "",
+      avail_status: "",
+      image_urls: "",
+    },
+    validate: {
+      category: (value) => {
+        if (value.length === 0) return "Category is empty.";
+        if (/^\s*$|^\s+.*|.*\s+$/.test(value))
+          return "Category contains trailing/leading whitespaces";
+        return null;
+      },
     },
   });
 
-  const updateOnClickHandler = async () => {
-    console.log(form.values);
+  const handleImageChange = async (index, event) => {
+    const file = event.target.files[0];
+
+    if (file) {
+      setSelectedImageFile(file);
+
+      const reader = new FileReader();
+
+      reader.onload = async (e) => {
+        const newSelectedImages = [...selectedImages];
+        newSelectedImages[index] = e.target.result;
+
+        const newSelectedImageUrls = [...selectedImageUrls];
+        newSelectedImageUrls[index] = null;
+
+        setSelectedImages(newSelectedImages);
+        setSelectedImageUrls(newSelectedImageUrls);
+
+        if (index === 0) {
+          try {
+            const formData = new FormData();
+            formData.append("image", file);
+
+            const response = await axios.post(
+              "http://localhost:8000/classify-image/",
+              formData
+            );
+            const classifiedCategory = response.data.category;
+
+            form.setValues({ ...form.values, category: classifiedCategory });
+          } catch (error) {
+            console.error("Error classifying image:", error);
+          }
+        }
+      };
+
+      reader.readAsDataURL(file);
+    }
   };
 
   useEffect(() => {
-    const setUserSessionData = async () => {
+    const fetchItemDetails = async () => {
       try {
-        const user = await retrieveUserInfo();
-        setCurrentUser(user);
-        console.log(user);
+        const response = await axios.get(
+          `http://localhost:8000/view-item/${id}/${item_id}/`
+        );
+        const itemData = response.data;
+        setItem(itemData);
+        form.setValues({ category: itemData.category });
+        form.setValues({ condition: itemData.condition });
+        form.setValues({ colour: itemData.colour });
+        form.setValues({ title: itemData.title });
+        form.setValues({ description: itemData.description });
+        form.setValues({ price: itemData.price });
+        form.setValues({ quantity_available: itemData.quantity_available });
+        form.setValues({ avail_status: itemData.avail_status });
+        form.setValues({ collection_address: itemData.collection_address });
+
+        setSelectedImages(itemData.image_urls);
+        setSelectedImageUrls(itemData.image_urls);
+
+        console.log(itemData);
       } catch (error) {
-        console.log(error);
+        console.error("Error fetching Item details:", error);
       }
     };
 
-    // Check if user has signed in before
-    if (Cookies.get("firebaseIdToken")) {
-      setUserSessionData();
-    } else {
-      navigate("/", { replace: true });
-    }
+    fetchItemDetails();
   }, []);
 
+  if (item === null) {
+    return <div>Loading...</div>;
+  }
+  const handleSubmit = async () => {
+    try {
+      const response = await axios.put(
+        `http://localhost:8000/edit-item/${id}/${item_id}/`,
+        form.values
+      );
+
+      setIsEditing(false);
+
+      showNotifications({
+        status: response.data.status,
+        title: "Updated Sucessfully",
+        message: response.data.message,
+      });
+
+      navigate(`/`);
+    } catch (error) {
+      console.error("Error updating item:", error);
+
+      /*   notifications.show({
+      title: "Error Updating F&B Item",
+      message: error.response.data,
+      autoClose: 3000,
+    }); */
+    }
+  };
+
+  const handleSaveClick = () => {
+    if (isEditing) {
+      handleSubmit();
+    } else {
+      setIsEditing(true);
+    }
+  };
+
+  const handleDeleteClick = async () => {
+    try {
+      await axios.delete(`http://localhost:8000/delete-item/${id}/${item_id}/`);
+      navigate(`/`);
+    } catch (error) {
+      console.error("Error deleting item:", error);
+    }
+  };
+
   return (
-    <div className={classes.container}>
-      <div className={classes.leftside}>
-        <img src={DummyImage} className={classes.mainimage} />
-        <div className={classes.secondaryimagewrapper}>
-          <img src={DummyImage} className={classes.secondaryimage} />
-          <img src={DummyImage} className={classes.secondaryimage} />
-          <img src={DummyImage} className={classes.secondaryimage} />
-        </div>
-      </div>
-      <div className={classes.rightside}>
-        <div className={classes.menu}>
-          <Text>Category</Text>
-          <TextInput
-            placeholder="Your name"
-            disabled
-            value={form.values.category}
-          />
-          <div className={classes.uploadwrapper}>
-            <img src={IconUpload} width={30} height={30} />
-            <Button>Upload</Button>
+    <form onSubmit={handleSubmit}>
+      <Container my="md">
+        <div
+          style={{
+            border: "1px solid #ccc",
+            padding: "16px",
+            borderRadius: "4px",
+          }}
+        >
+          <div
+            style={{
+              marginBottom: "16px",
+              fontSize: theme.fontSizes.md,
+              fontWeight: "bold",
+            }}
+          >
+            Preview Images
           </div>
+          <SimpleGrid cols={3} breakpoints={[{ maxWidth: "xs", cols: 1 }]}>
+            {selectedImages.map((imageUrl, index) => (
+              <div
+                key={index}
+                onClick={() => setSelectedImageIndex(index)}
+                style={{
+                  width: "100%",
+                  height: "300px",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  marginBottom: "16px",
+                  padding: "16px",
+                  borderRadius: theme.radius.md,
+                  justifyContent: "center", // Center content vertically and horizontally
+                  textAlign: "center", // Center text horizontally
+                  overflow: "hidden", // Clip image to container boundaries
+                  cursor: "pointer", // Change cursor on hover
+                  border: `2px solid ${
+                    selectedImageIndex === index ? theme.colors.teal[6] : "#ccc"
+                  }`,
+                }}
+              >
+                <img
+                  src={imageUrl || item.image_urls[index]}
+                  alt={`Uploaded ${index}`}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    overflow: "hidden",
+                  }}
+                />
+                <label
+                  htmlFor={`image-upload-${index}`}
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    marginTop: "8px",
+                    cursor: "pointer",
+                    color: theme.colors.blue[6],
+                  }}
+                >
+                  <BiUpload size={24} />
+                </label>
+                <input
+                  id={`image-upload-${index}`}
+                  type="file"
+                  accept="image/*"
+                  onChange={(event) => handleImageChange(index, event)}
+                  style={{ display: "none" }}
+                />
+              </div>
+            ))}
+            {item.image_urls.length === 0 && <div>No images available</div>}
+          </SimpleGrid>
         </div>
-
-        <div className={classes.menu}>
-          <Text>Condition</Text>
-          <Radio.Group
-            className={classes.conditionwrapper}
-            value={form.values.condition}
-            onChange={(value) => form.setValues({ condition: value })}
-          >
-            <Radio value="brand new" label="Brand New" />
-            <Radio value="well used" label="Well Used" />
-            <Radio value="heavily used" label="Heavily Used" />
-          </Radio.Group>
+      </Container>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <TextInput
+          label="Category"
+          value={item.category}
+          style={{ width: "50%" }}
+          classNames={classes}
+          disabled={!isEditing}
+          {...form.getInputProps("category")}
+        />
+        <br />
+        <TextInput
+          label="Condition"
+          value={item.condition}
+          style={{ width: "50%" }}
+          classNames={classes}
+          disabled={!isEditing}
+          {...form.getInputProps("condition")}
+        />
+        <br />
+        <TextInput
+          label="Colour"
+          value={item.colour}
+          style={{ width: "50%" }}
+          classNames={classes}
+          disabled={!isEditing}
+          {...form.getInputProps("colour")}
+        />
+        <br />
+        <TextInput
+          label="Title"
+          value={item.title}
+          style={{ width: "50%" }}
+          classNames={classes}
+          disabled={!isEditing}
+          {...form.getInputProps("title")}
+        />
+        <br />
+        <TextInput
+          label="Description"
+          value={item.description}
+          style={{ width: "50%" }}
+          classNames={classes}
+          disabled={!isEditing}
+          {...form.getInputProps("description")}
+        />
+        <br />
+        <TextInput
+          label="Price"
+          value={"S$" + " " + item.price}
+          style={{ width: "50%" }}
+          classNames={classes}
+          disabled={!isEditing}
+          {...form.getInputProps("price")}
+        />
+        <br />
+        <TextInput
+          label="Quantity"
+          value={item.quantity_available}
+          style={{ width: "50%" }}
+          classNames={classes}
+          disabled={!isEditing}
+          {...form.getInputProps("quantity_available")}
+        />
+        <br />
+        <TextInput
+          label="Collection Address"
+          value={item.collection_address}
+          style={{ width: "50%" }}
+          classNames={classes}
+          disabled={!isEditing}
+          {...form.getInputProps("collection_address")}
+        />
+        <br />
+        <TextInput
+          label="Status"
+          value={item.avail_status}
+          style={{ width: "50%" }}
+          classNames={classes}
+          disabled={!isEditing}
+          {...form.getInputProps("avail_status")}
+        />
+        <br />
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+            marginTop: "16px",
+            marginBottom: "16px",
+          }}
+        >
+          <div style={{ marginRight: "8px" }}>
+            <Button
+              type="button"
+              variant="outline"
+              color="red"
+              onClick={handleDeleteClick}
+            >
+              Delete
+            </Button>
+          </div>
+          <div style={{ marginRight: "8px" }}>
+            <Button type="button" onClick={handleSaveClick}>
+              {isEditing ? "Save" : "Update"}
+            </Button>
+          </div>
+          <Button type="button" onClick={() => navigate("/")} variant="outline">
+            Cancel
+          </Button>
         </div>
-
-        <div className={classes.menu}>
-          <Text>Colour</Text>
-          <Select
-            placeholder="Pick one"
-            data={[
-              { value: "red", label: "Red" },
-              { value: "blue", label: "Blue" },
-              { value: "yellow", label: "Yellow" },
-              { value: "pink", label: "Pink" },
-            ]}
-          />
-        </div>
-
-        <div className={classes.menu}>
-          <Text>Title</Text>
-          <TextInput
-            placeholder="Title"
-            value={form.values.title}
-            {...form.getInputProps("title")}
-          />
-        </div>
-
-        <div className={classes.menu}>
-          <Text>Description</Text>
-          <Textarea
-            value={form.values.description}
-            {...form.getInputProps("description")}
-          />
-        </div>
-
-        <div className={classes.menu}>
-          <Text>Price</Text>
-          <NumberInput
-            hideControls
-            decimalSeparator="."
-            thousandsSeparator=","
-            precision={2}
-            step={0.5}
-            defaultValue={form.values.price}
-          />
-        </div>
-
-        <div className={classes.menu}>
-          <Text>Quantity</Text>
-          <NumberInput defaultValue={form.values.quantity} />
-        </div>
-
-        <div className={classes.menu}>
-          <Text>Collection address</Text>
-          <TextInput
-            value={form.values.collection_address}
-            {...form.getInputProps("collection_address")}
-          />
-        </div>
-
-        <div className={classes.menu}>
-          <Text>Status</Text>
-          <Radio.Group
-            className={classes.conditionwrapper}
-            value={form.values.status}
-          >
-            <Radio value="available" label="Available" />
-            <Radio value="unavailable" label="Unavailable" />
-          </Radio.Group>
-        </div>
-
-        <Button onClick={updateOnClickHandler}>Update listing</Button>
       </div>
-    </div>
+    </form>
   );
 }
 

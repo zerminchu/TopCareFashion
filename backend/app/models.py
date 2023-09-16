@@ -21,7 +21,6 @@ class User(models.Model):
     user_id = models.CharField(max_length=100, unique=True, default="", )
     first_name = models.CharField(max_length=100, blank=True, null=False)
     last_name = models.CharField(max_length=100, blank=True, null=False)
-    # verified_status = models.BooleanField(default=False)
     email = models.EmailField(unique=True, null=False, blank=True)
     date_of_birth = models.DateTimeField(null=False, blank=False)
     role = models.CharField(

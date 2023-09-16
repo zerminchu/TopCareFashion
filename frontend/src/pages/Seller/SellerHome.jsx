@@ -1,15 +1,12 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import {
   Card,
   Image,
   Text,
   Group,
-  Badge,
   createStyles,
-  Center,
-  Button,
   rem,
   Menu,
 } from "@mantine/core";
@@ -22,15 +19,12 @@ import { Select } from "@mantine/core";
 import { TextInput } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { Burger } from "@mantine/core";
-import {
-  IconSettings,
-  IconSearch,
-  IconPhoto,
-  IconMessageCircle,
-  IconTrash,
-  IconArrowsLeftRight,
-} from "@tabler/icons-react";
+import { IconSettings, IconSearch, IconCopy } from "@tabler/icons-react";
 import { useDispatch } from "react-redux";
+import copy from "copy-to-clipboard";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -75,10 +69,10 @@ const useStyles = createStyles((theme) => ({
 }));
 
 function SellerCards() {
+  const { id, item_id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { id } = useParams();
   const [category, setCategory] = useState("");
   const [condition, setCondition] = useState("");
   const [price, setPrice] = useState("");
@@ -88,8 +82,16 @@ function SellerCards() {
   const [searchText, setSearchText] = useState("");
   const [opened, { toggle }] = useDisclosure(false);
   const label = opened ? "Close navigation" : "Open navigation";
+  const [openedMenus, setOpenedMenus] = useState(
+    new Array(filteredItems.length).fill(false)
+  );
+  const [isShareModalOpen, setShareModalOpen] = useState(false);
+  const [selectedItemForShare, setSelectedItemForShare] = useState(null);
 
   const [currentUser, setCurrentUser] = useState();
+
+  const [itemURL, setItemURL] = useState("");
+  const [itemTitle, setItemTitle] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -97,7 +99,7 @@ function SellerCards() {
         const response = await axios.get(
           `http://localhost:8000/view-item/${id}/`
         );
-        const fetchedItems = response.data; // Array of items
+        const fetchedItems = response.data;
         setItems(fetchedItems);
         setFilteredItems(fetchedItems);
       } catch (error) {
@@ -130,7 +132,7 @@ function SellerCards() {
     const checkOnBoardingCompleted = async () => {
       try {
         const url =
-          import.meta.env.VITE_NODE_ENV == "DEV"
+          import.meta.env.VITE_API_DEV == "DEV"
             ? import.meta.env.VITE_API_DEV
             : import.meta.env.VITE_API_PROD;
 
@@ -150,7 +152,6 @@ function SellerCards() {
       }
     };
 
-    // Check if user has signed in before
     if (currentUser && currentUser.stripe_id === "") {
       dispatch({ type: "SET_SELLER_ON_BOARD", value: true });
       console.log("you havent onboard");
@@ -185,6 +186,40 @@ function SellerCards() {
     }
 
     setFilteredItems(filtered);
+  };
+
+  const handleBurgerClick = (index) => {
+    const updatedMenus = [...openedMenus];
+    updatedMenus[index] = !updatedMenus[index];
+    setOpenedMenus(updatedMenus);
+  };
+
+  /*  const openShareModal = (item) => {
+    if (!isShareModalOpen) {
+      setSelectedItemForShare(item);
+      setShareModalOpen(true);
+    }
+  };
+
+  const closeShareModal = () => {
+    setSelectedItemForShare(null);
+    setShareModalOpen(false);
+  }; */
+
+  const handleShareClick = (item) => {
+    const itemURL = `https://topcarefashion/listing/${item.item_id}`;
+
+    // Copy the URL to clipboard
+    copy(itemURL);
+
+    toast.success("URL copied to clipboard!", {
+      position: "top-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
   };
 
   return (
@@ -269,19 +304,36 @@ function SellerCards() {
                     marginLeft: "auto",
                   }}
                 >
-                  <Burger opened={opened} onClick={toggle} aria-label={label} />
+                  <Burger
+                    opened={openedMenus[index]}
+                    onClick={() => handleBurgerClick(index)}
+                    aria-label={label}
+                  />
                 </div>
                 <div className={classes.optionsContainer}>
-                  {opened && (
+                  {openedMenus[index] && (
                     <Menu position="bottom" shadow="xs">
                       <Menu.Item icon={<IconSettings size={14} />}>
-                        Edit
+                        <Link
+                          to={`/edit-listing/${item.user_id}/${item.item_id}`}
+                          style={{
+                            textDecoration: "none",
+                            color: "inherit",
+                          }}
+                        >
+                          Edit
+                        </Link>
                       </Menu.Item>
-                      <Menu.Item icon={<IconMessageCircle size={14} />}>
-                        Share
-                      </Menu.Item>
-                      <Menu.Item color="red" icon={<IconTrash size={14} />}>
-                        Delete
+                      <Menu.Item
+                        icon={<IconCopy size={14} />}
+                        onClick={() => handleShareClick(item)}
+                      >
+                        Copy
+                        <ToastContainer
+                          position="top-right"
+                          autoClose={3000}
+                          hideProgressBar
+                        />
                       </Menu.Item>
                     </Menu>
                   )}
@@ -291,8 +343,36 @@ function SellerCards() {
           </Card>
         ))}
       </div>
+      {/*  {selectedItemForShare && (
+        <Modal
+          isOpen={isShareModalOpen}
+          onRequestClose={closeShareModal}
+          contentLabel="Share Modal"
+          className="share-modal"
+          overlayClassName="share-modal-overlay"
+        >
+          <div className="modal-header">
+            <button className="close-button" onClick={closeShareModal}>
+              <AiOutlineClose size={24} />
+            </button>
+          </div>
+          <div className="modal-content">
+            <h2>Share this item</h2>
+            <div className="social-icons">
+              <FacebookShareButton url={itemURL} quote={itemTitle}>
+                <FacebookIcon size={32} round />
+              </FacebookShareButton>
+              <TwitterShareButton url={itemURL} title={itemTitle}>
+                <TwitterIcon size={32} round />
+              </TwitterShareButton>
+              <WhatsappShareButton url={itemURL} title={itemTitle}>
+                <WhatsappIcon size={32} round />
+              </WhatsappShareButton>
+            </div>
+          </div>
+        </Modal> 
+      )} */}
     </div>
   );
 }
-
 export default SellerCards;

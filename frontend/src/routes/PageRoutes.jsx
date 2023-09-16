@@ -23,7 +23,7 @@ function PageRoutes() {
       <Route path="/user-profile" element={<UserProfile />} />;
       <Route path="/upload-image" element={<ImageUpload />} />;
       <Route path="seller/create-listing" element={<ListItem />} />;
-      <Route path="seller/edit-listing" element={<EditListing />} />; //
+      <Route path="/edit-listing/:id/:item_id/" element={<EditListing />} />
       <Route path="/seller-home/:id" element={<SellerHome />} />;
       <Route path="/seller/business-profile" element={<BusinessProfile />} />
       <Route

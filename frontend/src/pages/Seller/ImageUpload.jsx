@@ -16,6 +16,7 @@ import { Container, SimpleGrid } from "@mantine/core";
 import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
 import Cookies from "js-cookie";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import axios from "axios";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -66,9 +67,10 @@ function ImageUpload() {
   const [progress, setProgress] = useState(0);
   const [loaded, setLoaded] = useState(false);
   const [uploadedImages, setUploadedImages] = useState([]);
-  const [showButtons, setShowButtons] = useState(false); // New state to control button visibility
+  const [showButtons, setShowButtons] = useState(false);
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState();
+  const [newlyUploadedIndex, setNewlyUploadedIndex] = useState(null);
 
   const handleDrop = (files) => {
     const allowedFormats = ["image/jpeg", "image/png"];
@@ -113,27 +115,56 @@ function ImageUpload() {
   }, []);
 
   const handleClick = () => {
-    if (uploadedImages.length === 3) {
-      if (uploadedImages.length === 3) {
-        const imageFiles = uploadedImages.map((blobUrl, index) => {
-          const blob = fetch(blobUrl).then((r) => r.blob());
-          return new File([blob], `image_${index}.png`, { type: "image/png" });
-        });
+    if (uploadedImages.length > 0) {
+      const firstImageUrl = uploadedImages[0];
 
-        // Navigate to the ListItem component with uploaded images as state
-        navigate("/create-listing", { state: { uploadedImages: imageFiles } });
-      }
+      fetch(firstImageUrl)
+        .then((response) => response.blob())
+        .then((blob) => {
+          // Create a FormData object and append the first image as a File
+          const formData = new FormData();
+          formData.append(
+            "image",
+            new File([blob], `image.png`, { type: "image/png" })
+          );
+          axios
+            .post("http://localhost:8000/classify-image/", formData)
+            .then((response) => {
+              const data = response.data;
+              console.log(data);
+
+              if (uploadedImages.length === 3) {
+                const imageFiles = uploadedImages.map((blobUrl, index) => {
+                  const blob = fetch(blobUrl).then((r) => r.blob());
+                  return new File([blob], `image_${index}.png`, {
+                    type: "image/png",
+                  });
+                });
+                navigate("/create-listing", {
+                  state: {
+                    uploadedImages: imageFiles,
+                    predictedCategory: data.category,
+                  },
+                });
+              } else {
+                console.log("Less than three images uploaded.");
+              }
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+            });
+        });
     } else if (loaded) {
       setLoaded(false);
       setUploadedImages([]);
-      setShowButtons(false); // Hide buttons when images are cleared
+      setShowButtons(false);
     } else if (!interval.active) {
       interval.start();
     }
   };
 
   const handleDragEnd = (result) => {
-    if (!result.destination) return; // If dropped outside the list, do nothing
+    if (!result.destination) return;
 
     const newImages = [...uploadedImages];
     const [reorderedItem] = newImages.splice(result.source.index, 1);
@@ -225,7 +256,7 @@ function ImageUpload() {
                 </Text>
                 <Text ta="center" fz="sm" mt="xs" c="dimmed">
                   Drag&apos;n&apos;drop files here to upload. We can accept only{" "}
-                  <i>.jpg or .png</i> files that are less than 30mb in size.
+                  <i>.jpg or .png</i> and a maximum of 3 images are allowed.
                 </Text>
               </div>
             </Dropzone>

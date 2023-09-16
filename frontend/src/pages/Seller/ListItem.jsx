@@ -6,6 +6,7 @@ import {
   rem,
   TextInput,
   Button,
+  Select,
 } from "@mantine/core";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -40,9 +41,11 @@ function ListItem() {
   const theme = useMantineTheme();
   const location = useLocation();
   const uploadedImagesFromRoute = location.state?.uploadedImages || [];
+  const predictedCategoryFromRoute = location.state?.predictedCategory || "";
+
   const { classes } = useStyles();
   const [uploadedImages, setUploadedImages] = useState(uploadedImagesFromRoute);
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState(predictedCategoryFromRoute);
   const [condition, setCondition] = useState("");
   const [colour, setColour] = useState("");
   const [title, setTitle] = useState("");
@@ -123,6 +126,7 @@ function ListItem() {
 
       setSubmissionSuccessful(true);
       localStorage.removeItem("uploadedImages");
+      navigate("/");
     } catch (error) {
       dispatch({ type: "SET_LOADING", value: false });
 
@@ -155,7 +159,7 @@ function ListItem() {
             style={{
               marginBottom: "16px",
               fontSize: theme.fontSizes.md,
-              fontWeight: "700px",
+              fontWeight: "bold",
             }}
           >
             {submissionSuccessful ? "Uploaded Images" : "Preview Images"}
@@ -205,21 +209,27 @@ function ListItem() {
           onChange={(event) => setCategory(event.target.value)}
           placeholder="Top"
           classNames={classes}
-          style={{ width: "50%" }}
+          style={{ width: "50%", marginBottom: "10px" }}
         />
-        <br />
-        {/*  <Select
+
+        <Select
           mt="md"
           withinPortal
-          data={["Brand New", "Well Used", "Heavily Used"]}
-          placeholder="Pick one"
+          data={[
+            { value: "Brand New", label: "Brand New" },
+            { value: "Lightly Used", label: "Lightly Used" },
+            { value: "Well Used", label: "Well Used" },
+          ]}
+          placeholder="Brand New"
           label="Condition"
           value={condition}
-          onChange={(event) => setCondition(event.target.value)}
-          //classNames={classes}
-        /> */}
+          classNames={classes}
+          style={{ width: "50%" }}
+          onChange={(selectedValue) => setCondition(selectedValue)}
+        />
+        <br />
 
-        <TextInput
+        {/*  <TextInput
           label="Condition"
           value={condition}
           onChange={(event) => setCondition(event.target.value)}
@@ -227,7 +237,7 @@ function ListItem() {
           classNames={classes}
           style={{ width: "50%" }}
         />
-        <br />
+        <br /> */}
         <TextInput
           label="Colour"
           value={colour}
@@ -241,7 +251,7 @@ function ListItem() {
           label="Title"
           value={title}
           onChange={(event) => setTitle(event.target.value)}
-          placeholder="Give your item a title"
+          placeholder="Oversized T-Shirt"
           classNames={classes}
           style={{ width: "50%" }}
         />
@@ -259,7 +269,7 @@ function ListItem() {
           label="Price"
           value={price}
           onChange={(event) => setPrice(event.target.value)}
-          placeholder="$123"
+          placeholder="$ 123"
           classNames={classes}
           style={{ width: "50%" }}
         />
@@ -282,12 +292,19 @@ function ListItem() {
           style={{ width: "50%" }}
         />
         <br />
-        <TextInput
+        <Select
+          mt="mt"
+          withinPortal
+          data={[
+            { value: "Available", label: "Available" },
+            { value: "Unavailable", label: "Unavailable" },
+          ]}
+          placeholder="Available"
           label="Status"
           value={avail_status}
-          onChange={(event) => setAvailStatus(event.target.value)}
           classNames={classes}
           style={{ width: "50%" }}
+          onChange={(selectedValue) => setAvailStatus(selectedValue)}
         />
         <br />
         <div
