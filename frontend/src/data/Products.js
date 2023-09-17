@@ -298,7 +298,7 @@ export const DUMMY_CART_PRODUCT = [
   {
     store_name: "Elegant Red Gown",
     collection_address: "Sapphire Towers, Suite #405",
-    title: "Retro Sunglasses",
+    title: "Red Dress",
     color: "Red",
     size: "L",
     price: 211.56,

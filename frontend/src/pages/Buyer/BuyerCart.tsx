@@ -171,7 +171,7 @@ const sampleData: RowData[] = [
   {
     image:
       "https://images.unsplash.com/photo-1606480192262-e3b6a9f37142?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cmVkJTIwZ293bnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60",
-    title: "Retro Sunglasses",
+    title: "Red Dress",
     type: "Top Wear",
     color: "Red",
     size: "L",
@@ -250,6 +250,7 @@ export function Transactions() {
     const data = DUMMY_CART_PRODUCT;
 
     const filteredData = data.filter((item) => item.title === title);
+    console.log("pressed buy" +title) //title passes the param
 
     navigate("/buyer/checkout", {
       state: { data: filteredData },
