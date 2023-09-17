@@ -138,6 +138,20 @@ function ProductDetails() {
     });
   };
 
+  const wishlistOnClick = () => {
+    // Check if user sign in before
+    if (!Cookies.get("firebaseIdToken")) {
+      dispatch({ type: "SET_SIGN_IN", value: true });
+      return;
+    }
+
+    showNotifications({
+      status: "success",
+      title: "Success",
+      message: "Product has been added to wishlist",
+    });
+  };
+
   const buyNowOnClick = () => {
     // Check if user sign in before
     if (!Cookies.get("firebaseIdToken")) {
@@ -410,7 +424,13 @@ function ProductDetails() {
                 <Button onClick={buyNowOnClick}>Buy now</Button>
                 <Button>Share</Button>
                 <div>
-                  <img src={IconWishlist} width={30} height={30} />
+                  <img
+                    className={classes.wishlist}
+                    onClick={wishlistOnClick}
+                    src={IconWishlist}
+                    width={30}
+                    height={30}
+                  />
                 </div>
               </div>
             </div>
