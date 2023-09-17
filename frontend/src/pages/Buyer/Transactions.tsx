@@ -21,6 +21,7 @@ import {
   IconSearch,
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
+import { DUMMY_TRANSACTION_PRODUCT } from "../../data/Products";
 
 const useStyles = createStyles((theme) => ({
   th: {
@@ -136,7 +137,6 @@ function sortData(
     payload.search
   );
 }
-const rateWord = "rate";
 
 const dontSort = () => {
   console.log("nothing");
@@ -222,8 +222,16 @@ export function Transactions() {
     );
   };
 
-  const handleRateButtonClick = () => {
-    console.log("pressed rate");
+
+  const handleRateButtonClick = (product_title) => {
+    const data = DUMMY_TRANSACTION_PRODUCT;
+
+    const filteredData = data.filter((item) => item.title === product_title);
+    console.log("pressed buy" +product_title) //title passes the param
+
+    navigate("/buyer/product-rate", {
+      state: { data: filteredData },
+    });
   };
 
   const rows = sortedData.map((row) => (
@@ -239,7 +247,7 @@ export function Transactions() {
         <td>
           <UnstyledButton
             className={`${classes.rateButton} ${classes.rateButtonHover}`}
-            onClick={handleRateButtonClick}
+            onClick={() => handleRateButtonClick(row.product_title)}
           >
             RATE
           </UnstyledButton>
