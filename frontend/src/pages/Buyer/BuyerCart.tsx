@@ -12,13 +12,16 @@ import {
   Button,
 } from "@mantine/core";
 import { keys } from "@mantine/utils";
+
 import {
   IconSelector,
   IconChevronDown,
   IconChevronUp,
   IconSearch,
 } from "@tabler/icons-react";
+import IconTrashBin from "../../assets/icons/ic_trash.svg";
 import blueShirt from "../../assets/images/blue_shirt.jpg";
+
 import { DUMMY_CART_PRODUCT } from "../../data/Products";
 import { useNavigate } from "react-router";
 //import
@@ -50,7 +53,7 @@ const useStyles = createStyles((theme) => ({
     backgroundColor: "black",
     color: "white",
     border: "none",
-    padding: "8px 20px",
+    padding: "8px 15px",
     cursor: "pointer",
     transition: "background-color 0.3s ease", // Add a transition for hover effect
     borderRadius: "10px",
@@ -160,7 +163,7 @@ const sampleData: RowData[] = [
       "https://images.unsplash.com/photo-1597350584914-55bb62285896?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1964&q=80",
     title: "Trendy White Sneakers",
     type: "Foot Wear",
-    color: "wHITE",
+    color: "White",
     size: "XL",
     price: "$300.00",
     quantity: "3",
@@ -262,6 +265,12 @@ export function Transactions() {
     });
   };
 
+  const handleTrashClick = (title) => {
+    // Using dummy cart product to send params to checkout page
+    console.log("Clicked Trash");
+
+  };
+
   const rows = sortedData.map((row) => (
     <tr key={row.title}>
       <td>
@@ -288,6 +297,10 @@ export function Transactions() {
           Buy Now
         </UnstyledButton>
       </td>
+      <td>
+        <img src={IconTrashBin} alt="Trash Icon" width="24" height="24" onClick={() => handleTrashClick(row.title)} />
+      </td>
+      
     </tr>
   ));
 
@@ -361,13 +374,12 @@ export function Transactions() {
               >
                 Quantity
               </Th>
-              <Th
+              {/*<Th
                 sorted={sortBy === null}
                 reversed={reverseSortDirection}
                 onSort={() => dontSort}
-              >
-                {/* No title for this column */}
-              </Th>
+              >}
+              </Th>*/ }
             </tr>
           </thead>
           <tbody>
