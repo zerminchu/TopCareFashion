@@ -1,6 +1,6 @@
 import { ActionIcon, Avatar, Button, Text, TextInput } from "@mantine/core";
 import React, { useState, useEffect } from "react";
-import { DUMMY_CHAT } from "../data/Chats";
+import { DUMMY_CHAT, DUMMY_INBOX } from "../data/Chats";
 import Chat from "../components/Chat";
 import IconSend from "../assets/icons/ic_send.svg";
 
@@ -9,6 +9,7 @@ import InboxUser from "../components/InboxUser";
 
 function Chatting() {
   const [chattingData, setChattingData] = useState([]);
+  const [inboxData, setInboxData] = useState([]);
   const [message, setMessage] = useState("");
 
   const sendOnClick = () => {
@@ -27,6 +28,7 @@ function Chatting() {
 
   useEffect(() => {
     setChattingData(DUMMY_CHAT);
+    setInboxData(DUMMY_INBOX);
   }, []);
 
   const renderChatting = () => {
@@ -36,8 +38,14 @@ function Chatting() {
   };
 
   const renderInboxUser = () => {
-    return [0, 0, 0, 0, 0, 0].map((user) => {
-      return <InboxUser />;
+    return inboxData.map((user, index) => {
+      return (
+        <InboxUser
+          key={index}
+          profileImage={user.profile_image}
+          name={user.name}
+        />
+      );
     });
   };
 

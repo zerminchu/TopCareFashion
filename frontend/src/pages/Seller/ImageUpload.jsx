@@ -140,7 +140,7 @@ function ImageUpload() {
                     type: "image/png",
                   });
                 });
-                navigate("/create-listing", {
+                navigate("/seller/create-listing", {
                   state: {
                     uploadedImages: imageFiles,
                     predictedCategory: data.category,

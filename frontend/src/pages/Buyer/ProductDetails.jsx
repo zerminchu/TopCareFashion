@@ -289,6 +289,15 @@ function ProductDetails() {
 
                 <div className={classes.productItemAtribute}>
                   <Text size="md" fw={500}>
+                    Price
+                  </Text>
+                  <Text size="lg" fw={700} align="right" color="blue">
+                    ${productDetails.price}
+                  </Text>
+                </div>
+
+                <div className={classes.productItemAtribute}>
+                  <Text size="md" fw={500}>
                     Collection address
                   </Text>
                   <Text size="lg" fw={700} align="right" color="blue">

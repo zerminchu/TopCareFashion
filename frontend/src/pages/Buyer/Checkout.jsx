@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Stepper, Button, Group, Text, Table, TextInput } from "@mantine/core";
 
-import ILProductImage from "../../assets/illustrations/il_category_top.jpg";
-import ILLNullImageListing from "../../assets/illustrations/il_null_image_clothes.svg";
 import classes from "./Checkout.module.css";
 import CheckoutItem from "../../components/CheckoutItem";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { showNotifications } from "../../utils/ShowNotification";
+import axios from "axios";
+import { useDispatch } from "react-redux";
 
 function Checkout() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [checkoutItems, setCheckoutItems] = useState([]);
 
@@ -26,7 +28,6 @@ function Checkout() {
 
   const renderCheckoutItems = () => {
     return checkoutItems.map((item) => {
-      console.log("render checkout item", item);
       return (
         <CheckoutItem
           title={item.title}
@@ -58,8 +59,42 @@ function Checkout() {
     );
   };
 
-  const orderOnClick = () => {
-    console.log("CHECKOUT !", checkoutItems);
+  const orderOnClick = async () => {
+    try {
+      dispatch({ type: "SET_LOADING", value: true });
+
+      let checkoutData = [];
+
+      checkoutItems.map((item) => {
+        const data = {
+          title: item.title,
+          quantity: item.cart_quantity,
+          price: parseFloat(item.price),
+        };
+
+        checkoutData.push(data);
+      });
+
+      const url =
+        import.meta.env.VITE_NODE_ENV == "DEV"
+          ? import.meta.env.VITE_API_DEV
+          : import.meta.env.VITE_API_PROD;
+
+      const response = await axios.post(`${url}/buyer/checkout/`, {
+        checkout: checkoutData,
+      });
+
+      dispatch({ type: "SET_LOADING", value: false });
+
+      window.open(response.data.data.url);
+    } catch (error) {
+      dispatch({ type: "SET_LOADING", value: false });
+      showNotifications({
+        status: "error",
+        title: "Error",
+        message: error.response.data.message,
+      });
+    }
   };
 
   return (

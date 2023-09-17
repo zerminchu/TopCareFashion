@@ -7,7 +7,6 @@ import IconLocation from "../assets/icons/ic_location.svg";
 import classes from "./CheckoutItem.module.css";
 
 function CheckoutItem(props) {
-  console.log(props);
   return (
     <div className={classes.container}>
       <div className={classes.locationContainer}>
