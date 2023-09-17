@@ -93,9 +93,7 @@ function productRate() {
 
   const handleSubmitRating = () => {
     // Handle the submission of the rating and feedback
-    console.log("Rating:", rating);
-    console.log("Feedback:", feedback);
-    // Optionally, reset the rating and feedback state variables
+    // reset the rating and feedback state variables
     setRating(0);
     setFeedback("");
     setShowSuccessMessage(true);
