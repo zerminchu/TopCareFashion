@@ -15,5 +15,20 @@
 }
 
 .container {
-  margin-top: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image {
+  align-self: center;
+  cursor: pointer;
+}
+
+.content {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-direction: column;
+  width: 20%;
 }

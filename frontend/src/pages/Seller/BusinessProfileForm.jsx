@@ -34,21 +34,15 @@ function BusinessProfileForm() {
     }
   }, []);
 
-  const form = useForm({
-    initialValues: {
-      businessName: "",
-      businessDescription: "",
-      businessType: "",
-      location: "",
-      socialMedia: "",
-      contactInformation: "",
-    },
-  });
-
+  // Route restriction only for seller
   useEffect(() => {
+    if (currentUser && currentUser.role !== "seller") {
+      navigate("/", { replace: true });
+      return;
+    }
+
     if (currentUser) {
       const businessData = currentUser.business_profile;
-      console.log(businessData);
 
       form.setValues({ businessName: businessData.business_name || "" });
       form.setValues({
@@ -63,43 +57,92 @@ function BusinessProfileForm() {
     }
   }, [currentUser]);
 
+  const form = useForm({
+    initialValues: {
+      businessName: "",
+      businessDescription: "",
+      businessType: "",
+      location: "",
+      socialMedia: "",
+      contactInformation: "",
+    },
+    validate: {
+      businessName: (value) => {
+        if (value.length === 0) return "Business name should not be blank";
+        if (/^\s$|^\s+.|.\s+$/.test(value))
+          return "Business name should not contain trailing/leading whitespaces";
+      },
+      businessDescription: (value) => {
+        if (value.length === 0)
+          return "Business Description should not be blank";
+        if (/^\s$|^\s+.|.\s+$/.test(value))
+          return "Business Description should not contain trailing/leading whitespaces";
+      },
+      businessType: (value) => {
+        if (value.length === 0) return "Business Type should not be blank";
+        if (/^\s$|^\s+.|.\s+$/.test(value))
+          return "Business Type should not contain trailing/leading whitespaces";
+      },
+      location: (value) => {
+        if (value.length === 0) return "Location should not be blank";
+        if (/^\s$|^\s+.|.\s+$/.test(value))
+          return "Location should contain not trailing/leading whitespaces";
+      },
+      socialMedia: (value) => {
+        if (value.length === 0) return "Social Media should not be blank";
+        if (/^\s$|^\s+.|.\s+$/.test(value))
+          return "Social Media should contain not trailing/leading whitespaces";
+      },
+      contactInformation: (value) => {
+        if (value.length === 0)
+          return "Contact Information should not be blank";
+        if (/^\s$|^\s+.|.\s+$/.test(value))
+          return "Contact Infomration should contain not trailing/leading whitespaces";
+      },
+    },
+  });
+
   const cancelOnClick = () => {
     navigate("/", { replace: true });
   };
 
   const saveOnClick = async () => {
     try {
-      dispatch({ type: "SET_LOADING", value: true });
+      if (!form.validate().hasErrors) {
+        dispatch({ type: "SET_LOADING", value: true });
 
-      const data = {
-        business_name: form.values.businessName,
-        business_description: form.values.businessDescription,
-        business_type: form.values.businessType,
-        location: form.values.location,
-        social_media_link: form.values.socialMedia,
-        contact_info: form.values.contactInformation,
-      };
+        const data = {
+          business_name: form.values.businessName,
+          business_description: form.values.businessDescription,
+          business_type: form.values.businessType,
+          location: form.values.location,
+          social_media_link: form.values.socialMedia,
+          contact_info: form.values.contactInformation,
+        };
 
-      const url =
-        import.meta.env.VITE_NODE_ENV == "DEV"
-          ? import.meta.env.VITE_API_DEV
-          : import.meta.env.VITE_API_PROD;
+        const url =
+          import.meta.env.VITE_NODE_ENV == "DEV"
+            ? import.meta.env.VITE_API_DEV
+            : import.meta.env.VITE_API_PROD;
 
-      const response = await axios.post(
-        `${url}/seller/${currentUser.user_id}/update-business-profile/`,
-        data
-      );
+        const response = await axios.post(
+          `${url}/seller/${currentUser.user_id}/update-business-profile/`,
+          data
+        );
 
-      dispatch({ type: "SET_LOADING", value: false });
+        dispatch({ type: "SET_LOADING", value: false });
 
-      showNotifications({
-        status: "success",
-        title: "Success",
-        message: response.data.message,
-      });
+        navigate("/seller/business-profile/");
+
+        showNotifications({
+          status: "success",
+          title: "Success",
+          message: response.data.message,
+        });
+      }
     } catch (error) {
       dispatch({ type: "SET_LOADING", value: false });
-      console.log(error);
+
       showNotifications({
         status: "error",
         title: "Error",

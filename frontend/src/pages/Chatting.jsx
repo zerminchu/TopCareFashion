@@ -6,8 +6,13 @@ import IconSend from "../assets/icons/ic_send.svg";
 
 import classes from "./Chatting.module.css";
 import InboxUser from "../components/InboxUser";
+import { useNavigate } from "react-router-dom";
+import { retrieveUserInfo } from "../utils/RetrieveUserInfoFromToken";
+import Cookies from "js-cookie";
 
 function Chatting() {
+  const navigate = useNavigate();
+  const [currentUser, setCurrentUser] = useState();
   const [chattingData, setChattingData] = useState([]);
   const [inboxData, setInboxData] = useState([]);
   const [message, setMessage] = useState("");
@@ -25,6 +30,24 @@ function Chatting() {
       setMessage("");
     }
   };
+
+  useEffect(() => {
+    const setUserSessionData = async () => {
+      try {
+        const user = await retrieveUserInfo();
+        setCurrentUser(user);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    // Check if user has signed in before
+    if (Cookies.get("firebaseIdToken")) {
+      setUserSessionData();
+    } else {
+      navigate("/", { replace: true });
+    }
+  }, []);
 
   useEffect(() => {
     setChattingData(DUMMY_CHAT);

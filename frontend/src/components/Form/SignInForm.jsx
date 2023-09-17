@@ -19,10 +19,15 @@ function SignInForm(props) {
       password: "",
     },
     validate: {
-      email: (value) =>
-        value.length <= 0 ? "Email should not be blank" : null,
-      password: (value) =>
-        value.length <= 0 ? "Password should not be blank" : null,
+      email: (value) => {
+        if (value.length === 0) return "Email should not be blank";
+        if (/^\s$|^\s+.|.\s+$/.test(value))
+          return "Email should contain trailing/leading whitespaces";
+      },
+
+      password: (value) => {
+        if (value.length === 0) return "Password should not be blank";
+      },
     },
   });
 

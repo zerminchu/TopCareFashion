@@ -1,4 +1,11 @@
-import { TextInput, Text, Textarea, Select, Button, Title, } from "@mantine/core";
+import {
+  TextInput,
+  Text,
+  Textarea,
+  Select,
+  Button,
+  Title,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 
 import classes from "./FeedbackForm.module.css";
@@ -10,14 +17,14 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { showNotifications } from "../../utils/ShowNotification";
 
-
 function FeedbackForm() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const [currentUser, setCurrentUser] = useState();
 
-  useEffect(() => { //set user to null
+  useEffect(() => {
+    //set user to null
     const setUserSessionData = async () => {
       try {
         const user = await retrieveUserInfo();
@@ -35,15 +42,38 @@ function FeedbackForm() {
     }
   }, []);
 
+  // Route restriction only for seller
+  useEffect(() => {
+    if (currentUser && currentUser.role !== "seller") {
+      navigate("/", { replace: true });
+    }
+  }, [currentUser]);
+
   const form = useForm({
-    initialValues: { 
+    initialValues: {
       title: "", //title
       description: "", //descripton
       category: "", //category
     },
+    validate: {
+      title: (value) => {
+        if (value.length === 0) return "Title should not be blank";
+        if (/^\s$|^\s+.|.\s+$/.test(value))
+          return "Title should not contain trailing/leading whitespaces";
+      },
+
+      description: (value) => {
+        if (value.length === 0) return "Description should not be blank";
+        if (/^\s$|^\s+.|.\s+$/.test(value))
+          return "Description should not contain trailing/leading whitespaces";
+      },
+      category: (value) => {
+        if (value.length === 0) return "Category should not be blank";
+        if (/^\s$|^\s+.|.\s+$/.test(value))
+          return "Category should not contain trailing/leading whitespaces";
+      },
+    },
   });
-
-
 
   const cancelOnClick = () => {
     navigate("/", { replace: true });
@@ -51,33 +81,35 @@ function FeedbackForm() {
 
   const saveOnClick = async () => {
     try {
-      dispatch({ type: "SET_LOADING", value: true });
+      if (!form.validate().hasErrors) {
+        dispatch({ type: "SET_LOADING", value: true });
 
-      const data = {
-        title: form.values.title, 
-        description: form.values.description,
-        category: form.values.category,
+        const data = {
+          title: form.values.title,
+          description: form.values.description,
+          category: form.values.category,
+        };
 
-      };
+        const url =
+          import.meta.env.VITE_API_DEV == "DEV"
+            ? import.meta.env.VITE_API_DEV
+            : import.meta.env.VITE_API_PROD;
 
-      const url =
-        import.meta.env.VITE_API_DEV == "DEV"
-          ? import.meta.env.VITE_API_DEV
-          : import.meta.env.VITE_API_PROD;
+        const response = await axios.post(
+          //post request
 
-      const response = await axios.post( //post request 
+          `${url}/feedback/${currentUser.user_id}/feedback-form/`, //new feedback one
+          data
+        );
 
-        `${url}/feedback/${currentUser.user_id}/feedback-form/`, //new feedback one
-        data
-      );
+        dispatch({ type: "SET_LOADING", value: false });
 
-      dispatch({ type: "SET_LOADING", value: false });
-
-      showNotifications({
-        status: "success",
-        title: "Success",
-        message: response.data.message,
-      });
+        showNotifications({
+          status: "success",
+          title: "Success",
+          message: response.data.message,
+        });
+      }
     } catch (error) {
       dispatch({ type: "SET_LOADING", value: false });
       console.log(error);
@@ -95,7 +127,6 @@ function FeedbackForm() {
         Feedback Form
       </Title>
       <div className={classes.content}>
-        
         <TextInput
           value={form.values.businessName}
           label="Title"
@@ -122,7 +153,7 @@ function FeedbackForm() {
           ]}
           onChange={(value) => form.setValues({ category: value })}
         />
-       
+
         <div className={classes.bottom}>
           <Button onClick={saveOnClick}>Save Changes</Button>
           <Button variant="outline" onClick={cancelOnClick}>

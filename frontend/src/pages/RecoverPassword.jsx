@@ -16,30 +16,39 @@ function RecoverPassword() {
     initialValues: {
       email: "",
     },
+    validate: {
+      email: (value) => {
+        if (value.length === 0) return "Email should not be blank";
+        if (/^\s$|^\s+.|.\s+$/.test(value))
+          return "Email should not contain trailing/leading whitespaces";
+      },
+    },
   });
 
   const confirmHandler = async () => {
     try {
-      dispatch({ type: "SET_LOADING", value: true });
+      if (!form.validate().hasErrors) {
+        dispatch({ type: "SET_LOADING", value: true });
 
-      const data = { email: form.values.email };
+        const data = { email: form.values.email };
 
-      const url =
-        import.meta.env.VITE_NODE_ENV == "DEV"
-          ? import.meta.env.VITE_API_DEV
-          : import.meta.env.VITE_API_PROD;
+        const url =
+          import.meta.env.VITE_NODE_ENV == "DEV"
+            ? import.meta.env.VITE_API_DEV
+            : import.meta.env.VITE_API_PROD;
 
-      const response = await axios.post(`${url}/recover-password/`, data);
+        const response = await axios.post(`${url}/recover-password/`, data);
 
-      dispatch({ type: "SET_LOADING", value: false });
+        dispatch({ type: "SET_LOADING", value: false });
 
-      showNotifications({
-        status: "success",
-        title: "Success",
-        message: response.data.message,
-      });
+        showNotifications({
+          status: "success",
+          title: "Success",
+          message: response.data.message,
+        });
 
-      navigate("/");
+        navigate("/");
+      }
     } catch (error) {
       dispatch({ type: "SET_LOADING", value: false });
 

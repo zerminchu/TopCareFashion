@@ -91,30 +91,41 @@ function BusinessProfile() {
     if (Cookies.get("firebaseIdToken")) {
       setUserSessionData();
     } else {
+      console.log("here1");
       navigate("/", { replace: true });
     }
   }, []);
 
+  // Route restriction only for seller
   useEffect(() => {
-    if (currentUser) {
-      const businessProfile = currentUser.business_profile;
+    if (currentUser && currentUser.role !== "seller") {
+      navigate("/", { replace: true });
+      return;
+    }
 
-      businessData.setValues({
-        businessName: businessProfile.business_name || "",
-      });
-      businessData.setValues({
-        businessDescription: businessProfile.business_description || "",
-      });
-      businessData.setValues({
-        businessType: businessProfile.business_type || "",
-      });
-      businessData.setValues({ location: businessProfile.location || "" });
-      businessData.setValues({
-        socialMedia: businessProfile.social_media_link || "",
-      });
-      businessData.setValues({
-        contactInformation: businessProfile.contact_info || "",
-      });
+    if (currentUser) {
+      if (currentUser.role === "seller") {
+        const businessProfile = currentUser.business_profile;
+
+        businessData.setValues({
+          businessName: businessProfile.business_name || "",
+        });
+        businessData.setValues({
+          businessDescription: businessProfile.business_description || "",
+        });
+        businessData.setValues({
+          businessType: businessProfile.business_type || "",
+        });
+        businessData.setValues({ location: businessProfile.location || "" });
+        businessData.setValues({
+          socialMedia: businessProfile.social_media_link || "",
+        });
+        businessData.setValues({
+          contactInformation: businessProfile.contact_info || "",
+        });
+      } else {
+        navigate("/", { replace: true });
+      }
     }
   }, [currentUser]);
 
@@ -259,13 +270,15 @@ function BusinessProfile() {
   const renderContent = () => {
     // Check if user has filled up the business profile or not
     if (currentUser) {
-      const businessData = currentUser.business_profile;
+      if (currentUser.role === "seller") {
+        const businessData = currentUser.business_profile;
 
-      if (Object.values(businessData).every((value) => value === "")) {
-        return renderNewBusinessProfile();
+        if (Object.values(businessData).every((value) => value === "")) {
+          return renderNewBusinessProfile();
+        }
+
+        return renderExistingBusinessProfile();
       }
-
-      return renderExistingBusinessProfile();
     }
   };
 

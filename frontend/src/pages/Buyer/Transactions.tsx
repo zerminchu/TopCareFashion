@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   createStyles,
   Table,
@@ -9,21 +9,33 @@ import {
   Center,
   TextInput,
   rem,
-} from '@mantine/core';
-import { keys } from '@mantine/utils';
-import { IconSelector, IconChevronDown, IconChevronUp, IconSearch } from '@tabler/icons-react';
+} from "@mantine/core";
+import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
+import { showNotifications } from "../../utils/ShowNotification";
+import Cookies from "js-cookie";
+import { keys } from "@mantine/utils";
+import {
+  IconSelector,
+  IconChevronDown,
+  IconChevronUp,
+  IconSearch,
+} from "@tabler/icons-react";
+import { useNavigate } from "react-router-dom";
 
 const useStyles = createStyles((theme) => ({
   th: {
-    padding: '0 !important',
+    padding: "0 !important",
   },
 
   control: {
-    width: '100%',
+    width: "100%",
     padding: `${theme.spacing.xs} ${theme.spacing.md}`,
 
-    '&:hover': {
-      backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+    "&:hover": {
+      backgroundColor:
+        theme.colorScheme === "dark"
+          ? theme.colors.dark[6]
+          : theme.colors.gray[0],
     },
   },
 
@@ -34,24 +46,22 @@ const useStyles = createStyles((theme) => ({
   },
 
   rateButton: {
-    backgroundColor: 'black',
-    color: 'white',
-    border: 'none',
-    padding: '8px 30px',
-    cursor: 'pointer',
-    transition: 'background-color 0.3s ease', // Add a transition for hover effect
-    borderRadius: '10px',
+    backgroundColor: "black",
+    color: "white",
+    border: "none",
+    padding: "8px 30px",
+    cursor: "pointer",
+    transition: "background-color 0.3s ease", // Add a transition for hover effect
+    borderRadius: "10px",
   },
 
-  rateButtonHover: {
-    
-  },
+  rateButtonHover: {},
 
   container: {
-    maxWidth: '1200px', // Set the maximum width for the container
-    margin: '20px auto',  // Center the container horizontally and add a top margin
-    border: '1px solid #ccc', // Add an outline border
-    padding: '20px', // Add padding to the container
+    maxWidth: "1200px", // Set the maximum width for the container
+    margin: "20px auto", // Center the container horizontally and add a top margin
+    border: "1px solid #ccc", // Add an outline border
+    padding: "20px", // Add padding to the container
   },
 }));
 
@@ -77,7 +87,11 @@ interface ThProps {
 
 function Th({ children, reversed, sorted, onSort }: ThProps) {
   const { classes } = useStyles();
-  const Icon = sorted ? (reversed ? IconChevronUp : IconChevronDown) : IconSelector;
+  const Icon = sorted
+    ? reversed
+      ? IconChevronUp
+      : IconChevronDown
+    : IconSelector;
   return (
     <th className={classes.th}>
       <UnstyledButton onClick={onSort} className={classes.control}>
@@ -150,14 +164,44 @@ const sampleData: RowData[] = [
   
 ];
 
-
-
 export function Transactions() {
+  const navigate = useNavigate();
   const { classes } = useStyles();
-  const [search, setSearch] = React.useState('');
+
+  const [currentUser, setCurrentUser] = useState();
+  const [search, setSearch] = React.useState("");
   const [sortedData, setSortedData] = React.useState(sampleData);
   const [sortBy, setSortBy] = React.useState<keyof RowData | null>(null);
   const [reverseSortDirection, setReverseSortDirection] = React.useState(false);
+
+  // Check current user
+  useEffect(() => {
+    const setUserSessionData = async () => {
+      try {
+        const user = await retrieveUserInfo();
+        setCurrentUser(user);
+      } catch (error) {
+        showNotifications({
+          status: "error",
+          title: "Error",
+          message: error.response.data.message,
+        });
+      }
+    };
+
+    if (Cookies.get("firebaseIdToken")) {
+      setUserSessionData();
+    } else {
+      navigate("/", { replace: true });
+    }
+  }, []);
+
+  // Route restriction only for buyer
+  useEffect(() => {
+    if (currentUser && currentUser.role !== "buyer") {
+      navigate("/", { replace: true });
+    }
+  }, [currentUser]);
 
   const setSorting = (field: keyof RowData) => {
     const reversed = field === sortBy ? !reverseSortDirection : false;
@@ -169,10 +213,16 @@ export function Transactions() {
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.currentTarget;
     setSearch(value);
-    setSortedData(sortData(sampleData, { sortBy, reversed: reverseSortDirection, search: value }));
+    setSortedData(
+      sortData(sampleData, {
+        sortBy,
+        reversed: reverseSortDirection,
+        search: value,
+      })
+    );
   };
 
-  const handleRateButtonClick= () => {
+  const handleRateButtonClick = () => {
     console.log("pressed rate");
   };
 
@@ -184,20 +234,25 @@ export function Transactions() {
       <td>{row.product_title}</td>
       <td>{row.price}</td>
       <td>{row.quantity}</td> {/* New column for quantity */}
-      <td>{row.status}</td>   {/* New column for status */}
+      <td>{row.status}</td> {/* New column for status */}
       <td>
-      <td>
-      <UnstyledButton className={`${classes.rateButton} ${classes.rateButtonHover}`} onClick={handleRateButtonClick }>
-        RATE
-      </UnstyledButton>
-    </td>
+        <td>
+          <UnstyledButton
+            className={`${classes.rateButton} ${classes.rateButtonHover}`}
+            onClick={handleRateButtonClick}
+          >
+            RATE
+          </UnstyledButton>
+        </td>
       </td>
     </tr>
   ));
 
   return (
-    <div className={classes.container}> {/* Container div */}
-    <Text weight={700} underline size="24px" mb="sm">
+    <div className={classes.container}>
+      {" "}
+      {/* Container div */}
+      <Text weight={700} underline size="24px" mb="sm">
         Orders
       </Text>
     <ScrollArea>
@@ -239,17 +294,18 @@ export function Transactions() {
           {rows.length > 0 ? (
             rows
           ) : (
-            <tr>
-              <td colSpan={Object.keys(sampleData[0]).length}>
-                <Text weight={500} align="center">
-                  Nothing found
-                </Text>
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </Table>
-    </ScrollArea>
+            
+              <tr>
+                <td colSpan={Object.keys(sampleData[0]).length}>
+                  <Text weight={500} align="center">
+                    Nothing found
+                  </Text>
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </Table>
+      </ScrollArea>
     </div>
   );
 }

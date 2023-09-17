@@ -78,6 +78,13 @@ function ListItem() {
     }
   }, []);
 
+  // Route restriction only for seller
+  useEffect(() => {
+    if (currentUser && currentUser.role !== "seller") {
+      navigate("/", { replace: true });
+    }
+  }, [currentUser]);
+
   useEffect(() => {
     if (location.state?.category) {
       setCategory(location.state.category);

@@ -5,6 +5,8 @@ import classes from "./Checkout.module.css";
 import CheckoutItem from "../../components/CheckoutItem";
 import { useLocation, useNavigate } from "react-router";
 import { showNotifications } from "../../utils/ShowNotification";
+import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
+import Cookies from "js-cookie";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 
@@ -14,9 +16,39 @@ function Checkout() {
   const dispatch = useDispatch();
 
   const [checkoutItems, setCheckoutItems] = useState([]);
+  const [currentUser, setCurrentUser] = useState();
 
   // Using params to pass data from cart / product detail page
   const data = location.state?.data;
+
+  // Check current user
+  useEffect(() => {
+    const setUserSessionData = async () => {
+      try {
+        const user = await retrieveUserInfo();
+        setCurrentUser(user);
+      } catch (error) {
+        showNotifications({
+          status: "error",
+          title: "Error",
+          message: error.response.data.message,
+        });
+      }
+    };
+
+    if (Cookies.get("firebaseIdToken")) {
+      setUserSessionData();
+    } else {
+      navigate("/", { replace: true });
+    }
+  }, []);
+
+  // Route restriction only for buyer
+  useEffect(() => {
+    if (currentUser && currentUser.role !== "buyer") {
+      navigate("/", { replace: true });
+    }
+  }, [currentUser]);
 
   useEffect(() => {
     if (data) {
