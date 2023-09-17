@@ -1,0 +1,33 @@
+.meContainer {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: end;
+}
+
+.otherContainer {
+  display: flex;
+  width: 100%;
+}
+
+.meMessage {
+  display: flex;
+  padding: 10px;
+  max-width: 45%;
+  border-bottom-left-radius: 10px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  background-color: #228be6;
+  color: white;
+}
+
+.otherMessage {
+  display: flex;
+  padding: 10px;
+  border-bottom-right-radius: 10px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  max-width: 45%;
+  background-color: #dff0ff;
+  color: black;
+}

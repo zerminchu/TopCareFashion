@@ -3,15 +3,17 @@ from django.urls import path, include, re_path
 
 from app import views
 from app import sellerViews
+from app import buyerViews
 
 from app.views import *
 from app.sellerViews import *
+from app.buyerViews import *
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("add-product/", views.add_product, name="add-product"),
-    path("view-item/all/", views.get_by_sellerId, name="view-item/all"),
+    path("view-item/all/", views.get_all_item, name="view-item/all"),
     path("view-item/<str:user_id>/",
          views.get_by_sellerId, name="view-item/user_id"),
     path("view-item/<str:user_id>/<str:item_id>/",
@@ -38,7 +40,6 @@ urlpatterns = [
     path("item/", views.getAllItems, name="get-all-item"),
 
     # Seller
-    
     path("add-product/", views.add_product, name="add-product"),
     path("classify-image/", views.classify_image, name="classify-image"),
     path("seller/onboarding/", sellerViews.onBoarding, name="onboarding"),
@@ -48,5 +49,7 @@ urlpatterns = [
     path("seller/<str:user_id>/update-business-profile/", sellerViews.updateBusinessProfile, name="update-business-profile"),
     path("feedback/<str:user_id>/feedback-form/", views.feedbackForm, name="feedback-form"),
     path("seller/<str:user_id>/ratings/", sellerViews.getReviews, name="get-seller-reviews"),
-    
+
+    # Buyer
+    path("buyer/checkout/", buyerViews.getCheckoutLink, name="get-checkout-link"),
 ]

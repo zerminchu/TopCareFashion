@@ -23,6 +23,10 @@ function BuyerHeader(props) {
     navigate("/buyer/wishlist");
   };
 
+  const manageViewChat = () => {
+    navigate("/chatting");
+  };
+
   return (
     <div className={classes.container}>
       <div className={classes.leftside}>
@@ -34,7 +38,6 @@ function BuyerHeader(props) {
           Top Care Fashion
         </Text>
         <a href="#">Home</a>
-        <a href="#">Shop</a>
         <a href="#">Sell</a>
         <a href="#">Men</a>
         <a href="#">Women</a>
@@ -52,7 +55,11 @@ function BuyerHeader(props) {
           {manageViewCart}
           <img src={IconCart} width={30} height={30} />
         </div>
-        <img src={IconChat} width={30} height={30} />
+        <div onClick={manageViewChat} style={{ cursor: "pointer" }}>
+          {" "}
+          {manageViewChat}
+          <img src={IconChat} width={30} height={30} />
+        </div>
       </div>
     </div>
   );

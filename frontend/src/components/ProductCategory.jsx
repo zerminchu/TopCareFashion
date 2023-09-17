@@ -1,11 +1,22 @@
-import React from "react";
+/* eslint-disable react/prop-types */
 import classes from "./ProductCategory.module.css";
 import ILCategoryBottom from "../assets/illustrations/il_category_bottom.jpg";
 import ILCategoryTop from "../assets/illustrations/il_category_top.jpg";
 import ILCategoryFootwear from "../assets/illustrations/il_category_footwear.jpg";
 import { Text } from "@mantine/core";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function ProductCategory(props) {
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const navigate = useNavigate();
+
+  const onClick = () => {
+    setSelectedCategory(props.category);
+    props.setSelectedCategory(props.category);
+    navigate(`/buyer/category-listing/${props.category}`);
+  };
+
   const imageUrl = () => {
     if (props.category === "Bottom") {
       return ILCategoryBottom;
@@ -33,7 +44,12 @@ function ProductCategory(props) {
   };
 
   return (
-    <div className={classes.card}>
+    <div
+      className={`${classes.card} ${
+        selectedCategory === props.category ? classes.activeCategory : ""
+      }`}
+      onClick={onClick}
+    >
       <div className={classes.cardHeader}>
         <img src={imageUrl()} />
       </div>

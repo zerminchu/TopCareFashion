@@ -1,5 +1,6 @@
+/* eslint-disable no-unused-vars */
 import { Button, Text, TextInput } from "@mantine/core";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import ProductCategory from "../../components/ProductCategory";
 import Product from "../../components/Product";
@@ -15,6 +16,10 @@ function BuyerHome() {
   const [search, setSearch] = useState("");
   const [productDummyList, setproductDummyList] = useState([]);
   const [productList, setproductList] = useState([]);
+  const [visibleProductCount, setVisibleProductCount] = useState(6);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [sortOrder, setSortOrder] = useState("ascending");
+  const [sortedProducts, setSortedProducts] = useState([]);
 
   useEffect(() => {
     setproductDummyList(DUMMY_PRODUCT);
@@ -59,9 +64,24 @@ function BuyerHome() {
       );
     });
   };
+  const filteredProducts = productList.filter(
+    (product) =>
+      selectedCategory === "" || product.category === selectedCategory
+  );
 
   const renderRealProducts = () => {
-    return productList.map((product, index) => {
+    const visibleProducts = filteredProducts.slice(0, visibleProductCount);
+    console.log("Selected category:", selectedCategory);
+    const productsToRender =
+      sortOrder === "ascending"
+        ? filteredProducts.slice(0, visibleProductCount)
+        : filteredProducts.slice(-visibleProductCount).reverse();
+
+    const toggleSortOrder = () => {
+      setSortOrder(sortOrder === "ascending" ? "descending" : "ascending");
+    };
+
+    return productsToRender.map((product, index) => {
       return (
         <Product
           key={index}
@@ -78,9 +98,30 @@ function BuyerHome() {
           store_name={product.store_name}
           collection_address={product.collection_address}
           sold={product.sold}
+          category={product.category}
+          condition={product.condition}
         />
       );
     });
+  };
+
+  const renderViewMoreButton = () => {
+    if (visibleProductCount < productList.length) {
+      return (
+        <div className={classes.viewMoreButtonContainer}>
+          <Button
+            variant="outline"
+            className={classes.viewMoreButton}
+            onClick={() => {
+              setVisibleProductCount(visibleProductCount + 6);
+            }}
+          >
+            View More
+          </Button>
+        </div>
+      );
+    }
+    return null;
   };
 
   return (
@@ -106,18 +147,25 @@ function BuyerHome() {
         </div>
 
         <div className={classes.listProductCategory}>
-          <ProductCategory category="Top" />
-          <ProductCategory category="Bottom" />
-          <ProductCategory category="Footwear" />
+          <ProductCategory
+            category="Top"
+            setSelectedCategory={setSelectedCategory}
+          />
+          <ProductCategory
+            category="Bottom"
+            setSelectedCategory={setSelectedCategory}
+          />
+          <ProductCategory
+            category="Footwear"
+            setSelectedCategory={setSelectedCategory}
+          />
         </div>
       </div>
 
       <div>
         <h1>Recommended Products</h1>
-        <div className={classes.listProduct}>
-          {renderDummyProducts()}
-          {renderRealProducts()}
-        </div>
+        <div className={classes.listProduct}>{renderRealProducts()}</div>
+        {renderViewMoreButton()}
       </div>
     </div>
   );
