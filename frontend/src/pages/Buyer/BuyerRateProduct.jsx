@@ -126,7 +126,7 @@ function productRate() {
         />
       </div>
         <div className={classes.submitContainer}>
-          <Button onClick={handleSubmitRating}>Submit Feedback</Button>
+          <Button onClick={handleSubmitRating}>Submit Rating</Button>
           {showSuccessMessage && (
         <Text style={{ color: 'green' }}>Rating submitted successfully!</Text>
       )}
