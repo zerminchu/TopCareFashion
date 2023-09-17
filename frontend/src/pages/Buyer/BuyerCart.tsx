@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   createStyles,
   Table,
@@ -21,6 +21,9 @@ import {
 import blueShirt from "../../assets/images/blue_shirt.jpg";
 import { DUMMY_CART_PRODUCT } from "../../data/Products";
 import { useNavigate } from "react-router";
+import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
+import Cookies from "js-cookie";
+import { showNotifications } from "../../utils/ShowNotification";
 //import
 
 const useStyles = createStyles((theme) => ({
@@ -180,11 +183,42 @@ const sampleData: RowData[] = [
 export function Transactions() {
   const navigate = useNavigate();
   const { classes } = useStyles();
+
+  const [currentUser, setCurrentUser] = useState();
   const [search, setSearch] = useState("");
   const [sortedData, setSortedData] = useState<RowData[]>(sampleData);
   const [sortBy, setSortBy] = useState<keyof RowData | null>(null);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
   const [updatedData, setUpdatedData] = useState<RowData[]>(sampleData);
+
+  // Check current user
+  useEffect(() => {
+    const setUserSessionData = async () => {
+      try {
+        const user = await retrieveUserInfo();
+        setCurrentUser(user);
+      } catch (error) {
+        showNotifications({
+          status: "error",
+          title: "Error",
+          message: error.response.data.message,
+        });
+      }
+    };
+
+    if (Cookies.get("firebaseIdToken")) {
+      setUserSessionData();
+    } else {
+      navigate("/", { replace: true });
+    }
+  }, []);
+
+  // Route restriction only for buyer
+  useEffect(() => {
+    if (currentUser && currentUser.role !== "buyer") {
+      navigate("/", { replace: true });
+    }
+  }, [currentUser]);
 
   const [editedQuantity, setEditedQuantity] = useState<Record<string, string>>( //sets the initial value into the text field
     sampleData.reduce((acc, item) => {

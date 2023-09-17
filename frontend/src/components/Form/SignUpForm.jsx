@@ -22,6 +22,34 @@ function SignUpForm(props) {
       password: "",
       confirmPassword: "",
     },
+    validate: {
+      firstName: (value) => {
+        if (value.length === 0) return "First Name should not be blank";
+        if (/^\s$|^\s+.|.\s+$/.test(value))
+          return "First Name should contain trailing/leading whitespaces";
+      },
+      lastName: (value) => {
+        if (value.length === 0) return "Last Name should not be blank";
+        if (/^\s$|^\s+.|.\s+$/.test(value))
+          return "Last Name should contain trailing/leading whitespaces";
+      },
+      dateOfBirth: (value) => {
+        if (value.length === 0) return "Date Of Birth should not be blank";
+        if (/^\s$|^\s+.|.\s+$/.test(value))
+          return "Date Of Birth should contain trailing/leading whitespaces";
+      },
+      email: (value) => {
+        if (value.length === 0) return "Email should not be blank";
+        if (/^\s$|^\s+.|.\s+$/.test(value))
+          return "Email should contain trailing/leading whitespaces";
+      },
+      password: (value) => {
+        if (value.length === 0) return "Password should not be blank";
+      },
+      confirmPassword: (value) => {
+        if (value.length === 0) return "Confirm Password should not be blank";
+      },
+    },
   });
 
   const backOnClick = () => {
@@ -31,41 +59,43 @@ function SignUpForm(props) {
 
   const handleSignUpClick = async () => {
     try {
-      dispatch({ type: "SET_LOADING", value: true });
+      if (!form.validate().hasErrors) {
+        dispatch({ type: "SET_LOADING", value: true });
 
-      // Convert date object to YYYY-MM-DD
-      const inputDate = new Date(form.values.dateOfBirth);
-      const year = inputDate.getFullYear();
-      const month = String(inputDate.getMonth() + 1).padStart(2, "0");
-      const day = String(inputDate.getDate()).padStart(2, "0");
-      const formattedDate = `${year}-${month}-${day}`;
+        // Convert date object to YYYY-MM-DD
+        const inputDate = new Date(form.values.dateOfBirth);
+        const year = inputDate.getFullYear();
+        const month = String(inputDate.getMonth() + 1).padStart(2, "0");
+        const day = String(inputDate.getDate()).padStart(2, "0");
+        const formattedDate = `${year}-${month}-${day}`;
 
-      const data = {
-        role: form.values.userType,
-        name: {
-          first_name: form.values.firstName,
-          last_name: form.values.lastName,
-        },
-        email: form.values.email,
-        date_of_birth: formattedDate,
-        password: form.values.password,
-        confirm_password: form.values.confirmPassword,
-      };
+        const data = {
+          role: form.values.userType,
+          name: {
+            first_name: form.values.firstName,
+            last_name: form.values.lastName,
+          },
+          email: form.values.email,
+          date_of_birth: formattedDate,
+          password: form.values.password,
+          confirm_password: form.values.confirmPassword,
+        };
 
-      const url =
-        import.meta.env.VITE_NODE_ENV == "DEV"
-          ? import.meta.env.VITE_API_DEV
-          : import.meta.env.VITE_API_PROD;
+        const url =
+          import.meta.env.VITE_NODE_ENV == "DEV"
+            ? import.meta.env.VITE_API_DEV
+            : import.meta.env.VITE_API_PROD;
 
-      const response = await axios.post(`${url}/sign-up/`, data);
+        const response = await axios.post(`${url}/sign-up/`, data);
 
-      dispatch({ type: "SET_LOADING", value: false });
+        dispatch({ type: "SET_LOADING", value: false });
 
-      showNotifications({
-        status: "success",
-        title: "Success",
-        message: response.data.message,
-      });
+        showNotifications({
+          status: "success",
+          title: "Success",
+          message: response.data.message,
+        });
+      }
     } catch (error) {
       dispatch({ type: "SET_LOADING", value: false });
       showNotifications({

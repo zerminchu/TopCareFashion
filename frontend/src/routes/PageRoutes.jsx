@@ -22,34 +22,37 @@ import Chatting from "../pages/Chatting";
 function PageRoutes() {
   return (
     <Routes>
-      <Route path="/recover-password" element={<RecoverPassword />} />;
-      <Route path="/user-profile" element={<UserProfile />} />;
-      <Route path="/upload-image" element={<ImageUpload />} />;
+      {/* Private route for seller */}
       <Route path="seller/create-listing" element={<ListItem />} />;
       <Route path="/edit-listing/:id/:item_id/" element={<EditListing />} />
-      <Route path="/chatting" element={<Chatting />} />
       <Route path="/seller-home/:id" element={<SellerHome />} />;
       <Route path="/seller/business-profile" element={<BusinessProfile />} />
       <Route
         path="/seller/frequently-ask-question"
         element={<FrequentlyAskQuestion />}
       />
+      <Route path="/seller/upload-image" element={<ImageUpload />} />;
+      <Route
+        path="/seller/edit-business-profile"
+        element={<BusinessProfileForm />}
+      />
       <Route path="/seller/feedback-form" element={<FeedbackForm />} />
       <Route path="/seller/ratings" element={<Ratings />} />
+      {/* Private route for buyer */}
       <Route path="/buyer/product-detail" element={<ProductDetails />} />
       <Route path="/buyer/wishlist" element={<Wishlist />} />
       <Route path="/buyer/checkout" element={<Checkout />} />
       <Route path="/buyer/transactions" element={<Transactions />} />
       <Route path="/buyer/buyer-cart" element={<BuyerCart />} />
       <Route
-        path="/seller/edit-business-profile"
-        element={<BusinessProfileForm />}
-      />
-      <Route
         path="/buyer/category-listing/:category"
         element={<CategoryListingsPage />}
       />
-      ;
+      {/* Private route */}
+      <Route path="/user-profile" element={<UserProfile />} />;
+      <Route path="/chatting" element={<Chatting />} />
+      {/* Public route */}
+      <Route path="/recover-password" element={<RecoverPassword />} />;
       <Route path="/" element={<Home />} />
       <Route path="*" element={<h1>Page not found</h1>} />
     </Routes>

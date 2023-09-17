@@ -114,6 +114,13 @@ function ImageUpload() {
     }
   }, []);
 
+  // Route restriction only for seller
+  useEffect(() => {
+    if (currentUser && currentUser.role !== "seller") {
+      navigate("/", { replace: true });
+    }
+  }, [currentUser]);
+
   const handleClick = () => {
     if (uploadedImages.length > 0) {
       const firstImageUrl = uploadedImages[0];

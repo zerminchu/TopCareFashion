@@ -16,7 +16,7 @@ function SellerHeader(props) {
   const [currentUser, setCurrentUser] = useState(props.currentUser);
 
   const listItem = () => {
-    navigate("/upload-image");
+    navigate("/seller/upload-image");
   };
 
   return (

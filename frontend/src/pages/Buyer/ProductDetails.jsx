@@ -7,13 +7,46 @@ import IconRating from "../../assets/icons/ic_rating.svg";
 import { useLocation, useNavigate } from "react-router-dom";
 import ILLNullImageListing from "../../assets/illustrations/il_null_image_clothes.svg";
 import axios from "axios";
+import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
+import Cookies from "js-cookie";
 
 import classes from "./ProductDetails.module.css";
 import { showNotifications } from "../../utils/ShowNotification";
+import { useDispatch } from "react-redux";
 
 function ProductDetails() {
+  const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
+
+  const [currentUser, setCurrentUser] = useState();
+
+  // Check current user
+  useEffect(() => {
+    const setUserSessionData = async () => {
+      try {
+        const user = await retrieveUserInfo();
+        setCurrentUser(user);
+      } catch (error) {
+        showNotifications({
+          status: "error",
+          title: "Error",
+          message: error.response.data.message,
+        });
+      }
+    };
+
+    if (Cookies.get("firebaseIdToken")) {
+      setUserSessionData();
+    }
+  }, []);
+
+  // Route restriction only for buyer
+  useEffect(() => {
+    if (currentUser && currentUser.role !== "buyer") {
+      navigate("/", { replace: true });
+    }
+  }, [currentUser]);
 
   // Dummy data
   const data = location.state?.data;
@@ -91,7 +124,27 @@ function ProductDetails() {
     }
   };
 
+  const addToCartOnClick = () => {
+    // Check if user sign in before
+    if (!Cookies.get("firebaseIdToken")) {
+      dispatch({ type: "SET_SIGN_IN", value: true });
+      return;
+    }
+
+    showNotifications({
+      status: "success",
+      title: "Success",
+      message: "Product has been added to cart",
+    });
+  };
+
   const buyNowOnClick = () => {
+    // Check if user sign in before
+    if (!Cookies.get("firebaseIdToken")) {
+      dispatch({ type: "SET_SIGN_IN", value: true });
+      return;
+    }
+
     const date = new Date();
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, "0");
@@ -353,7 +406,7 @@ function ProductDetails() {
               </div>
 
               <div className={classes.topButtonContainer}>
-                <Button>Add to cart</Button>
+                <Button onClick={addToCartOnClick}>Add to cart</Button>
                 <Button onClick={buyNowOnClick}>Buy now</Button>
                 <Button>Share</Button>
                 <div>
