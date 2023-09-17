@@ -142,11 +142,7 @@ function sortData(
     payload.search
   );
 }
-const rateWord = "rate";
 
-const dontSort = () => {
-  console.log("nothing");
-};
 
 const sampleData: RowData[] = [
   {
@@ -187,7 +183,9 @@ export function Transactions() {
   const [sortedData, setSortedData] = useState<RowData[]>(sampleData);
   const [sortBy, setSortBy] = useState<keyof RowData | null>(null);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
-  const [updatedData, setUpdatedData] = useState<RowData[]>(sampleData);
+  const [filteredOutItems, setFilteredOutItems] = useState<RowData[]>([]); // Specify the type explicitly
+  //const [filteredOutTitles, setFilteredOutTitles] = useState<string[]>([]);
+  
 
   const [editedQuantity, setEditedQuantity] = useState<Record<string, string>>( //sets the initial value into the text field
     sampleData.reduce((acc, item) => {
@@ -217,6 +215,7 @@ export function Transactions() {
     //handle searches
     const { value } = event.currentTarget;
     setSearch(value);
+    console.log(value) //can use this, set as the title (filter out the title)
     setSortedData(
       sortData(
         sampleData.map((item) => ({
@@ -257,7 +256,7 @@ export function Transactions() {
     });
   };
 
-  const handleProceedCheckoutClick = () => {
+  const handleProceedCheckoutClick1 = () => {
     // Using dummy cart product to send params to checkout page
     const data = DUMMY_CART_PRODUCT;
 
@@ -266,11 +265,39 @@ export function Transactions() {
     });
   };
 
-  const handleTrashClick = (title) => {
-    // Using dummy cart product to send params to checkout page
-    console.log("Clicked Trash");
+  
 
+
+  const handleTrashClick = (title) => {
+    // Find the item with the specified title
+    const itemToFilterOut = sampleData.find((item) => item.title === title);
+    // Filter out the item with the specified title from the current sortedData
+    const updatedData = sortedData.filter((item) => item.title !== title); 
+
+    // Update the sortedData state with the filtered data
+    setSortedData(updatedData);
+
+    // Add the filtered-out item to the filteredOutItems state
+    setFilteredOutItems((prevFilteredOutItems) => [
+      ...(prevFilteredOutItems || []), // Use a default empty array if prevFilteredOutItems is undefined
+      itemToFilterOut!,
+    ]);
   };
+
+
+  const handleProceedCheckoutClick = () => {
+    const data = DUMMY_CART_PRODUCT;
+  
+    // Filter out the items with titles that are in filteredOutItems
+    const filteredData = data.filter((item) =>
+      !filteredOutItems.some((filteredItem) => filteredItem.title === item.title)
+    );
+  
+    navigate("/buyer/checkout", {
+      state: { data: filteredData },
+    });
+  };
+
 
   const rows = sortedData.map((row) => (
     <tr key={row.title}>
