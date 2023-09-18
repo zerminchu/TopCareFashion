@@ -134,8 +134,14 @@ function ImageUpload() {
             "image",
             new File([blob], `image.png`, { type: "image/png" })
           );
+
+          const url =
+            import.meta.env.VITE_NODE_ENV == "DEV"
+              ? import.meta.env.VITE_API_DEV
+              : import.meta.env.VITE_API_PROD;
+
           axios
-            .post("http://localhost:8000/classify-image/", formData)
+            .post(`${url}/classify-image/`, formData)
             .then((response) => {
               const data = response.data;
               console.log(data);

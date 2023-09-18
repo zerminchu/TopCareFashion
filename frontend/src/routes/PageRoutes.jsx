@@ -43,7 +43,6 @@ function PageRoutes() {
       />
       <Route path="/seller/feedback-form" element={<FeedbackForm />} />
       <Route path="/seller/ratings" element={<Ratings />} />
-      <Route path="/seller/order-status" element={<OrderStatus />} />;
       {/* Private route for buyer */}
       <Route path="/buyer/product-detail" element={<ProductDetails />} />
       <Route path="/buyer/wishlist" element={<Wishlist />} />
