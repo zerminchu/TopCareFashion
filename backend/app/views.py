@@ -204,7 +204,7 @@ def signIn(request):
             
             return JsonResponse({
                 'status': "success",
-                'message': "User login successfully",
+                'message': "Logged in Successful",
                 'data': user
             }, status=200)
 

@@ -19,9 +19,10 @@ import Wishlist from "../pages/Buyer/Wishlist";
 import CategoryListingsPage from "../components/CategoryListing";
 import Chatting from "../pages/Chatting";
 import NotFoundImage from "../components/NotFound";
-/* import OutfitRecommender from "../pages/Buyer/OutfitRecommender";
- */ import ProductRate from "../pages/Buyer/BuyerRateProduct";
+import OutfitRecommender from "../pages/Buyer/OutfitRecommender";
+import ProductRate from "../pages/Buyer/BuyerRateProduct";
 import OrderStatus from "../pages/Seller/OrderStatus";
+import PremiumPopup from "../pages/Buyer/PremiumPage";
 
 function PageRoutes() {
   return (
@@ -54,9 +55,9 @@ function PageRoutes() {
         path="/buyer/category-listing/:category"
         element={<CategoryListingsPage />}
       />
+      <Route path="/buyer/premium-feature" element={<PremiumPopup />} />
       <Route path="/not-found" element={<NotFoundImage />} />
-      {/*       <Route path="/outfit-recommender" element={<OutfitRecommender />} />;
-       */}{" "}
+      <Route path="/outfit-recommender" element={<OutfitRecommender />} />;
       {/* Private route */}
       <Route path="/user-profile" element={<UserProfile />} />;
       <Route path="/chatting" element={<Chatting />} />

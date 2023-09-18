@@ -11,11 +11,13 @@ import IconAnalytics from "../../assets/icons/ic_analytics.svg";
 import IconManageListing from "../../assets/icons/ic_manage_listing.svg";
 import IconLogout from "../../assets/icons/ic_logout.svg";
 import IconQuestionMark from "../../assets/icons/ic_questionmark.svg";
+import { Badge } from "@mantine/core";
 
 import classes from "./DropDownMenu.module.css";
 
 import { Text, Menu, Avatar } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
+import PremiumPopup from "../../pages/Buyer/PremiumPage";
 
 function DropDownMenu(props) {
   const navigate = useNavigate();
@@ -58,6 +60,10 @@ function DropDownMenu(props) {
   const logoutOnClick = () => {
     Cookies.remove("firebaseIdToken");
     window.location.reload();
+  };
+
+  const fashionRecommender = () => {
+    setOpen(true);
   };
 
   const renderDropDownSeller = () => {
@@ -145,6 +151,19 @@ function DropDownMenu(props) {
               Transactions
             </Menu.Item>
 
+            <Menu.Item
+              icon={<img src={IconLogout} />}
+              onClick={fashionRecommender}
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <span style={{ marginRight: "10px" }}>Fashion Recommender</span>
+              <Badge>Premium</Badge>
+            </Menu.Item>
+
             <Menu.Item icon={<img src={IconLogout} />} onClick={logoutOnClick}>
               Logout
             </Menu.Item>
@@ -164,7 +183,12 @@ function DropDownMenu(props) {
     return <Text>Unknown</Text>;
   };
 
-  return <div>{renderDropDown()}</div>;
+  return (
+    <div>
+      {renderDropDown()}
+      {open && <PremiumPopup isOpen={open} onClose={() => setOpen(false)} />}
+    </div>
+  );
 }
 
 export default DropDownMenu;
