@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
+import { retrieveUserInfo } from "../utils/RetrieveUserInfoFromToken";
 import Cookies from "js-cookie";
 import {
 
@@ -76,11 +76,11 @@ export function FaqSimple() {
   }, []);
 
   // Route restriction only for seller
-  useEffect(() => {
-    if (currentUser && currentUser.role !== "seller") {
-      navigate("/", { replace: true });
-    }
-  }, [currentUser]);
+  // useEffect(() => {
+  //   if (currentUser && currentUser.role !== "seller") {
+  //     navigate("/", { replace: true });
+  //   }
+  // }, [currentUser]);
 
   return (
     <Container size="sm" className={classes.wrapper}>
