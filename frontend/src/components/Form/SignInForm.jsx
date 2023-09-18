@@ -22,7 +22,7 @@ function SignInForm(props) {
       email: (value) => {
         if (value.length === 0) return "Email should not be blank";
         if (/^\s$|^\s+.|.\s+$/.test(value))
-          return "Email should contain trailing/leading whitespaces";
+          return "Email should not contain trailing/leading whitespaces";
       },
 
       password: (value) => {

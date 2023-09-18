@@ -26,22 +26,22 @@ function SignUpForm(props) {
       firstName: (value) => {
         if (value.length === 0) return "First Name should not be blank";
         if (/^\s$|^\s+.|.\s+$/.test(value))
-          return "First Name should contain trailing/leading whitespaces";
+          return "First Name should not contain trailing/leading whitespaces";
       },
       lastName: (value) => {
         if (value.length === 0) return "Last Name should not be blank";
         if (/^\s$|^\s+.|.\s+$/.test(value))
-          return "Last Name should contain trailing/leading whitespaces";
+          return "Last Name should not contain trailing/leading whitespaces";
       },
       dateOfBirth: (value) => {
         if (value.length === 0) return "Date Of Birth should not be blank";
         if (/^\s$|^\s+.|.\s+$/.test(value))
-          return "Date Of Birth should contain trailing/leading whitespaces";
+          return "Date Of Birth should not contain trailing/leading whitespaces";
       },
       email: (value) => {
         if (value.length === 0) return "Email should not be blank";
         if (/^\s$|^\s+.|.\s+$/.test(value))
-          return "Email should contain trailing/leading whitespaces";
+          return "Email should not contain trailing/leading whitespaces";
       },
       password: (value) => {
         if (value.length === 0) return "Password should not be blank";
