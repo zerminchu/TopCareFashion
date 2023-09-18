@@ -21,6 +21,7 @@ import {
   IconSearch,
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
+import { DUMMY_TRANSACTION_PRODUCT } from "../../data/Products";
 
 const useStyles = createStyles((theme) => ({
   th: {
@@ -66,7 +67,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 interface RowData {
-  buyer: string;
+  image: string;
   product_title: string;
   price: string;
   quantity: string;
@@ -136,118 +137,31 @@ function sortData(
     payload.search
   );
 }
-const rateWord = "rate";
 
 const dontSort = () => {
   console.log("nothing");
 };
 
 const sampleData: RowData[] = [
+  
   {
-    buyer: "John Tan",
-    product_title: "Blue Cardigan",
-    price: "$132.50",
-    quantity: "x2",
-    status: "paid",
+    image:
+      "https://images.unsplash.com/photo-1597350584914-55bb62285896?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1964&q=80",
+    product_title: "Trendy White Sneakers",
+    price: "$300.00",
+    quantity: "3",
+    status: 'paid',
   },
   {
-    buyer: "John Tan",
+    image:
+      "https://images.unsplash.com/photo-1606480192262-e3b6a9f37142?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cmVkJTIwZ293bnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60",
     product_title: "Red Dress",
-    price: "$99.99",
-    quantity: "x1",
-    status: "paid",
+    price: "$211.56",
+    quantity: "2",
+    status: 'paid',
   },
-  {
-    buyer: "John Tan",
-    product_title: "Black T-Shirt",
-    price: "$19.99",
-    quantity: "x3",
-    status: "paid",
-  },
-  {
-    buyer: "John Tan",
-    product_title: "Green Skirt",
-    price: "$45.00",
-    quantity: "x4",
-    status: "paid",
-  },
-  {
-    buyer: "John Tan",
-    product_title: "Yellow Sweater",
-    price: "$89.95",
-    quantity: "x1",
-    status: "paid",
-  },
-  {
-    buyer: "John Tan",
-    product_title: "White Blouse",
-    price: "$29.99",
-    quantity: "x2",
-    status: "paid",
-  },
-  {
-    buyer: "John Tan",
-    product_title: "Striped Pants",
-    price: "$65.00",
-    quantity: "x3",
-    status: "paid",
-  },
-  {
-    buyer: "John Tan",
-    product_title: "Pink Shirt",
-    price: "$24.99",
-    quantity: "x2",
-    status: "paid",
-  },
-  {
-    buyer: "John Tan",
-    product_title: "Orange Jacket",
-    price: "$79.50",
-    quantity: "x1",
-    status: "paid",
-  },
-  {
-    buyer: "John Tan",
-    product_title: "Gray Hoodie",
-    price: "$54.99",
-    quantity: "x2",
-    status: "paid",
-  },
-  {
-    buyer: "John Tan",
-    product_title: "Brown Pants",
-    price: "$38.00",
-    quantity: "x3",
-    status: "paid",
-  },
-  {
-    buyer: "John Tan",
-    product_title: "Purple Dress",
-    price: "$69.95",
-    quantity: "x1",
-    status: "paid",
-  },
-  {
-    buyer: "John Tan",
-    product_title: "Navy Blue Jeans",
-    price: "$49.99",
-    quantity: "x2",
-    status: "paid",
-  },
-  {
-    buyer: "John Tan",
-    product_title: "Beige Sweater",
-    price: "$62.50",
-    quantity: "x3",
-    status: "paid",
-  },
-  {
-    buyer: "John Tan",
-    product_title: "Crimson Shirt",
-    price: "$29.99",
-    quantity: "x2",
-    status: "paid",
-  },
+  
+  
 ];
 
 export function Transactions() {
@@ -308,13 +222,23 @@ export function Transactions() {
     );
   };
 
-  const handleRateButtonClick = () => {
-    console.log("pressed rate");
+
+  const handleRateButtonClick = (product_title) => {
+    const data = DUMMY_TRANSACTION_PRODUCT;
+
+    const filteredData = data.filter((item) => item.title === product_title);
+    console.log("pressed buy" +product_title) //title passes the param
+
+    navigate("/buyer/product-rate", {
+      state: { data: filteredData },
+    });
   };
 
   const rows = sortedData.map((row) => (
-    <tr key={row.buyer}>
-      <td>{row.buyer}</td>
+    <tr key={row.product_title}>
+      <td>
+        <img src={row.image} alt={row.image} width="50" height="50" />
+      </td>
       <td>{row.product_title}</td>
       <td>{row.price}</td>
       <td>{row.quantity}</td> {/* New column for quantity */}
@@ -323,7 +247,7 @@ export function Transactions() {
         <td>
           <UnstyledButton
             className={`${classes.rateButton} ${classes.rateButtonHover}`}
-            onClick={handleRateButtonClick}
+            onClick={() => handleRateButtonClick(row.product_title)}
           >
             RATE
           </UnstyledButton>
@@ -339,70 +263,46 @@ export function Transactions() {
       <Text weight={700} underline size="24px" mb="sm">
         Orders
       </Text>
-      <ScrollArea>
-        <TextInput
-          placeholder="Search by any field"
-          mb="md"
-          icon={<IconSearch size="0.9rem" stroke={1.5} />}
-          value={search}
-          onChange={handleSearchChange}
-        />
-        <Table
-          horizontalSpacing="md"
-          verticalSpacing="xs"
-          miw={700}
-          sx={{ tableLayout: "fixed" }}
-        >
-          <thead>
-            <tr>
-              <Th
-                sorted={sortBy === "buyer"}
+    <ScrollArea>
+      <TextInput
+        placeholder="Search by any field"
+        mb="md"
+        icon={<IconSearch size="0.9rem" stroke={1.5} />}
+        value={search}
+        onChange={handleSearchChange}
+      />
+      <Table horizontalSpacing="md" verticalSpacing="xs" miw={700} sx={{ tableLayout: 'fixed' }}>
+        <thead>
+          <tr>
+          <Th
+                sorted={sortBy === "image"}
                 reversed={reverseSortDirection}
-                onSort={() => setSorting("buyer")}
+                onSort={() => setSorting("image")}
               >
-                Buyer
+                {/* no title */}
               </Th>
-              <Th
-                sorted={sortBy === "product_title"}
-                reversed={reverseSortDirection}
-                onSort={() => setSorting("product_title")}
-              >
-                Product Title
-              </Th>
-              <Th
-                sorted={sortBy === "price"}
-                reversed={reverseSortDirection}
-                onSort={() => setSorting("price")}
-              >
-                Price
-              </Th>
-              <Th
-                sorted={sortBy === "quantity"}
-                reversed={reverseSortDirection}
-                onSort={() => setSorting("quantity")}
-              >
-                Quantity
-              </Th>
-              <Th
-                sorted={sortBy === "status"}
-                reversed={reverseSortDirection}
-                onSort={() => setSorting("status")}
-              >
-                Status
-              </Th>
-              <Th
-                sorted={sortBy === null}
-                reversed={reverseSortDirection}
-                onSort={() => dontSort}
-              >
-                {/* No title for this column */}
-              </Th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.length > 0 ? (
-              rows
-            ) : (
+            <Th sorted={sortBy === 'product_title'} reversed={reverseSortDirection} onSort={() => setSorting('product_title')}>
+              Product Title
+            </Th>
+            <Th sorted={sortBy === 'price'} reversed={reverseSortDirection} onSort={() => setSorting('price')}>
+              Price
+            </Th>
+            <Th sorted={sortBy === 'quantity'} reversed={reverseSortDirection} onSort={() => setSorting('quantity')}>
+            Quantity
+          </Th>
+          <Th sorted={sortBy === 'status'} reversed={reverseSortDirection} onSort={() => setSorting('status')}>
+            Status
+          </Th>
+          <Th sorted={sortBy === null} reversed={reverseSortDirection} onSort={() => dontSort}>
+            {/* No title for this column */}
+          </Th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.length > 0 ? (
+            rows
+          ) : (
+            
               <tr>
                 <td colSpan={Object.keys(sampleData[0]).length}>
                   <Text weight={500} align="center">
