@@ -606,6 +606,27 @@ def getAllItems(request):
             }, status=200)
         except Exception as e:
             return Response({"error": str(e)}, status=500)
+        
+@api_view(["GET"])
+def getAllUsers(request):
+    if request.method == "GET":
+        try:
+            db = firestore.client()
+            userRef = db.collection("Users")
+            userData = userRef.get()
+            
+            responseData = []
+
+            for user in userData:
+                responseData.append(user.to_dict())
+
+            return JsonResponse({
+                'status': "success",
+                'message': "All users retrieved successfully",
+                'data': responseData
+            }, status=200)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
 
 
 @api_view(["POST"])

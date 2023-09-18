@@ -1,20 +1,45 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import { Button, TextInput } from "@mantine/core";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import ProductCategory from "../../components/ProductCategory";
+import CategoryListing from "../../components/CategoryListing";
+import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
 import Product from "../../components/Product";
-
 import classes from "./BuyerHome.module.css";
 import CarouselAds from "./CarouselAds";
 import axios from "axios";
+import Cookies from "js-cookie";
 
-function BuyerHome() {
+function BuyerHome(props) {
   const [searchText, setSearchText] = useState("");
   const [productList, setproductList] = useState([]);
+
   const [visibleProductCount, setVisibleProductCount] = useState(6);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  const [user, setUser] = useState([]);
+  const [currentUser, setCurrentUser] = useState();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const setUserSessionData = async () => {
+      try {
+        const user = await retrieveUserInfo();
+        setCurrentUser(user);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    if (Cookies.get("firebaseIdToken")) {
+      setUserSessionData();
+    } else {
+      navigate("/", { replace: true });
+    }
+  }, []);
 
   useEffect(() => {
     const retrieveAllItems = async () => {
@@ -42,11 +67,13 @@ function BuyerHome() {
     setSearchResults(filteredProducts);
   }, [searchText, productList]);
 
-  const renderRealProducts = () => {
-    /*  const filteredProducts = productList.filter((product) =>
-      product.title.toLowerCase().includes(searchText.toLowerCase())
-    ); */
+  const renderUser = () => {
+    return user.map((user, index) => {
+      return <CategoryListing key={index} name={user.name} />;
+    });
+  };
 
+  const renderRealProducts = () => {
     const visibleProducts = searchResults.slice(0, visibleProductCount);
 
     return visibleProducts.map((product, index) => {
@@ -96,7 +123,10 @@ function BuyerHome() {
     <div>
       <div className={classes.container}>
         <div>
-          <h1>Explore and search your product</h1>
+          <h1>
+            Welcome {currentUser.name.first_name}! Explore and search for your
+            product
+          </h1>
           <div className={classes.searchContainer}>
             <TextInput
               className={classes.searchBar}
@@ -136,7 +166,9 @@ function BuyerHome() {
               : "Recommended Products"}
           </h1>
 
-          <div className={classes.listProduct}>{renderRealProducts()}</div>
+          <div className={classes.listProduct}>
+            {(renderRealProducts(), renderUser())}
+          </div>
           {renderViewMoreButton()}
         </div>
       </div>
