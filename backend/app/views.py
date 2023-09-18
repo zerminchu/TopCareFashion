@@ -154,12 +154,6 @@ def signUp(request):
                     "message": "Email already exists, please use another one"
                 }, status=400)
             
-            if("Enter a valid email address" in str(e)):
-                return JsonResponse({
-                    "status": "error",
-                    "message": "Email is not valid"
-                }, status=400)
-            
             if("WEAK_PASSWORD : Password should be at least 6 characters" in str(e)):
                 return JsonResponse({
                     "status": "error",
@@ -213,12 +207,6 @@ def signIn(request):
                 return JsonResponse({
                     "status": "error",
                     "message": "Your password is incorrect"
-                }, status=400)
-            
-            if("Enter a valid email address" in str(e)):
-                return JsonResponse({
-                    "status": "error",
-                    "message": "Email is not valid"
                 }, status=400)
 
             return JsonResponse({
