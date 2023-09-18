@@ -29,6 +29,7 @@ function BuyerHome(props) {
       try {
         const user = await retrieveUserInfo();
         setCurrentUser(user);
+        console.log(currentUser);
       } catch (error) {
         console.log(error);
       }
@@ -123,10 +124,12 @@ function BuyerHome(props) {
     <div>
       <div className={classes.container}>
         <div>
-          <h1>
-            Welcome {currentUser.name.first_name}! Explore and search for your
-            product
-          </h1>
+          <h1>Explore and search for your product</h1>
+          {currentUser && currentUser.name && currentUser.name.first_name && (
+            <h1>
+              Welcome {currentUser.name.first_name}! Find your favourite with us
+            </h1>
+          )}
           <div className={classes.searchContainer}>
             <TextInput
               className={classes.searchBar}
@@ -166,9 +169,7 @@ function BuyerHome(props) {
               : "Recommended Products"}
           </h1>
 
-          <div className={classes.listProduct}>
-            {(renderRealProducts(), renderUser())}
-          </div>
+          <div className={classes.listProduct}>{renderRealProducts()}</div>
           {renderViewMoreButton()}
         </div>
       </div>
