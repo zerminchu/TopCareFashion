@@ -298,7 +298,7 @@ export const DUMMY_CART_PRODUCT = [
   {
     store_name: "Elegant Red Gown",
     collection_address: "Sapphire Towers, Suite #405",
-    title: "Retro Sunglasses",
+    title: "Red Dress",
     color: "Red",
     size: "L",
     price: 211.56,
@@ -336,6 +336,37 @@ export const DUMMY_WISHLIST_PRODUCT = [
     color: "Red",
     size: "L",
     price: 211.56,
+    images: ["https://images.unsplash.com/photo-1606480192262-e3b6a9f37142?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cmVkJTIwZ293bnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60",
+      "https://images.unsplash.com/photo-1606480192262-e3b6a9f37142?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cmVkJTIwZ293bnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60",
+      "https://images.unsplash.com/photo-1606480192262-e3b6a9f37142?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cmVkJTIwZ293bnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60"]
+  },
+]
+
+export const DUMMY_TRANSACTION_PRODUCT = [
+  {
+    store_name: "My clothes shop",
+    collection_address: "Digital Plaza, Unit #55",
+    title: "Trendy White Sneakers",
+    size: "M",
+    color: "White",
+    price: 300.00,
+    cart_quantity: 3,
+    quantity_available: 150,
+    created_at: "2023-09-04",
+    images: ["https://images.unsplash.com/photo-1597350584914-55bb62285896?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1964&q=80",
+      "https://images.unsplash.com/photo-1597350584914-55bb62285896?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1964&q=80",
+      "https://images.unsplash.com/photo-1597350584914-55bb62285896?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1964&q=80"]
+  },
+  {
+    store_name: "Elegant Red Gown",
+    collection_address: "Sapphire Towers, Suite #405",
+    title: "Red Dress",
+    color: "Red",
+    size: "L",
+    price: 211.56,
+    cart_quantity: 2,
+    quantity_available: 50,
+    created_at: "2023-09-08",
     images: ["https://images.unsplash.com/photo-1606480192262-e3b6a9f37142?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cmVkJTIwZ293bnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60",
       "https://images.unsplash.com/photo-1606480192262-e3b6a9f37142?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cmVkJTIwZ293bnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60",
       "https://images.unsplash.com/photo-1606480192262-e3b6a9f37142?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cmVkJTIwZ293bnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60"]
