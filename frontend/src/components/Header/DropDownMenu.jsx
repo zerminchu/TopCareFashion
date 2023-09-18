@@ -38,7 +38,7 @@ function DropDownMenu(props) {
   };
 
   const analyticsOnClick = () => {
-    console.log("analytics click");
+    navigate("/seller/order-status");
   };
 
   const manageListingsOnClick = () => {
@@ -46,17 +46,14 @@ function DropDownMenu(props) {
   };
 
   const manageFeedbackForm = () => {
-    console.log("manage feedback");
     navigate("/seller/feedback-form");
   };
 
   const manageFrequentlyAskQuestion = () => {
-    console.log("manage FAQ click");
     navigate("/seller/frequently-ask-question");
   };
 
   const manageTransactionsOnClick = () => {
-    console.log("manage transaction click");
     navigate("/buyer/transactions");
   };
 
@@ -94,6 +91,7 @@ function DropDownMenu(props) {
             >
               Business Profile
             </Menu.Item>
+
             <Menu.Item
               icon={<img src={IconAnalytics} />}
               onClick={analyticsOnClick}

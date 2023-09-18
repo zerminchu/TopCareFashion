@@ -97,13 +97,8 @@ function EditListing() {
             const formData = new FormData();
             formData.append("image", file);
 
-            const url =
-              import.meta.env.VITE_NODE_ENV == "DEV"
-                ? import.meta.env.VITE_API_DEV
-                : import.meta.env.VITE_API_PROD;
-
             const response = await axios.post(
-              `${url}/classify-image/`,
+              "http://localhost:8000/classify-image/",
               formData
             );
             const classifiedCategory = response.data.category;
@@ -147,12 +142,9 @@ function EditListing() {
   useEffect(() => {
     const fetchItemDetails = async () => {
       try {
-        const url =
-          import.meta.env.VITE_NODE_ENV == "DEV"
-            ? import.meta.env.VITE_API_DEV
-            : import.meta.env.VITE_API_PROD;
-
-        const response = await axios.get(`${url}/view-item/${id}/${item_id}/`);
+        const response = await axios.get(
+          `http://localhost:8000/view-item/${id}/${item_id}/`
+        );
         const itemData = response.data;
         setItem(itemData);
         form.setValues({ category: itemData.category });
@@ -182,13 +174,8 @@ function EditListing() {
   }
   const handleSubmit = async () => {
     try {
-      const url =
-        import.meta.env.VITE_NODE_ENV == "DEV"
-          ? import.meta.env.VITE_API_DEV
-          : import.meta.env.VITE_API_PROD;
-
       const response = await axios.put(
-        `${url}/edit-item/${id}/${item_id}/`,
+        `http://localhost:8000/edit-item/${id}/${item_id}/`,
         form.values
       );
 
@@ -222,12 +209,7 @@ function EditListing() {
 
   const handleDeleteClick = async () => {
     try {
-      const url =
-        import.meta.env.VITE_NODE_ENV == "DEV"
-          ? import.meta.env.VITE_API_DEV
-          : import.meta.env.VITE_API_PROD;
-
-      await axios.delete(`${url}/delete-item/${id}/${item_id}/`);
+      await axios.delete(`http://localhost:8000/delete-item/${id}/${item_id}/`);
       navigate(`/`);
     } catch (error) {
       console.error("Error deleting item:", error);

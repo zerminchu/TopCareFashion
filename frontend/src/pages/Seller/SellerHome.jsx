@@ -95,12 +95,9 @@ function SellerCards() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const url =
-          import.meta.env.VITE_NODE_ENV == "DEV"
-            ? import.meta.env.VITE_API_DEV
-            : import.meta.env.VITE_API_PROD;
-
-        const response = await axios.get(`${url}/view-item/${id}/`);
+        const response = await axios.get(
+          `http://localhost:8000/view-item/${id}/`
+        );
         const fetchedItems = response.data;
         setItems(fetchedItems);
         setFilteredItems(fetchedItems);
