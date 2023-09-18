@@ -108,7 +108,6 @@ function UserProfile() {
           gender: currentUser.gender,
           dateOfBirth: currentUser.date_of_birth,
           showImage: currentUser.profile_image_url,
-          phoneNumber: "-",
         });
       } else {
         showNotifications({
@@ -168,9 +167,6 @@ function UserProfile() {
         });
 
         dispatch({ type: "SET_LOADING", value: false });
-
-        navigate(`/seller-home/${currentUser.user_id}`);
-        //navigate("/")
 
         showNotifications({
           status: response.data.status,

@@ -164,12 +164,6 @@ def updateBusinessProfile(request, user_id):
         raise Exception(serializer.errors)
     
     except Exception as e:
-      if("string='Enter a valid URL.', code='invalid'" in str(e)):
-        return JsonResponse({
-            "status": "error",
-            "message": "Enter a valid URL for social media"
-        }, status=400)
-      
       return JsonResponse({
           "status": "error",
           "message": str(e)
