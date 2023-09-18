@@ -49,44 +49,46 @@ function OrderStatus() {
       {/* --------Dashboard Link---------*/}
       <div className={classes["left"]}>
         <tr>
-          <a href="/seller/order-status">Dashboard</a>
+          <a href="http://localhost:5173/OrderStatus" target="_blank">
+            Dashboard
+          </a>
         </tr>
       </div>
 
       {/* ---------Total Earned & Order Completed--------- */}
-      <div className={classes["container"]}>
-        <h2 className={classes["main--title"]}>Today's Data</h2>
-        <div className={classes["container--wrapper"]}>
-          <div className={classes["amount"]}>
-            <div className={classes["amount--header"]}>
-              <span className={classes["title"]}>Total Earned </span>
-              <span className={classes["amount--value"]}>$562.78</span>
+      <div class="container">
+        <h2 class="main--title">Today's Data</h2>
+        <div class="container--wrapper">
+          <div class="amount">
+            <div class="amount--header">
+              <span class="title">Total Earned </span>
+              <span class="amount--value">$562.78</span>
             </div>
-            <i className={classes["fasfa-dollar-sign icon"]}></i>
+            <i class="fasfa-dollar-sign icon"></i>
           </div>
 
-          <div className={classes["amount"]}>
-            <div className={classes["amount--header"]}>
-              <span className={classes["title"]}>Order Completed </span>
-              <span className={classes["amount--value"]}>10</span>
+          <div class="amount">
+            <div class="amount--header">
+              <span class="title">Order Completed </span>
+              <span class="amount--value">10</span>
             </div>
-            <i className={classes["fasfa-dollar-sign icon"]}></i>
+            <i class="fasfa-dollar-sign icon"></i>
           </div>
         </div>
       </div>
 
       {/* ---------Sales chart & Sales By Product--------- */}
 
-      <div className={classes["container"]}>
-        <div className={classes["chart"]}>
-          <h3 className={classes["main-title"]}>Sales Chart</h3>
+      <div class="container">
+        <div class="chart">
+          <h3 class="main-title">Sales Chart</h3>
           <canvas ref={chartRef}></canvas>
         </div>
       </div>
 
-      <div className={classes["container"]}>
-        <div className={classes["product"]}>
-          <h3 className={classes["main-title"]}>Sales By Product</h3>
+      <div class="container">
+        <div class="product">
+          <h3 class="main-title">Sales By Product</h3>
 
           <tr>
             <th>Product Name</th>
@@ -119,9 +121,9 @@ function OrderStatus() {
       </div>
 
       {/* ---------Orders--------- */}
-      <div className={classes["container"]}>
-        <div className={classes["tabular--wrapper"]}>
-          <h2 className={classes["main-title"]}>Orders</h2>
+      <div class="container">
+        <div class="tabular--wrapper">
+          <h2 class="main-title">Orders</h2>
           <div class="table-container">
             <tr>
               <thead>
