@@ -169,8 +169,8 @@ function UserProfile() {
 
         dispatch({ type: "SET_LOADING", value: false });
 
-        navigate(`/seller-home/${currentUser.user_id}`);
-        //navigate("/")
+        //navigate(`/seller-home/${currentUser.user_id}`);
+        navigate("/");
 
         showNotifications({
           status: response.data.status,
