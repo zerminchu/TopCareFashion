@@ -83,7 +83,6 @@ function SellerCards() {
   const [category, setCategory] = useState("");
   const [condition, setCondition] = useState("");
   const [price, setPrice] = useState("");
-  const { classes } = useStyles();
   const [items, setItems] = useState([]);
   const [filteredItems, setFilteredItems] = useState([]);
   const [searchText, setSearchText] = useState("");
@@ -230,36 +229,28 @@ function SellerCards() {
   };
 
   return (
-    <div>
-      <div
-        style={{
-          marginTop: "16px",
-          marginLeft: "20px",
-          marginBottom: "16px",
-          display: "flex",
-          alignItems: "center",
-        }}
-      >
-        <Select
-          placeholder="Select by category"
-          searchable
-          nothingFound="No options"
-          data={["Top", "Bottom", "Footwear"]}
-          value={category}
-          onChange={(value) => handleCategoryChange(value)}
-          style={{ marginRight: "16px" }}
-        />
-        <TextInput
-          placeholder="Search by item"
-          icon={<IconSearch size="1rem" />}
-          rightSectionWidth={90}
-          styles={{ rightSection: { pointerEvents: "none" } }}
-          value={searchText}
-          onChange={(event) => handleSearchTextChange(event.target.value)}
-        />
-        {/* <InstantSearch searchClient={searchClient} indexName="instant_search">
-          <RefinementList attribute="brand" />
-        </InstantSearch> */}
+    <div className={classes.container}>
+      <div>
+        <div className={classes.searchContainer}>
+          <Select
+            placeholder="Select by category"
+            searchable
+            nothingFound="No options"
+            data={["Top", "Bottom", "Footwear"]}
+            value={category}
+            onChange={(value) => handleCategoryChange(value)}
+          />
+
+          <TextInput
+            placeholder="Search by item"
+            icon={<IconSearch size="1rem" />}
+            rightSectionWidth={90}
+            styles={{ rightSection: { pointerEvents: "none" } }}
+            value={searchText}
+            onChange={(event) => handleSearchTextChange(event.target.value)}
+            className={classes.searchBar}
+          />
+        </div>
       </div>
 
       <div style={{ display: "flex", flexWrap: "wrap" }}>

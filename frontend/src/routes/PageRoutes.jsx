@@ -18,6 +18,8 @@ import BuyerCart from "../pages/Buyer/BuyerCart";
 import Wishlist from "../pages/Buyer/Wishlist";
 import CategoryListingsPage from "../components/CategoryListing";
 import Chatting from "../pages/Chatting";
+import NotFoundImage from "../components/NotFound";
+import OutfitRecommender from "../pages/Buyer/OutfitRecommender";
 
 function PageRoutes() {
   return (
@@ -49,6 +51,8 @@ function PageRoutes() {
         path="/buyer/category-listing/:category"
         element={<CategoryListingsPage />}
       />
+      <Route path="/not-found" element={<NotFoundImage />} />
+      <Route path="/outfit-recommender" element={<OutfitRecommender />} />
       ;
       <Route path="/" element={<Home />} />
       <Route path="*" element={<h1>Page not found</h1>} />
