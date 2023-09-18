@@ -39,8 +39,12 @@ function Footer() {
           Resources
         </Text>
         <div className={classes.linkContainer}>
-          <a className={classes.link}>FAQ</a>
-          <a className={classes.link}>Feedback</a>
+          <a href="/faq" className={classes.link}>
+            FAQ
+          </a>
+          <a href="/feedback" className={classes.link}>
+            Feedback
+          </a>
         </div>
         <Text>© TopCare Fashion</Text>
       </div>
