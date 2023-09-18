@@ -160,6 +160,12 @@ def signUp(request):
                     "message": "Password should be at least 6 characters"
                 }, status=400)
             
+            if("Enter a valid email address" in str(e)):
+                return JsonResponse({
+                    "status": "error",
+                    "message": "Email is not valid"
+                }, status=400)
+            
             return JsonResponse({
                 "status": "error",
                 "message": str(e)
@@ -207,6 +213,12 @@ def signIn(request):
                 return JsonResponse({
                     "status": "error",
                     "message": "Your password is incorrect"
+                }, status=400)
+            
+            if("Enter a valid email address" in str(e)):
+                return JsonResponse({
+                    "status": "error",
+                    "message": "Email is not valid"
                 }, status=400)
 
             return JsonResponse({

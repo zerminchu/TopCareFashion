@@ -120,7 +120,12 @@ function ListItem() {
       formData.append("user_id", currentUser.user_id);
       formData.append("avail_status", avail_status);
 
-      await axios.post("http://localhost:8000/add-product/", formData);
+      const url =
+        import.meta.env.VITE_NODE_ENV == "DEV"
+          ? import.meta.env.VITE_API_DEV
+          : import.meta.env.VITE_API_PROD;
+
+      await axios.post(`${url}/add-product/`, formData);
 
       navigate("/", { replace: true });
       dispatch({ type: "SET_LOADING", value: false });

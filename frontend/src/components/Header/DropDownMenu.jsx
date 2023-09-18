@@ -58,7 +58,6 @@ function DropDownMenu(props) {
     navigate("/buyer/transactions");
   };
 
-
   const logoutOnClick = () => {
     Cookies.remove("firebaseIdToken");
     window.location.reload();
@@ -90,12 +89,6 @@ function DropDownMenu(props) {
               Business Profile
             </Menu.Item>
             <Menu.Item
-              icon={<img src={IconSettings} />}
-              onClick={settingsOnClick}
-            >
-              Settings
-            </Menu.Item>
-            <Menu.Item
               icon={<img src={IconAnalytics} />}
               onClick={analyticsOnClick}
             >
@@ -103,25 +96,18 @@ function DropDownMenu(props) {
             </Menu.Item>
 
             <Menu.Item
-              icon={<img src={IconManageListing} />}
-              onClick={manageListingsOnClick}
+              icon={<img src={IconQuestionMark} />}
+              onClick={manageFeedbackForm}
             >
-              Manage Listings
+              Feedback Form
             </Menu.Item>
 
             <Menu.Item
-            icon={<img src={IconQuestionMark} />}
-            onClick={manageFeedbackForm}
-          >
-            Feedback Form
-          </Menu.Item>
-
-          <Menu.Item
-            icon={<img src={IconQuestionMark} />}
-            onClick={manageFrequentlyAskQuestion}
-          >
-            FAQ
-          </Menu.Item>
+              icon={<img src={IconQuestionMark} />}
+              onClick={manageFrequentlyAskQuestion}
+            >
+              FAQ
+            </Menu.Item>
             <Menu.Item icon={<img src={IconLogout} />} onClick={logoutOnClick}>
               Logout
             </Menu.Item>
@@ -159,13 +145,6 @@ function DropDownMenu(props) {
               onClick={manageTransactionsOnClick}
             >
               Transactions
-            </Menu.Item>
-
-            <Menu.Item
-              icon={<img src={IconSettings} />}
-              onClick={settingsOnClick}
-            >
-              Settings
             </Menu.Item>
             <Menu.Item icon={<img src={IconLogout} />} onClick={logoutOnClick}>
               Logout
