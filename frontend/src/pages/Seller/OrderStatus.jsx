@@ -41,13 +41,13 @@ function OrderStatus() {
   }, []);
 
   return (
-    <form class="container">
+    <form className={classes["container"]}>
       <h2>
         <strong>Your Summaries</strong>
       </h2>
 
       {/* --------Dashboard Link---------*/}
-      <div className="left">
+      <div className={classes["left"]}>
         <tr>
           <a href="http://localhost:5173/OrderStatus" target="_blank">
             Dashboard
