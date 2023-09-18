@@ -3,10 +3,12 @@ import classes from "./Product.module.css";
 import { Button, Text } from "@mantine/core";
 import { showNotifications } from "../utils/ShowNotification";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import Cookies from "js-cookie";
 
 function Product(props) {
   const navigate = useNavigate();
-  console.log(props);
+  const dispatch = useDispatch();
 
   const onClick = () => {
     if (props.item_id) {
@@ -20,12 +22,19 @@ function Product(props) {
     }
   };
 
-  const addToCartOnClick = () => {
+  const addToCartOnClick = (e) => {
+    if (!Cookies.get("firebaseIdToken")) {
+      dispatch({ type: "SET_SIGN_IN", value: true });
+      return;
+    }
+
     showNotifications({
       status: "success",
       title: "Success",
       message: "Product has been added to cart",
     });
+
+    e.stopPropagation();
   };
 
   return (

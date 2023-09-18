@@ -5,9 +5,15 @@ import ILLNullImageListing from "../assets/illustrations/il_null_image_clothes.s
 import IconLocation from "../assets/icons/ic_location.svg";
 
 import classes from "./CheckoutItem.module.css";
+import { useNavigate } from "react-router-dom";
 
 function CheckoutItem(props) {
-  console.log(props);
+  const navigate = useNavigate();
+
+  const chatOnClick = () => {
+    navigate("/chatting");
+  };
+
   return (
     <div className={classes.container}>
       <div className={classes.locationContainer}>
@@ -24,7 +30,7 @@ function CheckoutItem(props) {
         <Text fw={500} size="lg">
           {props.store_name}
         </Text>
-        <Button>Chat with seller</Button>
+        <Button onClick={chatOnClick}>Chat with seller</Button>
       </div>
 
       <div>

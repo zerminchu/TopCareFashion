@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   createStyles,
   Table,
@@ -9,21 +9,34 @@ import {
   Center,
   TextInput,
   rem,
-} from '@mantine/core';
-import { keys } from '@mantine/utils';
-import { IconSelector, IconChevronDown, IconChevronUp, IconSearch } from '@tabler/icons-react';
+} from "@mantine/core";
+import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
+import { showNotifications } from "../../utils/ShowNotification";
+import Cookies from "js-cookie";
+import { keys } from "@mantine/utils";
+import {
+  IconSelector,
+  IconChevronDown,
+  IconChevronUp,
+  IconSearch,
+} from "@tabler/icons-react";
+import { useNavigate } from "react-router-dom";
+import { DUMMY_TRANSACTION_PRODUCT } from "../../data/Products";
 
 const useStyles = createStyles((theme) => ({
   th: {
-    padding: '0 !important',
+    padding: "0 !important",
   },
 
   control: {
-    width: '100%',
+    width: "100%",
     padding: `${theme.spacing.xs} ${theme.spacing.md}`,
 
-    '&:hover': {
-      backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+    "&:hover": {
+      backgroundColor:
+        theme.colorScheme === "dark"
+          ? theme.colors.dark[6]
+          : theme.colors.gray[0],
     },
   },
 
@@ -34,29 +47,27 @@ const useStyles = createStyles((theme) => ({
   },
 
   rateButton: {
-    backgroundColor: 'black',
-    color: 'white',
-    border: 'none',
-    padding: '8px 30px',
-    cursor: 'pointer',
-    transition: 'background-color 0.3s ease', // Add a transition for hover effect
-    borderRadius: '10px',
+    backgroundColor: "black",
+    color: "white",
+    border: "none",
+    padding: "8px 30px",
+    cursor: "pointer",
+    transition: "background-color 0.3s ease", // Add a transition for hover effect
+    borderRadius: "10px",
   },
 
-  rateButtonHover: {
-    
-  },
+  rateButtonHover: {},
 
   container: {
-    maxWidth: '1200px', // Set the maximum width for the container
-    margin: '20px auto',  // Center the container horizontally and add a top margin
-    border: '1px solid #ccc', // Add an outline border
-    padding: '20px', // Add padding to the container
+    maxWidth: "1200px", // Set the maximum width for the container
+    margin: "20px auto", // Center the container horizontally and add a top margin
+    border: "1px solid #ccc", // Add an outline border
+    padding: "20px", // Add padding to the container
   },
 }));
 
 interface RowData {
-  buyer: string;
+  image: string;
   product_title: string;
   price: string;
   quantity: string;
@@ -77,7 +88,11 @@ interface ThProps {
 
 function Th({ children, reversed, sorted, onSort }: ThProps) {
   const { classes } = useStyles();
-  const Icon = sorted ? (reversed ? IconChevronUp : IconChevronDown) : IconSelector;
+  const Icon = sorted
+    ? reversed
+      ? IconChevronUp
+      : IconChevronDown
+    : IconSelector;
   return (
     <th className={classes.th}>
       <UnstyledButton onClick={onSort} className={classes.control}>
@@ -122,129 +137,71 @@ function sortData(
     payload.search
   );
 }
-const rateWord = "rate";
 
 const dontSort = () => {
   console.log("nothing");
 };
 
 const sampleData: RowData[] = [
+  
   {
-    buyer: 'John Tan',
-    product_title: 'Blue Cardigan',
-    price: '$132.50',
-    quantity: 'x2',
+    image:
+      "https://images.unsplash.com/photo-1597350584914-55bb62285896?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1964&q=80",
+    product_title: "Trendy White Sneakers",
+    price: "$300.00",
+    quantity: "3",
     status: 'paid',
   },
   {
-    buyer: 'John Tan',
-    product_title: 'Red Dress',
-    price: '$99.99',
-    quantity: 'x1',
-    status: 'paid',
-  },
-  {
-    buyer: 'John Tan',
-    product_title: 'Black T-Shirt',
-    price: '$19.99',
-    quantity: 'x3',
-    status: 'paid',
-  },
-  {
-    buyer: 'John Tan',
-    product_title: 'Green Skirt',
-    price: '$45.00',
-    quantity: 'x4',
-    status: 'paid',
-  },
-  {
-    buyer: 'John Tan',
-    product_title: 'Yellow Sweater',
-    price: '$89.95',
-    quantity: 'x1',
-    status: 'paid',
-  },
-  {
-    buyer: 'John Tan',
-    product_title: 'White Blouse',
-    price: '$29.99',
-    quantity: 'x2',
-    status: 'paid',
-  },
-  {
-    buyer: 'John Tan',
-    product_title: 'Striped Pants',
-    price: '$65.00',
-    quantity: 'x3',
-    status: 'paid',
-  },
-  {
-    buyer: 'John Tan',
-    product_title: 'Pink Shirt',
-    price: '$24.99',
-    quantity: 'x2',
-    status: 'paid',
-  },
-  {
-    buyer: 'John Tan',
-    product_title: 'Orange Jacket',
-    price: '$79.50',
-    quantity: 'x1',
-    status: 'paid',
-  },
-  {
-    buyer: 'John Tan',
-    product_title: 'Gray Hoodie',
-    price: '$54.99',
-    quantity: 'x2',
-    status: 'paid',
-  },
-  {
-    buyer: 'John Tan',
-    product_title: 'Brown Pants',
-    price: '$38.00',
-    quantity: 'x3',
-    status: 'paid',
-  },
-  {
-    buyer: 'John Tan',
-    product_title: 'Purple Dress',
-    price: '$69.95',
-    quantity: 'x1',
-    status: 'paid',
-  },
-  {
-    buyer: 'John Tan',
-    product_title: 'Navy Blue Jeans',
-    price: '$49.99',
-    quantity: 'x2',
-    status: 'paid',
-  },
-  {
-    buyer: 'John Tan',
-    product_title: 'Beige Sweater',
-    price: '$62.50',
-    quantity: 'x3',
-    status: 'paid',
-  },
-  {
-    buyer: 'John Tan',
-    product_title: 'Crimson Shirt',
-    price: '$29.99',
-    quantity: 'x2',
+    image:
+      "https://images.unsplash.com/photo-1606480192262-e3b6a9f37142?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cmVkJTIwZ293bnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60",
+    product_title: "Red Dress",
+    price: "$211.56",
+    quantity: "2",
     status: 'paid',
   },
   
+  
 ];
 
-
-
 export function Transactions() {
+  const navigate = useNavigate();
   const { classes } = useStyles();
-  const [search, setSearch] = React.useState('');
+
+  const [currentUser, setCurrentUser] = useState();
+  const [search, setSearch] = React.useState("");
   const [sortedData, setSortedData] = React.useState(sampleData);
   const [sortBy, setSortBy] = React.useState<keyof RowData | null>(null);
   const [reverseSortDirection, setReverseSortDirection] = React.useState(false);
+
+  // Check current user
+  useEffect(() => {
+    const setUserSessionData = async () => {
+      try {
+        const user = await retrieveUserInfo();
+        setCurrentUser(user);
+      } catch (error) {
+        showNotifications({
+          status: "error",
+          title: "Error",
+          message: error.response.data.message,
+        });
+      }
+    };
+
+    if (Cookies.get("firebaseIdToken")) {
+      setUserSessionData();
+    } else {
+      navigate("/", { replace: true });
+    }
+  }, []);
+
+  // Route restriction only for buyer
+  useEffect(() => {
+    if (currentUser && currentUser.role !== "buyer") {
+      navigate("/", { replace: true });
+    }
+  }, [currentUser]);
 
   const setSorting = (field: keyof RowData) => {
     const reversed = field === sortBy ? !reverseSortDirection : false;
@@ -256,33 +213,54 @@ export function Transactions() {
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.currentTarget;
     setSearch(value);
-    setSortedData(sortData(sampleData, { sortBy, reversed: reverseSortDirection, search: value }));
+    setSortedData(
+      sortData(sampleData, {
+        sortBy,
+        reversed: reverseSortDirection,
+        search: value,
+      })
+    );
   };
 
-  const handleRateButtonClick= () => {
-    console.log("pressed rate");
+
+  const handleRateButtonClick = (product_title) => {
+    const data = DUMMY_TRANSACTION_PRODUCT;
+
+    const filteredData = data.filter((item) => item.title === product_title);
+    console.log("pressed buy" +product_title) //title passes the param
+
+    navigate("/buyer/product-rate", {
+      state: { data: filteredData },
+    });
   };
 
   const rows = sortedData.map((row) => (
-    <tr key={row.buyer}>
-      <td>{row.buyer}</td>
+    <tr key={row.product_title}>
+      <td>
+        <img src={row.image} alt={row.image} width="50" height="50" />
+      </td>
       <td>{row.product_title}</td>
       <td>{row.price}</td>
       <td>{row.quantity}</td> {/* New column for quantity */}
-      <td>{row.status}</td>   {/* New column for status */}
+      <td>{row.status}</td> {/* New column for status */}
       <td>
-      <td>
-      <UnstyledButton className={`${classes.rateButton} ${classes.rateButtonHover}`} onClick={handleRateButtonClick }>
-        RATE
-      </UnstyledButton>
-    </td>
+        <td>
+          <UnstyledButton
+            className={`${classes.rateButton} ${classes.rateButtonHover}`}
+            onClick={() => handleRateButtonClick(row.product_title)}
+          >
+            RATE
+          </UnstyledButton>
+        </td>
       </td>
     </tr>
   ));
 
   return (
-    <div className={classes.container}> {/* Container div */}
-    <Text weight={700} underline size="24px" mb="sm">
+    <div className={classes.container}>
+      {" "}
+      {/* Container div */}
+      <Text weight={700} underline size="24px" mb="sm">
         Orders
       </Text>
     <ScrollArea>
@@ -296,9 +274,13 @@ export function Transactions() {
       <Table horizontalSpacing="md" verticalSpacing="xs" miw={700} sx={{ tableLayout: 'fixed' }}>
         <thead>
           <tr>
-            <Th sorted={sortBy === 'buyer'} reversed={reverseSortDirection} onSort={() => setSorting('buyer')}>
-              Buyer
-            </Th>
+          <Th
+                sorted={sortBy === "image"}
+                reversed={reverseSortDirection}
+                onSort={() => setSorting("image")}
+              >
+                {/* no title */}
+              </Th>
             <Th sorted={sortBy === 'product_title'} reversed={reverseSortDirection} onSort={() => setSorting('product_title')}>
               Product Title
             </Th>
@@ -320,17 +302,18 @@ export function Transactions() {
           {rows.length > 0 ? (
             rows
           ) : (
-            <tr>
-              <td colSpan={Object.keys(sampleData[0]).length}>
-                <Text weight={500} align="center">
-                  Nothing found
-                </Text>
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </Table>
-    </ScrollArea>
+            
+              <tr>
+                <td colSpan={Object.keys(sampleData[0]).length}>
+                  <Text weight={500} align="center">
+                    Nothing found
+                  </Text>
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </Table>
+      </ScrollArea>
     </div>
   );
 }

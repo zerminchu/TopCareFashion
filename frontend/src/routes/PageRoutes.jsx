@@ -19,41 +19,49 @@ import Wishlist from "../pages/Buyer/Wishlist";
 import CategoryListingsPage from "../components/CategoryListing";
 import Chatting from "../pages/Chatting";
 import NotFoundImage from "../components/NotFound";
-import OutfitRecommender from "../pages/Buyer/OutfitRecommender";
+/* import OutfitRecommender from "../pages/Buyer/OutfitRecommender";
+ */ import ProductRate from "../pages/Buyer/BuyerRateProduct";
+import OrderStatus from "../pages/Seller/OrderStatus";
 
 function PageRoutes() {
   return (
     <Routes>
-      <Route path="/recover-password" element={<RecoverPassword />} />;
-      <Route path="/user-profile" element={<UserProfile />} />;
-      <Route path="/upload-image" element={<ImageUpload />} />;
+      {/* Private route for seller */}
       <Route path="seller/create-listing" element={<ListItem />} />;
       <Route path="/edit-listing/:id/:item_id/" element={<EditListing />} />
-      <Route path="/chatting" element={<Chatting />} />
       <Route path="/seller-home/:id" element={<SellerHome />} />;
       <Route path="/seller/business-profile" element={<BusinessProfile />} />
       <Route
         path="/seller/frequently-ask-question"
         element={<FrequentlyAskQuestion />}
       />
-      <Route path="/seller/feedback-form" element={<FeedbackForm />} />
-      <Route path="/seller/ratings" element={<Ratings />} />
-      <Route path="/buyer/product-detail" element={<ProductDetails />} />
-      <Route path="/buyer/wishlist" element={<Wishlist />} />
-      <Route path="/buyer/checkout" element={<Checkout />} />
-      <Route path="/buyer/transactions" element={<Transactions />} />
-      <Route path="/buyer/buyer-cart" element={<BuyerCart />} />
+      <Route path="/seller/upload-image" element={<ImageUpload />} />;
       <Route
         path="/seller/edit-business-profile"
         element={<BusinessProfileForm />}
       />
+      <Route path="/seller/feedback-form" element={<FeedbackForm />} />
+      <Route path="/seller/ratings" element={<Ratings />} />
+      <Route path="/seller/order-status" element={<OrderStatus />} />;
+      {/* Private route for buyer */}
+      <Route path="/buyer/product-detail" element={<ProductDetails />} />
+      <Route path="/buyer/wishlist" element={<Wishlist />} />
+      <Route path="/buyer/checkout" element={<Checkout />} />
+      <Route path="/buyer/product-rate" element={<ProductRate />} />
+      <Route path="/buyer/transactions" element={<Transactions />} />
+      <Route path="/buyer/buyer-cart" element={<BuyerCart />} />
       <Route
         path="/buyer/category-listing/:category"
         element={<CategoryListingsPage />}
       />
       <Route path="/not-found" element={<NotFoundImage />} />
-      <Route path="/outfit-recommender" element={<OutfitRecommender />} />
-      ;
+      {/*       <Route path="/outfit-recommender" element={<OutfitRecommender />} />;
+       */}{" "}
+      {/* Private route */}
+      <Route path="/user-profile" element={<UserProfile />} />;
+      <Route path="/chatting" element={<Chatting />} />
+      {/* Public route */}
+      <Route path="/recover-password" element={<RecoverPassword />} />;
       <Route path="/" element={<Home />} />
       <Route path="*" element={<h1>Page not found</h1>} />
     </Routes>

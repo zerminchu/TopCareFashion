@@ -3,15 +3,13 @@ import React from "react";
 
 import classes from "./InboxUser.module.css";
 
-function InboxUser() {
+function InboxUser(props) {
   return (
     <div className={classes.container}>
-      <Avatar color="cyan" radius="xl" size={60}>
-        MK
-      </Avatar>
+      <Avatar src={props.profileImage} radius="xl" size={60}></Avatar>
       <div className={classes.content}>
         <Text fw={500} size="lg">
-          Name
+          {props.name}
         </Text>
         <Text>Hello I wanna ask someth ...</Text>
       </div>

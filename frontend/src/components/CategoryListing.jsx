@@ -8,10 +8,15 @@ import axios from "axios";
 import { TextInput, Button, Select } from "@mantine/core";
 import { IconSettings, IconSearch, IconCopy } from "@tabler/icons-react";
 import NotFoundImage from "./NotFound";
+import Cookies from "js-cookie";
+import { retrieveUserInfo } from "../utils/RetrieveUserInfoFromToken";
+import { showNotifications } from "../utils/ShowNotification";
 
 function CategoryListingsPage() {
   const { category } = useParams();
   const navigate = useNavigate();
+
+  const [currentUser, setCurrentUser] = useState();
   const [productList, setProductList] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
 
@@ -39,6 +44,33 @@ function CategoryListingsPage() {
 
     retrieveAllItems();
   }, []);
+
+  // Check current user
+  useEffect(() => {
+    const setUserSessionData = async () => {
+      try {
+        const user = await retrieveUserInfo();
+        setCurrentUser(user);
+      } catch (error) {
+        showNotifications({
+          status: "error",
+          title: "Error",
+          message: error.response.data.message,
+        });
+      }
+    };
+
+    if (Cookies.get("firebaseIdToken")) {
+      setUserSessionData();
+    }
+  }, []);
+
+  // Route restriction only for buyer
+  useEffect(() => {
+    if (currentUser && currentUser.role !== "buyer") {
+      navigate("/", { replace: true });
+    }
+  }, [currentUser]);
 
   useEffect(() => {
     // Filter products by category, search text, and condition

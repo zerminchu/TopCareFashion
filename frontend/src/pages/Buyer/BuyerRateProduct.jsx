@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Stepper, Button, Group, Text, Table, TextInput } from "@mantine/core";
+import { Button, Text, Textarea, Rating} from "@mantine/core";
 
-import classes from "./Checkout.module.css";
+import classes from "./BuyerRateProduct.module.css";
 import CheckoutItem from "../../components/CheckoutItem";
 import { useLocation, useNavigate } from "react-router";
 import { showNotifications } from "../../utils/ShowNotification";
@@ -10,13 +10,18 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 
-function Checkout() {
+
+function productRate() {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [rating, setRating] = useState(0);
+  const [feedback, setFeedback] = useState("");
 
   const [checkoutItems, setCheckoutItems] = useState([]);
   const [currentUser, setCurrentUser] = useState();
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  
 
   // Using params to pass data from cart / product detail page
   const data = location.state?.data;
@@ -75,85 +80,61 @@ function Checkout() {
     });
   };
 
-  const renderTotalPrice = () => {
-    let totalPrice = 0;
-
-    if (checkoutItems) {
-      checkoutItems.map((item) => {
-        totalPrice += item.price * item.cart_quantity;
-      });
-    }
-
-    return (
-      <Text fw={700} size="xl">
-        ${totalPrice}
-      </Text>
-    );
+  
+  const handleRatingChange = (value) => {
+    // Handle changes in the rating value
+    setRating(value);
   };
 
-  const orderOnClick = async () => {
-    try {
-      dispatch({ type: "SET_LOADING", value: true });
+  const handleFeedbackChange = (event) => {
+    // Handle changes in the feedback text
+    setFeedback(event.target.value);
+  };
 
-      let checkoutData = [];
-
-      checkoutItems.map((item) => {
-        const data = {
-          title: item.title,
-          quantity: item.cart_quantity,
-          price: parseFloat(item.price),
-        };
-
-        checkoutData.push(data);
-      });
-
-      const url =
-        import.meta.env.VITE_NODE_ENV == "DEV"
-          ? import.meta.env.VITE_API_DEV
-          : import.meta.env.VITE_API_PROD;
-
-      const response = await axios.post(`${url}/buyer/checkout/`, {
-        checkout: checkoutData,
-      });
-
-      dispatch({ type: "SET_LOADING", value: false });
-
-      window.open(response.data.data.url);
-    } catch (error) {
-      dispatch({ type: "SET_LOADING", value: false });
-      showNotifications({
-        status: "error",
-        title: "Error",
-        message: error.response.data.message,
-      });
-    }
+  const handleSubmitRating = () => {
+    // Handle the submission of the rating and feedback
+    // reset the rating and feedback state variables
+    setRating(0);
+    setFeedback("");
+    setShowSuccessMessage(true);
+    setTimeout(() => {
+        navigate("/buyer/transactions");
+      }, 1500);
   };
 
   return (
     <div className={classes.container}>
-      <Stepper active={active} onStepClick={setActive} breakpoint="sm">
-        <Stepper.Step label="Shopping cart"></Stepper.Step>
-        <Stepper.Step label="Purchased"></Stepper.Step>
-        <Stepper.Step label="Available for pickup">
-          Available for pickup
-        </Stepper.Step>
-        <Stepper.Step label="Completed"></Stepper.Step>
-      </Stepper>
+      
 
       <div className={classes.itemList}>{renderCheckoutItems()}</div>
 
-      <div className={classes.summaryContainer}>
+      <div className={classes.feedbackContainer}>
         <Text fw={700} size="xl">
-          Summary
+          Product Quality
         </Text>
-        <div className={classes.priceContainer}>
-          <Text fw={500}>Total Price</Text>
-          {renderTotalPrice()}
-          <Button onClick={orderOnClick}>Place an order</Button>
+        <div className={classes.starRatingContainer}>
+        <Rating defaultValue={4} onChange={handleRatingChange}/>
+        </div>
+        <div className={classes.ratingDescriptionContainer}>
+        <Text fw={500} style={{ paddingBottom: '10px' }}>
+        Satisfaction feedback:
+        </Text>
+        <Textarea
+          value={feedback}
+          onChange={handleFeedbackChange}
+          placeholder="Describe your satisfaction with the product..."
+        />
+      </div>
+        <div className={classes.submitContainer}>
+          <Button onClick={handleSubmitRating}>Submit Rating</Button>
+          {showSuccessMessage && (
+        <Text style={{ color: 'green' }}>Rating submitted successfully!</Text>
+      )}
         </div>
       </div>
     </div>
   );
 }
 
-export default Checkout;
+export default productRate;
+

@@ -30,6 +30,39 @@ function UserProfile() {
       profileImage: "",
       phoneNumber: "",
     },
+    validate: {
+      firstName: (value) => {
+        if (value.length === 0) return "First Name should not be blank";
+        if (/^\s$|^\s+.|.\s+$/.test(value))
+          return "First Name should not contain trailing/leading whitespaces";
+      },
+
+      lastName: (value) => {
+        if (value.length === 0) return "Last Name should not be blank";
+        if (/^\s$|^\s+.|.\s+$/.test(value))
+          return "Last Name should not contain trailing/leading whitespaces";
+      },
+      gender: (value) => {
+        if (value.length === 0) return "Gender should not be blank";
+        if (/^\s$|^\s+.|.\s+$/.test(value))
+          return "Gender should not contain trailing/leading whitespaces";
+      },
+      email: (value) => {
+        if (value.length === 0) return "Email should not be blank";
+        if (/^\s$|^\s+.|.\s+$/.test(value))
+          return "Email should not contain trailing/leading whitespaces";
+      },
+      dateOfBirth: (value) => {
+        if (value.length === 0) return "Date Of Birth should not be blank";
+        if (/^\s$|^\s+.|.\s+$/.test(value))
+          return "Date Of Birth should not contain trailing/leading whitespaces";
+      },
+      phoneNumber: (value) => {
+        if (value.length === 0) return "Phone Number should not be blank";
+        if (/^\s$|^\s+.|.\s+$/.test(value))
+          return "Phone Number should not contain trailing/leading whitespaces";
+      },
+    },
   });
 
   useEffect(() => {
@@ -75,6 +108,7 @@ function UserProfile() {
           gender: currentUser.gender,
           dateOfBirth: currentUser.date_of_birth,
           showImage: currentUser.profile_image_url,
+          phoneNumber: "-",
         });
       } else {
         showNotifications({
@@ -107,38 +141,43 @@ function UserProfile() {
     event.preventDefault();
 
     try {
-      dispatch({ type: "SET_LOADING", value: true });
+      if (!form.validate().hasErrors) {
+        dispatch({ type: "SET_LOADING", value: true });
 
-      const formData = new FormData();
+        const formData = new FormData();
 
-      formData.append("user_id", form.values.userId);
-      formData.append("first_name", form.values.firstName);
-      formData.append("last_name", form.values.lastName);
-      formData.append("gender", form.values.gender);
-      formData.append("profile_image", form.values.profileImage);
+        formData.append("user_id", form.values.userId);
+        formData.append("first_name", form.values.firstName);
+        formData.append("last_name", form.values.lastName);
+        formData.append("gender", form.values.gender);
+        formData.append("profile_image", form.values.profileImage);
 
-      if (currentUser.role === "buyer") {
-        formData.append("phone_number", form.values.phoneNumber);
+        if (currentUser.role === "buyer") {
+          formData.append("phone_number", form.values.phoneNumber);
+        }
+
+        const url =
+          import.meta.env.VITE_NODE_ENV == "DEV"
+            ? import.meta.env.VITE_API_DEV
+            : import.meta.env.VITE_API_PROD;
+
+        const response = await axios.post(`${url}/update-profile/`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        dispatch({ type: "SET_LOADING", value: false });
+
+        navigate(`/seller-home/${currentUser.user_id}`);
+        //navigate("/")
+
+        showNotifications({
+          status: response.data.status,
+          title: "Success",
+          message: response.data.message,
+        });
       }
-
-      const url =
-        import.meta.env.VITE_NODE_ENV == "DEV"
-          ? import.meta.env.VITE_API_DEV
-          : import.meta.env.VITE_API_PROD;
-
-      const response = await axios.post(`${url}/update-profile/`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      dispatch({ type: "SET_LOADING", value: false });
-
-      showNotifications({
-        status: response.data.status,
-        title: "Success",
-        message: response.data.message,
-      });
     } catch (error) {
       dispatch({ type: "SET_LOADING", value: false });
 
@@ -163,19 +202,12 @@ function UserProfile() {
   };
 
   return (
-    <form className={classes.container} onSubmit={saveOnClick}>
-      <Flex
-        mih={50}
-        gap="xl"
-        justify="center"
-        align="center"
-        direction="column"
-        wrap="wrap"
-        onSubmit={saveOnClick}
-      >
+    <div className={classes.container}>
+      <form className={classes.content} onSubmit={saveOnClick}>
         <Image
           width={100}
           height={100}
+          className={classes.image}
           radius="50% "
           src={form.values.showImage || IlDefaultAvatar}
           alt="Selected"
@@ -230,8 +262,8 @@ function UserProfile() {
         </Radio.Group>
 
         <Button type="submit">Save</Button>
-      </Flex>
-    </form>
+      </form>
+    </div>
   );
 }
 

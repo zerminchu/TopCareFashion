@@ -14,6 +14,8 @@ import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useForm } from "@mantine/form";
 import { showNotifications } from "../../utils/ShowNotification";
 import { BiUpload } from "react-icons/bi";
+import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
+import Cookies from "js-cookie";
 
 const useStyles = createStyles((theme) => ({
   root: {
@@ -111,6 +113,31 @@ function EditListing() {
       reader.readAsDataURL(file);
     }
   };
+
+  useEffect(() => {
+    const setUserSessionData = async () => {
+      try {
+        const user = await retrieveUserInfo();
+        setCurrentUser(user);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    // Check if user has signed in before
+    if (Cookies.get("firebaseIdToken")) {
+      setUserSessionData();
+    } else {
+      navigate("/", { replace: true });
+    }
+  }, []);
+
+  // Route restriction only for seller
+  useEffect(() => {
+    if (currentUser && currentUser.role !== "seller") {
+      navigate("/", { replace: true });
+    }
+  }, [currentUser]);
 
   useEffect(() => {
     const fetchItemDetails = async () => {
