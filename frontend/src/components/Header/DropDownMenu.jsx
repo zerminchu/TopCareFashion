@@ -36,7 +36,7 @@ function DropDownMenu(props) {
   };
 
   const analyticsOnClick = () => {
-    navigate("/seller/order-status");
+    console.log("analytics click");
   };
 
   const manageListingsOnClick = () => {
@@ -44,16 +44,20 @@ function DropDownMenu(props) {
   };
 
   const manageFeedbackForm = () => {
+    console.log("manage feedback");
     navigate("/seller/feedback-form");
   };
 
   const manageFrequentlyAskQuestion = () => {
+    console.log("manage FAQ click");
     navigate("/seller/frequently-ask-question");
   };
 
   const manageTransactionsOnClick = () => {
+    console.log("manage transaction click");
     navigate("/buyer/transactions");
   };
+
 
   const logoutOnClick = () => {
     Cookies.remove("firebaseIdToken");
@@ -85,7 +89,12 @@ function DropDownMenu(props) {
             >
               Business Profile
             </Menu.Item>
-
+            <Menu.Item
+              icon={<img src={IconSettings} />}
+              onClick={settingsOnClick}
+            >
+              Settings
+            </Menu.Item>
             <Menu.Item
               icon={<img src={IconAnalytics} />}
               onClick={analyticsOnClick}
@@ -94,18 +103,25 @@ function DropDownMenu(props) {
             </Menu.Item>
 
             <Menu.Item
-              icon={<img src={IconQuestionMark} />}
-              onClick={manageFeedbackForm}
+              icon={<img src={IconManageListing} />}
+              onClick={manageListingsOnClick}
             >
-              Feedback Form
+              Manage Listings
             </Menu.Item>
 
             <Menu.Item
-              icon={<img src={IconQuestionMark} />}
-              onClick={manageFrequentlyAskQuestion}
-            >
-              FAQ
-            </Menu.Item>
+            icon={<img src={IconQuestionMark} />}
+            onClick={manageFeedbackForm}
+          >
+            Feedback Form
+          </Menu.Item>
+
+          <Menu.Item
+            icon={<img src={IconQuestionMark} />}
+            onClick={manageFrequentlyAskQuestion}
+          >
+            FAQ
+          </Menu.Item>
             <Menu.Item icon={<img src={IconLogout} />} onClick={logoutOnClick}>
               Logout
             </Menu.Item>
@@ -145,6 +161,12 @@ function DropDownMenu(props) {
               Transactions
             </Menu.Item>
 
+            <Menu.Item
+              icon={<img src={IconSettings} />}
+              onClick={settingsOnClick}
+            >
+              Settings
+            </Menu.Item>
             <Menu.Item icon={<img src={IconLogout} />} onClick={logoutOnClick}>
               Logout
             </Menu.Item>
