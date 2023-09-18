@@ -18,7 +18,6 @@ import BuyerCart from "../pages/Buyer/BuyerCart";
 import Wishlist from "../pages/Buyer/Wishlist";
 import CategoryListingsPage from "../components/CategoryListing";
 import Chatting from "../pages/Chatting";
-import ProductRate from "../pages/Buyer/BuyerRateProduct";
 
 function PageRoutes() {
   return (
@@ -43,7 +42,6 @@ function PageRoutes() {
       <Route path="/buyer/product-detail" element={<ProductDetails />} />
       <Route path="/buyer/wishlist" element={<Wishlist />} />
       <Route path="/buyer/checkout" element={<Checkout />} />
-      <Route path="/buyer/product-rate" element={<ProductRate />} />
       <Route path="/buyer/transactions" element={<Transactions />} />
       <Route path="/buyer/buyer-cart" element={<BuyerCart />} />
       <Route

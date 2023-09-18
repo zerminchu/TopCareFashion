@@ -12,16 +12,13 @@ import {
   Button,
 } from "@mantine/core";
 import { keys } from "@mantine/utils";
-
 import {
   IconSelector,
   IconChevronDown,
   IconChevronUp,
   IconSearch,
 } from "@tabler/icons-react";
-import IconTrashBin from "../../assets/icons/ic_trash.svg";
 import blueShirt from "../../assets/images/blue_shirt.jpg";
-
 import { DUMMY_CART_PRODUCT } from "../../data/Products";
 import { useNavigate } from "react-router";
 import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
@@ -56,7 +53,7 @@ const useStyles = createStyles((theme) => ({
     backgroundColor: "black",
     color: "white",
     border: "none",
-    padding: "8px 15px",
+    padding: "8px 20px",
     cursor: "pointer",
     transition: "background-color 0.3s ease", // Add a transition for hover effect
     borderRadius: "10px",
@@ -145,7 +142,11 @@ function sortData(
     payload.search
   );
 }
+const rateWord = "rate";
 
+const dontSort = () => {
+  console.log("nothing");
+};
 
 const sampleData: RowData[] = [
   {
@@ -162,7 +163,7 @@ const sampleData: RowData[] = [
       "https://images.unsplash.com/photo-1597350584914-55bb62285896?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1964&q=80",
     title: "Trendy White Sneakers",
     type: "Foot Wear",
-    color: "White",
+    color: "wHITE",
     size: "XL",
     price: "$300.00",
     quantity: "3",
@@ -170,7 +171,7 @@ const sampleData: RowData[] = [
   {
     image:
       "https://images.unsplash.com/photo-1606480192262-e3b6a9f37142?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cmVkJTIwZ293bnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60",
-    title: "Red Dress",
+    title: "Retro Sunglasses",
     type: "Top Wear",
     color: "Red",
     size: "L",
@@ -188,9 +189,7 @@ export function Transactions() {
   const [sortedData, setSortedData] = useState<RowData[]>(sampleData);
   const [sortBy, setSortBy] = useState<keyof RowData | null>(null);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
-  const [filteredOutItems, setFilteredOutItems] = useState<RowData[]>([]); // Specify the type explicitly
-  //const [filteredOutTitles, setFilteredOutTitles] = useState<string[]>([]);
-  
+  const [updatedData, setUpdatedData] = useState<RowData[]>(sampleData);
 
   // Check current user
   useEffect(() => {
@@ -249,7 +248,6 @@ export function Transactions() {
     //handle searches
     const { value } = event.currentTarget;
     setSearch(value);
-    console.log(value) //can use this, set as the title (filter out the title)
     setSortedData(
       sortData(
         sampleData.map((item) => ({
@@ -283,14 +281,13 @@ export function Transactions() {
     const data = DUMMY_CART_PRODUCT;
 
     const filteredData = data.filter((item) => item.title === title);
-    console.log("pressed buy" +title) //title passes the param
 
     navigate("/buyer/checkout", {
       state: { data: filteredData },
     });
   };
 
-  const handleProceedCheckoutClick1 = () => {
+  const handleProceedCheckoutClick = () => {
     // Using dummy cart product to send params to checkout page
     const data = DUMMY_CART_PRODUCT;
 
@@ -298,40 +295,6 @@ export function Transactions() {
       state: { data: data },
     });
   };
-
-  
-
-
-  const handleTrashClick = (title) => {
-    // Find the item with the specified title
-    const itemToFilterOut = sampleData.find((item) => item.title === title);
-    // Filter out the item with the specified title from the current sortedData
-    const updatedData = sortedData.filter((item) => item.title !== title); 
-
-    // Update the sortedData state with the filtered data
-    setSortedData(updatedData);
-
-    // Add the filtered-out item to the filteredOutItems state
-    setFilteredOutItems((prevFilteredOutItems) => [
-      ...(prevFilteredOutItems || []), // Use a default empty array if prevFilteredOutItems is undefined
-      itemToFilterOut!,
-    ]);
-  };
-
-
-  const handleProceedCheckoutClick = () => {
-    const data = DUMMY_CART_PRODUCT;
-  
-    // Filter out the items with titles that are in filteredOutItems
-    const filteredData = data.filter((item) =>
-      !filteredOutItems.some((filteredItem) => filteredItem.title === item.title)
-    );
-  
-    navigate("/buyer/checkout", {
-      state: { data: filteredData },
-    });
-  };
-
 
   const rows = sortedData.map((row) => (
     <tr key={row.title}>
@@ -359,10 +322,6 @@ export function Transactions() {
           Buy Now
         </UnstyledButton>
       </td>
-      <td>
-        <img src={IconTrashBin} alt="Trash Icon" width="24" height="24" onClick={() => handleTrashClick(row.title)} />
-      </td>
-      
     </tr>
   ));
 
@@ -436,12 +395,13 @@ export function Transactions() {
               >
                 Quantity
               </Th>
-              {/*<Th
+              <Th
                 sorted={sortBy === null}
                 reversed={reverseSortDirection}
                 onSort={() => dontSort}
-              >}
-              </Th>*/ }
+              >
+                {/* No title for this column */}
+              </Th>
             </tr>
           </thead>
           <tbody>
