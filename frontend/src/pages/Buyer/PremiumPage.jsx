@@ -1,13 +1,73 @@
 /* eslint-disable react/prop-types */
 import { Modal, Paper, Text, Button } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
+import React, { useState, useEffect } from "react";
+import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
+import { showNotifications } from "../../utils/ShowNotification";
+import { useDispatch } from "react-redux";
+import axios from "axios";
 
 function PremiumPopup({ isOpen, onClose }) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const getStartedOnClick = () => {
-    onClose();
-    navigate("/buyer/premium-feature");
+  const [currentUser, setCurrentUser] = useState();
+
+  useEffect(() => {
+    const setUserSessionData = async () => {
+      try {
+        const user = await retrieveUserInfo();
+        setCurrentUser(user);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    // Check if user has signed in before
+    if (Cookies.get("firebaseIdToken")) {
+      setUserSessionData();
+    } else {
+      navigate("/", { replace: true });
+    }
+  }, []);
+
+  const getStartedOnClick = async () => {
+    try {
+      if (currentUser) {
+        console.log("CURRENT USER", currentUser);
+        if (currentUser.premium_feature) {
+          navigate("/buyer/premium-feature");
+          onClose();
+        } else {
+          dispatch({ type: "SET_LOADING", value: true });
+          const url =
+            import.meta.env.VITE_NODE_ENV == "DEV"
+              ? import.meta.env.VITE_API_DEV
+              : import.meta.env.VITE_API_PROD;
+
+          const response = await axios.post(
+            `${url}/buyer/premium-feature-checkout/`,
+            {
+              user_id: currentUser.user_id,
+            }
+          );
+          console.log("need to pay");
+
+          dispatch({ type: "SET_LOADING", value: false });
+          onClose();
+
+          window.open(response.data.data.url);
+        }
+      }
+    } catch (error) {
+      dispatch({ type: "SET_LOADING", value: false });
+      showNotifications({
+        status: "error",
+        title: "Error",
+        message: error.response.data.message,
+      });
+    }
   };
 
   return (
