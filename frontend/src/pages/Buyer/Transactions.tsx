@@ -58,8 +58,20 @@ const useStyles = createStyles((theme) => ({
 
   rateButtonHover: {},
 
+  detailButton: {
+    backgroundColor: "black",
+    color: "white",
+    border: "none",
+    padding: "8px 30px",
+    cursor: "pointer",
+    transition: "background-color 0.3s ease", // Add a transition for hover effect
+    borderRadius: "10px",
+  },
+
+  detailButtonHover: {},
+
   container: {
-    maxWidth: "1200px", // Set the maximum width for the container
+    maxWidth: "1400px", // Set the maximum width for the container
     margin: "20px auto", // Center the container horizontally and add a top margin
     border: "1px solid #ccc", // Add an outline border
     padding: "20px", // Add padding to the container
@@ -243,7 +255,7 @@ export function Transactions() {
       <td>{row.price}</td>
       <td>{row.quantity}</td> {/* New column for quantity */}
       <td>{row.status}</td> {/* New column for status */}
-      <td>
+      
         <td>
           <UnstyledButton
             className={`${classes.rateButton} ${classes.rateButtonHover}`}
@@ -252,7 +264,15 @@ export function Transactions() {
             RATE
           </UnstyledButton>
         </td>
-      </td>
+      
+      <td>
+          <UnstyledButton
+            className={`${classes.detailButton} ${classes.detailButtonHover}`}
+            onClick={() => handleRateButtonClick(row.product_title)}
+          >
+            View Details
+          </UnstyledButton>
+        </td>
     </tr>
   ));
 
@@ -292,6 +312,9 @@ export function Transactions() {
           </Th>
           <Th sorted={sortBy === 'status'} reversed={reverseSortDirection} onSort={() => setSorting('status')}>
             Status
+          </Th>
+          <Th sorted={sortBy === null} reversed={reverseSortDirection} onSort={() => dontSort}>
+            {/* No title for this column */}
           </Th>
           <Th sorted={sortBy === null} reversed={reverseSortDirection} onSort={() => dontSort}>
             {/* No title for this column */}

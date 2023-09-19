@@ -163,7 +163,6 @@ function DropDownMenu(props) {
               <span style={{ marginRight: "10px" }}>Fashion Recommender</span>
               <Badge>Premium</Badge>
             </Menu.Item>
-
             <Menu.Item
               icon={<img src={IconQuestionMark} />}
               onClick={manageFeedbackForm}
