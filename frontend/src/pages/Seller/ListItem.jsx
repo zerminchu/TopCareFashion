@@ -15,6 +15,7 @@ import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
 import Cookies from "js-cookie";
 import { showNotifications } from "../../utils/ShowNotification";
 import { useDispatch } from "react-redux";
+import { Badge } from "@mantine/core";
 
 const useStyles = createStyles((theme) => ({
   root: {
@@ -286,15 +287,34 @@ function ListItem() {
           alignItems: "center",
         }}
       >
-        <TextInput
-          label="Category"
-          value={category}
-          onChange={(event) => setCategory(event.target.value)}
-          placeholder="Top"
-          classNames={classes}
-          style={{ width: "50%", marginBottom: "10px" }}
-          error={validateCategory(category)}
-        />
+        <div
+          style={{
+            position: "relative",
+            display: "inline-block",
+            width: "50%",
+            marginBottom: "10px",
+          }}
+        >
+          <TextInput
+            label="Category"
+            value={category}
+            onChange={(event) => setCategory(event.target.value)}
+            placeholder="Top"
+            classNames={classes}
+            error={validateCategory(category)}
+          />
+          <Badge
+            color="violet"
+            style={{
+              position: "absolute",
+              top: "50%",
+              right: "5px",
+              transform: "translateY(-50%)",
+            }}
+          >
+            PREDICTED
+          </Badge>
+        </div>
 
         <Select
           mt="md"

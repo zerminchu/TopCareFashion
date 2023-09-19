@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { useForm } from "@mantine/form";
 import classes from "./SignUpForm.module.css";
@@ -11,6 +11,26 @@ import ILLogo from "../../assets/illustrations/il_logo.png";
 
 function SignUpForm(props) {
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    // Function to enable scrolling
+    const enableScroll = () => {
+      document.documentElement.classList.remove("disable-scroll");
+      document.body.classList.remove("disable-scroll");
+    };
+
+    // Function to disable scrolling
+    const disableScroll = () => {
+      document.documentElement.classList.add("disable-scroll");
+      document.body.classList.add("disable-scroll");
+    };
+
+    // Call disableScroll when the form is shown
+    disableScroll();
+
+    // Call enableScroll when the form is hidden
+    return enableScroll;
+  }, []);
 
   const form = useForm({
     initialValues: {
@@ -110,12 +130,7 @@ function SignUpForm(props) {
     <div className={classes.popupoverlay}>
       <div className={classes.popupContainer}>
         <div className={classes.popupcontent}>
-          <img
-            src={ILLogo}
-            width={70}
-            height={30}
-            style={{ marginTop: "120px" }}
-          />
+          <img src={ILLogo} width={70} height={70} />
           <Select
             className={classes.element}
             label="Role"

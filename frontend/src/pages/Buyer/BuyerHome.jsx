@@ -16,7 +16,7 @@ import Cookies from "js-cookie";
 function BuyerHome(props) {
   const [searchText, setSearchText] = useState("");
   const [productList, setproductList] = useState([]);
-  const [visibleProductCount, setVisibleProductCount] = useState(6);
+  const [visibleProductCount, setVisibleProductCount] = useState(10);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [user, setUser] = useState([]);
@@ -109,7 +109,7 @@ function BuyerHome(props) {
             variant="outline"
             className={classes.viewMoreButton}
             onClick={() => {
-              setVisibleProductCount(visibleProductCount + 6);
+              setVisibleProductCount(visibleProductCount + 10);
             }}
           >
             View More

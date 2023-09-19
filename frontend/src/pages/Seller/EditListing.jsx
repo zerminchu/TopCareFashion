@@ -16,6 +16,7 @@ import { showNotifications } from "../../utils/ShowNotification";
 import { BiUpload } from "react-icons/bi";
 import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
 import Cookies from "js-cookie";
+import { Badge } from "@mantine/core";
 
 const useStyles = createStyles((theme) => ({
   root: {
@@ -315,14 +316,33 @@ function EditListing() {
           alignItems: "center",
         }}
       >
-        <TextInput
-          label="Category"
-          value={item.category}
-          style={{ width: "50%" }}
-          classNames={classes}
-          disabled={!isEditing}
-          {...form.getInputProps("category")}
-        />
+        <div
+          style={{
+            position: "relative",
+            display: "inline-block",
+            width: "50%",
+          }}
+        >
+          <TextInput
+            label="Category"
+            value={item.category}
+            classNames={classes}
+            disabled={!isEditing}
+            {...form.getInputProps("category")}
+          />
+          <Badge
+            color="violet"
+            style={{
+              position: "absolute",
+              top: "50%",
+              right: "5px",
+              transform: "translateY(-50%)",
+            }}
+          >
+            PREDICTED
+          </Badge>
+        </div>
+
         <br />
         <TextInput
           label="Condition"

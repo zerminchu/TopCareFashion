@@ -236,7 +236,7 @@ function SellerCards() {
           />
 
           <TextInput
-            placeholder="Search by item"
+            placeholder="Search by listing"
             icon={<IconSearch size="1rem" />}
             rightSectionWidth={90}
             styles={{ rightSection: { pointerEvents: "none" } }}

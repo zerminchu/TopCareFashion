@@ -16,8 +16,10 @@
 
 .listProductCategory {
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  flex-wrap: wrap; /* Allow categories to wrap to the next line if needed */
+  justify-content: space-between; /* Distribute space evenly between categories */
+  gap: 10px; /* Adjust the gap between categories */
+  border-radius: 100px;
 }
 
 .searchContainer {
@@ -30,6 +32,8 @@
 .categoryContainer {
   display: flex;
   flex-direction: column;
+  border-radius: 100px; 
+
 }
 
 .seeAllCategoryContainer {
@@ -55,3 +59,4 @@
   align-items: center;
   margin-top: 30px;
 }
+

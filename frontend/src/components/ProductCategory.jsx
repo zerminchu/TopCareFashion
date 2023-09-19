@@ -14,6 +14,7 @@ function ProductCategory(props) {
   const onClick = () => {
     setSelectedCategory(props.category);
     props.setSelectedCategory(props.category);
+
     navigate(`/buyer/category-listing/${props.category}`);
   };
 
@@ -33,7 +34,7 @@ function ProductCategory(props) {
     if (props.category === "Bottom") {
       return <Text>Shop for the lastest tops for women and men</Text>;
     } else if (props.category === "Top") {
-      return <Text>Find the perfect pair of patns, shorts, or skirts</Text>;
+      return <Text>Find the perfect pair of pants, shorts, or skirts</Text>;
     } else if (props.category === "Footwear") {
       return (
         <Text>Step up your shoe game with our collection of footwear</Text>

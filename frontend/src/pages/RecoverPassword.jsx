@@ -1,12 +1,12 @@
-import { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Box, Button, Flex, Text, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { useDispatch } from "react-redux";
 
 import "./RecoverPassword.css";
 import { showNotifications } from "../utils/ShowNotification";
-import { useDispatch } from "react-redux";
 
 function RecoverPassword() {
   const navigate = useNavigate();
@@ -18,9 +18,8 @@ function RecoverPassword() {
     },
     validate: {
       email: (value) => {
-        if (value.length === 0) return "Email should not be blank";
-        if (/^\s$|^\s+.|.\s+$/.test(value))
-          return "Email should not contain trailing/leading whitespaces";
+        if (!value) return "Email should not be blank";
+        if (!/^\S+@\S+\.\S+$/.test(value)) return "Invalid email format";
       },
     },
   });
@@ -33,7 +32,7 @@ function RecoverPassword() {
         const data = { email: form.values.email };
 
         const url =
-          import.meta.env.VITE_NODE_ENV == "DEV"
+          import.meta.env.VITE_NODE_ENV === "DEV"
             ? import.meta.env.VITE_API_DEV
             : import.meta.env.VITE_API_PROD;
 
@@ -46,8 +45,6 @@ function RecoverPassword() {
           title: "Success",
           message: response.data.message,
         });
-
-        navigate("/");
       }
     } catch (error) {
       dispatch({ type: "SET_LOADING", value: false });
@@ -55,21 +52,59 @@ function RecoverPassword() {
       showNotifications({
         status: "error",
         title: "Error",
-        message: error.response.data.message,
+        message: error.response?.data?.message || "An error occurred",
       });
     }
   };
 
   return (
-    <div className="container">
-      <Text fw={700}>Reset Password</Text>
-      <TextInput
-        label="Email"
-        placeholder="Email"
-        {...form.getInputProps("email")}
-      />
-      <Button onClick={confirmHandler}>Confirm</Button>
-    </div>
+    <Flex
+      align="center"
+      justify="center"
+      minHeight="100vh"
+      padding="1rem"
+      flexDirection="column"
+    >
+      <Box
+        padding="2rem"
+        borderRadius="8px"
+        boxShadow="md"
+        backgroundColor="#ffffff"
+        width={{ xs: "100%", sm: "80%", md: "60%" }}
+      >
+        <Text
+          size="xl"
+          weight={700}
+          textAlign="center"
+          marginBottom="1.5rem"
+          justify-content="center"
+        >
+          Reset Password
+        </Text>
+        <br />
+        <Text size="l" weight={500} textAlign="center" marginBottom="1.5rem">
+          Enter the email address of your account
+        </Text>
+        <br />
+        <TextInput
+          placeholder="Your email"
+          {...form.getInputProps("email")}
+          radius="sm"
+          fullWidth
+          marginBottom="1.5rem"
+        />
+        <br />
+        <Button
+          onClick={confirmHandler}
+          fullWidth
+          radius="sm"
+          size="lg"
+          style={{ backgroundColor: "#007aff" }}
+        >
+          Send a password reset link
+        </Button>
+      </Box>
+    </Flex>
   );
 }
 

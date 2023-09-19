@@ -51,7 +51,6 @@ display: flex;
   gap: 20px;
   flex-direction: row;
   margin-right:20px;
-      /* Change flex-direction to reverse */
 }
 
 .categoryDropdown {
@@ -62,5 +61,5 @@ display: flex;
 
 .searchBar {
   flex: 5;
-  max-width: 1200px;
+  max-width: 90%;
 }
