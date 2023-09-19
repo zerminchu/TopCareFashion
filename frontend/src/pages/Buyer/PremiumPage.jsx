@@ -53,14 +53,27 @@ function PremiumPopup({ isOpen, onClose }) {
           >
             Fashion Recommender
           </Text>
-          <Text
-            size="sm"
-            style={{
-              marginBottom: "20px",
-            }}
-          >
-            The conversational fashion recommender feature is a premium feature.
+          <Text size="lg" weight={700} style={{ marginBottom: "20px" }}>
+            Elevate Your Style with Premium Access!
           </Text>
+          <Text size="sm" style={{ marginBottom: "20px" }}>
+            Unlock the full potential of our Conversational Fashion Recommender
+            – a premium feature designed just for you. Discover the latest
+            trends, receive personalised recommendations, and stay ahead in the
+            fashion game.
+            <br />
+            <br />
+            <Text weight={700} color="#555">
+              UNLIMITED LIFETIME ACCESS
+            </Text>{" "}
+            for an incredible price of only
+            <Text weight={700} color="#555">
+              S$4.99
+            </Text>
+            <br />
+            <i>Limited Time Only</i>
+          </Text>
+
           <Button
             fullWidth
             size="lg"
