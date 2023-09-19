@@ -137,7 +137,7 @@ function BuyerHome(props) {
           <div className={classes.searchContainer}>
             <TextInput
               className={classes.searchBar}
-              placeholder="Search product"
+              placeholder="Search for an apprarel"
               value={searchText}
               onChange={(e) => {
                 setSearchText(e.target.value);
