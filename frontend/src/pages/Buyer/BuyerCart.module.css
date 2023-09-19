@@ -1,0 +1,6 @@
+.biggerContainer {
+  display: flex;
+  flex-direction: column;
+  padding-left: 7%;
+  padding-right: 7%;
+}

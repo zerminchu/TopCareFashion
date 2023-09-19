@@ -27,7 +27,8 @@ import { useNavigate } from "react-router";
 import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
 import Cookies from "js-cookie";
 import { showNotifications } from "../../utils/ShowNotification";
-//import
+import CartItem from "../../components/CartItem";
+import style from "./BuyerCart.module.css";
 
 const useStyles = createStyles((theme) => ({
   th: {
@@ -65,7 +66,7 @@ const useStyles = createStyles((theme) => ({
   rateButtonHover: {},
 
   container: {
-    maxWidth: "1200px", // Set the maximum width for the container
+    borderRadius: "5px",
     margin: "20px auto", // Center the container horizontally and add a top margin
     border: "1px solid #ccc", // Add an outline border
     padding: "20px", // Add padding to the container
@@ -146,7 +147,6 @@ function sortData(
   );
 }
 
-
 const sampleData: RowData[] = [
   {
     image: blueShirt,
@@ -190,7 +190,6 @@ export function Transactions() {
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
   const [filteredOutItems, setFilteredOutItems] = useState<RowData[]>([]); // Specify the type explicitly
   //const [filteredOutTitles, setFilteredOutTitles] = useState<string[]>([]);
-  
 
   // Check current user
   useEffect(() => {
@@ -249,7 +248,7 @@ export function Transactions() {
     //handle searches
     const { value } = event.currentTarget;
     setSearch(value);
-    console.log(value) //can use this, set as the title (filter out the title)
+    console.log(value); //can use this, set as the title (filter out the title)
     setSortedData(
       sortData(
         sampleData.map((item) => ({
@@ -266,6 +265,7 @@ export function Transactions() {
     title: string
   ) => {
     const { value } = event.currentTarget;
+    console.log("This is invoked", value);
 
     // Use a regular expression to check if the value is a number
     if (/^\d+$/.test(value) || value === "") {
@@ -273,6 +273,7 @@ export function Transactions() {
         ...prevQuantity,
         [title]: value,
       }));
+      console.log("Updated quantity", editedQuantity);
     } else {
       // Display an error message or handle invalid input as needed
       console.log(`Invalid input for ${title}: ${value}`);
@@ -283,7 +284,7 @@ export function Transactions() {
     const data = DUMMY_CART_PRODUCT;
 
     const filteredData = data.filter((item) => item.title === title);
-    console.log("pressed buy" +title) //title passes the param
+    console.log("pressed buy" + title); //title passes the param
 
     navigate("/buyer/checkout", {
       state: { data: filteredData },
@@ -299,14 +300,11 @@ export function Transactions() {
     });
   };
 
-  
-
-
   const handleTrashClick = (title) => {
     // Find the item with the specified title
     const itemToFilterOut = sampleData.find((item) => item.title === title);
     // Filter out the item with the specified title from the current sortedData
-    const updatedData = sortedData.filter((item) => item.title !== title); 
+    const updatedData = sortedData.filter((item) => item.title !== title);
 
     // Update the sortedData state with the filtered data
     setSortedData(updatedData);
@@ -318,148 +316,165 @@ export function Transactions() {
     ]);
   };
 
-
   const handleProceedCheckoutClick = () => {
     const data = DUMMY_CART_PRODUCT;
-  
+
     // Filter out the items with titles that are in filteredOutItems
-    const filteredData = data.filter((item) =>
-      !filteredOutItems.some((filteredItem) => filteredItem.title === item.title)
+    const filteredData = data.filter(
+      (item) =>
+        !filteredOutItems.some(
+          (filteredItem) => filteredItem.title === item.title
+        )
     );
-  
+
     navigate("/buyer/checkout", {
       state: { data: filteredData },
     });
   };
 
-
-  const rows = sortedData.map((row) => (
-    <tr key={row.title}>
-      <td>
-        <img src={row.image} alt={row.title} width="50" height="50" />
-      </td>
-      <td>{row.title}</td>
-      <td>{row.type}</td>
-      <td>{row.color}</td>
-      <td>{row.size}</td>
-      <td>{row.price}</td>
-      <td>
-        <input
-          type="text"
-          value={editedQuantity[row.title]}
-          onChange={(e) => handleQuantityChange(e, row.title)}
-          style={{ width: "40px" }} // Limit the width to 20px
+  const renderCartItems = () => {
+    return sortedData.map((item) => {
+      return (
+        <CartItem
+          title={item.title}
+          image={item.image}
+          type={item.type}
+          color={item.color}
+          size={item.size}
+          price={item.price}
+          quantity={editedQuantity[item.title]}
+          handleQuantityChange={handleQuantityChange}
+          handleTrashClick={handleTrashClick}
+          handleBuyButtonClick={handleBuyButtonClick}
         />
-      </td>
-      <td>
-        <UnstyledButton
-          className={`${classes.rateButton} ${classes.rateButtonHover}`}
-          onClick={() => handleBuyButtonClick(row.title)}
-        >
-          Buy Now
-        </UnstyledButton>
-      </td>
-      <td>
-        <img src={IconTrashBin} alt="Trash Icon" width="24" height="24" onClick={() => handleTrashClick(row.title)} />
-      </td>
-      
-    </tr>
-  ));
+      );
+    });
+  };
+
+  // const rows = sortedData.map((row) => (
+  //   <tr key={row.title}>
+  //     <td>
+  //       <img src={row.image} alt={row.title} width="50" height="50" />
+  //     </td>
+  //     <td>{row.title}</td>
+  //     <td>{row.type}</td>
+  //     <td>{row.color}</td>
+  //     <td>{row.size}</td>
+  //     <td>{row.price}</td>
+  //     <td>
+  //       <input
+  //         type="text"
+  //         value={editedQuantity[row.title]}
+  //         onChange={(e) => handleQuantityChange(e, row.title)}
+  //         style={{ width: "40px" }} // Limit the width to 20px
+  //       />
+  //     </td>
+  //     <td>
+  //       <UnstyledButton
+  //         className={`${classes.rateButton} ${classes.rateButtonHover}`}
+  //         onClick={() => handleBuyButtonClick(row.title)}
+  //       >
+  //         Buy Now
+  //       </UnstyledButton>
+  //     </td>
+  //     <td>
+  //       <img
+  //         src={IconTrashBin}
+  //         alt="Trash Icon"
+  //         width="24"
+  //         height="24"
+  //         onClick={() => handleTrashClick(row.title)}
+  //       />
+  //     </td>
+  //   </tr>
+  // ));
 
   return (
-    <div className={classes.container}>
-      <Text weight={700} underline size="32px" mb="sm">
-        Cart
-      </Text>
-      <ScrollArea>
-        <TextInput
-          placeholder="Search by any field"
-          mb="md"
-          icon={<IconSearch size="0.9rem" stroke={1.5} />}
-          value={search}
-          onChange={handleSearchChange}
-        />
-        <Table
-          horizontalSpacing="md"
-          verticalSpacing="xs"
-          miw={700}
-          sx={{ tableLayout: "fixed" }}
-        >
-          <thead>
-            <tr>
-              <Th
-                sorted={sortBy === "image"}
-                reversed={reverseSortDirection}
-                onSort={() => setSorting("image")}
-              >
-                {/* no title */}
-              </Th>
-              <Th
-                sorted={sortBy === "title"}
-                reversed={reverseSortDirection}
-                onSort={() => setSorting("title")}
-              >
-                Title
-              </Th>
-              <Th
-                sorted={sortBy === "type"}
-                reversed={reverseSortDirection}
-                onSort={() => setSorting("type")}
-              >
-                Type
-              </Th>
-              <Th
-                sorted={sortBy === "color"}
-                reversed={reverseSortDirection}
-                onSort={() => setSorting("color")}
-              >
-                Color
-              </Th>
-              <Th
-                sorted={sortBy === "size"}
-                reversed={reverseSortDirection}
-                onSort={() => setSorting("size")}
-              >
-                Size
-              </Th>
-              <Th
-                sorted={sortBy === "price"}
-                reversed={reverseSortDirection}
-                onSort={() => setSorting("price")}
-              >
-                Price
-              </Th>
-              <Th
-                sorted={sortBy === "quantity"}
-                reversed={reverseSortDirection}
-                onSort={() => setSorting("quantity")}
-              >
-                Quantity
-              </Th>
-              {/*<Th
+    <div className={style.biggerContainer}>
+      <div className={classes.container}>
+        <Text weight={700} underline size="32px" mb="sm">
+          Cart
+        </Text>
+        <ScrollArea>
+          <TextInput
+            placeholder="Search by any field"
+            mb="md"
+            icon={<IconSearch size="0.9rem" stroke={1.5} />}
+            value={search}
+            onChange={handleSearchChange}
+          />
+          <Table
+            horizontalSpacing="md"
+            verticalSpacing="xs"
+            miw={700}
+            sx={{ tableLayout: "fixed" }}
+          >
+            <thead>
+              <tr>
+                <Th
+                  sorted={sortBy === "image"}
+                  reversed={reverseSortDirection}
+                  onSort={() => setSorting("image")}
+                >
+                  {/* no title */}
+                </Th>
+                <Th
+                  sorted={sortBy === "title"}
+                  reversed={reverseSortDirection}
+                  onSort={() => setSorting("title")}
+                >
+                  Title
+                </Th>
+                <Th
+                  sorted={sortBy === "type"}
+                  reversed={reverseSortDirection}
+                  onSort={() => setSorting("type")}
+                >
+                  Type
+                </Th>
+                <Th
+                  sorted={sortBy === "color"}
+                  reversed={reverseSortDirection}
+                  onSort={() => setSorting("color")}
+                >
+                  Color
+                </Th>
+                <Th
+                  sorted={sortBy === "size"}
+                  reversed={reverseSortDirection}
+                  onSort={() => setSorting("size")}
+                >
+                  Size
+                </Th>
+                <Th
+                  sorted={sortBy === "price"}
+                  reversed={reverseSortDirection}
+                  onSort={() => setSorting("price")}
+                >
+                  Price
+                </Th>
+                <Th
+                  sorted={sortBy === "quantity"}
+                  reversed={reverseSortDirection}
+                  onSort={() => setSorting("quantity")}
+                >
+                  Quantity
+                </Th>
+                {/*<Th
                 sorted={sortBy === null}
                 reversed={reverseSortDirection}
                 onSort={() => dontSort}
               >}
-              </Th>*/ }
-            </tr>
-          </thead>
-          <tbody>
-            {rows.length > 0 ? (
-              rows
-            ) : (
-              <tr>
-                <td colSpan={Object.keys(sampleData[0]).length}>
-                  <Text weight={500} align="center">
-                    Nothing found
-                  </Text>
-                </td>
+              </Th>*/}
               </tr>
-            )}
-          </tbody>
-        </Table>
-      </ScrollArea>
-      <Button onClick={handleProceedCheckoutClick}>Proceed to checkout</Button>
+            </thead>
+            <tbody>{renderCartItems()}</tbody>
+          </Table>
+        </ScrollArea>
+        <Button onClick={handleProceedCheckoutClick}>
+          Proceed to checkout
+        </Button>
+      </div>
     </div>
   );
 }
