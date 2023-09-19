@@ -146,7 +146,6 @@ function sortData(
   );
 }
 
-
 const sampleData: RowData[] = [
   {
     image: blueShirt,
@@ -190,7 +189,6 @@ export function Transactions() {
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
   const [filteredOutItems, setFilteredOutItems] = useState<RowData[]>([]); // Specify the type explicitly
   //const [filteredOutTitles, setFilteredOutTitles] = useState<string[]>([]);
-  
 
   // Check current user
   useEffect(() => {
@@ -249,7 +247,7 @@ export function Transactions() {
     //handle searches
     const { value } = event.currentTarget;
     setSearch(value);
-    console.log(value) //can use this, set as the title (filter out the title)
+    console.log(value); //can use this, set as the title (filter out the title)
     setSortedData(
       sortData(
         sampleData.map((item) => ({
@@ -283,7 +281,7 @@ export function Transactions() {
     const data = DUMMY_CART_PRODUCT;
 
     const filteredData = data.filter((item) => item.title === title);
-    console.log("pressed buy" +title) //title passes the param
+    console.log("pressed buy" + title); //title passes the param
 
     navigate("/buyer/checkout", {
       state: { data: filteredData },
@@ -299,14 +297,11 @@ export function Transactions() {
     });
   };
 
-  
-
-
   const handleTrashClick = (title) => {
     // Find the item with the specified title
     const itemToFilterOut = sampleData.find((item) => item.title === title);
     // Filter out the item with the specified title from the current sortedData
-    const updatedData = sortedData.filter((item) => item.title !== title); 
+    const updatedData = sortedData.filter((item) => item.title !== title);
 
     // Update the sortedData state with the filtered data
     setSortedData(updatedData);
@@ -318,20 +313,21 @@ export function Transactions() {
     ]);
   };
 
-
   const handleProceedCheckoutClick = () => {
     const data = DUMMY_CART_PRODUCT;
-  
+
     // Filter out the items with titles that are in filteredOutItems
-    const filteredData = data.filter((item) =>
-      !filteredOutItems.some((filteredItem) => filteredItem.title === item.title)
+    const filteredData = data.filter(
+      (item) =>
+        !filteredOutItems.some(
+          (filteredItem) => filteredItem.title === item.title
+        )
     );
-  
+
     navigate("/buyer/checkout", {
       state: { data: filteredData },
     });
   };
-
 
   const rows = sortedData.map((row) => (
     <tr key={row.title}>
@@ -360,9 +356,14 @@ export function Transactions() {
         </UnstyledButton>
       </td>
       <td>
-        <img src={IconTrashBin} alt="Trash Icon" width="24" height="24" onClick={() => handleTrashClick(row.title)} />
+        <img
+          src={IconTrashBin}
+          alt="Trash Icon"
+          width="24"
+          height="24"
+          onClick={() => handleTrashClick(row.title)}
+        />
       </td>
-      
     </tr>
   ));
 
@@ -441,7 +442,7 @@ export function Transactions() {
                 reversed={reverseSortDirection}
                 onSort={() => dontSort}
               >}
-              </Th>*/ }
+              </Th>*/}
             </tr>
           </thead>
           <tbody>

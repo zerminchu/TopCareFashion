@@ -23,6 +23,7 @@ import OutfitRecommender from "../pages/Buyer/OutfitRecommender";
 import ProductRate from "../pages/Buyer/BuyerRateProduct";
 import OrderStatus from "../pages/Seller/OrderStatus";
 import PremiumPopup from "../pages/Buyer/PremiumPage";
+import MixAndMatch from "../pages/Buyer/MixAndMatch";
 
 function PageRoutes() {
   return (
@@ -55,7 +56,7 @@ function PageRoutes() {
         path="/buyer/category-listing/:category"
         element={<CategoryListingsPage />}
       />
-      <Route path="/buyer/premium-feature" element={<PremiumPopup />} />
+      <Route path="/buyer/premium-feature" element={<MixAndMatch />} />
       <Route path="/not-found" element={<NotFoundImage />} />
       <Route path="/outfit-recommender" element={<OutfitRecommender />} />;
       {/* Private route */}

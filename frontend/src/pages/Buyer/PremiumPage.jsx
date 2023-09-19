@@ -1,7 +1,15 @@
 /* eslint-disable react/prop-types */
 import { Modal, Paper, Text, Button } from "@mantine/core";
+import { useNavigate } from "react-router-dom";
 
 function PremiumPopup({ isOpen, onClose }) {
+  const navigate = useNavigate();
+
+  const getStartedOnClick = () => {
+    onClose();
+    navigate("/buyer/premium-feature");
+  };
+
   return (
     <Modal
       opened={isOpen}
@@ -47,7 +55,7 @@ function PremiumPopup({ isOpen, onClose }) {
           size="lg"
           variant="gradient"
           gradient={{ from: "blue", to: "cyan" }}
-          onClick={onClose}
+          onClick={getStartedOnClick}
           style={{
             backgroundColor: "#007bff",
             color: "white",

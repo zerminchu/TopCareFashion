@@ -94,8 +94,7 @@ function SignInForm(props) {
   const [isPopupOpen, setPopupOpen] = useState(true);
 
   const handleBackButtonClick = () => {
-    setPopupOpen(false);
-    window.location.reload();
+    dispatch({ type: "SET_SIGN_IN", value: false });
   };
 
   return (
