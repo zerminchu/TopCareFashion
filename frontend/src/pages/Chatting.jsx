@@ -1,5 +1,5 @@
 import { ActionIcon, Avatar, Button, Text, TextInput } from "@mantine/core";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { DUMMY_CHAT, DUMMY_INBOX } from "../data/Chats";
 import Chat from "../components/Chat";
 import IconSend from "../assets/icons/ic_send.svg";
@@ -11,25 +11,20 @@ import { retrieveUserInfo } from "../utils/RetrieveUserInfoFromToken";
 import Cookies from "js-cookie";
 
 function Chatting() {
+  const chatBodyRef = useRef(null);
+
   const navigate = useNavigate();
+
   const [currentUser, setCurrentUser] = useState();
   const [chattingData, setChattingData] = useState([]);
   const [inboxData, setInboxData] = useState([]);
   const [message, setMessage] = useState("");
 
-  const sendOnClick = () => {
-    if (message.length > 0) {
-      let newChattingData = [...chattingData];
-
-      newChattingData.push({
-        message: message,
-        send_by: "me",
-      });
-
-      setChattingData(newChattingData);
-      setMessage("");
+  useEffect(() => {
+    if (chatBodyRef.current) {
+      chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
     }
-  };
+  }, [chattingData]);
 
   useEffect(() => {
     const setUserSessionData = async () => {
@@ -53,6 +48,27 @@ function Chatting() {
     setChattingData(DUMMY_CHAT);
     setInboxData(DUMMY_INBOX);
   }, []);
+
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      sendOnClick();
+    }
+  };
+
+  const sendOnClick = () => {
+    if (message.length > 0) {
+      let newChattingData = [...chattingData];
+
+      newChattingData.push({
+        message: message,
+        send_by: "me",
+      });
+
+      setChattingData(newChattingData);
+      setMessage("");
+    }
+  };
 
   const renderChatting = () => {
     return chattingData.map((chat, index) => {
@@ -90,13 +106,16 @@ function Chatting() {
 
           <hr className={classes.horizontalLine} />
 
-          <div className={classes.chatBody}>{renderChatting()}</div>
+          <div className={classes.chatBody} ref={chatBodyRef}>
+            {renderChatting()}
+          </div>
 
           <hr className={classes.horizontalLine} />
 
           <div className={classes.chatFooter}>
             <TextInput
               className={classes.messageInput}
+              onKeyDown={handleKeyPress}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
             />
