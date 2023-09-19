@@ -37,8 +37,6 @@ function BuyerHeader(props) {
         <Text fw={700} fz="xl">
           Top Care Fashion
         </Text>
-        <a href="#">Home</a>
-        <a href="#">Sell</a>
         <a href="#">Men</a>
         <a href="#">Women</a>
         <a href="#">About us</a>

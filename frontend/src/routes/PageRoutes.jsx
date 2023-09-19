@@ -18,7 +18,12 @@ import BuyerCart from "../pages/Buyer/BuyerCart";
 import Wishlist from "../pages/Buyer/Wishlist";
 import CategoryListingsPage from "../components/CategoryListing";
 import Chatting from "../pages/Chatting";
+import NotFoundImage from "../components/NotFound";
+import OutfitRecommender from "../pages/Buyer/OutfitRecommender";
 import ProductRate from "../pages/Buyer/BuyerRateProduct";
+import OrderStatus from "../pages/Seller/OrderStatus";
+import PremiumPopup from "../pages/Buyer/PremiumPage";
+import MixAndMatch from "../pages/Buyer/MixAndMatch";
 
 function PageRoutes() {
   return (
@@ -39,6 +44,7 @@ function PageRoutes() {
       />
       <Route path="/seller/feedback-form" element={<FeedbackForm />} />
       <Route path="/seller/ratings" element={<Ratings />} />
+      <Route path="/seller/order-status" element={<OrderStatus />} />;
       {/* Private route for buyer */}
       <Route path="/buyer/product-detail" element={<ProductDetails />} />
       <Route path="/buyer/wishlist" element={<Wishlist />} />
@@ -50,6 +56,9 @@ function PageRoutes() {
         path="/buyer/category-listing/:category"
         element={<CategoryListingsPage />}
       />
+      <Route path="/buyer/premium-feature" element={<MixAndMatch />} />
+      <Route path="/not-found" element={<NotFoundImage />} />
+      <Route path="/outfit-recommender" element={<OutfitRecommender />} />;
       {/* Private route */}
       <Route path="/user-profile" element={<UserProfile />} />;
       <Route path="/chatting" element={<Chatting />} />

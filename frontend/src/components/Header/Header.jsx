@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import ILLogo from "../../assets/illustrations/il_logo.png";
 import { useDispatch } from "react-redux";
 import { Button } from "@mantine/core";
+import { Link } from "react-router-dom";
 
 function Header() {
   const navigate = useNavigate();
@@ -55,12 +56,12 @@ function Header() {
         <div>
           <div className={classes.container}>
             <div className={classes.leftside}>
-              <img src={ILLogo} width={50} height={50} />
+              <Link to="/">
+                <img src={ILLogo} width={50} height={50} />
+              </Link>{" "}
               <span className={classes.businessname}>Top Care Fashion</span>
             </div>
             <div className={classes.middleside}>
-              <a href="#">Home</a>
-              <a href="#">Shop</a>
               <a href="#">Sell</a>
               <a href="#">Men</a>
               <a href="#">Women</a>

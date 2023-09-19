@@ -154,6 +154,12 @@ def signUp(request):
                     "message": "Email already exists, please use another one"
                 }, status=400)
             
+            if("Enter a valid email address" in str(e)):
+                return JsonResponse({
+                    "status": "error",
+                    "message": "Email is not valid"
+                }, status=400)
+            
             if("WEAK_PASSWORD : Password should be at least 6 characters" in str(e)):
                 return JsonResponse({
                     "status": "error",
@@ -198,7 +204,7 @@ def signIn(request):
             
             return JsonResponse({
                 'status': "success",
-                'message': "User login successfully",
+                'message': "Logged in Successful",
                 'data': user
             }, status=200)
 
@@ -207,6 +213,12 @@ def signIn(request):
                 return JsonResponse({
                     "status": "error",
                     "message": "Your password is incorrect"
+                }, status=400)
+            
+            if("Enter a valid email address" in str(e)):
+                return JsonResponse({
+                    "status": "error",
+                    "message": "Email is not valid"
                 }, status=400)
 
             return JsonResponse({
@@ -590,6 +602,27 @@ def getAllItems(request):
             return JsonResponse({
                 'status': "success",
                 'message': "All items retrieved successfully",
+                'data': responseData
+            }, status=200)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+        
+@api_view(["GET"])
+def getAllUsers(request):
+    if request.method == "GET":
+        try:
+            db = firestore.client()
+            userRef = db.collection("Users")
+            userData = userRef.get()
+            
+            responseData = []
+
+            for user in userData:
+                responseData.append(user.to_dict())
+
+            return JsonResponse({
+                'status': "success",
+                'message': "All users retrieved successfully",
                 'data': responseData
             }, status=200)
         except Exception as e:

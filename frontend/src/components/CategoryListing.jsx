@@ -7,6 +7,7 @@ import classes from "./BuyerHome.module.css";
 import axios from "axios";
 import { TextInput, Button, Select } from "@mantine/core";
 import { IconSettings, IconSearch, IconCopy } from "@tabler/icons-react";
+import NotFoundImage from "./NotFound";
 import Cookies from "js-cookie";
 import { retrieveUserInfo } from "../utils/RetrieveUserInfoFromToken";
 import { showNotifications } from "../utils/ShowNotification";
@@ -17,9 +18,14 @@ function CategoryListingsPage() {
 
   const [currentUser, setCurrentUser] = useState();
   const [productList, setProductList] = useState([]);
-  const [searchText, setSearchText] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-  const [originalProducts, setOriginalProducts] = useState([]);
+
+  const [searchText, setSearchText] = useState("");
+  const [filteredProducts, setFilteredProducts] = useState([]);
+
+  // State variables for filtering
+  const [selectedCondition, setSelectedCondition] = useState("");
+  const [selectedSort, setSelectedSort] = useState("");
 
   useEffect(() => {
     const retrieveAllItems = async () => {
@@ -67,44 +73,45 @@ function CategoryListingsPage() {
   }, [currentUser]);
 
   useEffect(() => {
-    const filteredProducts = productList.filter(
-      (product) => category === "" || product.category === category
-    );
-
-    setSearchResults(filteredProducts);
-  }, [category, productList]);
-
-  const handleSearch = (text) => {
-    const searchTerm = text.toLowerCase();
-    const filteredProducts = searchResults.filter((product) => {
+    // Filter products by category, search text, and condition
+    const filteredProducts = productList.filter((product) => {
       return (
         (category === "" || product.category === category) &&
-        (product.title.toLowerCase().includes(searchTerm) ||
-          product.description.toLowerCase().includes(searchTerm))
+        (searchText === "" ||
+          product.title.toLowerCase().includes(searchText.toLowerCase())) &&
+        (selectedCondition === "" || product.condition === selectedCondition)
       );
     });
 
-    setSearchResults(filteredProducts);
-  };
-
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      handleSearch();
-    } else if (
-      e.key === "Backspace" &&
-      searchText === "" &&
-      searchResults.length === 0
-    ) {
-      // Reset the search to the original products when backspace is pressed and no results are found
-      setSearchResults(originalProducts);
+    let sortedProducts = [...filteredProducts];
+    if (selectedSort === "lowestToHighest") {
+      sortedProducts.sort((a, b) => a.price - b.price);
+    } else if (selectedSort === "highestToLowest") {
+      sortedProducts.sort((a, b) => b.price - a.price);
     }
+
+    setSearchResults(sortedProducts);
+  }, [category, productList, searchText, selectedCondition, selectedSort]);
+
+  const handleSearch = () => {
+    setSearchResults(
+      productList.filter((product) =>
+        product.title.toLowerCase().includes(searchText.toLowerCase())
+      )
+    );
   };
 
   const renderProductListings = () => {
-    const productsToRender =
-      searchResults.length > 0 ? searchResults : productList;
+    const filteredAndSortedProducts = searchResults;
 
-    return searchResults.map((product, index) => (
+    if (filteredAndSortedProducts.length === 0) {
+      return (
+        <div className={classes.centeredContainer}>
+          <NotFoundImage />
+        </div>
+      );
+    }
+    return filteredAndSortedProducts.map((product, index) => (
       <Product
         key={index}
         item_id={product.item_id}
@@ -130,24 +137,37 @@ function CategoryListingsPage() {
     <div className={classes.container}>
       <div>
         <div className={classes.searchContainer}>
+          {/*   <Button className={classes.searchButton} onClick={handleSearch}>
+            Search
+          </Button> */}
+          <Select
+            data={[
+              { value: "New", label: "New" },
+              { value: "Heavily Used", label: "Heavily Used" },
+              { value: "Lightly Used", label: "Lightly Used" },
+            ]}
+            value={selectedCondition}
+            onChange={(value) => setSelectedCondition(value)}
+            placeholder="Condition"
+          />
+          <Select
+            data={[
+              { value: "lowestToHighest", label: "Lowest to Highest " },
+              { value: "highestToLowest", label: "Highest to Lowest " },
+            ]}
+            value={selectedSort}
+            onChange={(value) => setSelectedSort(value)}
+            placeholder="Price"
+          />
           <TextInput
-            placeholder="Search by title or description"
+            placeholder="Search"
             icon={<IconSearch size="1rem" />}
             rightSectionWidth={90}
             styles={{ rightSection: { pointerEvents: "none" } }}
             value={searchText}
+            onChange={(event) => setSearchText(event.target.value)}
             className={classes.searchBar}
-            onChange={(e) => {
-              setSearchText(e.target.value);
-              handleSearch(e.target.value);
-            }}
           />
-          <Button
-            className={classes.searchButton}
-            onClick={() => handleSearch(searchText)}
-          >
-            Search
-          </Button>
         </div>
       </div>
 

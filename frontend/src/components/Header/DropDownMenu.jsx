@@ -11,11 +11,13 @@ import IconAnalytics from "../../assets/icons/ic_analytics.svg";
 import IconManageListing from "../../assets/icons/ic_manage_listing.svg";
 import IconLogout from "../../assets/icons/ic_logout.svg";
 import IconQuestionMark from "../../assets/icons/ic_questionmark.svg";
+import { Badge } from "@mantine/core";
 
 import classes from "./DropDownMenu.module.css";
 
 import { Text, Menu, Avatar } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
+import PremiumPopup from "../../pages/Buyer/PremiumPage";
 
 function DropDownMenu(props) {
   const navigate = useNavigate();
@@ -36,7 +38,7 @@ function DropDownMenu(props) {
   };
 
   const analyticsOnClick = () => {
-    console.log("analytics click");
+    navigate("/seller/order-status");
   };
 
   const manageListingsOnClick = () => {
@@ -44,24 +46,24 @@ function DropDownMenu(props) {
   };
 
   const manageFeedbackForm = () => {
-    console.log("manage feedback");
     navigate("/seller/feedback-form");
   };
 
   const manageFrequentlyAskQuestion = () => {
-    console.log("manage FAQ click");
     navigate("/seller/frequently-ask-question");
   };
 
   const manageTransactionsOnClick = () => {
-    console.log("manage transaction click");
     navigate("/buyer/transactions");
   };
-
 
   const logoutOnClick = () => {
     Cookies.remove("firebaseIdToken");
     window.location.reload();
+  };
+
+  const fashionRecommender = () => {
+    setOpen(true);
   };
 
   const renderDropDownSeller = () => {
@@ -89,12 +91,7 @@ function DropDownMenu(props) {
             >
               Business Profile
             </Menu.Item>
-            <Menu.Item
-              icon={<img src={IconSettings} />}
-              onClick={settingsOnClick}
-            >
-              Settings
-            </Menu.Item>
+
             <Menu.Item
               icon={<img src={IconAnalytics} />}
               onClick={analyticsOnClick}
@@ -103,25 +100,18 @@ function DropDownMenu(props) {
             </Menu.Item>
 
             <Menu.Item
-              icon={<img src={IconManageListing} />}
-              onClick={manageListingsOnClick}
+              icon={<img src={IconQuestionMark} />}
+              onClick={manageFeedbackForm}
             >
-              Manage Listings
+              Feedback Form
             </Menu.Item>
 
             <Menu.Item
-            icon={<img src={IconQuestionMark} />}
-            onClick={manageFeedbackForm}
-          >
-            Feedback Form
-          </Menu.Item>
-
-          <Menu.Item
-            icon={<img src={IconQuestionMark} />}
-            onClick={manageFrequentlyAskQuestion}
-          >
-            FAQ
-          </Menu.Item>
+              icon={<img src={IconQuestionMark} />}
+              onClick={manageFrequentlyAskQuestion}
+            >
+              FAQ
+            </Menu.Item>
             <Menu.Item icon={<img src={IconLogout} />} onClick={logoutOnClick}>
               Logout
             </Menu.Item>
@@ -162,10 +152,16 @@ function DropDownMenu(props) {
             </Menu.Item>
 
             <Menu.Item
-              icon={<img src={IconSettings} />}
-              onClick={settingsOnClick}
+              icon={<img src={IconLogout} />}
+              onClick={fashionRecommender}
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
             >
-              Settings
+              <span style={{ marginRight: "10px" }}>Fashion Recommender</span>
+              <Badge>Premium</Badge>
             </Menu.Item>
             <Menu.Item
             icon={<img src={IconQuestionMark} />}
@@ -199,7 +195,12 @@ function DropDownMenu(props) {
     return <Text>Unknown</Text>;
   };
 
-  return <div>{renderDropDown()}</div>;
+  return (
+    <div>
+      {renderDropDown()}
+      {open && <PremiumPopup isOpen={open} onClose={() => setOpen(false)} />}
+    </div>
+  );
 }
 
 export default DropDownMenu;

@@ -132,7 +132,8 @@ function BusinessProfileForm() {
 
         dispatch({ type: "SET_LOADING", value: false });
 
-        navigate("/seller/business-profile/");
+        navigate(`/seller-home/${currentUser.user_id}`);
+        //navigate("/");
 
         showNotifications({
           status: "success",

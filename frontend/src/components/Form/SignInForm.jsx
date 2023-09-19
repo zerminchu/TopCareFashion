@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+/* eslint-disable no-unused-vars */
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -8,6 +9,7 @@ import { useDispatch } from "react-redux";
 import { showNotifications } from "../../utils/ShowNotification";
 import { Button, PasswordInput, TextInput } from "@mantine/core";
 import ILLogo from "../../assets/illustrations/il_logo.png";
+import { AiOutlineClose } from "react-icons/ai";
 
 function SignInForm(props) {
   const dispatch = useDispatch();
@@ -89,43 +91,56 @@ function SignInForm(props) {
     dispatch({ type: "SET_SIGN_UP", value: true });
     dispatch({ type: "SET_SIGN_IN", value: false });
   };
+  const [isPopupOpen, setPopupOpen] = useState(true);
+
+  const handleBackButtonClick = () => {
+    dispatch({ type: "SET_SIGN_IN", value: false });
+  };
 
   return (
     <div className={classes.popupoverlay}>
-      <div className={classes.popupContainer}>
-        <div className={classes.popupcontent}>
-          <img src={ILLogo} width={70} height={70} />
-          <TextInput
-            className={classes.element}
-            label="Email"
-            {...form.getInputProps("email")}
-            withAsterisk
-          />
+      {isPopupOpen && (
+        <div className={classes.popupContainer}>
+          <div className={classes.popupcontent}>
+            <AiOutlineClose
+              className={classes.backButton}
+              onClick={handleBackButtonClick}
+              size={30}
+            />
 
-          <PasswordInput
-            className={classes.element}
-            label="Password"
-            description="Password must include at least 6 words"
-            {...form.getInputProps("password")}
-            withAsterisk
-          />
+            <img src={ILLogo} width={70} height={70} />
+            <TextInput
+              className={classes.element}
+              label="Email"
+              {...form.getInputProps("email")}
+              withAsterisk
+            />
 
-          <p
-            className={classes.forgotPassword}
-            onClick={handleForgotPasswordClick}
-            style={{ textDecoration: "underline", cursor: "pointer" }}
-          >
-            Forgot Password?
-          </p>
+            <PasswordInput
+              className={classes.element}
+              label="Password"
+              description="Password must include at least 6 words"
+              {...form.getInputProps("password")}
+              withAsterisk
+            />
 
-          <Button className={classes.element} onClick={handleSignInClick}>
-            Sign In
-          </Button>
-          <Button className={classes.element} onClick={handleSignUpClick}>
-            Sign Up
-          </Button>
+            <p
+              className={classes.forgotPassword}
+              onClick={handleForgotPasswordClick}
+              style={{ textDecoration: "underline", cursor: "pointer" }}
+            >
+              Forgot Password?
+            </p>
+
+            <Button className={classes.element} onClick={handleSignInClick}>
+              Sign In
+            </Button>
+            <Button className={classes.element} onClick={handleSignUpClick}>
+              Sign Up
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
