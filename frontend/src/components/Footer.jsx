@@ -11,17 +11,18 @@ function Footer() {
     <footer className={classes.container}>
       <div className={classes.leftSide}>
         <Text size="xl" fw={700}>
-          TopCare Fashion
+          Top Care Fashion
         </Text>
         <Text size="md">
-          we've seamlessly blended the vast world of fashion with the integrity
-          of a secure marketplace. Dedicated to celebrating diverse styles, we
-          connect passionate sellers with discerning buyers, ensuring that every
-          transaction is as unique as the pieces exchanged. Our platform stands
-          as a testament to the fashion industry's dynamism, offering a curated
-          selection of apparel that speaks to both trendsetters and classic
-          style aficionados. Beyond fashion, our name is synonymous with trust,
-          transparency, and top-notch customer care.
+          We've harmoniously fused the expansive realm of fashion with the
+          reliability of a secure marketplace. Committed to embracing a variety
+          of styles, we link enthusiastic sellers with discerning buyers,
+          guaranteeing that each transaction is as exceptional as the items
+          exchanged. Our platform is a testament to the ever-evolving fashion
+          industry, presenting a thoughtfully curated collection of clothing
+          that appeals to both trendsetters and those with classic tastes.
+          Beyond fashion, our name embodies trust, transparency, and exceptional
+          customer service.
         </Text>
 
         <Text size="xl" fw={700}>
@@ -42,7 +43,7 @@ function Footer() {
           <a className={classes.link}>FAQ</a>
           <a className={classes.link}>Feedback</a>
         </div>
-        <Text>© TopCare Fashion</Text>
+        <Text>© Top Care Fashion</Text>
       </div>
     </footer>
   );

@@ -124,7 +124,7 @@ function FeedbackForm() {
   return (
     <div className={classes.container}>
       <Title align="center" className={classes.title}>
-        Feedback Form
+        We would love to hear from you.
       </Title>
       <div className={classes.content}>
         <TextInput

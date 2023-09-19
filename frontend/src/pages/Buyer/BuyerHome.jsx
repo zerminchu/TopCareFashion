@@ -16,13 +16,13 @@ import Cookies from "js-cookie";
 function BuyerHome(props) {
   const [searchText, setSearchText] = useState("");
   const [productList, setproductList] = useState([]);
-
   const [visibleProductCount, setVisibleProductCount] = useState(6);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [user, setUser] = useState([]);
   const [currentUser, setCurrentUser] = useState();
   const navigate = useNavigate();
+  const searchResultCount = searchResults.length;
 
   useEffect(() => {
     const setUserSessionData = async () => {
@@ -124,10 +124,14 @@ function BuyerHome(props) {
     <div>
       <div className={classes.container}>
         <div>
-          <h1>Explore and search for your product</h1>
-          {currentUser && currentUser.name && currentUser.name.first_name && (
-            <h1>
-              Welcome {currentUser.name.first_name}! Find your favourite with us
+          {currentUser ? (
+            <h1 style={{ marginTop: "-20px" }}>
+              Welcome {currentUser.name.first_name}, find your favourite with us
+              today!
+            </h1>
+          ) : (
+            <h1 style={{ marginTop: "-25px" }}>
+              Redefine fashion with us today.
             </h1>
           )}
           <div className={classes.searchContainer}>
@@ -144,7 +148,7 @@ function BuyerHome(props) {
 
         <CarouselAds />
         <div className={classes.categoryContainer}>
-          <h1>Categories</h1>
+          <h2>Categories</h2>
 
           <div className={classes.listProductCategory}>
             <ProductCategory
@@ -163,11 +167,11 @@ function BuyerHome(props) {
         </div>
 
         <div>
-          <h1>
+          <h2>
             {searchText
-              ? `Search results for "${searchText}"`
-              : "Recommended Products"}
-          </h1>
+              ? `${searchResultCount} search results for '${searchText}'`
+              : "Top picks by sellers"}
+          </h2>
 
           <div className={classes.listProduct}>{renderRealProducts()}</div>
           {renderViewMoreButton()}

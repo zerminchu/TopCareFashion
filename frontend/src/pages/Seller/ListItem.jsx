@@ -55,6 +55,7 @@ function ListItem() {
   const [collection_address, setCollectionAddress] = useState("");
   const [avail_status, setAvailStatus] = useState("");
   const [submissionSuccessful, setSubmissionSuccessful] = useState(false);
+  const [formSubmitted, setFormSubmitted] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -93,6 +94,7 @@ function ListItem() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setFormSubmitted(true);
 
     try {
       dispatch({ type: "SET_LOADING", value: true });
@@ -139,7 +141,7 @@ function ListItem() {
 
       showNotifications({
         title: "Error",
-        message: "There is error when creating listing",
+        message: "Oops! There is an error creating a listing!",
         status: "error",
       });
     }
@@ -151,6 +153,80 @@ function ListItem() {
       setUploadedImages(JSON.parse(storedImages));
     }
   }, []);
+
+  const validateCategory = (value) => {
+    if (formSubmitted) {
+      if (value.length === 0) return "Category should not be blank";
+      if (/^\s$|^\s+.|.\s+$/.test(value))
+        return "Category should not contain trailing/leading whitespaces";
+    }
+    return null;
+  };
+
+  const validateCondition = (value) => {
+    if (formSubmitted) {
+      if (value.length === 0) return "Condition should not be blank";
+      if (/^\s$|^\s+.|.\s+$/.test(value))
+        return "Condition should not contain trailing/leading whitespaces";
+    }
+    return null;
+  };
+
+  const validateColour = (value) => {
+    if (formSubmitted) {
+      if (value.length === 0) return "Colour should not be blank";
+      if (/^\s$|^\s+.|.\s+$/.test(value))
+        return "Colour should not contain trailing/leading whitespaces";
+    }
+    return null;
+  };
+  const validateTitle = (value) => {
+    if (formSubmitted) {
+      if (value.length === 0) return "Title should not be blank";
+      if (/^\s$|^\s+.|.\s+$/.test(value))
+        return "Title should not contain trailing/leading whitespaces";
+    }
+    return null;
+  };
+
+  const validateDescription = (value) => {
+    if (formSubmitted) {
+      if (value.length === 0) return "Description should not be blank";
+      if (/^\s$|^\s+.|.\s+$/.test(value))
+        return "Description should not contain trailing/leading whitespaces";
+    }
+    return null;
+  };
+
+  const validatePrice = (value) => {
+    if (formSubmitted) {
+      if (value.length === 0) return "Price should not be blank";
+    }
+    return null;
+  };
+
+  const validateQuantityAvailable = (value) => {
+    if (formSubmitted) {
+      if (value.length === 0) return "Quantity Available should not be blank";
+    }
+    return null;
+  };
+
+  const validateCollectionAddress = (value) => {
+    if (formSubmitted) {
+      if (value.length === 0) return "Collection Address should not be blank";
+      if (/^\s$|^\s+.|.\s+$/.test(value))
+        return "Collection Address should not contain trailing/leading whitespaces";
+    }
+    return null;
+  };
+
+  const validateAvailStatus = (value) => {
+    if (formSubmitted) {
+      if (value.length === 0) return "Available Status should not be blank";
+    }
+    return null;
+  };
 
   return (
     <form onSubmit={handleSubmit}>
@@ -217,6 +293,7 @@ function ListItem() {
           placeholder="Top"
           classNames={classes}
           style={{ width: "50%", marginBottom: "10px" }}
+          error={validateCategory(category)}
         />
 
         <Select
@@ -233,6 +310,7 @@ function ListItem() {
           classNames={classes}
           style={{ width: "50%" }}
           onChange={(selectedValue) => setCondition(selectedValue)}
+          error={validateCondition(condition)}
         />
         <br />
 
@@ -252,6 +330,7 @@ function ListItem() {
           placeholder="Red"
           classNames={classes}
           style={{ width: "50%" }}
+          error={validateColour(colour)}
         />
         <br />
         <TextInput
@@ -261,6 +340,7 @@ function ListItem() {
           placeholder="Oversized T-Shirt"
           classNames={classes}
           style={{ width: "50%" }}
+          error={validateTitle(title)}
         />
         <br />
         <TextInput
@@ -270,6 +350,7 @@ function ListItem() {
           placeholder="Give your item a description"
           classNames={classes}
           style={{ width: "50%" }}
+          error={validateDescription(description)}
         />
         <br />
         <TextInput
@@ -279,15 +360,17 @@ function ListItem() {
           placeholder="$ 123"
           classNames={classes}
           style={{ width: "50%" }}
+          error={validatePrice(price)}
         />
         <br />
         <TextInput
-          label="Quantity"
+          label="Quantity Available"
           value={quantity_available}
           onChange={(event) => setQuantityAvailable(event.target.value)}
           placeholder="10"
           classNames={classes}
           style={{ width: "50%" }}
+          error={validateQuantityAvailable(quantity_available)}
         />
         <br />
         <TextInput
@@ -297,6 +380,7 @@ function ListItem() {
           placeholder="123, Clementi Road"
           classNames={classes}
           style={{ width: "50%" }}
+          error={validateCollectionAddress(collection_address)}
         />
         <br />
         <Select
@@ -307,11 +391,12 @@ function ListItem() {
             { value: "Unavailable", label: "Unavailable" },
           ]}
           placeholder="Available"
-          label="Status"
+          label="Available Status"
           value={avail_status}
           classNames={classes}
           style={{ width: "50%" }}
           onChange={(selectedValue) => setAvailStatus(selectedValue)}
+          error={validateAvailStatus(avail_status)}
         />
         <br />
         <div

@@ -232,6 +232,7 @@ function SellerCards() {
             data={["Top", "Bottom", "Footwear"]}
             value={category}
             onChange={(value) => handleCategoryChange(value)}
+            className={classes.categoryDropdown}
           />
 
           <TextInput

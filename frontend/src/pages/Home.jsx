@@ -1,8 +1,4 @@
 /* eslint-disable no-unused-vars */
-import Header from "../components/Header/Header";
-/* import { useEffect } from "react";
-import axios from "axios";
-import Cookies from "js-cookie"; */
 import { useState, useEffect } from "react";
 import { retrieveUserInfo } from "../utils/RetrieveUserInfoFromToken";
 import Cookies from "js-cookie";
