@@ -28,47 +28,59 @@ function PremiumPopup({ isOpen, onClose }) {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          width: "300px",
+          width: "400px",
           backgroundColor: "white",
           borderRadius: "8px",
+          justifyContent: "center",
         }}
       >
-        <Text
-          size="xl"
-          weight={700}
+        <div
           style={{
-            marginBottom: "20px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1, // Center content vertically
+            padding: "20px", // Add padding for better spacing
           }}
         >
-          Fashion Recommender
-        </Text>
-        <Text
-          size="sm"
-          style={{
-            marginBottom: "20px",
-          }}
-        >
-          The fashion recommender feature is a premium feature.
-        </Text>
-        <Button
-          fullWidth
-          size="lg"
-          variant="gradient"
-          gradient={{ from: "blue", to: "cyan" }}
-          onClick={getStartedOnClick}
-          style={{
-            backgroundColor: "#007bff",
-            color: "white",
-            borderRadius: "4px",
-            padding: "10px 20px",
-            cursor: "pointer",
-          }}
-          hoverStyle={{
-            backgroundColor: "#0056b3",
-          }}
-        >
-          Get Started
-        </Button>
+          <Text
+            size="xl"
+            weight={700}
+            style={{
+              marginBottom: "20px",
+            }}
+          >
+            Fashion Recommender
+          </Text>
+          <Text
+            size="sm"
+            style={{
+              marginBottom: "20px",
+            }}
+          >
+            The conversational fashion recommender feature is a premium feature.
+          </Text>
+          <Button
+            fullWidth
+            size="lg"
+            variant="gradient"
+            gradient={{ from: "blue", to: "cyan" }}
+            onClick={getStartedOnClick}
+            style={{
+              backgroundColor: "#007bff",
+              color: "white",
+              borderRadius: "4px",
+              padding: "10px 20px",
+              cursor: "pointer",
+            }}
+            hoverStyle={{
+              backgroundColor: "#0056b3",
+            }}
+          >
+            Get Started
+          </Button>
+        </div>
       </Paper>
     </Modal>
   );
