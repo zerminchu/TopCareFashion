@@ -1,24 +1,17 @@
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
+import { retrieveUserInfo } from "../utils/RetrieveUserInfoFromToken";
 import Cookies from "js-cookie";
 import {
-  TextInput,
-  ActionIcon,
-  useMantineTheme,
+
   Container,
   Title,
   Accordion,
   createStyles,
   rem,
 } from "@mantine/core";
-import { IconSearch, IconArrowRight, IconArrowLeft } from "@tabler/icons-react";
-import DummyImage from "../../assets/illustrations/il_avatar.png";
-import IconUpload from "../../assets/icons/ic_upload.svg";
-import { useForm } from "@mantine/form";
 
-import classes from "./EditListing.module.css";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -40,9 +33,24 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-const placeholder =
-  "It can’t help but hear a pin drop from over half a mile away, so it lives deep in the mountains where there aren’t many people or Pokémon.It was born from sludge on the ocean floor. In a sterile environment, the germs within its body can’t multiply, and it dies.It has no eyeballs, so it can’t see. It checks its surroundings via the ultrasonic waves it emits from its mouth.";
 
+
+
+const forgotPassword = "Click the sign in button and navigate to the forgot password button, you will need to put in your email address that you want to reset the password, and a link will be sent to that email for the password reset.";
+
+const moreThanOneAccount = "Yes, each account is created using an email, you can register for a new account using a different email.";
+
+const premiumFeature = "Our clothes reccomender mode is a Chat Bot in which you can ask it for outfit ideas, you can prompt it with questions such as what kind of outfit would be good for this occasion, and it will generate a picture of a outfit that would fit the occasion, it can also be asked questions about the what type of clothing piece goes well with another piece of clothing based on your own personalized style.";
+
+const paymentSystem = "We work with STRIPE payment system, it is a secure gateway used to process payment.";
+
+const ListProduct= "Listing a product is done by clicking on the list product button on the top right of the screen, it will ask you for 3 images of the product. Afterwhich, will ask you to fill various fields about the product including pickup location and product description, once all fields are filled. Click the Submit button and the product will be listed.";
+
+const editListing = "In the home page where all your products are listed, simply click on the edit button(triple line) and it will bring you back to the form where you can edit the details of the product.";
+
+const pastTransaction = "Click on the dropdown menu next to your profile picture and click on transactions button, all your past trasactions will be listed there.";
+
+const checkOrderStatus = "In the "
 export function FaqSimple() {
   const navigate = useNavigate();
   const { classes } = useStyles();
@@ -68,11 +76,11 @@ export function FaqSimple() {
   }, []);
 
   // Route restriction only for seller
-  useEffect(() => {
-    if (currentUser && currentUser.role !== "seller") {
-      navigate("/", { replace: true });
-    }
-  }, [currentUser]);
+  // useEffect(() => {
+  //   if (currentUser && currentUser.role !== "seller") {
+  //     navigate("/", { replace: true });
+  //   }
+  // }, [currentUser]);
 
   return (
     <Container size="sm" className={classes.wrapper}>
@@ -82,37 +90,30 @@ export function FaqSimple() {
         </Title>
 
         <Accordion variant="separated">
-          <Accordion.Item className={classes.item} value="reset-password">
-            <Accordion.Control>How can I reset my password?</Accordion.Control>
-            <Accordion.Panel>{placeholder}</Accordion.Panel>
+          <Accordion.Item className={classes.item} value="forgot-password">
+            <Accordion.Control>How can i reset forgotten password?</Accordion.Control>
+            <Accordion.Panel>{forgotPassword}</Accordion.Panel>
           </Accordion.Item>
 
           <Accordion.Item className={classes.item} value="another-account">
             <Accordion.Control>
               Can I create more that one account?
             </Accordion.Control>
-            <Accordion.Panel>{placeholder}</Accordion.Panel>
+            <Accordion.Panel>{moreThanOneAccount}</Accordion.Panel>
           </Accordion.Item>
 
-          <Accordion.Item className={classes.item} value="newsletter">
+          <Accordion.Item className={classes.item} value="clothes-reccomender">
             <Accordion.Control>
-              How can I subscribe to monthly newsletter?
+              What is the premium feature?
             </Accordion.Control>
-            <Accordion.Panel>{placeholder}</Accordion.Panel>
-          </Accordion.Item>
-
-          <Accordion.Item className={classes.item} value="credit-card">
-            <Accordion.Control>
-              Do you store credit card information securely?
-            </Accordion.Control>
-            <Accordion.Panel>{placeholder}</Accordion.Panel>
+            <Accordion.Panel>{premiumFeature}</Accordion.Panel>
           </Accordion.Item>
 
           <Accordion.Item className={classes.item} value="payment">
             <Accordion.Control>
               What payment systems to you work with?
             </Accordion.Control>
-            <Accordion.Panel>{placeholder}</Accordion.Panel>
+            <Accordion.Panel>{paymentSystem}</Accordion.Panel>
           </Accordion.Item>
         </Accordion>
       </div>
@@ -122,37 +123,26 @@ export function FaqSimple() {
         </Title>
 
         <Accordion variant="separated">
-          <Accordion.Item className={classes.item} value="Tech-1">
-            <Accordion.Control>How can I reset my password?</Accordion.Control>
-            <Accordion.Panel>{placeholder}</Accordion.Panel>
-          </Accordion.Item>
 
           <Accordion.Item className={classes.item} value="Tech-2">
             <Accordion.Control>
-              Can I create more that one account?
+              How do I list a product?
             </Accordion.Control>
-            <Accordion.Panel>{placeholder}</Accordion.Panel>
+            <Accordion.Panel>{ListProduct}</Accordion.Panel>
           </Accordion.Item>
 
           <Accordion.Item className={classes.item} value="Tech-3">
             <Accordion.Control>
-              How can I subscribe to monthly newsletter?
+              How do I edit a existing product listing?
             </Accordion.Control>
-            <Accordion.Panel>{placeholder}</Accordion.Panel>
-          </Accordion.Item>
-
-          <Accordion.Item className={classes.item} value="Tech-4">
-            <Accordion.Control>
-              Do you store credit card information securely?
-            </Accordion.Control>
-            <Accordion.Panel>{placeholder}</Accordion.Panel>
+            <Accordion.Panel>{editListing}</Accordion.Panel>
           </Accordion.Item>
 
           <Accordion.Item className={classes.item} value="payment">
             <Accordion.Control>
-              What payment systems to you work with?
+              How do I check past transactions?
             </Accordion.Control>
-            <Accordion.Panel>{placeholder}</Accordion.Panel>
+            <Accordion.Panel>{pastTransaction}</Accordion.Panel>
           </Accordion.Item>
         </Accordion>
       </div>
