@@ -9,12 +9,15 @@
   justify-content: center;
   align-items: center;
   z-index: 2;
+  overflow: auto;
 }
 
 .popupContainer {
   display: flex;
   flex-direction: column;
   width: 30%;
+  
+
 }
 
 .popupcontent {
@@ -35,6 +38,7 @@
   width: 100%;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 110px;
 }
 
 .element {

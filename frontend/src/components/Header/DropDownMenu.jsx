@@ -164,6 +164,19 @@ function DropDownMenu(props) {
               <Badge>Premium</Badge>
             </Menu.Item>
 
+            <Menu.Item
+              icon={<img src={IconQuestionMark} />}
+              onClick={manageFeedbackForm}
+            >
+              Feedback Form
+            </Menu.Item>
+
+            <Menu.Item
+              icon={<img src={IconQuestionMark} />}
+              onClick={manageFrequentlyAskQuestion}
+            >
+              FAQ
+            </Menu.Item>
             <Menu.Item icon={<img src={IconLogout} />} onClick={logoutOnClick}>
               Logout
             </Menu.Item>

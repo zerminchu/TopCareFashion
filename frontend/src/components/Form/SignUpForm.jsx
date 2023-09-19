@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+/* eslint-disable no-unused-vars */
+import { useState } from "react";
 import axios from "axios";
 import { useForm } from "@mantine/form";
 import classes from "./SignUpForm.module.css";
@@ -7,7 +8,6 @@ import { DateInput } from "@mantine/dates";
 import { useDispatch } from "react-redux";
 import { showNotifications } from "../../utils/ShowNotification";
 import ILLogo from "../../assets/illustrations/il_logo.png";
-import IconArrowLeft from "../../assets/icons/ic_arrow_left.svg";
 
 function SignUpForm(props) {
   const dispatch = useDispatch();
@@ -110,7 +110,12 @@ function SignUpForm(props) {
     <div className={classes.popupoverlay}>
       <div className={classes.popupContainer}>
         <div className={classes.popupcontent}>
-          <img src={ILLogo} width={70} height={70} />
+          <img
+            src={ILLogo}
+            width={70}
+            height={30}
+            style={{ marginTop: "120px" }}
+          />
           <Select
             className={classes.element}
             label="Role"

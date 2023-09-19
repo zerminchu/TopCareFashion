@@ -10,12 +10,12 @@ import { useForm } from "@mantine/form";
 
 import classes from "./FeedbackForm.module.css";
 import { useNavigate } from "react-router-dom";
-import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
+import { retrieveUserInfo } from "../utils/RetrieveUserInfoFromToken";
 import Cookies from "js-cookie";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { showNotifications } from "../../utils/ShowNotification";
+import { showNotifications } from "../utils/ShowNotification";
 
 function FeedbackForm() {
   const navigate = useNavigate();
@@ -43,11 +43,11 @@ function FeedbackForm() {
   }, []);
 
   // Route restriction only for seller
-  useEffect(() => {
-    if (currentUser && currentUser.role !== "seller") {
-      navigate("/", { replace: true });
-    }
-  }, [currentUser]);
+  // useEffect(() => {
+  //   if (currentUser && currentUser.role !== "seller") {
+  //     navigate("/", { replace: true });
+  //   }
+  // }, [currentUser]);
 
   const form = useForm({
     initialValues: {
@@ -124,7 +124,7 @@ function FeedbackForm() {
   return (
     <div className={classes.container}>
       <Title align="center" className={classes.title}>
-        Feedback Form
+        We would love to hear from you.
       </Title>
       <div className={classes.content}>
         <TextInput

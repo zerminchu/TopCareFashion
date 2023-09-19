@@ -66,7 +66,6 @@ function Header() {
               <a href="#">Men</a>
               <a href="#">Women</a>
               <a href="#">About Us</a>
-              <a href="#">Contact us</a>
             </div>
             <Button onClick={signIn}>Sign in</Button>
           </div>

@@ -13,19 +13,16 @@ import { retrieveUserInfo } from "../utils/RetrieveUserInfoFromToken";
 import { showNotifications } from "../utils/ShowNotification";
 
 function CategoryListingsPage() {
-  const { category } = useParams();
   const navigate = useNavigate();
-
+  const { category } = useParams();
   const [currentUser, setCurrentUser] = useState();
   const [productList, setProductList] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
-
   const [searchText, setSearchText] = useState("");
   const [filteredProducts, setFilteredProducts] = useState([]);
-
-  // State variables for filtering
   const [selectedCondition, setSelectedCondition] = useState("");
   const [selectedSort, setSelectedSort] = useState("");
+  const numberOfListings = searchResults.length;
 
   useEffect(() => {
     const retrieveAllItems = async () => {
@@ -170,8 +167,15 @@ function CategoryListingsPage() {
           />
         </div>
       </div>
-
-      <h1>{`Listings for ${category}`}</h1>
+      <div>
+        <h1
+          style={{ marginBottom: "10px", marginTop: "-25px" }}
+        >{`${numberOfListings} listings for ${category}`}</h1>
+        <h2 style={{ fontWeight: "normal", fontSize: "18px" }}>
+          Looking for New or Used {category}s in Singapore? Browse great deals
+          on Top Care Fashion and find your new {category}!
+        </h2>
+      </div>
       <div className={classes.listProduct}>{renderProductListings()}</div>
     </div>
   );
