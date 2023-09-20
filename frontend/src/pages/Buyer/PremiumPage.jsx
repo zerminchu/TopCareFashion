@@ -7,8 +7,10 @@ import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
 import { showNotifications } from "../../utils/ShowNotification";
 import { useDispatch } from "react-redux";
 import axios from "axios";
+import classes from "./PremiumPage.module.css";
+import { CloseButton } from "@mantine/core";
 
-function PremiumPopup({ isOpen, onClose }) {
+function PremiumPopup() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -32,33 +34,30 @@ function PremiumPopup({ isOpen, onClose }) {
     }
   }, []);
 
+  const handleBackButtonClick = () => {
+    dispatch({ type: "SET_PREMIUM_FEATURE", value: false });
+  };
+
   const getStartedOnClick = async () => {
     try {
       if (currentUser) {
-        console.log("CURRENT USER", currentUser);
-        if (currentUser.premium_feature) {
-          navigate("/buyer/premium-feature");
-          onClose();
-        } else {
-          dispatch({ type: "SET_LOADING", value: true });
-          const url =
-            import.meta.env.VITE_NODE_ENV == "DEV"
-              ? import.meta.env.VITE_API_DEV
-              : import.meta.env.VITE_API_PROD;
+        dispatch({ type: "SET_LOADING", value: true });
+        const url =
+          import.meta.env.VITE_NODE_ENV == "DEV"
+            ? import.meta.env.VITE_API_DEV
+            : import.meta.env.VITE_API_PROD;
 
-          const response = await axios.post(
-            `${url}/buyer/premium-feature-checkout/`,
-            {
-              user_id: currentUser.user_id,
-            }
-          );
-          console.log("need to pay");
+        const response = await axios.post(
+          `${url}/buyer/premium-feature-checkout/`,
+          {
+            user_id: currentUser.user_id,
+          }
+        );
 
-          dispatch({ type: "SET_LOADING", value: false });
-          onClose();
+        dispatch({ type: "SET_LOADING", value: false });
+        dispatch({ type: "SET_PREMIUM_FEATURE", value: false });
 
-          window.open(response.data.data.url);
-        }
+        window.open(response.data.data.url);
       }
     } catch (error) {
       dispatch({ type: "SET_LOADING", value: false });
@@ -71,16 +70,7 @@ function PremiumPopup({ isOpen, onClose }) {
   };
 
   return (
-    <Modal
-      opened={isOpen}
-      onClose={onClose}
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "rgba(0, 0, 0, 0.5)",
-      }}
-    >
+    <div className={classes.popupoverlay}>
       <Paper
         padding="md"
         shadow="xs"
@@ -104,6 +94,11 @@ function PremiumPopup({ isOpen, onClose }) {
             padding: "20px", // Add padding for better spacing
           }}
         >
+          <CloseButton
+            onClick={handleBackButtonClick}
+            size={30}
+            className={classes.backButton}
+          />
           <Text
             size="xl"
             weight={700}
@@ -155,7 +150,7 @@ function PremiumPopup({ isOpen, onClose }) {
           </Button>
         </div>
       </Paper>
-    </Modal>
+    </div>
   );
 }
 

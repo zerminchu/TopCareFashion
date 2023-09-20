@@ -3,7 +3,7 @@ import { createStore } from 'redux'
 const initialstate = {
   sellerOnBoardBool: false,
   existingSellerOnBoardBool: false,
-  premiumFeatureBool: true,
+  premiumFeatureBool: false,
   signInBool: false,
   signUpBool: false,
   loadingBool: false,
