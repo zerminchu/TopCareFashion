@@ -14,12 +14,16 @@
   gap: 5em;
 }
 
+.categoryTitle{
+  align-items: flex-start;
+}
+
 .listProductCategory {
   display: flex;
-  flex-wrap: wrap; /* Allow categories to wrap to the next line if needed */
-  justify-content: space-between; /* Distribute space evenly between categories */
-  gap: 10px; /* Adjust the gap between categories */
+  justify-content: space-between; 
+  width: 60%;
   border-radius: 100px;
+  align-items: center;
 }
 
 .searchContainer {
@@ -33,6 +37,7 @@
   display: flex;
   flex-direction: column;
   border-radius: 100px; 
+  align-items: center;
 
 }
 

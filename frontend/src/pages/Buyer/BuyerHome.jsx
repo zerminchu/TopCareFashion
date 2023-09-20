@@ -147,9 +147,10 @@ function BuyerHome(props) {
         </div>
 
         <CarouselAds />
-        <div className={classes.categoryContainer}>
+        <div className={classes.categoryTitle}>
           <h2>Categories</h2>
-
+        </div>
+        <div className={classes.categoryContainer}>
           <div className={classes.listProductCategory}>
             <ProductCategory
               category="Top"
