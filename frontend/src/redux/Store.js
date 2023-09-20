@@ -3,6 +3,7 @@ import { createStore } from 'redux'
 const initialstate = {
   sellerOnBoardBool: false,
   existingSellerOnBoardBool: false,
+  premiumFeatureBool: true,
   signInBool: false,
   signUpBool: false,
   loadingBool: false,
@@ -25,6 +26,12 @@ const reducer = (state = initialstate, action) => {
     return {
       ...state,
       existingSellerOnBoardBool: action.value
+    }
+  }
+  else if (action.type === "SET_PREMIUM_FEATURE") {
+    return {
+      ...state,
+      premiumFeatureBool: action.value
     }
   }
   else if (action.type === "SET_SIGN_IN") {

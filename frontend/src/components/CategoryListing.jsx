@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Product from "./Product";
 import ProductCategory from "./ProductCategory";
-import classes from "./BuyerHome.module.css";
+import classes from "./CategoryListing.module.css";
 import axios from "axios";
 import { TextInput, Button, Select } from "@mantine/core";
 import { IconSettings, IconSearch, IconCopy } from "@tabler/icons-react";
@@ -12,9 +12,11 @@ import Cookies from "js-cookie";
 import { retrieveUserInfo } from "../utils/RetrieveUserInfoFromToken";
 import { showNotifications } from "../utils/ShowNotification";
 
-function CategoryListingsPage() {
+function CategoryListingsPage(props) {
   const navigate = useNavigate();
+  const location = useLocation();
   const { category } = useParams();
+
   const [currentUser, setCurrentUser] = useState();
   const [productList, setProductList] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
@@ -22,6 +24,8 @@ function CategoryListingsPage() {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [selectedCondition, setSelectedCondition] = useState("");
   const [selectedSort, setSelectedSort] = useState("");
+
+  const gender = location.state?.gender;
   const numberOfListings = searchResults.length;
 
   useEffect(() => {
@@ -33,7 +37,26 @@ function CategoryListingsPage() {
             : import.meta.env.VITE_API_PROD;
 
         const response = await axios.get(`${url}/item/`);
-        setProductList(response.data.data);
+        let items = [];
+
+        if (gender === "men") {
+          const menProducts = response.data.data.filter(
+            (item) => item.gender.toLowerCase() === "men"
+          );
+          items = menProducts;
+        } else if (gender === "women") {
+          const womenProducts = response.data.data.filter(
+            (item) => item.gender.toLowerCase() === "women"
+          );
+          items = womenProducts;
+        } else {
+          const menProducts = response.data.data.filter(
+            (item) => item.gender.toLowerCase() === "men"
+          );
+          items = menProducts;
+        }
+
+        setProductList(items);
       } catch (error) {
         console.error("Error fetching products:", error);
       }

@@ -15,7 +15,9 @@ function ProductCategory(props) {
     setSelectedCategory(props.category);
     props.setSelectedCategory(props.category);
 
-    navigate(`/buyer/category-listing/${props.category}`);
+    navigate(`/buyer/category-listing/${props.category}`, {
+      state: { gender: props.gender },
+    });
   };
 
   const imageUrl = () => {

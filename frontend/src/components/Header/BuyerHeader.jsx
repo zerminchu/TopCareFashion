@@ -37,8 +37,8 @@ function BuyerHeader(props) {
         <Text fw={700} fz="xl">
           Top Care Fashion
         </Text>
-        <a href="#">Men</a>
-        <a href="#">Women</a>
+        <a href="/men">Men</a>
+        <a href="/women">Women</a>
         <a href="#">About us</a>
       </div>
       <div className={classes.rightside}>

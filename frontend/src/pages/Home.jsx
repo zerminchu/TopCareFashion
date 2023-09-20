@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { retrieveUserInfo } from "../utils/RetrieveUserInfoFromToken";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
@@ -27,9 +27,8 @@ function Home() {
     // Check if user has signed in before
     if (Cookies.get("firebaseIdToken")) {
       setUserSessionData();
-    } else {
-      navigate("/", { replace: true });
     }
+    console.log("Iam at home");
   }, []);
 
   useEffect(() => {

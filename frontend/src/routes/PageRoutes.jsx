@@ -22,8 +22,9 @@ import NotFoundImage from "../components/NotFound";
 import OutfitRecommender from "../pages/Buyer/OutfitRecommender";
 import ProductRate from "../pages/Buyer/BuyerRateProduct";
 import OrderStatus from "../pages/Seller/OrderStatus";
-import PremiumPopup from "../pages/Buyer/PremiumPage";
 import MixAndMatch from "../pages/Buyer/MixAndMatch";
+import BuyerHomeWomen from "../pages/Buyer/BuyerHomeWomen";
+import BuyerHomeMen from "../pages/Buyer/BuyerHomeMen";
 
 function PageRoutes() {
   return (
@@ -64,6 +65,8 @@ function PageRoutes() {
       <Route path="/chatting" element={<Chatting />} />
       {/* Public route */}
       <Route path="/recover-password" element={<RecoverPassword />} />;
+      <Route path="/men" element={<BuyerHomeMen />} />
+      <Route path="/women" element={<BuyerHomeWomen />} />
       <Route path="/" element={<Home />} />
       <Route path="*" element={<h1>Page not found</h1>} />
     </Routes>
