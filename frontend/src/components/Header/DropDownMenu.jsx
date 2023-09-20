@@ -99,16 +99,9 @@ function DropDownMenu(props) {
 
             <Menu.Item
               icon={<img src={IconAnalytics} />}
-              onClick={analyticsOnClick}
-            >
-              Analytics
-            </Menu.Item>
-
-            <Menu.Item
-              icon={<img src={IconAnalytics} />}
               onClick={analyticsOnClick2}
             >
-              Analytics2
+              Summaries
             </Menu.Item>
 
             <Menu.Item

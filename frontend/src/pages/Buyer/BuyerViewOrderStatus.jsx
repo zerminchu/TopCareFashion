@@ -12,7 +12,7 @@ import Cookies from "js-cookie";
 function productOrderStatus() {
   const location = useLocation();
   const navigate = useNavigate();
-
+  const [active, setActive] = useState(2);
   const [checkoutItems, setCheckoutItems] = useState([]);
   const [currentUser, setCurrentUser] = useState();
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
@@ -77,8 +77,6 @@ function productOrderStatus() {
     setCurrentDate(getCurrentDate());
   }, []);
 
-  const [active, setActive] = useState(1);
-
   const renderCheckoutItems = () => {
     return checkoutItems.map((item) => {
       return (
@@ -113,14 +111,15 @@ function productOrderStatus() {
       <Stepper active={active} onStepClick={setActive} breakpoint="sm" clickable={false}>
         <Stepper.Step label="Shopping cart"  allowStepSelect={active < 0}></Stepper.Step> 
         <Stepper.Step label="Purchased" allowStepSelect={active < 0}>
-        <p>{currentDate} | Order Placed</p>
-          Waiting for Vendor to prepare the product for pickup.
+        
           
         </Stepper.Step>
         <Stepper.Step label="Available for pickup" allowStepSelect={active < 0}>
-          Available for pickup
+        <p>{currentDate} | Order Placed</p>
+          Waiting for Vendor to prepare the product for pickup.
         </Stepper.Step>
-        <Stepper.Step label="Completed" allowStepSelect={active < 0}></Stepper.Step>
+        <Stepper.Step label="Completed" allowStepSelect={active < 0}> Available for Pickup</Stepper.Step>
+        
       </Stepper>
       </div>
         <div className={classes.submitContainer}>

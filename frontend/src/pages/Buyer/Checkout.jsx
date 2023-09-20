@@ -132,12 +132,12 @@ function Checkout() {
   return (
     <div className={classes.container}>
       <Stepper active={active} onStepClick={setActive} breakpoint="sm">
-        <Stepper.Step label="Shopping cart"></Stepper.Step>
-        <Stepper.Step label="Purchased"></Stepper.Step>
-        <Stepper.Step label="Available for pickup">
+        <Stepper.Step label="Shopping cart" allowStepSelect={active < 0}></Stepper.Step>
+        <Stepper.Step label="Purchased" allowStepSelect={active < 0}></Stepper.Step>
+        <Stepper.Step label="Available for pickup" allowStepSelect={active < 0}>
           Available for pickup
         </Stepper.Step>
-        <Stepper.Step label="Completed"></Stepper.Step>
+        <Stepper.Step label="Completed" allowStepSelect={active < 0}></Stepper.Step>
       </Stepper>
 
       <div className={classes.itemList}>{renderCheckoutItems()}</div>

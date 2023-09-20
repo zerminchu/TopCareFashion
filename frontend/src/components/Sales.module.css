@@ -1,0 +1,28 @@
+.titleContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+}
+
+.confirmation {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  gap: 5px;
+  width: 200px;
+  border-radius: 5px;
+  background-color: rgb(230, 244, 255);
+}
+
+.buttonConfirmation {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+}
+
+.deleteContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}

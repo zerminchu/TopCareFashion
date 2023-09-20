@@ -331,7 +331,7 @@ export const DUMMY_WISHLIST_PRODUCT = [
       "https://images.unsplash.com/photo-1597350584914-55bb62285896?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1964&q=80"]
   },
   {
-    title: "Retro Sunglasses",
+    title: "Red Dress",
     type: "Top wear",
     color: "Red",
     size: "L",
@@ -369,7 +369,7 @@ export const DUMMY_ORDERS_PPRODUCT = [
   },
   {
     buyer: "Farzxia@gmail.com",
-    title: "Retro Sunglasses",
+    title: "Red Dress",
     type: "Top wear",
     color: "Red",
     size: "L",
@@ -410,5 +410,23 @@ export const DUMMY_TRANSACTION_PRODUCT = [
     images: ["https://images.unsplash.com/photo-1606480192262-e3b6a9f37142?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cmVkJTIwZ293bnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60",
       "https://images.unsplash.com/photo-1606480192262-e3b6a9f37142?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cmVkJTIwZ293bnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60",
       "https://images.unsplash.com/photo-1606480192262-e3b6a9f37142?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cmVkJTIwZ293bnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60"]
+  },
+]
+
+export const DUMMY_PRODUCT_SALES = [
+  {
+    title: "Blue Shirt",
+    price: 28.00,
+    quantity: 34.00,
+  },
+  {
+    title: "Trendy White Sneakers",
+    price: 300.00,
+    quantity: 54.00,
+  },
+  {
+    title: "Red Dress",
+    price: 211.56,
+    quantity: 14.00,
   },
 ]
