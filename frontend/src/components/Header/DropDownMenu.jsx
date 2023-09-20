@@ -79,6 +79,11 @@ function DropDownMenu(props) {
     }
   };
 
+  const analyticsOnClick2 = () => {
+    navigate("/seller/analytics");
+  };
+  
+
   const renderDropDownSeller = () => {
     return (
       <div className={classes.container}>
@@ -110,6 +115,13 @@ function DropDownMenu(props) {
               onClick={analyticsOnClick}
             >
               Analytics
+            </Menu.Item>
+
+            <Menu.Item
+              icon={<img src={IconAnalytics} />}
+              onClick={analyticsOnClick2}
+            >
+              Analytics2
             </Menu.Item>
 
             <Menu.Item

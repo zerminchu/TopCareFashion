@@ -25,6 +25,8 @@ import OrderStatus from "../pages/Seller/OrderStatus";
 import MixAndMatch from "../pages/Buyer/MixAndMatch";
 import BuyerHomeWomen from "../pages/Buyer/BuyerHomeWomen";
 import BuyerHomeMen from "../pages/Buyer/BuyerHomeMen";
+import ProductStatus from "../pages/Buyer/BuyerViewOrderStatus";
+import SellerAnalytics from "../pages/Seller/SellerAnalytics";
 
 function PageRoutes() {
   return (
@@ -46,6 +48,7 @@ function PageRoutes() {
       <Route path="/seller/feedback-form" element={<FeedbackForm />} />
       <Route path="/seller/ratings" element={<Ratings />} />
       <Route path="/seller/order-status" element={<OrderStatus />} />;
+      <Route path="/seller/analytics" element={<SellerAnalytics />} />;
       {/* Private route for buyer */}
       <Route path="/buyer/product-detail" element={<ProductDetails />} />
       <Route path="/buyer/wishlist" element={<Wishlist />} />
@@ -57,6 +60,7 @@ function PageRoutes() {
         path="/buyer/category-listing/:category"
         element={<CategoryListingsPage />}
       />
+      <Route path="/buyer/product-order-status" element={<ProductStatus />} />
       <Route path="/buyer/premium-feature" element={<MixAndMatch />} />
       <Route path="/not-found" element={<NotFoundImage />} />
       <Route path="/outfit-recommender" element={<OutfitRecommender />} />;

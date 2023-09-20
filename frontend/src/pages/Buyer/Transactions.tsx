@@ -246,6 +246,17 @@ export function Transactions() {
     });
   };
 
+  const handleDetailsButonClick = (product_title) => {
+    const data = DUMMY_TRANSACTION_PRODUCT;
+
+    const filteredData = data.filter((item) => item.title === product_title);
+    console.log("pressed buy" +product_title) //title passes the param
+
+    navigate("/buyer/product-order-status", {
+      state: { data: filteredData },
+    });
+  };
+
   const rows = sortedData.map((row) => (
     <tr key={row.product_title}>
       <td>
@@ -268,7 +279,7 @@ export function Transactions() {
       <td>
           <UnstyledButton
             className={`${classes.detailButton} ${classes.detailButtonHover}`}
-            onClick={() => handleRateButtonClick(row.product_title)}
+            onClick={() => handleDetailsButonClick(row.product_title)}
           >
             View Details
           </UnstyledButton>
