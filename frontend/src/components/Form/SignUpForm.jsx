@@ -109,6 +109,7 @@ function SignUpForm(props) {
         const response = await axios.post(`${url}/sign-up/`, data);
 
         dispatch({ type: "SET_LOADING", value: false });
+        dispatch({ type: "SET_SIGN_UP", value: false });
 
         showNotifications({
           status: "success",
