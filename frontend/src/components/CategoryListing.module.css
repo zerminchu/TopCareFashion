@@ -14,16 +14,10 @@
   gap: 5em;
 }
 
-.categoryTitle {
-  align-items: flex-start;
-}
-
 .listProductCategory {
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
-  align-items: center;
-  gap: 80px; 
-
 }
 
 .searchContainer {
@@ -36,8 +30,6 @@
 .categoryContainer {
   display: flex;
   flex-direction: column;
-  border-radius: 100px;
-  align-items: center;
 }
 
 .seeAllCategoryContainer {
@@ -62,4 +54,11 @@
   justify-content: center;
   align-items: center;
   margin-top: 30px;
+}
+
+.centered-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }

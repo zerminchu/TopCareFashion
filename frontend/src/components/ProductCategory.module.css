@@ -1,5 +1,6 @@
 .card {
   display: flex;
+  width: 100%;
   flex-direction: column;
   width: clamp(22rem, calc(22rem + 1vw), 25rem);
   overflow: hidden;

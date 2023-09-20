@@ -30,6 +30,7 @@ class User(models.Model):
         max_length=10, choices=GENDER_CHOICES, null=False, blank=True)
 
     # Buyer
+    premium_feature = models.BooleanField(default=False)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     color = models.CharField(max_length=50, blank=True, null=True)
     size = models.CharField(max_length=20, blank=True, null=True)

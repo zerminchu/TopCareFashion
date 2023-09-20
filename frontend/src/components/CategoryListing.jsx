@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Product from "./Product";
 import ProductCategory from "./ProductCategory";
-import classes from "./BuyerHome.module.css";
+import classes from "./CategoryListing.module.css";
 import axios from "axios";
 import { TextInput, Button, Select } from "@mantine/core";
 import { IconSettings, IconSearch, IconCopy } from "@tabler/icons-react";
@@ -12,20 +12,21 @@ import Cookies from "js-cookie";
 import { retrieveUserInfo } from "../utils/RetrieveUserInfoFromToken";
 import { showNotifications } from "../utils/ShowNotification";
 
-function CategoryListingsPage() {
-  const { category } = useParams();
+function CategoryListingsPage(props) {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { category } = useParams();
 
   const [currentUser, setCurrentUser] = useState();
   const [productList, setProductList] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
-
   const [searchText, setSearchText] = useState("");
   const [filteredProducts, setFilteredProducts] = useState([]);
-
-  // State variables for filtering
   const [selectedCondition, setSelectedCondition] = useState("");
   const [selectedSort, setSelectedSort] = useState("");
+
+  const gender = location.state?.gender;
+  const numberOfListings = searchResults.length;
 
   useEffect(() => {
     const retrieveAllItems = async () => {
@@ -36,7 +37,26 @@ function CategoryListingsPage() {
             : import.meta.env.VITE_API_PROD;
 
         const response = await axios.get(`${url}/item/`);
-        setProductList(response.data.data);
+        let items = [];
+
+        if (gender === "men") {
+          const menProducts = response.data.data.filter(
+            (item) => item.gender.toLowerCase() === "men"
+          );
+          items = menProducts;
+        } else if (gender === "women") {
+          const womenProducts = response.data.data.filter(
+            (item) => item.gender.toLowerCase() === "women"
+          );
+          items = womenProducts;
+        } else {
+          const menProducts = response.data.data.filter(
+            (item) => item.gender.toLowerCase() === "men"
+          );
+          items = menProducts;
+        }
+
+        setProductList(items);
       } catch (error) {
         console.error("Error fetching products:", error);
       }
@@ -170,8 +190,15 @@ function CategoryListingsPage() {
           />
         </div>
       </div>
-
-      <h1>{`Listings for ${category}`}</h1>
+      <div>
+        <h1
+          style={{ marginBottom: "10px", marginTop: "-25px" }}
+        >{`${numberOfListings} listings for ${category}`}</h1>
+        <h2 style={{ fontWeight: "normal", fontSize: "18px" }}>
+          Looking for New or Used {category}s in Singapore? Browse great deals
+          on Top Care Fashion and find your new {category}!
+        </h2>
+      </div>
       <div className={classes.listProduct}>{renderProductListings()}</div>
     </div>
   );

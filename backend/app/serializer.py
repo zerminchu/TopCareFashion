@@ -13,7 +13,8 @@ class BuyerSerializer(serializers.ModelSerializer):
             'business_type',
             'location',
             'contact_info',
-            'social_media_link'
+            'social_media_link',
+            'premium_feature'
         )
 
 class BuyerUpdateProfileSerializer(serializers.ModelSerializer):

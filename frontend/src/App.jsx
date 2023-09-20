@@ -9,6 +9,7 @@ import SignInForm from "./components/Form/SignInForm";
 import SignUpForm from "./components/Form/SignUpForm";
 import SellerOnBoard from "./pages/Seller/SellerOnBoard";
 import ExistingSellerOnBoard from "./pages/Seller/ExistingSellerOnBoard";
+import PremiumPopup from "./pages/Buyer/PremiumPage";
 import Footer from "./components/Footer";
 import Loading from "./components/Loading";
 
@@ -20,12 +21,14 @@ const MainApp = () => {
     <div className="App">
       {stateGlobal.signInBool && <SignInForm />}
       {stateGlobal.signUpBool && <SignUpForm />}
+
       {stateGlobal.loadingBool && <Loading />}
 
       <Header />
       <PageRoutes />
       <Footer />
 
+      {stateGlobal.premiumFeatureBool && <PremiumPopup />}
       {stateGlobal.sellerOnBoardBool && <SellerOnBoard />}
       {stateGlobal.existingSellerOnBoardBool && <ExistingSellerOnBoard />}
     </div>

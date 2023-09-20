@@ -8,12 +8,12 @@ import ProductCategory from "../../components/ProductCategory";
 import CategoryListing from "../../components/CategoryListing";
 import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
 import Product from "../../components/Product";
-import classes from "./BuyerHome.module.css";
+import classes from "./BuyerHomeWomen.module.css";
 import CarouselAds from "./CarouselAds";
 import axios from "axios";
 import Cookies from "js-cookie";
 
-function BuyerHome(props) {
+function BuyerHomeWomen(props) {
   const [searchText, setSearchText] = useState("");
   const [productList, setproductList] = useState([]);
   const [visibleProductCount, setVisibleProductCount] = useState(10);
@@ -49,7 +49,7 @@ function BuyerHome(props) {
 
         const response = await axios.get(`${url}/item/`);
         const menProductList = response.data.data.filter(
-          (item) => item.gender.toLowerCase() === "men"
+          (item) => item.gender.toLowerCase() === "women"
         );
         setproductList(menProductList);
       } catch (error) {
@@ -70,7 +70,7 @@ function BuyerHome(props) {
 
   const renderUser = () => {
     return user.map((user, index) => {
-      return <CategoryListing key={index} name={user.name} />;
+      return <CategoryListing key={index} gender="women" name={user.name} />;
     });
   };
 
@@ -154,17 +154,17 @@ function BuyerHome(props) {
           <div className={classes.listProductCategory}>
             <ProductCategory
               category="Top"
-              gender="men"
+              gender="women"
               setSelectedCategory={setSelectedCategory}
             />
             <ProductCategory
               category="Bottom"
-              gender="men"
+              gender="women"
               setSelectedCategory={setSelectedCategory}
             />
             <ProductCategory
               category="Footwear"
-              gender="men"
+              gender="women"
               setSelectedCategory={setSelectedCategory}
             />
           </div>
@@ -185,4 +185,4 @@ function BuyerHome(props) {
   );
 }
 
-export default BuyerHome;
+export default BuyerHomeWomen;

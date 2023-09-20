@@ -35,8 +35,6 @@ function Header() {
     // Check if user has signed in before
     if (Cookies.get("firebaseIdToken")) {
       setUserSessionData();
-    } else {
-      navigate("/", { replace: true });
     }
   }, []);
 
@@ -63,10 +61,9 @@ function Header() {
             </div>
             <div className={classes.middleside}>
               <a href="#">Sell</a>
-              <a href="#">Men</a>
-              <a href="#">Women</a>
+              <a href="/men">Men</a>
+              <a href="/women">Women</a>
               <a href="#">About Us</a>
-              <a href="#">Contact us</a>
             </div>
             <Button onClick={signIn}>Sign in</Button>
           </div>

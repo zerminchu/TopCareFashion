@@ -7,7 +7,7 @@ import classes from "./SignInForm.module.css";
 import { useForm } from "@mantine/form";
 import { useDispatch } from "react-redux";
 import { showNotifications } from "../../utils/ShowNotification";
-import { Button, PasswordInput, TextInput } from "@mantine/core";
+import { Button, CloseButton, PasswordInput, TextInput } from "@mantine/core";
 import ILLogo from "../../assets/illustrations/il_logo.png";
 import { AiOutlineClose } from "react-icons/ai";
 
@@ -74,7 +74,7 @@ function SignInForm(props) {
 
           setTimeout(() => {
             window.location.reload();
-          }, 1000); // Waits 1 seconds before reloading
+          }, 1000);
         }
       }
     } catch (error) {
@@ -102,7 +102,7 @@ function SignInForm(props) {
       {isPopupOpen && (
         <div className={classes.popupContainer}>
           <div className={classes.popupcontent}>
-            <AiOutlineClose
+            <CloseButton
               className={classes.backButton}
               onClick={handleBackButtonClick}
               size={30}

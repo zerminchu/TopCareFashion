@@ -58,6 +58,7 @@ def signUp(request):
                     "category": ""
                 }
                 data["verified_status"] = False
+                data["premium_feature"] = False
                 data["gender"] = ""
                 data["phone_number"] = ""
 

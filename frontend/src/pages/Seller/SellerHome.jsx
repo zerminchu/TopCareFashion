@@ -232,10 +232,11 @@ function SellerCards() {
             data={["Top", "Bottom", "Footwear"]}
             value={category}
             onChange={(value) => handleCategoryChange(value)}
+            className={classes.categoryDropdown}
           />
 
           <TextInput
-            placeholder="Search by item"
+            placeholder="Search by listing"
             icon={<IconSearch size="1rem" />}
             rightSectionWidth={90}
             styles={{ rightSection: { pointerEvents: "none" } }}

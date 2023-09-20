@@ -28,7 +28,6 @@ function SellerHeader(props) {
         <Text fw={700} fz="xl">
           Top Care Fashion
         </Text>
-        <a href="#">Contact us</a>
       </div>
       <div className={classes.rightside}>
         <DropDownMenu currentUser={currentUser} />

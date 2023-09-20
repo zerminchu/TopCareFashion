@@ -16,6 +16,7 @@ import { showNotifications } from "../../utils/ShowNotification";
 import { BiUpload } from "react-icons/bi";
 import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
 import Cookies from "js-cookie";
+import { Badge } from "@mantine/core";
 
 const useStyles = createStyles((theme) => ({
   root: {
@@ -51,6 +52,13 @@ function EditListing() {
   const [selectedImageUrls, setSelectedImageUrls] = useState([]);
   const [selectedImageFile, setSelectedImageFile] = useState(null);
 
+  const validateField = (fieldName, value) => {
+    if (value.length === 0) return `${fieldName} is empty`;
+    if (/^\s*$|^\s+.*|.*\s+$/.test(value))
+      return `${fieldName} contains trailing/leading whitespaces`;
+    return null;
+  };
+
   const form = useForm({
     initialValues: {
       category: "",
@@ -65,12 +73,15 @@ function EditListing() {
       image_urls: "",
     },
     validate: {
-      category: (value) => {
-        if (value.length === 0) return "Category is empty.";
-        if (/^\s*$|^\s+.*|.*\s+$/.test(value))
-          return "Category contains trailing/leading whitespaces";
-        return null;
-      },
+      category: (value) => validateField("Category", value),
+      condition: (value) => validateField("Condition", value),
+      colour: (value) => validateField("Colour", value),
+      title: (value) => validateField("Title", value),
+      description: (value) => validateField("Description", value),
+      price: (value) => validateField("Price", value),
+      collection_address: (value) => validateField("Collection Address", value),
+      quantity_available: (value) => validateField("Quantity Available", value),
+      avail_status: (value) => validateField("Available Status", value),
     },
   });
 
@@ -173,29 +184,33 @@ function EditListing() {
     return <div>Loading...</div>;
   }
   const handleSubmit = async () => {
-    try {
-      const response = await axios.put(
-        `http://localhost:8000/edit-item/${id}/${item_id}/`,
-        form.values
-      );
+    const errors = form.validate();
 
-      setIsEditing(false);
+    if (Object.keys(errors).length === 0) {
+      try {
+        const response = await axios.put(
+          `http://localhost:8000/edit-item/${id}/${item_id}/`,
+          form.values
+        );
 
-      showNotifications({
-        status: response.data.status,
-        title: "Updated Sucessfully",
-        message: response.data.message,
-      });
+        setIsEditing(false);
 
-      navigate(`/`);
-    } catch (error) {
-      console.error("Error updating item:", error);
+        showNotifications({
+          status: response.data.status,
+          title: "Updated Sucessfully",
+          message: response.data.message,
+        });
 
-      /*   notifications.show({
+        navigate(`/`);
+      } catch (error) {
+        console.error("Error updating item:", error);
+
+        /*   notifications.show({
       title: "Error Updating F&B Item",
       message: error.response.data,
       autoClose: 3000,
     }); */
+      }
     }
   };
 
@@ -301,14 +316,33 @@ function EditListing() {
           alignItems: "center",
         }}
       >
-        <TextInput
-          label="Category"
-          value={item.category}
-          style={{ width: "50%" }}
-          classNames={classes}
-          disabled={!isEditing}
-          {...form.getInputProps("category")}
-        />
+        <div
+          style={{
+            position: "relative",
+            display: "inline-block",
+            width: "50%",
+          }}
+        >
+          <TextInput
+            label="Category"
+            value={item.category}
+            classNames={classes}
+            disabled={!isEditing}
+            {...form.getInputProps("category")}
+          />
+          <Badge
+            color="violet"
+            style={{
+              position: "absolute",
+              top: "50%",
+              right: "5px",
+              transform: "translateY(-50%)",
+            }}
+          >
+            PREDICTED
+          </Badge>
+        </div>
+
         <br />
         <TextInput
           label="Condition"
@@ -348,7 +382,7 @@ function EditListing() {
         <br />
         <TextInput
           label="Price"
-          value={"S$" + " " + item.price}
+          value={"S$" + (isEditing ? form.values.price : item.price)}
           style={{ width: "50%" }}
           classNames={classes}
           disabled={!isEditing}
@@ -356,7 +390,7 @@ function EditListing() {
         />
         <br />
         <TextInput
-          label="Quantity"
+          label="Quantity Available"
           value={item.quantity_available}
           style={{ width: "50%" }}
           classNames={classes}
@@ -374,7 +408,7 @@ function EditListing() {
         />
         <br />
         <TextInput
-          label="Status"
+          label="Available Status"
           value={item.avail_status}
           style={{ width: "50%" }}
           classNames={classes}

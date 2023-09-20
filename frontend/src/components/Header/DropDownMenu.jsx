@@ -18,9 +18,12 @@ import classes from "./DropDownMenu.module.css";
 import { Text, Menu, Avatar } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import PremiumPopup from "../../pages/Buyer/PremiumPage";
+import { useDispatch } from "react-redux";
+import { showNotifications } from "../../utils/ShowNotification";
 
 function DropDownMenu(props) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [currentUser, setCurrentUser] = useState(props.currentUser);
   const [open, setOpen] = useState(false);
@@ -63,7 +66,17 @@ function DropDownMenu(props) {
   };
 
   const fashionRecommender = () => {
-    setOpen(true);
+    try {
+      if (currentUser) {
+        if (currentUser.premium_feature) {
+          navigate("/buyer/premium-feature");
+        } else {
+          dispatch({ type: "SET_PREMIUM_FEATURE", value: true });
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const analyticsOnClick2 = () => {
@@ -169,18 +182,18 @@ function DropDownMenu(props) {
               <Badge>Premium</Badge>
             </Menu.Item>
             <Menu.Item
-            icon={<img src={IconQuestionMark} />}
-            onClick={manageFeedbackForm}
-          >
-            Feedback Form
-          </Menu.Item>
+              icon={<img src={IconQuestionMark} />}
+              onClick={manageFeedbackForm}
+            >
+              Feedback Form
+            </Menu.Item>
 
-          <Menu.Item
-            icon={<img src={IconQuestionMark} />}
-            onClick={manageFrequentlyAskQuestion}
-          >
-            FAQ
-          </Menu.Item>
+            <Menu.Item
+              icon={<img src={IconQuestionMark} />}
+              onClick={manageFrequentlyAskQuestion}
+            >
+              FAQ
+            </Menu.Item>
             <Menu.Item icon={<img src={IconLogout} />} onClick={logoutOnClick}>
               Logout
             </Menu.Item>
@@ -200,12 +213,7 @@ function DropDownMenu(props) {
     return <Text>Unknown</Text>;
   };
 
-  return (
-    <div>
-      {renderDropDown()}
-      {open && <PremiumPopup isOpen={open} onClose={() => setOpen(false)} />}
-    </div>
-  );
+  return <div>{renderDropDown()}</div>;
 }
 
 export default DropDownMenu;

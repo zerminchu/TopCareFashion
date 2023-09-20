@@ -54,4 +54,6 @@ urlpatterns = [
 
     # Buyer
     path("buyer/checkout/", buyerViews.getCheckoutLink, name="get-checkout-link"),
+    path("buyer/premium-feature-checkout/", buyerViews.getPremiumFeatureCheckoutLink
+         , name="get-premium-feature-checkout-link"),
 ]
