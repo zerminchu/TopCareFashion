@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import {Table, Text } from '@mantine/core';
+import {Table, Text, Button } from '@mantine/core';
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { DUMMY_ORDERS_PPRODUCT } from "../../data/Products";
 import { DUMMY_PRODUCT_SALES } from "../../data/Products";
@@ -66,7 +66,8 @@ function sellerAnalytics() {
 
     };
 
-    const totalRev = 20113.84;
+    const totalRev = 1890.5;
+    const ordersCompleted = 9;
   
    
   
@@ -108,14 +109,17 @@ function sellerAnalytics() {
         return (
           <Orders
             key={index}
+            buyer={item.buyer}
             title={item.title}
             type={item.type}
             color={item.color}
             price={item.price}
             size={item.size}
             images={item.images}
-            quantity={item.quantity}
+            quantity={"x"+item.quantity}
             status={item.status}
+            button={item.button}
+           
           />
         );
       });
@@ -127,10 +131,10 @@ function sellerAnalytics() {
           <Sales
             key={index}
             title={product.title}
+            sales={product.sales}
             price={product.price}
-            quantity={product.quantity}
-            addRevenue = {calculateRevenue}
           />
+          
         );
       });
     };
@@ -138,23 +142,25 @@ function sellerAnalytics() {
 
     return (
       <div className={classes.container}>
+        <b>Your Summary</b>
         <div className={classes.sideBySideContainer}>
       
       <div className={classes.div2}>
-      {RenderTotalRev()}
-      <Text>{totalRev}</Text>
+      <Text>Your Total Revenue: ${totalRev}</Text>
       </div>
       <div className={classes.div3}>
+      <Text>Total Orders Completed: {ordersCompleted} orders</Text>
       </div>
     
     </div>
       <div className={classes.div1}>
+      <u className={classes.titles}>Sales By Product</u>
       <Table verticalSpacing="md">
           <thead>
             <tr>
-              <th>Title</th>
-              <th>Price</th>
-              <th>quantity</th>
+              <th>Product Name</th>
+              <th>Sales</th>
+              <th>Revenue</th>
             </tr>
           </thead>
           <tbody>{renderSalesItem()}</tbody>
@@ -164,10 +170,12 @@ function sellerAnalytics() {
       <div className={classes.div4}>
       <div className={classes.container1}>
       <div className={classes.tableContainer1}>
+      <u className={classes.titles}>Orders</u>
         <Table verticalSpacing="md">
           <thead>
             <tr>
             <th>Image</th>
+            <th>Buyer</th>
               <th>Title</th>
               <th>Type</th>
               <th>Color</th>

@@ -69,7 +69,8 @@ const useStyles = createStyles((theme) => ({
     borderRadius: "5px",
     margin: "20px auto", // Center the container horizontally and add a top margin
     border: "1px solid #ccc", // Add an outline border
-    padding: "20px", // Add padding to the container
+    padding: "2%", // Add padding to the container
+    width: "100%", // Add padding to the container
   },
 }));
 
@@ -291,14 +292,6 @@ export function Transactions() {
     });
   };
 
-  const handleProceedCheckoutClick1 = () => {
-    // Using dummy cart product to send params to checkout page
-    const data = DUMMY_CART_PRODUCT;
-
-    navigate("/buyer/checkout", {
-      state: { data: data },
-    });
-  };
 
   const handleTrashClick = (title) => {
     // Find the item with the specified title
@@ -350,44 +343,6 @@ export function Transactions() {
       );
     });
   };
-
-  // const rows = sortedData.map((row) => (
-  //   <tr key={row.title}>
-  //     <td>
-  //       <img src={row.image} alt={row.title} width="50" height="50" />
-  //     </td>
-  //     <td>{row.title}</td>
-  //     <td>{row.type}</td>
-  //     <td>{row.color}</td>
-  //     <td>{row.size}</td>
-  //     <td>{row.price}</td>
-  //     <td>
-  //       <input
-  //         type="text"
-  //         value={editedQuantity[row.title]}
-  //         onChange={(e) => handleQuantityChange(e, row.title)}
-  //         style={{ width: "40px" }} // Limit the width to 20px
-  //       />
-  //     </td>
-  //     <td>
-  //       <UnstyledButton
-  //         className={`${classes.rateButton} ${classes.rateButtonHover}`}
-  //         onClick={() => handleBuyButtonClick(row.title)}
-  //       >
-  //         Buy Now
-  //       </UnstyledButton>
-  //     </td>
-  //     <td>
-  //       <img
-  //         src={IconTrashBin}
-  //         alt="Trash Icon"
-  //         width="24"
-  //         height="24"
-  //         onClick={() => handleTrashClick(row.title)}
-  //       />
-  //     </td>
-  //   </tr>
-  // ));
 
   return (
     <div className={style.biggerContainer}>
