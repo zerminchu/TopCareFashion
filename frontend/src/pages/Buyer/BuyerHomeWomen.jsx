@@ -62,6 +62,13 @@ function BuyerHomeWomen(props) {
     retrieveAllItems();
   }, []);
 
+  // Route restriction only for buyer
+  useEffect(() => {
+    if (currentUser && currentUser.role !== "buyer") {
+      navigate("/", { replace: true });
+    }
+  }, [currentUser]);
+
   useEffect(() => {
     const filteredProducts = productList.filter((product) =>
       product.title.toLowerCase().includes(searchText.toLowerCase())

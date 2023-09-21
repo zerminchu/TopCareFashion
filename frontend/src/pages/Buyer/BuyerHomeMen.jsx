@@ -39,6 +39,13 @@ function BuyerHomeMen(props) {
     }
   }, []);
 
+  // Route restriction only for buyer
+  useEffect(() => {
+    if (currentUser && currentUser.role !== "buyer") {
+      navigate("/", { replace: true });
+    }
+  }, [currentUser]);
+
   useEffect(() => {
     const retrieveAllItems = async () => {
       try {
