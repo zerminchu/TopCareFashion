@@ -3,7 +3,6 @@ import { Provider, useSelector } from "react-redux";
 import { MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import Store from "./redux/Store";
-import { LoadingOverlay } from "@mantine/core";
 import Header from "./components/Header/Header";
 import SignInForm from "./components/Form/SignInForm";
 import SignUpForm from "./components/Form/SignUpForm";
@@ -12,6 +11,7 @@ import ExistingSellerOnBoard from "./pages/Seller/ExistingSellerOnBoard";
 import PremiumPopup from "./pages/Buyer/PremiumPage";
 import Footer from "./components/Footer";
 import Loading from "./components/Loading";
+import CookiePermission from "./components/CookiePermission";
 
 import "./App.css";
 
@@ -39,6 +39,7 @@ function App() {
   return (
     <Provider store={Store}>
       <MantineProvider withNormalizeCSS withGlobalStyles>
+        <CookiePermission />
         <Notifications position="bottom-right" autoClose={4000} />
         <MainApp />
       </MantineProvider>

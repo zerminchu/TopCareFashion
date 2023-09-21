@@ -3,6 +3,7 @@ import { createStore } from 'redux'
 const initialstate = {
   sellerOnBoardBool: false,
   existingSellerOnBoardBool: false,
+  cookiePermissionBool: true,
   premiumFeatureBool: false,
   signInBool: false,
   signUpBool: false,
@@ -14,6 +15,12 @@ const reducer = (state = initialstate, action) => {
     return {
       ...state,
       loadingBool: action.value
+    }
+  }
+  else if (action.type === "SET_COOKIE_PERMISSION") {
+    return {
+      ...state,
+      cookiePermissionBool: action.value
     }
   }
   else if (action.type === "SET_SELLER_ON_BOARD") {
