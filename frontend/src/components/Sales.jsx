@@ -6,9 +6,9 @@ import { Text } from "@mantine/core";
 
 function Sales(props) {
 
-  useEffect(() => {
-    props.addRevenue(props.price * props.quantity)
-  }, []);
+  // useEffect(() => {
+  //   props.addRevenue(props.price * props.quantity)
+  // }, []);
 
   return (
     <tr key="sales">
@@ -17,9 +17,8 @@ function Sales(props) {
           <Text fw={500}>{props.title}</Text>
         </div>
       </td>
-      <td>${props.price}</td>
-      <td>{props.quantity}</td>
-      <td>{props.price * props.quantity}</td>
+      <td>{props.sales}</td>
+      <td>${(props.price * props.sales).toFixed(2)}</td>
     </tr>
   );
 }

@@ -9,6 +9,7 @@ import {
   Center,
   TextInput,
   rem,
+  Button,
 } from "@mantine/core";
 import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
 import { showNotifications } from "../../utils/ShowNotification";
@@ -268,21 +269,19 @@ export function Transactions() {
       <td>{row.status}</td> {/* New column for status */}
       
         <td>
-          <UnstyledButton
-            className={`${classes.rateButton} ${classes.rateButtonHover}`}
+          <Button 
             onClick={() => handleRateButtonClick(row.product_title)}
           >
             RATE
-          </UnstyledButton>
+          </Button>
         </td>
       
       <td>
-          <UnstyledButton
-            className={`${classes.detailButton} ${classes.detailButtonHover}`}
+          <Button
             onClick={() => handleDetailsButonClick(row.product_title)}
           >
             View Details
-          </UnstyledButton>
+          </Button>
         </td>
     </tr>
   ));
