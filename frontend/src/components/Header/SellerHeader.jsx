@@ -19,6 +19,10 @@ function SellerHeader(props) {
     navigate("/seller/upload-image");
   };
 
+  const chatOnClick = () => {
+    navigate("/chatting");
+  };
+
   return (
     <div className={classes.container}>
       <div className={classes.leftside}>
@@ -31,7 +35,7 @@ function SellerHeader(props) {
       </div>
       <div className={classes.rightside}>
         <DropDownMenu currentUser={currentUser} />
-        <img src={IconChat} width={30} height={30} />
+        <img src={IconChat} onClick={chatOnClick} width={30} height={30} />
         <Button onClick={listItem}>List now</Button>
       </div>
     </div>
