@@ -49,7 +49,9 @@ function BuyerHomeWomen(props) {
 
         const response = await axios.get(`${url}/item/`);
         const menProductList = response.data.data.filter(
-          (item) => item.gender.toLowerCase() === "women"
+          (item) =>
+            item.hasOwnProperty("gender") &&
+            item.gender.toLowerCase() === "women"
         );
         setproductList(menProductList);
       } catch (error) {

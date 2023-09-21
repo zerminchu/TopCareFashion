@@ -41,17 +41,23 @@ function CategoryListingsPage(props) {
 
         if (gender === "men") {
           const menProducts = response.data.data.filter(
-            (item) => item.gender.toLowerCase() === "men"
+            (item) =>
+              item.hasOwnProperty("gender") &&
+              item.gender.toLowerCase() === "men"
           );
           items = menProducts;
         } else if (gender === "women") {
           const womenProducts = response.data.data.filter(
-            (item) => item.gender.toLowerCase() === "women"
+            (item) =>
+              item.hasOwnProperty("gender") &&
+              item.gender.toLowerCase() === "women"
           );
           items = womenProducts;
         } else {
           const menProducts = response.data.data.filter(
-            (item) => item.gender.toLowerCase() === "men"
+            (item) =>
+              item.hasOwnProperty("gender") &&
+              item.gender.toLowerCase() === "men"
           );
           items = menProducts;
         }

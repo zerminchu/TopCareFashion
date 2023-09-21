@@ -13,6 +13,7 @@ import Cookies from "js-cookie";
 import classes from "./ProductDetails.module.css";
 import { showNotifications } from "../../utils/ShowNotification";
 import { useDispatch } from "react-redux";
+import copy from "copy-to-clipboard";
 
 function ProductDetails() {
   const dispatch = useDispatch();
@@ -122,6 +123,26 @@ function ProductDetails() {
         );
       });
     }
+  };
+
+  const chatOnClick = () => {
+    navigate("/chatting");
+  };
+
+  const shareOnClick = () => {
+    let itemUrl = "https://topcarefashion.com/listing/";
+
+    if (itemId) {
+      itemUrl = `https://topcarefashion.com/listing/${itemId}`;
+    }
+
+    copy(itemUrl);
+
+    showNotifications({
+      status: "success",
+      title: "Success",
+      message: "Listing link has been copied to clipboard",
+    });
   };
 
   const addToCartOnClick = () => {
@@ -422,7 +443,7 @@ function ProductDetails() {
               <div className={classes.topButtonContainer}>
                 <Button onClick={addToCartOnClick}>Add to cart</Button>
                 <Button onClick={buyNowOnClick}>Buy now</Button>
-                <Button>Share</Button>
+                <Button onClick={shareOnClick}>Share</Button>
                 <div>
                   <img
                     className={classes.wishlist}
@@ -440,7 +461,7 @@ function ProductDetails() {
             <Text size="xl" fw={700}>
               {productDetails.store_name}
             </Text>
-            <Button variant="outline">
+            <Button onClick={chatOnClick} variant="outline">
               <img src={IconChat} width={25} height={25} />
               Chat with seller
             </Button>

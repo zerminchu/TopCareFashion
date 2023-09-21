@@ -678,6 +678,7 @@ def add_product(request):
                     "condition": condition,
                     "colour": colour,
                     "title": title,
+                    "gender": "men",
                     "description": description,
                     "price": price,
                     "image_urls": image_urls,
