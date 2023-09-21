@@ -39,6 +39,13 @@ function BuyerHomeMen(props) {
     }
   }, []);
 
+  // Route restriction only for buyer
+  useEffect(() => {
+    if (currentUser && currentUser.role !== "buyer") {
+      navigate("/", { replace: true });
+    }
+  }, [currentUser]);
+
   useEffect(() => {
     const retrieveAllItems = async () => {
       try {
@@ -49,7 +56,8 @@ function BuyerHomeMen(props) {
 
         const response = await axios.get(`${url}/item/`);
         const menProductList = response.data.data.filter(
-          (item) => item.gender.toLowerCase() === "men"
+          (item) =>
+            item.hasOwnProperty("gender") && item.gender.toLowerCase() === "men"
         );
         setproductList(menProductList);
       } catch (error) {

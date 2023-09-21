@@ -50,6 +50,8 @@ function PageRoutes() {
       <Route path="/seller/order-status" element={<OrderStatus />} />;
       <Route path="/seller/analytics" element={<SellerAnalytics />} />;
       {/* Private route for buyer */}
+      <Route path="/men" element={<BuyerHomeMen />} />
+      <Route path="/women" element={<BuyerHomeWomen />} />
       <Route path="/buyer/product-detail" element={<ProductDetails />} />
       <Route path="/buyer/wishlist" element={<Wishlist />} />
       <Route path="/buyer/checkout" element={<Checkout />} />
@@ -69,8 +71,6 @@ function PageRoutes() {
       <Route path="/chatting" element={<Chatting />} />
       {/* Public route */}
       <Route path="/recover-password" element={<RecoverPassword />} />;
-      <Route path="/men" element={<BuyerHomeMen />} />
-      <Route path="/women" element={<BuyerHomeWomen />} />
       <Route path="/" element={<Home />} />
       <Route path="*" element={<h1>Page not found</h1>} />
     </Routes>
