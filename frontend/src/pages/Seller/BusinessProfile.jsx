@@ -253,12 +253,14 @@ function BusinessProfile() {
 
   const renderNewBusinessProfile = () => {
     return (
-      <div>
-        <Text fw={700}>
-          You have not set up your business profile, please click the button
-          below to set up
+      <div className={classes.newProfileContainer}>
+        <Text fw={900} className={classes.newProfileText}>
+          You have not set up your business profile.
         </Text>
-        <Button onClick={() => navigate("/seller/edit-business-profile")}>
+        <Button
+          onClick={() => navigate("/seller/edit-business-profile")}
+          className={classes.setupButton}
+        >
           Set up business profile
         </Button>
       </div>
