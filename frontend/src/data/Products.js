@@ -301,7 +301,7 @@ export const DUMMY_CART_PRODUCT = [
     title: "Red Dress",
     color: "Red",
     size: "L",
-    price: 211.56,
+    price: 211.50,
     cart_quantity: 2,
     quantity_available: 50,
     created_at: "2023-09-08",
@@ -331,11 +331,11 @@ export const DUMMY_WISHLIST_PRODUCT = [
       "https://images.unsplash.com/photo-1597350584914-55bb62285896?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1964&q=80"]
   },
   {
-    title: "Retro Sunglasses",
+    title: "Red Dress",
     type: "Top wear",
     color: "Red",
     size: "L",
-    price: 211.56,
+    price: 211.50,
     images: ["https://images.unsplash.com/photo-1606480192262-e3b6a9f37142?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cmVkJTIwZ293bnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60",
       "https://images.unsplash.com/photo-1606480192262-e3b6a9f37142?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cmVkJTIwZ293bnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60",
       "https://images.unsplash.com/photo-1606480192262-e3b6a9f37142?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cmVkJTIwZ293bnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60"]
@@ -351,8 +351,8 @@ export const DUMMY_ORDERS_PPRODUCT = [
     color: "Blue",
     price: 28.00,
     images: [blueShirt, blueShirt, blueShirt],
-    quantity: 5,
-    status: "completed"
+    quantity: 2,
+    status: "paid"
   },
   {
     buyer: "JessiJay@gmail.com",
@@ -364,21 +364,35 @@ export const DUMMY_ORDERS_PPRODUCT = [
     images: ["https://images.unsplash.com/photo-1597350584914-55bb62285896?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1964&q=80",
       "https://images.unsplash.com/photo-1597350584914-55bb62285896?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1964&q=80",
       "https://images.unsplash.com/photo-1597350584914-55bb62285896?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1964&q=80"],
-    quantity: 7,
-    status: "completed"
+    quantity: 1,
+    status: "paid"
   },
   {
     buyer: "Farzxia@gmail.com",
-    title: "Retro Sunglasses",
+    title: "Red Dress",
     type: "Top wear",
     color: "Red",
     size: "L",
-    price: 211.56,
+    price: 211.50,
     images: ["https://images.unsplash.com/photo-1606480192262-e3b6a9f37142?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cmVkJTIwZ293bnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60",
       "https://images.unsplash.com/photo-1606480192262-e3b6a9f37142?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cmVkJTIwZ293bnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60",
       "https://images.unsplash.com/photo-1606480192262-e3b6a9f37142?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cmVkJTIwZ293bnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60"],
-    quantity: 12,
-    status: "completed"
+    quantity: 1,
+    status: "paid"
+  },
+
+  {
+    buyer: "Limpoh23@gmail.com",
+    title: "Red Dress",
+    type: "Top wear",
+    color: "Red",
+    size: "L",
+    price: 211.50,
+    images: ["https://images.unsplash.com/photo-1606480192262-e3b6a9f37142?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cmVkJTIwZ293bnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60",
+      "https://images.unsplash.com/photo-1606480192262-e3b6a9f37142?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cmVkJTIwZ293bnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60",
+      "https://images.unsplash.com/photo-1606480192262-e3b6a9f37142?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cmVkJTIwZ293bnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60"],
+    quantity: 1,
+    status: "paid"
   },
 ]
 
@@ -403,12 +417,30 @@ export const DUMMY_TRANSACTION_PRODUCT = [
     title: "Red Dress",
     color: "Red",
     size: "L",
-    price: 211.56,
+    price: 211.50,
     cart_quantity: 2,
     quantity_available: 50,
     created_at: "2023-09-08",
     images: ["https://images.unsplash.com/photo-1606480192262-e3b6a9f37142?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cmVkJTIwZ293bnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60",
       "https://images.unsplash.com/photo-1606480192262-e3b6a9f37142?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cmVkJTIwZ293bnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60",
       "https://images.unsplash.com/photo-1606480192262-e3b6a9f37142?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cmVkJTIwZ293bnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60"]
+  },
+]
+
+export const DUMMY_PRODUCT_SALES = [
+  {
+    title: "Blue Shirt",
+    price: 28.00,
+    sales: 2.00,
+  },
+  {
+    title: "Trendy White Sneakers",
+    price: 300.00,
+    sales: 4.00,
+  },
+  {
+    title: "Red Dress",
+    price: 211.50,
+    sales: 3.00,
   },
 ]
