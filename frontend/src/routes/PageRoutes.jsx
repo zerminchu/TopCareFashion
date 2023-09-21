@@ -26,7 +26,7 @@ import MixAndMatch from "../pages/Buyer/MixAndMatch";
 import BuyerHomeWomen from "../pages/Buyer/BuyerHomeWomen";
 import BuyerHomeMen from "../pages/Buyer/BuyerHomeMen";
 import ProductStatus from "../pages/Buyer/BuyerViewOrderStatus";
-import SellerAnalytics from "../pages/Seller/SellerAnalytics";
+import SellerSummary from "../pages/Seller/sellerSummary";
 
 function PageRoutes() {
   return (
@@ -48,7 +48,7 @@ function PageRoutes() {
       <Route path="/seller/feedback-form" element={<FeedbackForm />} />
       <Route path="/seller/ratings" element={<Ratings />} />
       <Route path="/seller/order-status" element={<OrderStatus />} />;
-      <Route path="/seller/analytics" element={<SellerAnalytics />} />;
+      <Route path="/seller/summary" element={<SellerSummary />} />;
       {/* Private route for buyer */}
       <Route path="/men" element={<BuyerHomeMen />} />
       <Route path="/women" element={<BuyerHomeWomen />} />
