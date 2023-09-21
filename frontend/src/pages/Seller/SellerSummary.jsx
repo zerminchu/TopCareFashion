@@ -9,11 +9,11 @@ import Cookies from "js-cookie";
 
 import Orders from "../../components/Orders";
 import Sales from "../../components/Sales";
-import classes from "./SellerAnalytics.module.css";
+import classes from "./SellerSummary.module.css";
 
 
 
-function sellerAnalytics() {
+function sellerSummary() {
     const navigate = useNavigate();
     const [currentUser, setCurrentUser] = useState();
     const chartRef = useRef(null); // Define chartRef using useRef
@@ -195,4 +195,4 @@ function sellerAnalytics() {
     );
   }
   
-  export default sellerAnalytics;
+  export default sellerSummary;

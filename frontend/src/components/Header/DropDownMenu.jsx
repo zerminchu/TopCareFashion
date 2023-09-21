@@ -80,7 +80,7 @@ function DropDownMenu(props) {
   };
 
   const analyticsOnClick2 = () => {
-    navigate("/seller/analytics");
+    navigate("/seller/summary");
   };
   
 
