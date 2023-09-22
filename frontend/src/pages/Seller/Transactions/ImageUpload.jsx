@@ -13,7 +13,7 @@ import { IconCloudUpload, IconX, IconDownload } from "@tabler/icons-react";
 import { useInterval } from "@mantine/hooks";
 import { useNavigate } from "react-router-dom";
 import { Container, SimpleGrid } from "@mantine/core";
-import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
+import { retrieveUserInfo } from "../../../utils/RetrieveUserInfoFromToken";
 import Cookies from "js-cookie";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import axios from "axios";

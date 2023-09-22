@@ -11,9 +11,9 @@ import {
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
+import { retrieveUserInfo } from "../../../utils/RetrieveUserInfoFromToken";
 import Cookies from "js-cookie";
-import { showNotifications } from "../../utils/ShowNotification";
+import { showNotifications } from "../../../utils/ShowNotification";
 import { useDispatch } from "react-redux";
 import { Badge } from "@mantine/core";
 

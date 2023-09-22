@@ -4,10 +4,10 @@ import { Button, TextInput } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import ProductCategory from "../../components/ProductCategory";
-import CategoryListing from "../../components/CategoryListing";
-import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
-import Product from "../../components/Product";
+import ProductCategory from "../../../components/ProductCategory";
+import CategoryListing from "../../../components/CategoryListing";
+import { retrieveUserInfo } from "../../../utils/RetrieveUserInfoFromToken";
+import Product from "../../../components/Product";
 import classes from "./BuyerHomeWomen.module.css";
 import CarouselAds from "./CarouselAds";
 import axios from "axios";

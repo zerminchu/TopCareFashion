@@ -1,14 +1,14 @@
 import { Button, Text } from "@mantine/core";
 import React, { useState, useEffect } from "react";
-import SellerRating from "../../components/Rating/SellerRating";
-import IconBusinessName from "../../assets/icons/ic_business_name.svg";
-import IconBusinessType from "../../assets/icons/ic_business_type.svg";
-import IconLocation from "../../assets/icons/ic_location.svg";
-import IconSocialMedia from "../../assets/icons/ic_social_media.svg";
-import IconContact from "../../assets/icons/ic_contact.svg";
-import IconSadFace from "../../assets/icons/ic_sad_face.svg";
-import IconNoRating from "../../assets/icons/ic_no_rating.svg";
-import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
+import SellerRating from "../../../components/Rating/SellerRating";
+import IconBusinessName from "../../../assets/icons/ic_business_name.svg";
+import IconBusinessType from "../../../assets/icons/ic_business_type.svg";
+import IconLocation from "../../../assets/icons/ic_location.svg";
+import IconSocialMedia from "../../../assets/icons/ic_social_media.svg";
+import IconContact from "../../../assets/icons/ic_contact.svg";
+import IconSadFace from "../../../assets/icons/ic_sad_face.svg";
+import IconNoRating from "../../../assets/icons/ic_no_rating.svg";
+import { retrieveUserInfo } from "../../../utils/RetrieveUserInfoFromToken";
 
 import classes from "./BusinessProfile.module.css";
 import { useForm } from "@mantine/form";

@@ -4,16 +4,16 @@ import { Button, TextInput } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import ProductCategory from "../../components/ProductCategory";
-import CategoryListing from "../../components/CategoryListing";
-import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
-import Product from "../../components/Product";
-import classes from "./BuyerHome.module.css";
+import ProductCategory from "../../../components/ProductCategory";
+import CategoryListing from "../../../components/CategoryListing";
+import { retrieveUserInfo } from "../../../utils/RetrieveUserInfoFromToken";
+import Product from "../../../components/Product";
+import classes from "./BuyerHomeMen.module.css";
 import CarouselAds from "./CarouselAds";
 import axios from "axios";
 import Cookies from "js-cookie";
 
-function BuyerHome(props) {
+function BuyerHomeMen(props) {
   const [searchText, setSearchText] = useState("");
   const [productList, setproductList] = useState([]);
   const [visibleProductCount, setVisibleProductCount] = useState(10);
@@ -38,6 +38,13 @@ function BuyerHome(props) {
       setUserSessionData();
     }
   }, []);
+
+  // Route restriction only for buyer
+  useEffect(() => {
+    if (currentUser && currentUser.role !== "buyer") {
+      navigate("/", { replace: true });
+    }
+  }, [currentUser]);
 
   useEffect(() => {
     const retrieveAllItems = async () => {
@@ -71,7 +78,7 @@ function BuyerHome(props) {
 
   const renderUser = () => {
     return user.map((user, index) => {
-      return <CategoryListing key={index} name={user.name} />;
+      return <CategoryListingPage key={index} gender="men" name={user.name} />;
     });
   };
 
@@ -186,4 +193,4 @@ function BuyerHome(props) {
   );
 }
 
-export default BuyerHome;
+export default BuyerHomeMen;

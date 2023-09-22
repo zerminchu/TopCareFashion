@@ -1,12 +1,12 @@
 import { TextInput, Text, Textarea, Select, Button } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useNavigate } from "react-router-dom";
-import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
+import { retrieveUserInfo } from "../../../utils/RetrieveUserInfoFromToken";
 import Cookies from "js-cookie";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { showNotifications } from "../../utils/ShowNotification";
+import { showNotifications } from "../../../utils/ShowNotification";
 
 import classes from "./BusinessProfileForm.module.css";
 

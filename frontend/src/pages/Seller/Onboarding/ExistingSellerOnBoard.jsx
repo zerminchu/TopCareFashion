@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
-import { showNotifications } from "../../utils/ShowNotification";
+import { retrieveUserInfo } from "../../../utils/RetrieveUserInfoFromToken";
+import { showNotifications } from "../../../utils/ShowNotification";
 import { useDispatch } from "react-redux";
 import { Button, Text } from "@mantine/core";
 import Cookies from "js-cookie";
@@ -8,7 +8,7 @@ import axios from "axios";
 
 import classes from "./SellerOnBoard.module.css";
 
-function SellerOnBoard(props) {
+function ExistingSellerOnBoard() {
   const dispatch = useDispatch();
   const [currentUser, setCurrentUser] = useState();
 
@@ -30,7 +30,7 @@ function SellerOnBoard(props) {
     }
   }, []);
 
-  const onBoardOnClick = async () => {
+  const continueOnClick = async () => {
     try {
       const url =
         import.meta.env.VITE_NODE_ENV == "DEV"
@@ -38,9 +38,9 @@ function SellerOnBoard(props) {
           : import.meta.env.VITE_API_PROD;
 
       dispatch({ type: "SET_LOADING", value: true });
-
+      console.log(currentUser);
       const response = await axios.post(`${url}/seller/onboarding/`, {
-        user_id: currentUser.user_id,
+        stripe_id: currentUser.stripe_id,
       });
 
       dispatch({ type: "SET_LOADING", value: false });
@@ -63,12 +63,13 @@ function SellerOnBoard(props) {
           Seller On Boarding
         </Text>
         <Text>
-          In order to receive payment, you need to create stripe account !
+          You have not completed previous stripe account creation, please
+          continue to receive payment for your shop
         </Text>
-        <Button onClick={onBoardOnClick}>On board</Button>
+        <Button onClick={continueOnClick}>Continue</Button>
       </div>
     </div>
   );
 }
 
-export default SellerOnBoard;
+export default ExistingSellerOnBoard;

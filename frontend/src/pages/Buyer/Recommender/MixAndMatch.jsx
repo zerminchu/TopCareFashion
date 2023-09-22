@@ -1,16 +1,16 @@
 import { ActionIcon, Avatar, Text, TextInput } from "@mantine/core";
 import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
-import IconSend from "../../assets/icons/ic_send.svg";
+import IconSend from "../../../assets/icons/ic_send.svg";
 import { useNavigate } from "react-router-dom";
-import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
+import { retrieveUserInfo } from "../../../utils/RetrieveUserInfoFromToken";
 import Cookies from "js-cookie";
-import MixAndMatchResponse from "../../components/MixAndMatchResponse";
+import MixAndMatchResponse from "../../../components/MixAndMatchResponse";
 import {
   DUMMY_RESPONSE_RED,
   DUMMY_RESPONSE_CASUAL,
   DUMMY_RESPONSE_FORMAL,
   DUMMY_RESPONSE_UNKNOWN,
-} from "../../data/MixAndMatch";
+} from "../../../data/MixAndMatch";
 
 import classes from "./MixAndMatch.module.css";
 

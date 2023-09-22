@@ -1,13 +1,13 @@
 import { ActionIcon, Avatar, Button, Text, TextInput } from "@mantine/core";
 import React, { useState, useEffect, useRef } from "react";
-import { DUMMY_CHAT, DUMMY_INBOX } from "../data/Chats";
-import Chat from "../components/Chat";
-import IconSend from "../assets/icons/ic_send.svg";
+import { DUMMY_CHAT, DUMMY_INBOX } from "../../../data/Chats";
+import Chat from "../../../components/Chat";
+import IconSend from "../../../assets/icons/ic_send.svg";
 
 import classes from "./Chatting.module.css";
-import InboxUser from "../components/InboxUser";
+import InboxUser from "../../../components/InboxUser";
 import { useNavigate } from "react-router-dom";
-import { retrieveUserInfo } from "../utils/RetrieveUserInfoFromToken";
+import { retrieveUserInfo } from "../../../utils/RetrieveUserInfoFromToken";
 import Cookies from "js-cookie";
 
 function Chatting() {

@@ -12,9 +12,9 @@ import {
 } from "@mantine/core";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useForm } from "@mantine/form";
-import { showNotifications } from "../../utils/ShowNotification";
+import { showNotifications } from "../../../utils/ShowNotification";
 import { BiUpload } from "react-icons/bi";
-import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
+import { retrieveUserInfo } from "../../../utils/RetrieveUserInfoFromToken";
 import Cookies from "js-cookie";
 import { Badge } from "@mantine/core";
 

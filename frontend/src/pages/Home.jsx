@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { retrieveUserInfo } from "../utils/RetrieveUserInfoFromToken";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
-import BuyerHome from "./Buyer/BuyerHome";
+import BuyerHome from "./Buyer/Buyer Home/BuyerHome";
 import SellerHome from "./Seller/SellerHome";
 
 function Home() {

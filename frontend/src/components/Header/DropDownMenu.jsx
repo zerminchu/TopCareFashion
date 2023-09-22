@@ -17,7 +17,7 @@ import classes from "./DropDownMenu.module.css";
 
 import { Text, Menu, Avatar } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
-import PremiumPopup from "../../pages/Buyer/PremiumPage";
+import PremiumPopup from "../../pages/Buyer/Recommender/PremiumPage";
 import { useDispatch } from "react-redux";
 import { showNotifications } from "../../utils/ShowNotification";
 
@@ -82,7 +82,6 @@ function DropDownMenu(props) {
   const analyticsOnClick2 = () => {
     navigate("/seller/summary");
   };
-  
 
   const renderDropDownSeller = () => {
     return (
