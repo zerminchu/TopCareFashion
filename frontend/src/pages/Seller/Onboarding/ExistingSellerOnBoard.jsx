@@ -59,14 +59,14 @@ function ExistingSellerOnBoard() {
   return (
     <div className={classes.popupoverlay}>
       <div className={classes.popupcontent}>
-        <Text fw={700} fz="lg">
-          Seller On Boarding
-        </Text>
-        <Text>
-          You have not completed previous stripe account creation, please
-          continue to receive payment for your shop
-        </Text>
-        <Button onClick={continueOnClick}>Continue</Button>
+        <h2 className={classes.popupTitle}>Seller Onboarding</h2>
+        <p className={classes.popupText}>
+          Your seller's Stripe account setup is incomplete. Take action now for
+          a smoother payment experience and unlock your full payment potential.
+        </p>
+        <button className={classes.onBoardButton} onClick={continueOnClick}>
+          Proceed to Setup
+        </button>
       </div>
     </div>
   );

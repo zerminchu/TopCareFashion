@@ -9,6 +9,7 @@ import {
   rem,
   TextInput,
   Button,
+  Select,
 } from "@mantine/core";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useForm } from "@mantine/form";
@@ -342,14 +343,28 @@ function EditListing() {
             PREDICTED
           </Badge>
         </div>
-
         <br />
-        <TextInput
+        {/*   <TextInput
           label="Condition"
           value={item.condition}
           style={{ width: "50%" }}
           classNames={classes}
           disabled={!isEditing}
+          {...form.getInputProps("condition")} */}
+        <Select
+          mt="md"
+          withinPortal
+          data={[
+            { value: "Brand New", label: "Brand New" },
+            { value: "Lightly Used", label: "Lightly Used" },
+            { value: "Well Used", label: "Well Used" },
+          ]}
+          placeholder="Brand New"
+          label="Condition"
+          classNames={classes}
+          disabled={!isEditing}
+          style={{ width: "50%" }}
+          value={item.condition}
           {...form.getInputProps("condition")}
         />
         <br />
@@ -407,11 +422,25 @@ function EditListing() {
           {...form.getInputProps("collection_address")}
         />
         <br />
-        <TextInput
+        {/* <TextInput
           label="Available Status"
           value={item.avail_status}
           style={{ width: "50%" }}
           classNames={classes}
+          disabled={!isEditing}
+          {...form.getInputProps("avail_status")} */}
+        <Select
+          mt="mt"
+          withinPortal
+          data={[
+            { value: "Available", label: "Available" },
+            { value: "Unavailable", label: "Unavailable" },
+          ]}
+          placeholder="Available"
+          label="Available Status"
+          value={item.avail_status}
+          classNames={classes}
+          style={{ width: "50%" }}
           disabled={!isEditing}
           {...form.getInputProps("avail_status")}
         />

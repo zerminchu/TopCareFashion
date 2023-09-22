@@ -59,13 +59,17 @@ function SellerOnBoard(props) {
   return (
     <div className={classes.popupoverlay}>
       <div className={classes.popupcontent}>
-        <Text fw={700} fz="lg">
-          Seller On Boarding
-        </Text>
-        <Text>
-          In order to receive payment, you need to create stripe account !
-        </Text>
-        <Button onClick={onBoardOnClick}>On board</Button>
+        <h2 className={classes.popupTitle}>Welcome to Seller Onboarding</h2>
+        <p className={classes.popupText}>
+          To streamline your payment experience, it is necessary to set up a
+          seller's Stripe account.
+        </p>
+        <button className={classes.onBoardButton} onClick={onBoardOnClick}>
+          Get Started
+        </button>
+        <p className={classes.popupNote}>
+          Note: You cannot proceed further until this process is completed.
+        </p>
       </div>
     </div>
   );
