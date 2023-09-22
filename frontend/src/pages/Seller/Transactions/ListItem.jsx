@@ -49,6 +49,7 @@ function ListItem() {
   const [category, setCategory] = useState(predictedCategoryFromRoute);
   const [condition, setCondition] = useState("");
   const [colour, setColour] = useState("");
+  const [gender, setGender] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
@@ -112,6 +113,8 @@ function ListItem() {
       files.forEach((file, index) => {
         formData.append("files", file); // Use the key 'files' for the array of files
       });
+
+      formData.append("gender", gender);
       formData.append("category", category);
       formData.append("condition", condition);
       formData.append("colour", colour);
@@ -123,7 +126,12 @@ function ListItem() {
       formData.append("user_id", currentUser.user_id);
       formData.append("avail_status", avail_status);
 
-      await axios.post("http://localhost:8000/add-product/", formData);
+      const url =
+        import.meta.env.VITE_NODE_ENV == "DEV"
+          ? import.meta.env.VITE_API_DEV
+          : import.meta.env.VITE_API_PROD;
+
+      await axios.post(`${url}/add-product/`, formData);
 
       navigate("/", { replace: true });
       dispatch({ type: "SET_LOADING", value: false });
@@ -351,6 +359,22 @@ function ListItem() {
           classNames={classes}
           style={{ width: "50%" }}
           error={validateColour(colour)}
+        />
+        <br />
+        <Select
+          mt="md"
+          withinPortal
+          data={[
+            { value: "men", label: "Men" },
+            { value: "women", label: "Women" },
+          ]}
+          placeholder="Men"
+          label="Gender"
+          value={gender}
+          classNames={classes}
+          style={{ width: "50%" }}
+          onChange={(selectedValue) => setGender(selectedValue)}
+          error={validateCondition(gender)}
         />
         <br />
         <TextInput

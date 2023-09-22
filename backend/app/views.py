@@ -642,6 +642,7 @@ def add_product(request):
 
             if serializer.is_valid():
                 validated_data = serializer.validated_data
+                gender = validated_data["gender"]
                 category = validated_data["category"]
                 condition = validated_data["condition"]
                 colour = validated_data["colour"]
@@ -674,6 +675,7 @@ def add_product(request):
                 item_id = products_ref.document()
                 item_id.set({
                     "item_id": item_id.id,
+                    "gender": gender,
                     "category": category,
                     "condition": condition,
                     "colour": colour,
@@ -805,6 +807,7 @@ def edit_item(request, user_id, item_id):
                     "condition": validated_data["condition"],
                     "colour": validated_data["colour"],
                     "title": validated_data["title"],
+                    "gender": validated_data["gender"],
                     "description": validated_data["description"],
                     "price": validated_data["price"],
                     

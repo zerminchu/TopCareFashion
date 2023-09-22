@@ -50,6 +50,7 @@ class User(models.Model):
 
 
 class Item(models.Model):
+    gender = models.CharField(max_length=255)
     category = models.CharField(max_length=255)
     condition = models.CharField(max_length=255)
     colour = models.CharField(max_length=255)
