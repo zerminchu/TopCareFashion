@@ -113,8 +113,13 @@ function EditListing() {
             const formData = new FormData();
             formData.append("image", file);
 
+            const url =
+              import.meta.env.VITE_NODE_ENV == "DEV"
+                ? import.meta.env.VITE_API_DEV
+                : import.meta.env.VITE_API_PROD;
+
             const response = await axios.post(
-              "http://localhost:8000/classify-image/",
+              `${url}/classify-image/`,
               formData
             );
             const classifiedCategory = response.data.category;
@@ -158,9 +163,12 @@ function EditListing() {
   useEffect(() => {
     const fetchItemDetails = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/view-item/${id}/${item_id}/`
-        );
+        const url =
+          import.meta.env.VITE_NODE_ENV == "DEV"
+            ? import.meta.env.VITE_API_DEV
+            : import.meta.env.VITE_API_PROD;
+
+        const response = await axios.get(`${url}/view-item/${id}/${item_id}/`);
         const itemData = response.data;
 
         setItem(itemData);
@@ -198,8 +206,13 @@ function EditListing() {
       try {
         dispatch({ type: "SET_LOADING", value: true });
 
+        const url =
+          import.meta.env.VITE_NODE_ENV == "DEV"
+            ? import.meta.env.VITE_API_DEV
+            : import.meta.env.VITE_API_PROD;
+
         const response = await axios.put(
-          `http://localhost:8000/edit-item/${id}/${item_id}/`,
+          `${url}/edit-item/${id}/${item_id}/`,
           form.values
         );
 
@@ -233,7 +246,12 @@ function EditListing() {
     try {
       dispatch({ type: "SET_LOADING", value: true });
 
-      await axios.delete(`http://localhost:8000/delete-item/${id}/${item_id}/`);
+      const url =
+        import.meta.env.VITE_NODE_ENV == "DEV"
+          ? import.meta.env.VITE_API_DEV
+          : import.meta.env.VITE_API_PROD;
+
+      await axios.delete(`${url}/delete-item/${id}/${item_id}/`);
 
       dispatch({ type: "SET_LOADING", value: false });
 
