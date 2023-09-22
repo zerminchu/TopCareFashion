@@ -9,6 +9,7 @@ import {
   rem,
   TextInput,
   Button,
+  Select,
 } from "@mantine/core";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useForm } from "@mantine/form";
@@ -17,6 +18,7 @@ import { BiUpload } from "react-icons/bi";
 import { retrieveUserInfo } from "../../../utils/RetrieveUserInfoFromToken";
 import Cookies from "js-cookie";
 import { Badge } from "@mantine/core";
+import { useDispatch } from "react-redux";
 
 const useStyles = createStyles((theme) => ({
   root: {
@@ -40,6 +42,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 function EditListing() {
+  const dispatch = useDispatch();
   const theme = useMantineTheme();
   const { id, item_id } = useParams();
   const { classes } = useStyles();
@@ -65,6 +68,7 @@ function EditListing() {
       condition: "",
       colour: "",
       title: "",
+      gender: "",
       description: "",
       price: "",
       collection_address: "",
@@ -73,6 +77,7 @@ function EditListing() {
       image_urls: "",
     },
     validate: {
+      gender: (value) => validateField("Gender", value),
       category: (value) => validateField("Category", value),
       condition: (value) => validateField("Condition", value),
       colour: (value) => validateField("Colour", value),
@@ -157,7 +162,10 @@ function EditListing() {
           `http://localhost:8000/view-item/${id}/${item_id}/`
         );
         const itemData = response.data;
+
         setItem(itemData);
+
+        form.setValues({ gender: itemData.gender });
         form.setValues({ category: itemData.category });
         form.setValues({ condition: itemData.condition });
         form.setValues({ colour: itemData.colour });
@@ -186,8 +194,10 @@ function EditListing() {
   const handleSubmit = async () => {
     const errors = form.validate();
 
-    if (Object.keys(errors).length === 0) {
+    if (!form.validate().hasErrors) {
       try {
+        dispatch({ type: "SET_LOADING", value: true });
+
         const response = await axios.put(
           `http://localhost:8000/edit-item/${id}/${item_id}/`,
           form.values
@@ -195,8 +205,10 @@ function EditListing() {
 
         setIsEditing(false);
 
+        dispatch({ type: "SET_LOADING", value: false });
+
         showNotifications({
-          status: response.data.status,
+          status: "success",
           title: "Updated Sucessfully",
           message: response.data.message,
         });
@@ -204,12 +216,7 @@ function EditListing() {
         navigate(`/`);
       } catch (error) {
         console.error("Error updating item:", error);
-
-        /*   notifications.show({
-      title: "Error Updating F&B Item",
-      message: error.response.data,
-      autoClose: 3000,
-    }); */
+        dispatch({ type: "SET_LOADING", value: false });
       }
     }
   };
@@ -224,9 +231,15 @@ function EditListing() {
 
   const handleDeleteClick = async () => {
     try {
+      dispatch({ type: "SET_LOADING", value: true });
+
       await axios.delete(`http://localhost:8000/delete-item/${id}/${item_id}/`);
+
+      dispatch({ type: "SET_LOADING", value: false });
+
       navigate(`/`);
     } catch (error) {
+      dispatch({ type: "SET_LOADING", value: false });
       console.error("Error deleting item:", error);
     }
   };
@@ -325,7 +338,6 @@ function EditListing() {
         >
           <TextInput
             label="Category"
-            value={item.category}
             classNames={classes}
             disabled={!isEditing}
             {...form.getInputProps("category")}
@@ -346,7 +358,6 @@ function EditListing() {
         <br />
         <TextInput
           label="Condition"
-          value={item.condition}
           style={{ width: "50%" }}
           classNames={classes}
           disabled={!isEditing}
@@ -355,16 +366,29 @@ function EditListing() {
         <br />
         <TextInput
           label="Colour"
-          value={item.colour}
           style={{ width: "50%" }}
           classNames={classes}
           disabled={!isEditing}
           {...form.getInputProps("colour")}
         />
         <br />
+        <Select
+          mt="md"
+          withinPortal
+          data={[
+            { value: "men", label: "Men" },
+            { value: "women", label: "Women" },
+          ]}
+          placeholder="Men"
+          label="Gender"
+          disabled={!isEditing}
+          classNames={classes}
+          style={{ width: "50%" }}
+          {...form.getInputProps("gender")}
+        />
+        <br />
         <TextInput
           label="Title"
-          value={item.title}
           style={{ width: "50%" }}
           classNames={classes}
           disabled={!isEditing}
@@ -373,7 +397,6 @@ function EditListing() {
         <br />
         <TextInput
           label="Description"
-          value={item.description}
           style={{ width: "50%" }}
           classNames={classes}
           disabled={!isEditing}
@@ -391,7 +414,6 @@ function EditListing() {
         <br />
         <TextInput
           label="Quantity Available"
-          value={item.quantity_available}
           style={{ width: "50%" }}
           classNames={classes}
           disabled={!isEditing}
@@ -400,7 +422,6 @@ function EditListing() {
         <br />
         <TextInput
           label="Collection Address"
-          value={item.collection_address}
           style={{ width: "50%" }}
           classNames={classes}
           disabled={!isEditing}
@@ -409,7 +430,6 @@ function EditListing() {
         <br />
         <TextInput
           label="Available Status"
-          value={item.avail_status}
           style={{ width: "50%" }}
           classNames={classes}
           disabled={!isEditing}
