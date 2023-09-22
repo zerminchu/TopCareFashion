@@ -372,7 +372,6 @@ function EditListing() {
             PREDICTED
           </Badge>
         </div>
-        <br />
         {/*   <TextInput
           label="Condition"
           style={{ width: "50%" }}
@@ -403,7 +402,6 @@ function EditListing() {
           disabled={!isEditing}
           {...form.getInputProps("colour")}
         />
-        <br />
         <Select
           mt="md"
           withinPortal
@@ -412,7 +410,7 @@ function EditListing() {
             { value: "women", label: "Women" },
           ]}
           placeholder="Men"
-          label="Gender"
+          label="Product Gender Specification"
           disabled={!isEditing}
           classNames={classes}
           style={{ width: "50%" }}

@@ -360,7 +360,6 @@ function ListItem() {
           style={{ width: "50%" }}
           error={validateColour(colour)}
         />
-        <br />
         <Select
           mt="md"
           withinPortal
@@ -369,7 +368,7 @@ function ListItem() {
             { value: "women", label: "Women" },
           ]}
           placeholder="Men"
-          label="Gender"
+          label="Product Gender Specification"
           value={gender}
           classNames={classes}
           style={{ width: "50%" }}
