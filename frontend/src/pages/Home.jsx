@@ -28,7 +28,6 @@ function Home() {
     if (Cookies.get("firebaseIdToken")) {
       setUserSessionData();
     }
-    console.log("Iam at home");
   }, []);
 
   useEffect(() => {

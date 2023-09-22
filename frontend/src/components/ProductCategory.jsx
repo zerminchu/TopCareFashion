@@ -3,6 +3,10 @@ import classes from "./ProductCategory.module.css";
 import ILCategoryBottom from "../assets/illustrations/il_category_bottom.jpg";
 import ILCategoryTop from "../assets/illustrations/il_category_top.jpg";
 import ILCategoryFootwear from "../assets/illustrations/il_category_footwear.jpg";
+import womentop from "../assets/illustrations/womentop.jpg";
+import womenbottom from "../assets/illustrations/womenbottom.jpg";
+import womenfootwear from "../assets/illustrations/womenfootwear.jpg";
+
 import { Text } from "@mantine/core";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -21,12 +25,19 @@ function ProductCategory(props) {
   };
 
   const imageUrl = () => {
-    if (props.category === "Bottom") {
+    if (props.category === "Bottom" && props.gender == "men") {
       return ILCategoryBottom;
-    } else if (props.category === "Top") {
+    } else if (props.category === "Top" && props.gender == "men") {
       return ILCategoryTop;
-    } else if (props.category === "Footwear") {
+    } else if (props.category === "Footwear" && props.gender == "men") {
       return ILCategoryFootwear;
+    }
+    if (props.category === "Bottom" && props.gender == "women") {
+      return womenbottom;
+    } else if (props.category === "Top" && props.gender == "women") {
+      return womentop;
+    } else if (props.category === "Footwear" && props.gender == "women") {
+      return womenfootwear;
     }
 
     return ILCategoryTop;
@@ -34,16 +45,14 @@ function ProductCategory(props) {
 
   const renderDescription = () => {
     if (props.category === "Bottom") {
-      return <Text>Shop for the lastest tops for women and men</Text>;
+      return <Text>Find the perfect pair of pants or short </Text>;
     } else if (props.category === "Top") {
-      return <Text>Find the perfect pair of pants, shorts, or skirts</Text>;
+      return <Text>Find the perfect pair of top</Text>;
     } else if (props.category === "Footwear") {
-      return (
-        <Text>Step up your shoe game with our collection of footwear</Text>
-      );
+      return <Text>Find the perfect pair of footwear</Text>;
     }
 
-    return <Text>Shop for the lastest clothes for women and men</Text>;
+    return <Text>Shop for the lastest clothes</Text>;
   };
 
   return (

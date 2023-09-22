@@ -60,10 +60,11 @@ function Header() {
               <span className={classes.businessname}>Top Care Fashion</span>
             </div>
             <div className={classes.middleside}>
-              <a href="#">Sell</a>
               <a href="/men">Men</a>
               <a href="/women">Women</a>
-              <a href="#">About Us</a>
+              <a href="https://zermin551.wixsite.com/topcarefashion/about-us">
+                About Us
+              </a>
             </div>
             <Button onClick={signIn}>Sign in</Button>
           </div>
