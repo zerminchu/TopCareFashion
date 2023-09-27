@@ -1,12 +1,6 @@
-import { Avatar, Skeleton, Text } from "@mantine/core";
 import React, { useEffect, useState } from "react";
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  getDoc,
-  doc,
-} from "firebase/firestore";
+import { Avatar, Skeleton, Text } from "@mantine/core";
+import { getFirestore, getDoc, doc } from "firebase/firestore";
 import Fire from "../firebase";
 
 import classes from "./InboxUser.module.css";
@@ -26,10 +20,9 @@ function InboxUser(props) {
       const userDoc = await getDoc(userRef);
 
       if (userDoc.exists()) {
-        console.log("USER FOUND ON INBOX", userDoc.data());
         setUserData(userDoc.data());
       } else {
-        console.log("No such user!");
+        console.log("No such user in inbox");
       }
     };
 
@@ -38,9 +31,14 @@ function InboxUser(props) {
 
   const renderContent = () => {
     if (userData) {
-      const name = userData.business_profile
-        ? userData.business_profile.business_name
-        : userData.name.first_name;
+      let name = userData.name.first_name + " " + userData.name.last_name;
+
+      if (
+        userData.business_profile &&
+        userData.business_profile.business_name !== ""
+      ) {
+        name = userData.business_profile.business_name;
+      }
 
       return (
         <div className={classes.container} onClick={inboxUserOnClick}>

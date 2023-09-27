@@ -1,31 +1,24 @@
-import { ActionIcon, Avatar, Button, Text, TextInput } from "@mantine/core";
 import React, { useState, useEffect, useRef } from "react";
-import { DUMMY_CHAT, DUMMY_INBOX } from "../../../data/Chats";
-import Chat from "../../../components/Chat";
-import IconSend from "../../../assets/icons/ic_send.svg";
+import { ActionIcon, Avatar, Text, TextInput } from "@mantine/core";
 import { useLocation } from "react-router-dom";
+import { getDatabase, ref, onValue, push, set } from "firebase/database";
+import { getFirestore, getDoc, doc } from "firebase/firestore";
 
-import classes from "./Chatting.module.css";
-import InboxUser from "../../../components/InboxUser";
 import { useNavigate } from "react-router-dom";
 import { retrieveUserInfo } from "../../../utils/RetrieveUserInfoFromToken";
+import InboxUser from "../../../components/InboxUser";
+import Chat from "../../../components/Chat";
+import IconSend from "../../../assets/icons/ic_send.svg";
 import Cookies from "js-cookie";
 import Fire from "../../../firebase";
-import { getDatabase, ref, onValue, push, set } from "firebase/database";
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  getDoc,
-  doc,
-} from "firebase/firestore";
+
+import classes from "./Chatting.module.css";
 
 function Chatting() {
   const location = useLocation();
   const chatBodyRef = useRef(null);
 
   const targetChatId = location.state?.targetChatId;
-  console.log("MY TARGET CHAT ID", targetChatId);
 
   const navigate = useNavigate();
 
@@ -52,7 +45,7 @@ function Chatting() {
       if (userDoc.exists()) {
         setTargetChat(userDoc.data());
       } else {
-        console.log("No such user!");
+        console.log("No such user in chatting");
       }
     };
 
@@ -61,10 +54,8 @@ function Chatting() {
     }
   }, [targetChatId]);
 
-  // Set chatting data
   useEffect(() => {
     if (currentUser && targetChat) {
-      console.log("called");
       const db = getDatabase(Fire);
 
       const chatUrl = `Chatting/${currentUser.user_id}_${targetChat.user_id}`;
@@ -78,7 +69,6 @@ function Chatting() {
 
           if (data) {
             setChattingData(Object.values(data));
-            console.log("IAM TALKING TO: ", targetChat.user_id);
           }
         },
         (error) => {
@@ -88,7 +78,6 @@ function Chatting() {
     }
   }, [currentUser, targetChat]);
 
-  // Set inbox
   useEffect(() => {
     if (currentUser) {
       const db = getDatabase(Fire);
@@ -189,12 +178,10 @@ function Chatting() {
   };
 
   const changeTargetChat = (target) => {
-    console.log("Change target chat called with target: ", target);
     setTargetChat(target);
   };
 
   const renderChatting = () => {
-    console.log("RENDER CHATING", chattingData);
     if (chattingData.length > 0 && chattingData !== null) {
       return chattingData.map((chat, index) => {
         const isMe = chat.sendBy === currentUser.user_id ? "me" : "other";
@@ -220,9 +207,14 @@ function Chatting() {
 
   const renderChat = () => {
     if (currentUser && targetChat) {
-      const name = targetChat.business_profile
-        ? targetChat.business_profile.business_name
-        : targetChat.name.first_name;
+      let name = targetChat.name.first_name + " " + targetChat.name.last_name;
+
+      if (
+        targetChat.business_profile &&
+        targetChat.business_profile.business_name !== ""
+      ) {
+        name = targetChat.business_profile.business_name;
+      }
 
       return (
         <div>
