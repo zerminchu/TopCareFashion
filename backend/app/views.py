@@ -629,6 +629,33 @@ def getAllUsers(request):
             }, status=200)
         except Exception as e:
             return Response({"error": str(e)}, status=500)
+        
+@api_view(["GET"])
+def getUserById(request, user_id):
+    if request.method == "GET":
+        try:
+            if(len(user_id) <= 0):
+                raise Exception("User id cannot be empty")
+
+            db = firestore.client()
+            userRef = db.collection("Users").document(user_id)
+            userData = userRef.get()
+
+            if(not userData.exists):
+                raise Exception("User data does not exists")
+            
+            userData = userData.to_dict()
+
+            return JsonResponse({
+                'status': "success",
+                'message': "User data retrieved successfully",
+                'data': userData
+            }, status=200)
+        except Exception as e:
+            return JsonResponse({
+                "status": "error",
+                "message": str(e)
+            }, status=400)
 
 
 @api_view(["POST"])
@@ -708,9 +735,8 @@ def add_product(request):
                 return Response({"errors": serializer.errors}, status=400)
         except Exception as e:
             return Response({"error": str(e)}, status=500)
+
 # GET All
-
-
 @api_view(["GET"])
 def get_all_item(request):
     if request.method == "GET":
@@ -730,8 +756,6 @@ def get_all_item(request):
             return Response({"error": str(e)}, status=500)
 
  # Get by User ID
-
-
 @api_view(["GET"])
 def get_by_sellerId(request, user_id):
     if request.method == "GET":

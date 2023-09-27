@@ -39,6 +39,7 @@ urlpatterns = [
     
     path("item/", views.getAllItems, name="get-all-item"),
     path("user/", views.getAllUsers, name="get-all-user"),
+    path("user/<str:user_id>", views.getUserById, name="get-user-by-id"),
 
 
     # Seller

@@ -1,33 +1,33 @@
 import React, { useEffect, useState } from "react";
 import { Avatar, Skeleton, Text } from "@mantine/core";
-import { getFirestore, getDoc, doc } from "firebase/firestore";
-import Fire from "../firebase";
+import axios from "axios";
 
 import classes from "./InboxUser.module.css";
 
 function InboxUser(props) {
   const [userData, setUserData] = useState();
 
-  const inboxUserOnClick = () => {
-    props.changeTargetChat(userData);
-  };
-
   useEffect(() => {
     const fetchData = async () => {
-      const db = getFirestore(Fire);
+      try {
+        const url =
+          import.meta.env.VITE_NODE_ENV == "DEV"
+            ? import.meta.env.VITE_API_DEV
+            : import.meta.env.VITE_API_PROD;
 
-      const userRef = doc(db, "Users", props.userId);
-      const userDoc = await getDoc(userRef);
-
-      if (userDoc.exists()) {
-        setUserData(userDoc.data());
-      } else {
-        console.log("No such user in inbox");
+        const response = await axios.get(`${url}/user/${props.userId}`);
+        setUserData(response.data.data);
+      } catch (error) {
+        console.log("There is error fetching data ", error);
       }
     };
 
     fetchData();
   }, []);
+
+  const inboxUserOnClick = () => {
+    props.changeTargetChat(userData);
+  };
 
   const renderContent = () => {
     if (userData) {

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { ActionIcon, Avatar, Text, TextInput } from "@mantine/core";
 import { useLocation } from "react-router-dom";
 import { getDatabase, ref, onValue, push, set } from "firebase/database";
-import { getFirestore, getDoc, doc } from "firebase/firestore";
+import axios from "axios";
 
 import { useNavigate } from "react-router-dom";
 import { retrieveUserInfo } from "../../../utils/RetrieveUserInfoFromToken";
@@ -37,15 +37,16 @@ function Chatting() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const db = getFirestore(Fire);
+      try {
+        const url =
+          import.meta.env.VITE_NODE_ENV == "DEV"
+            ? import.meta.env.VITE_API_DEV
+            : import.meta.env.VITE_API_PROD;
 
-      const userRef = doc(db, "Users", targetChatId);
-      const userDoc = await getDoc(userRef);
-
-      if (userDoc.exists()) {
-        setTargetChat(userDoc.data());
-      } else {
-        console.log("No such user in chatting");
+        const response = await axios.get(`${url}/user/${props.userId}`);
+        setUserData(response.data.data);
+      } catch (error) {
+        console.log("There is error fetching data ", error);
       }
     };
 
