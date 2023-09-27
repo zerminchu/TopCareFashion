@@ -67,6 +67,7 @@ function ProductDetails() {
 
         if (itemId) {
           const response = await axios.get(`${url}/listing/${itemId}`);
+          console.log(response);
           setProductDetails(response.data.data);
         }
       } catch (error) {
@@ -126,6 +127,14 @@ function ProductDetails() {
   };
 
   const chatOnClick = () => {
+    //navigate("/chatting");
+    if (productDetails) {
+      navigate("/chatting", {
+        state: { targetChatId: productDetails.user_id },
+      });
+      return;
+    }
+
     navigate("/chatting");
   };
 

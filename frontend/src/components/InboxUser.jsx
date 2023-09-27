@@ -7,7 +7,7 @@ import {
   getDoc,
   doc,
 } from "firebase/firestore";
-import Fire from "../firebase"; // Adjust the import path to where your firebaseConfig.js is located
+import Fire from "../firebase";
 
 import classes from "./InboxUser.module.css";
 
@@ -38,6 +38,10 @@ function InboxUser(props) {
 
   const renderContent = () => {
     if (userData) {
+      const name = userData.business_profile
+        ? userData.business_profile.business_name
+        : userData.name.first_name;
+
       return (
         <div className={classes.container} onClick={inboxUserOnClick}>
           <Avatar
@@ -47,7 +51,7 @@ function InboxUser(props) {
           ></Avatar>
           <div className={classes.rightSide}>
             <Text fw={500} size="lg">
-              {userData.name.first_name}
+              {name}
             </Text>
             <Text className={classes.truncate}>{props.lastChatMessage}</Text>
           </div>

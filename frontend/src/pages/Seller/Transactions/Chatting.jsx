@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { DUMMY_CHAT, DUMMY_INBOX } from "../../../data/Chats";
 import Chat from "../../../components/Chat";
 import IconSend from "../../../assets/icons/ic_send.svg";
+import { useLocation } from "react-router-dom";
 
 import classes from "./Chatting.module.css";
 import InboxUser from "../../../components/InboxUser";
@@ -11,9 +12,20 @@ import { retrieveUserInfo } from "../../../utils/RetrieveUserInfoFromToken";
 import Cookies from "js-cookie";
 import Fire from "../../../firebase";
 import { getDatabase, ref, onValue, push, set } from "firebase/database";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  getDoc,
+  doc,
+} from "firebase/firestore";
 
 function Chatting() {
+  const location = useLocation();
   const chatBodyRef = useRef(null);
+
+  const targetChatId = location.state?.targetChatId;
+  console.log("MY TARGET CHAT ID", targetChatId);
 
   const navigate = useNavigate();
 
@@ -22,13 +34,32 @@ function Chatting() {
   const [inboxData, setInboxData] = useState([]);
   const [message, setMessage] = useState("");
 
-  const [targetChat, settargetChat] = useState();
+  const [targetChat, setTargetChat] = useState();
 
   useEffect(() => {
     if (chatBodyRef.current) {
       chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
     }
   }, [chattingData]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const db = getFirestore(Fire);
+
+      const userRef = doc(db, "Users", targetChatId);
+      const userDoc = await getDoc(userRef);
+
+      if (userDoc.exists()) {
+        setTargetChat(userDoc.data());
+      } else {
+        console.log("No such user!");
+      }
+    };
+
+    if (targetChatId) {
+      fetchData();
+    }
+  }, [targetChatId]);
 
   // Set chatting data
   useEffect(() => {
@@ -72,7 +103,6 @@ function Chatting() {
           const data = snapshot.val();
 
           if (data) {
-            console.log("My inbox data: ", Object.values(data));
             setInboxData(Object.values(data));
           }
         },
@@ -82,11 +112,6 @@ function Chatting() {
       );
     }
   }, [currentUser]);
-
-  useEffect(() => {
-    //setChattingData(DUMMY_CHAT);
-    //setInboxData(DUMMY_INBOX);
-  }, []);
 
   useEffect(() => {
     if (chatBodyRef.current) {
@@ -165,7 +190,7 @@ function Chatting() {
 
   const changeTargetChat = (target) => {
     console.log("Change target chat called with target: ", target);
-    settargetChat(target);
+    setTargetChat(target);
   };
 
   const renderChatting = () => {
@@ -181,7 +206,6 @@ function Chatting() {
   };
 
   const renderInboxUser = () => {
-    console.log("FROM RENDER INBOX USER ", inboxData);
     return inboxData.map((user, index) => {
       return (
         <InboxUser
@@ -196,6 +220,10 @@ function Chatting() {
 
   const renderChat = () => {
     if (currentUser && targetChat) {
+      const name = targetChat.business_profile
+        ? targetChat.business_profile.business_name
+        : targetChat.name.first_name;
+
       return (
         <div>
           <div className={classes.chatHeader}>
@@ -204,9 +232,7 @@ function Chatting() {
               radius="100%"
               size={50}
             />
-            <Text fw={500}>
-              {targetChat.name.first_name} {targetChat.name.last_name}
-            </Text>
+            <Text fw={500}>{name}</Text>
           </div>
 
           <hr className={classes.horizontalLine} />

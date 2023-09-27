@@ -563,6 +563,7 @@ def getListingDetailByItemId(request, item_id):
             
             responseData = {
                 "title": (itemData.to_dict())["title"],
+                "user_id": (itemData.to_dict())["user_id"],
                 "collection_address": (listingData.to_dict())["collection_address"],
                 "size": ["S", "M", "L", "XL"],
                 "images": (itemData.to_dict())["image_urls"],
