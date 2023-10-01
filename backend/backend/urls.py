@@ -54,6 +54,7 @@ urlpatterns = [
     path("seller/<str:user_id>/ratings/", sellerViews.getReviews, name="get-seller-reviews"),
 
     # Buyer
+    path("buyer/edit-review/", buyerViews.editReview, name="edit-review"),
     path("buyer/checkout/", buyerViews.getCheckoutLink, name="get-checkout-link"),
     path("buyer/premium-feature-checkout/", buyerViews.getPremiumFeatureCheckoutLink
          , name="get-premium-feature-checkout-link"),

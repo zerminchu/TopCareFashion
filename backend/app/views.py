@@ -550,9 +550,12 @@ def getListingDetailByItemId(request, item_id):
                 
                 reviewItem["buyer_name"] = (buyerData.to_dict())["name"]["first_name"]
                 reviewItem["buyer_image_profile"] = (buyerData.to_dict())["profile_image_url"]
+                reviewItem["review_id"] = (review.to_dict())["review_id"]
                 reviewItem["rating"] = (review.to_dict())["rating"]
                 reviewItem["description"] = (review.to_dict())["description"]
                 reviewItem["reply"] = (review.to_dict())["reply"]
+                reviewItem["seller_id"] = (review.to_dict())["seller_id"]
+                reviewItem["buyer_id"] = (review.to_dict())["buyer_id"]
 
                 totalRating += int((review.to_dict())["rating"])
                 reviewList.append(reviewItem)

@@ -127,7 +127,6 @@ function ProductDetails() {
   };
 
   const chatOnClick = () => {
-    //navigate("/chatting");
     if (productDetails) {
       navigate("/chatting", {
         state: { targetChatId: productDetails.user_id },
@@ -227,11 +226,14 @@ function ProductDetails() {
       return (
         <ProductRating
           key={review.buyerName}
+          reviewId={review.review_id}
+          buyerId={review.buyer_id}
           buyerImageProfile={review.buyer_image_profile}
           buyerName={review.buyer_name}
           rating={review.rating}
           description={review.description}
           reply={review.reply || ""}
+          currentUser={currentUser || null}
         />
       );
     });

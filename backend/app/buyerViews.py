@@ -131,3 +131,33 @@ def getPremiumFeatureCheckoutLink(request):
           "status": "error",
           "message": str(e)
       }, status=400)
+    
+@api_view(["PUT"])
+def editReview(request):
+  if request.method == "PUT":
+    try:
+        data = request.data
+
+        # Validation
+        if(data["review_id"] == ""):
+            raise Exception("Review ID cannot be empty")
+        
+        if(data["description"] == ""):
+            raise Exception("Review cannot be empty")
+
+        # Update review
+        db = firestore.client()
+        reviewRef = db.collection("Review").document(data["review_id"])
+        updateReview = reviewRef.update({"description": data["description"]})
+
+        return JsonResponse({
+          'status': "success",
+          'message': "Edit review successfully",
+          'data': data["description"]
+        }, status=200)
+    
+    except Exception as e:
+      return JsonResponse({
+          "status": "error",
+          "message": str(e)
+      }, status=400)
