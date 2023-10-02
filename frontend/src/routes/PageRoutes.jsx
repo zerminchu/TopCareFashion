@@ -1,31 +1,30 @@
 import { Route, Routes } from "react-router-dom";
+import CategoryListingsPage from "../components/CategoryListing";
+import NotFoundImage from "../components/NotFound";
+import BuyerHomeMen from "../pages/Buyer/Buyer Home/BuyerHomeMen";
+import BuyerHomeWomen from "../pages/Buyer/Buyer Home/BuyerHomeWomen";
+import BuyerCart from "../pages/Buyer/BuyerCart";
+import ProductRate from "../pages/Buyer/BuyerRateProduct";
+import ProductStatus from "../pages/Buyer/BuyerViewOrderStatus";
+import Checkout from "../pages/Buyer/Checkout";
+import ProductDetails from "../pages/Buyer/ProductDetails";
+import MixAndMatch from "../pages/Buyer/Recommender/MixAndMatch";
+import Transactions from "../pages/Buyer/Transactions";
+import Wishlist from "../pages/Buyer/Wishlist";
+import FeedbackForm from "../pages/FeedbackForm";
+import FrequentlyAskQuestion from "../pages/FrequentlyAskQuestion";
 import Home from "../pages/Home";
 import RecoverPassword from "../pages/RecoverPassword";
-import UserProfile from "../pages/Seller/UserProfile";
+import BusinessProfile from "../pages/Seller/Business Profile/BusinessProfile";
+import BusinessProfileForm from "../pages/Seller/Business Profile/BusinessProfileForm";
+import OrderStatus from "../pages/Seller/OrderStatus";
+import Ratings from "../pages/Seller/Ratings";
+import SellerHome from "../pages/Seller/SellerHome";
+import Chatting from "../pages/Seller/Transactions/Chatting";
+import EditListing from "../pages/Seller/Transactions/EditListing";
 import ImageUpload from "../pages/Seller/Transactions/ImageUpload";
 import ListItem from "../pages/Seller/Transactions/ListItem";
-import SellerHome from "../pages/Seller/SellerHome";
-import EditListing from "../pages/Seller/Transactions/EditListing";
-import BusinessProfileForm from "../pages/Seller/Business Profile/BusinessProfileForm";
-import BusinessProfile from "../pages/Seller/Business Profile/BusinessProfile";
-import Ratings from "../pages/Seller/Ratings";
-import ProductDetails from "../pages/Buyer/ProductDetails";
-import Checkout from "../pages/Buyer/Checkout";
-import FrequentlyAskQuestion from "../pages/FrequentlyAskQuestion";
-import FeedbackForm from "../pages/FeedbackForm";
-import Transactions from "../pages/Buyer/Transactions";
-import BuyerCart from "../pages/Buyer/BuyerCart";
-import Wishlist from "../pages/Buyer/Wishlist";
-import CategoryListingsPage from "../components/CategoryListing";
-import Chatting from "../pages/Seller/Transactions/Chatting";
-import NotFoundImage from "../components/NotFound";
-import OutfitRecommender from "../pages/Buyer/Recommender/OutfitRecommender";
-import ProductRate from "../pages/Buyer/BuyerRateProduct";
-import OrderStatus from "../pages/Seller/OrderStatus";
-import MixAndMatch from "../pages/Buyer/Recommender/MixAndMatch";
-import BuyerHomeWomen from "../pages/Buyer/Buyer Home/BuyerHomeWomen";
-import BuyerHomeMen from "../pages/Buyer/Buyer Home/BuyerHomeMen";
-import ProductStatus from "../pages/Buyer/BuyerViewOrderStatus";
+import UserProfile from "../pages/Seller/UserProfile";
 import SellerSummary from "../pages/Seller/sellerSummary";
 
 function PageRoutes() {
@@ -65,7 +64,7 @@ function PageRoutes() {
       <Route path="/buyer/product-order-status" element={<ProductStatus />} />
       <Route path="/buyer/premium-feature" element={<MixAndMatch />} />
       <Route path="/not-found" element={<NotFoundImage />} />
-      <Route path="/outfit-recommender" element={<OutfitRecommender />} />;
+      {/* <Route path="/outfit-recommender" element={<OutfitRecommender />} />; */}
       {/* Private route */}
       <Route path="/user-profile" element={<UserProfile />} />;
       <Route path="/chatting" element={<Chatting />} />

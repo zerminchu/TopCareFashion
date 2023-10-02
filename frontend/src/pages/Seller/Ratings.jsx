@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from "react";
 import {
   Button,
   Loader,
@@ -7,17 +6,17 @@ import {
   Text,
   TextInput,
 } from "@mantine/core";
-import SellerRating from "../../components/Rating/SellerRating";
 import { DateInput } from "@mantine/dates";
+import axios from "axios";
+import Cookies from "js-cookie";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import SellerReview from "../../components/Rating/SellerReview";
 import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
-import Cookies from "js-cookie";
-import { useNavigate } from "react-router";
-import axios from "axios";
 import { showNotifications } from "../../utils/ShowNotification";
 
-import classes from "./Ratings.module.css";
 import { useDispatch } from "react-redux";
+import classes from "./Ratings.module.css";
 
 function Ratings() {
   const navigate = useNavigate();

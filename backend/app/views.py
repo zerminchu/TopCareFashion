@@ -1,34 +1,30 @@
-from django.shortcuts import render
-from django.http import JsonResponse
-from django.http import HttpResponse
-from . models import *
-from . serializer import *
-from .exceptions import *
-from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes, parser_classes
-from firebase_admin import firestore
-from django.core.files.base import ContentFile
-
-from firebase_admin import storage
-from firebase_admin import auth
-from django.core.validators import validate_email
-from django.core.files.storage import FileSystemStorage
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.parsers import MultiPartParser
-from config.firebase import firebase
-
+import io
 import os
-import uuid
 import random
 import re
-import io
+import uuid
 
-import tensorflow as tf
-from PIL import Image
 import numpy as np
+import tensorflow as tf
+from config.firebase import firebase
+from django.core.files.base import ContentFile
+from django.core.files.storage import FileSystemStorage
+from django.core.validators import validate_email
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render
+from firebase_admin import auth, firestore, storage
+from PIL import Image
+from rest_framework.decorators import (api_view, parser_classes,
+                                       permission_classes)
+from rest_framework.parsers import MultiPartParser
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from tensorflow.keras.models import load_model
-from tensorflow.keras.preprocessing.image import load_img
-from tensorflow.keras.preprocessing.image import img_to_array
+from tensorflow.keras.preprocessing.image import img_to_array, load_img
+
+from .exceptions import *
+from .models import *
+from .serializer import *
 
 
 @api_view(["POST"])
@@ -42,8 +38,8 @@ def signUp(request):
             if (data["password"] != data["confirm_password"]):
                 raise Exception(
                     "Password and confirm password should be the same")
-            
-            if(not all(v for v in data.values())):
+
+            if (not all(v for v in data.values())):
                 raise Exception("Please fill up all the data")
 
             db = firestore.client()
@@ -76,7 +72,7 @@ def signUp(request):
                     # Auth user first to get the user_id
                     authUser = firebaseAuth.create_user_with_email_and_password(
                         data["email"], data["password"])
-                    
+
                     # Send email verification
                     firebaseAuth.send_email_verification(authUser['idToken'])
 
@@ -106,7 +102,7 @@ def signUp(request):
 
                 # Serialize
                 sellerData = dict(data)
-                
+
                 name = sellerData.pop("name")
                 businessProfile = sellerData.pop("business_profile")
 
@@ -149,24 +145,24 @@ def signUp(request):
             }, status=400)
 
         except Exception as e:
-            if("EMAIL_EXISTS" in str(e)):
+            if ("EMAIL_EXISTS" in str(e)):
                 return JsonResponse({
                     "status": "error",
                     "message": "Email already exists, please use another one"
                 }, status=400)
-            
-            if("Enter a valid email address" in str(e)):
+
+            if ("Enter a valid email address" in str(e)):
                 return JsonResponse({
                     "status": "error",
                     "message": "Email is not valid"
                 }, status=400)
-            
-            if("WEAK_PASSWORD : Password should be at least 6 characters" in str(e)):
+
+            if ("WEAK_PASSWORD : Password should be at least 6 characters" in str(e)):
                 return JsonResponse({
                     "status": "error",
                     "message": "Password should be at least 6 characters"
                 }, status=400)
-            
+
             return JsonResponse({
                 "status": "error",
                 "message": str(e)
@@ -182,19 +178,19 @@ def signIn(request):
             data = request.data
 
             # Validation
-            if(not all(v for v in data.values())):
+            if (not all(v for v in data.values())):
                 raise Exception("Please fill up all the data")
             regex = r"[^@]+@[^@]+\.[^@]+"
 
-            if(not re.match(regex, data["email"]) is not None):
+            if (not re.match(regex, data["email"]) is not None):
                 raise Exception("Email is not valid")
 
             authUser = auth.get_user_by_email(data["email"])
 
             if (not authUser):
                 raise Exception("User not found")
-            
-            if(authUser.disabled):
+
+            if (authUser.disabled):
                 raise Exception("User has been suspended/disabled")
 
             if (not authUser.email_verified):
@@ -202,7 +198,7 @@ def signIn(request):
 
             user = firebaseAuth.sign_in_with_email_and_password(
                 data["email"], data["password"])
-            
+
             return JsonResponse({
                 'status': "success",
                 'message': "Logged in Successful",
@@ -210,13 +206,13 @@ def signIn(request):
             }, status=200)
 
         except Exception as e:
-            if("INVALID_PASSWORD" in str(e)):
+            if ("INVALID_PASSWORD" in str(e)):
                 return JsonResponse({
                     "status": "error",
                     "message": "Your password is incorrect"
                 }, status=400)
-            
-            if("Enter a valid email address" in str(e)):
+
+            if ("Enter a valid email address" in str(e)):
                 return JsonResponse({
                     "status": "error",
                     "message": "Email is not valid"
@@ -359,9 +355,9 @@ def updateProfile(request):
             userRef = db.collection("Users").document(user_id)
             userData = (userRef.get()).to_dict()
 
-            if(userData and userData["role"] == "buyer"):
+            if (userData and userData["role"] == "buyer"):
                 serializer = BuyerUpdateProfileSerializer(data=data)
-            elif(userData and userData["role"] == "seller"):
+            elif (userData and userData["role"] == "seller"):
                 serializer = SellerUpdateProfileSerializer(data=data)
 
             if (serializer.is_valid()):
@@ -402,7 +398,7 @@ def updateProfile(request):
                     }
 
                 # Check whether it has phone number data or not
-                if(phone_number):
+                if (phone_number):
                     updatedData["phone_number"] = phone_number
 
                 # Update data into firestore
@@ -429,7 +425,6 @@ def updateProfile(request):
                 "status": "error",
                 "message": str(e)
             }, status=400)
-        
 
 
 @api_view(["GET"])
@@ -438,7 +433,7 @@ def getAdvertisementListing(request):
         try:
             db = firestore.client()
             itemRef = db.collection('Item')
-            
+
             # Retrieving all item documents
             totalDocs = len(list(itemRef.stream()))
 
@@ -461,46 +456,47 @@ def getAdvertisementListing(request):
                 "status": "error",
                 "message": str(e)
             }, status=400)
+
+
 @api_view(["POST"])
 def feedbackForm(request, user_id):
-  if request.method == "POST":
-    try:
-      data = request.data
+    if request.method == "POST":
+        try:
+            data = request.data
 
-      # Check if account exists
-      db = firestore.client()
-      userRef = db.collection('Users').document(user_id)
-      userDoc = userRef.get()
+            # Check if account exists
+            db = firestore.client()
+            userRef = db.collection('Users').document(user_id)
+            userDoc = userRef.get()
 
-      if(not userDoc.exists):
-        raise Exception("User not found")
+            if (not userDoc.exists):
+                raise Exception("User not found")
 
-      # Validation
-      if(not all(v for v in data.values())):
-        raise Exception("Please fill up all the data")
+            # Validation
+            if (not all(v for v in data.values())):
+                raise Exception("Please fill up all the data")
 
-      # Serializer
-      serializer = FeedbackSerializer(data=data)
+            # Serializer
+            serializer = FeedbackSerializer(data=data)
 
-      if (serializer.is_valid()):    
-        feedbackRef = db.collection('Feedback')  #create new ref   
-        feedbackForm = feedbackRef.add(data)
+            if (serializer.is_valid()):
+                feedbackRef = db.collection('Feedback')  # create new ref
+                feedbackForm = feedbackRef.add(data)
 
-        
+                return JsonResponse({
+                    'status': "success",
+                    'message': "Feedback Form updated successfully",
+                }, status=200)
+            else:
+                raise Exception(serializer.errors)
 
-        return JsonResponse({
-          'status': "success",
-          'message': "Feedback Form updated successfully",
-        }, status=200)
-      else:
-        raise Exception(serializer.errors)
-    
-    except Exception as e:
-      return JsonResponse({
-          "status": "error",
-          "message": str(e)
-      }, status=400)
-        
+        except Exception as e:
+            return JsonResponse({
+                "status": "error",
+                "message": str(e)
+            }, status=400)
+
+
 @api_view(["GET"])
 def getListingDetailByItemId(request, item_id):
     if request.method == "GET":
@@ -509,31 +505,34 @@ def getListingDetailByItemId(request, item_id):
             itemRef = db.collection("Item").document(item_id)
             itemData = itemRef.get()
 
-            if(not itemData.exists):
+            if (not itemData.exists):
                 raise Exception("Item does not exists")
 
             # Retrieving listing id for collection address
-            listingRef = db.collection("Listing").where("item_id", "==", (itemData.to_dict())["item_id"]).limit(1)
+            listingRef = db.collection("Listing").where(
+                "item_id", "==", (itemData.to_dict())["item_id"]).limit(1)
             listingData = listingRef.get()
 
-            if(len(listingData) <= 0):
+            if (len(listingData) <= 0):
                 raise Exception("Listing does not exists")
-            
+
             listingData = listingData[0]
-            
+
             # Retrieving seller business profile for store name
-            sellerRef = db.collection("Users").document((itemData.to_dict())["user_id"])
+            sellerRef = db.collection("Users").document(
+                (itemData.to_dict())["user_id"])
             sellerData = (sellerRef.get())
 
-            if(not sellerData.exists):
+            if (not sellerData.exists):
                 raise Exception("Seller does not exists")
-            
-            if(sellerData.to_dict().get("business_profile") is None):
-                raise Exception("This listing is not created using seller account")
 
-            
+            if (sellerData.to_dict().get("business_profile") is None):
+                raise Exception(
+                    "This listing is not created using seller account")
+
             # Retrieving rating and calculate average rating
-            reviewRef = db.collection("Review").where("listing_id", "==", (listingData.to_dict())["listing_id"])
+            reviewRef = db.collection("Review").where(
+                "listing_id", "==", (listingData.to_dict())["listing_id"])
             reviewData = reviewRef.get()
 
             reviewList = []
@@ -542,25 +541,29 @@ def getListingDetailByItemId(request, item_id):
             for review in reviewData:
                 reviewItem = {}
 
-                buyerRef = db.collection("Users").document((review.to_dict())["buyer_id"])
+                buyerRef = db.collection("Users").document(
+                    (review.to_dict())["buyer_id"])
                 buyerData = buyerRef.get()
 
-                if(not buyerData.exists):
-                    raise Exception("Buyer data does not exists in the reviews")
-                
-                reviewItem["buyer_name"] = (buyerData.to_dict())["name"]["first_name"]
-                reviewItem["buyer_image_profile"] = (buyerData.to_dict())["profile_image_url"]
+                if (not buyerData.exists):
+                    raise Exception(
+                        "Buyer data does not exists in the reviews")
+
+                reviewItem["buyer_name"] = (buyerData.to_dict())[
+                    "name"]["first_name"]
+                reviewItem["buyer_image_profile"] = (buyerData.to_dict())[
+                    "profile_image_url"]
                 reviewItem["rating"] = (review.to_dict())["rating"]
                 reviewItem["description"] = (review.to_dict())["description"]
                 reviewItem["reply"] = (review.to_dict())["reply"]
 
                 totalRating += int((review.to_dict())["rating"])
                 reviewList.append(reviewItem)
-                
+
             averageRating = 0
-            if(len(reviewData) > 0):
+            if (len(reviewData) > 0):
                 averageRating = totalRating // len(reviewData)
-            
+
             responseData = {
                 "title": (itemData.to_dict())["title"],
                 "user_id": (itemData.to_dict())["user_id"],
@@ -587,7 +590,8 @@ def getListingDetailByItemId(request, item_id):
                 "status": "error",
                 "message": str(e)
             }, status=400)
-        
+
+
 @api_view(["GET"])
 def getAllItems(request):
     if request.method == "GET":
@@ -595,7 +599,7 @@ def getAllItems(request):
             db = firestore.client()
             itemRef = db.collection("Item")
             itemData = itemRef.get()
-            
+
             responseData = []
 
             for item in itemData:
@@ -608,7 +612,8 @@ def getAllItems(request):
             }, status=200)
         except Exception as e:
             return Response({"error": str(e)}, status=500)
-        
+
+
 @api_view(["GET"])
 def getAllUsers(request):
     if request.method == "GET":
@@ -616,7 +621,7 @@ def getAllUsers(request):
             db = firestore.client()
             userRef = db.collection("Users")
             userData = userRef.get()
-            
+
             responseData = []
 
             for user in userData:
@@ -629,21 +634,22 @@ def getAllUsers(request):
             }, status=200)
         except Exception as e:
             return Response({"error": str(e)}, status=500)
-        
+
+
 @api_view(["GET"])
 def getUserById(request, user_id):
     if request.method == "GET":
         try:
-            if(len(user_id) <= 0):
+            if (len(user_id) <= 0):
                 raise Exception("User id cannot be empty")
 
             db = firestore.client()
             userRef = db.collection("Users").document(user_id)
             userData = userRef.get()
 
-            if(not userData.exists):
+            if (not userData.exists):
                 raise Exception("User data does not exists")
-            
+
             userData = userData.to_dict()
 
             return JsonResponse({
@@ -737,6 +743,8 @@ def add_product(request):
             return Response({"error": str(e)}, status=500)
 
 # GET All
+
+
 @api_view(["GET"])
 def get_all_item(request):
     if request.method == "GET":
@@ -756,6 +764,8 @@ def get_all_item(request):
             return Response({"error": str(e)}, status=500)
 
  # Get by User ID
+
+
 @api_view(["GET"])
 def get_by_sellerId(request, user_id):
     if request.method == "GET":
@@ -775,6 +785,7 @@ def get_by_sellerId(request, user_id):
 
         except Exception as e:
             return Response({"error": str(e)}, status=500)
+
 
 @api_view(["GET"])
 def get_seller_and_item(request, user_id, item_id):
@@ -804,6 +815,7 @@ def get_seller_and_item(request, user_id, item_id):
             return Response(item)
         except Exception as e:
             return Response({"error": str(e)}, status=500)
+
 
 @api_view(["PUT"])
 def edit_item(request, user_id, item_id):
@@ -835,7 +847,7 @@ def edit_item(request, user_id, item_id):
                     "gender": validated_data["gender"],
                     "description": validated_data["description"],
                     "price": validated_data["price"],
-                    
+
                 })
 
                 collection_address = request.data.get("collection_address")
@@ -874,8 +886,8 @@ def edit_item(request, user_id, item_id):
                     image_urls.append(image_url)
 
                     product_doc.update({
-                    "image_urls": image_urls,
-                })
+                        "image_urls": image_urls,
+                    })
 
                 return Response({"message": "Product updated successfully"})
             else:
@@ -966,5 +978,3 @@ def classify_image(request):
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=400)
-
-

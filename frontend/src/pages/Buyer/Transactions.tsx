@@ -1,28 +1,31 @@
-import React, { useState, useEffect } from "react";
 import {
-  createStyles,
-  Table,
-  ScrollArea,
-  UnstyledButton,
-  Group,
-  Text,
-  Center,
-  TextInput,
-  rem,
   Button,
+  Center,
+  Group,
+  ScrollArea,
+  Table,
+  Text,
+  TextInput,
+  UnstyledButton,
+  createStyles,
+  rem,
 } from "@mantine/core";
-import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
-import { showNotifications } from "../../utils/ShowNotification";
-import Cookies from "js-cookie";
 import { keys } from "@mantine/utils";
 import {
-  IconSelector,
   IconChevronDown,
   IconChevronUp,
   IconSearch,
+  IconSelector,
 } from "@tabler/icons-react";
+import Cookies from "js-cookie";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { DUMMY_TRANSACTION_PRODUCT } from "../../data/Products";
+import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
+import { showNotifications } from "../../utils/ShowNotification";
+import axios from "axios";
+
+
 
 const useStyles = createStyles((theme) => ({
   th: {
@@ -177,7 +180,7 @@ const sampleData: RowData[] = [
   
 ];
 
-export function Transactions() {
+ function Transactions() {
   const navigate = useNavigate();
   const { classes } = useStyles();
 
@@ -186,6 +189,9 @@ export function Transactions() {
   const [sortedData, setSortedData] = React.useState(sampleData);
   const [sortBy, setSortBy] = React.useState<keyof RowData | null>(null);
   const [reverseSortDirection, setReverseSortDirection] = React.useState(false);
+  const [buyerReviews, setBuyerReviews] = useState([]); // State variable to store buyer reviews
+
+
 
   // Check current user
   useEffect(() => {
@@ -193,6 +199,7 @@ export function Transactions() {
       try {
         const user = await retrieveUserInfo();
         setCurrentUser(user);
+        console.log(user)
       } catch (error) {
         showNotifications({
           status: "error",
@@ -209,12 +216,40 @@ export function Transactions() {
     }
   }, []);
 
-  // Route restriction only for buyer
-  useEffect(() => {
-    if (currentUser && currentUser.role !== "buyer") {
-      navigate("/", { replace: true });
+  
+
+/*   useEffect(() => {
+    const fetchBuyerReviews = async () => {
+      try {
+        const url =
+          import.meta.env.VITE_API_DEV == "DEV"
+            ? import.meta.env.VITE_API_DEV
+            : import.meta.env.VITE_API_PROD;
+
+        const response = await axios.get(
+          `${url}/buyer/${currentUser.user_id}/get-reviews-buyer/`
+        );
+        if (response.data.status === "success") {
+          setBuyerReviews(response.data.data);
+        }
+      } catch (error) {
+        showNotifications({
+          status: "error",
+          title: "Error",
+          message: error.response.data.message,
+        });
+      }
+    };
+    if (currentUser) {
+      if (currentUser.role === "buyer") {
+        fetchBuyerReviews();
+      }
     }
   }, [currentUser]);
+ */
+
+
+
 
   const setSorting = (field: keyof RowData) => {
     const reversed = field === sortBy ? !reverseSortDirection : false;
@@ -240,7 +275,6 @@ export function Transactions() {
     const data = DUMMY_TRANSACTION_PRODUCT;
 
     const filteredData = data.filter((item) => item.title === product_title);
-    console.log("pressed buy" +product_title) //title passes the param
 
     navigate("/buyer/product-rate", {
       state: { data: filteredData },
@@ -258,6 +292,13 @@ export function Transactions() {
     });
   };
 
+/*   const isReviewSent = (product_title) => {
+    const review = buyerReviews.find((review) => review.user_id);
+    return !!review; 
+  };
+ */
+
+
   const rows = sortedData.map((row) => (
     <tr key={row.product_title}>
       <td>
@@ -271,8 +312,8 @@ export function Transactions() {
         <td>
           <Button 
             onClick={() => handleRateButtonClick(row.product_title)}
-          >
-            RATE
+  >
+          Make a Review
           </Button>
         </td>
       

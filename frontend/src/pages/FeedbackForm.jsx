@@ -1,21 +1,14 @@
-import {
-  TextInput,
-  Text,
-  Textarea,
-  Select,
-  Button,
-  Title,
-} from "@mantine/core";
+import { Button, Select, TextInput, Textarea, Title } from "@mantine/core";
 import { useForm } from "@mantine/form";
 
-import classes from "./FeedbackForm.module.css";
+import axios from "axios";
+import Cookies from "js-cookie";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { retrieveUserInfo } from "../utils/RetrieveUserInfoFromToken";
-import Cookies from "js-cookie";
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { useDispatch } from "react-redux";
 import { showNotifications } from "../utils/ShowNotification";
+import classes from "./FeedbackForm.module.css";
 
 function FeedbackForm() {
   const navigate = useNavigate();
