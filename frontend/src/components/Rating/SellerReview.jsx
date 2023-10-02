@@ -2,6 +2,7 @@ import { Button, Rating, Text, Textarea } from "@mantine/core";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import axios from "axios";
+import IconEdit from "../../assets/icons/ic_edit.svg";
 import { showNotifications } from "../../utils/ShowNotification";
 
 import classes from "./SellerReview.module.css";
@@ -10,7 +11,8 @@ function SellerReview(props) {
   const dispatch = useDispatch();
 
   const [isReply, setIsReply] = useState(false);
-  const [comment, setComment] = useState("");
+  const [isEditReply, setIsEditReply] = useState(false);
+  const [comment, setComment] = useState(props.reply || "");
 
   const saveOnClick = async () => {
     try {
@@ -46,6 +48,22 @@ function SellerReview(props) {
     }
   };
 
+  const renderEditReply = () => {
+    return (
+      <div className={classes.replyContainer}>
+        <Textarea
+          placeholder="Your comment"
+          label="Your comment"
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+        />
+        <div className={classes.replyButtonContainer}>
+          <Button onClick={saveOnClick}>Save changes</Button>
+        </div>
+      </div>
+    );
+  };
+
   const renderReply = () => {
     return (
       <div className={classes.replyContainer}>
@@ -55,7 +73,7 @@ function SellerReview(props) {
           onChange={(e) => setComment(e.target.value)}
         />
         <div className={classes.replyButtonContainer}>
-          <Button onClick={saveOnClick}>Save changes</Button>
+          <Button onClick={saveOnClick}>Reply</Button>
           <Button onClick={() => setIsReply(!isReply)}>Cancel</Button>
         </div>
       </div>
@@ -65,8 +83,18 @@ function SellerReview(props) {
   const renderSellerReplied = () => {
     return (
       <div className={classes.sellerRepliedContainer}>
-        <Text>Seller replied</Text>
-        <Text fw={700}>{props.reply}</Text>
+        <div className={classes.editReviewContainer}>
+          <Text>Seller replied</Text>
+          <img
+            src={IconEdit}
+            width={30}
+            height={30}
+            onClick={() => setIsEditReply(!isEditReply)}
+          />
+        </div>
+
+        {!isEditReply && <Text fw={700}>{props.reply}</Text>}
+        {isEditReply && renderEditReply()}
       </div>
     );
   };
@@ -83,7 +111,7 @@ function SellerReview(props) {
       <Text>{props.description}</Text>
       <div>
         {props.reply === "" && (
-          <Button onClick={() => setIsReply(!isReply)}>Reply</Button>
+          <Button onClick={() => setIsReply(!isReply)}>Add Reply</Button>
         )}
       </div>
 

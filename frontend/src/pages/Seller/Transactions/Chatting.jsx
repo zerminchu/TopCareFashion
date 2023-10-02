@@ -43,10 +43,10 @@ function Chatting() {
             ? import.meta.env.VITE_API_DEV
             : import.meta.env.VITE_API_PROD;
 
-        const response = await axios.get(`${url}/user/${props.userId}`);
-        setUserData(response.data.data);
+        const response = await axios.get(`${url}/user/${targetChatId}`);
+        setTargetChat(response.data.data);
       } catch (error) {
-        console.log("There is error fetching data ", error);
+        console.log("There is error fetching data for target chat ", error);
       }
     };
 
@@ -102,12 +102,6 @@ function Chatting() {
       );
     }
   }, [currentUser]);
-
-  useEffect(() => {
-    if (chatBodyRef.current) {
-      chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
-    }
-  }, [chattingData]);
 
   useEffect(() => {
     const setUserSessionData = async () => {

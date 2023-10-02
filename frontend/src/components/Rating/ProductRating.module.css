@@ -4,13 +4,25 @@
   gap: 10px;
 }
 
+.headerContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.topLeftSide {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+}
+
 .topContainer {
   display: flex;
   flex-direction: row;
   gap: 5px;
 }
 
-.rightSide {
+.topRightSide {
   display: flex;
   flex-direction: column;
 }
@@ -22,4 +34,17 @@
   gap: 5px;
   border-radius: 5px;
   padding: 10px;
+}
+
+.replyContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.replyButtonContainer {
+  display: flex;
+  gap: 10px;
+  flex-direction: row;
+  justify-content: end;
 }
