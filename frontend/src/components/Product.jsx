@@ -1,4 +1,5 @@
 /* eslint-disable react/prop-types */
+import React, { useState } from "react";
 import classes from "./Product.module.css";
 import { Button, Text } from "@mantine/core";
 import { showNotifications } from "../utils/ShowNotification";
@@ -9,6 +10,8 @@ import Cookies from "js-cookie";
 function Product(props) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const [isAddToCart, setisAddToCart] = useState(false);
 
   const onClick = () => {
     if (props.item_id) {
@@ -22,19 +25,24 @@ function Product(props) {
     }
   };
 
-  const addToCartOnClick = (e) => {
+  const addToCartOnClick = async (e) => {
     if (!Cookies.get("firebaseIdToken")) {
       dispatch({ type: "SET_SIGN_IN", value: true });
       return;
     }
 
-    showNotifications({
-      status: "success",
-      title: "Success",
-      message: "Product has been added to cart",
-    });
-
     e.stopPropagation();
+
+    setisAddToCart(!isAddToCart);
+
+    if (props.size) {
+      const cartData = props;
+
+      if (props) {
+        dispatch({ type: "SET_CART", value: true });
+        dispatch({ type: "SET_CART_DATA", value: cartData });
+      }
+    }
   };
 
   return (

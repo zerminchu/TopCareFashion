@@ -66,7 +66,7 @@ function ProductDetails() {
             : import.meta.env.VITE_API_PROD;
 
         if (itemId) {
-          const response = await axios.get(`${url}/listing/${itemId}`);
+          const response = await axios.get(`${url}/listing-detail/${itemId}`);
           console.log(response);
           setProductDetails(response.data.data);
         }

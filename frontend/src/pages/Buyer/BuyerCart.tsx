@@ -186,11 +186,45 @@ export function Transactions() {
 
   const [currentUser, setCurrentUser] = useState();
   const [search, setSearch] = useState("");
-  const [sortedData, setSortedData] = useState<RowData[]>(sampleData);
+  const [sortedData, setSortedData] = useState<RowData[]>([]);
   const [sortBy, setSortBy] = useState<keyof RowData | null>(null);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
   const [filteredOutItems, setFilteredOutItems] = useState<RowData[]>([]); // Specify the type explicitly
   //const [filteredOutTitles, setFilteredOutTitles] = useState<string[]>([]);
+
+  useEffect(() => {
+    setSortedData([
+      {
+        image: blueShirt,
+        title: "Blue Shirt",
+        type: "Top Wear",
+        color: "Blue",
+        size: "M",
+        price: "$28.00",
+        quantity: "1",
+      },
+      {
+        image:
+          "https://images.unsplash.com/photo-1597350584914-55bb62285896?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1964&q=80",
+        title: "Trendy White Sneakers",
+        type: "Foot Wear",
+        color: "White",
+        size: "XL",
+        price: "$300.00",
+        quantity: "3",
+      },
+      {
+        image:
+          "https://images.unsplash.com/photo-1606480192262-e3b6a9f37142?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cmVkJTIwZ293bnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60",
+        title: "Red Dress",
+        type: "Top Wear",
+        color: "Red",
+        size: "L",
+        price: "$211.56",
+        quantity: "2",
+      },
+    ]);
+  }, []);
 
   // Check current user
   useEffect(() => {
@@ -291,7 +325,6 @@ export function Transactions() {
       state: { data: filteredData },
     });
   };
-
 
   const handleTrashClick = (title) => {
     // Find the item with the specified title

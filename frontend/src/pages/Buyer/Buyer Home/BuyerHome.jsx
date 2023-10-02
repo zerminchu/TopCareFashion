@@ -79,6 +79,7 @@ function BuyerHome(props) {
     const visibleProducts = searchResults.slice(0, visibleProductCount);
 
     return visibleProducts.map((product, index) => {
+      console.log("Product ", product);
       return (
         <Product
           key={index}
@@ -97,6 +98,7 @@ function BuyerHome(props) {
           sold={product.sold}
           category={product.category}
           condition={product.condition}
+          seller_id={product.user_id}
         />
       );
     });

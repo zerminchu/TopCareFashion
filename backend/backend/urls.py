@@ -34,9 +34,9 @@ urlpatterns = [
          name="retrieve-user-info-from-token"),
     path("update-profile/", views.updateProfile, name="update-profile"),
     path("listing/advertisement", views.getAdvertisementListing, name="get-listing-advertisement"),
-    path("listing/<str:item_id>", views.getListingDetailByItemId, name="get-listing-by-item-id"),
+    path("listing-detail/<str:item_id>", views.getListingDetailByItemId, name="get-listing-detail-by-item-id"),
 
-    
+    path("listing-by-item-id/<str:item_id>", views.getListingByItemId, name="get-listing-by-item-id"),
     path("item/", views.getAllItems, name="get-all-item"),
     path("user/", views.getAllUsers, name="get-all-user"),
     path("user/<str:user_id>", views.getUserById, name="get-user-by-id"),
@@ -56,6 +56,7 @@ urlpatterns = [
     # Buyer
     path("buyer/edit-review/", buyerViews.editReview, name="edit-review"),
     path("buyer/checkout/", buyerViews.getCheckoutLink, name="get-checkout-link"),
+    path("buyer/add-to-cart/", buyerViews.addToCart, name="add-to-cart"),
     path("buyer/premium-feature-checkout/", buyerViews.getPremiumFeatureCheckoutLink
          , name="get-premium-feature-checkout-link"),
 ]

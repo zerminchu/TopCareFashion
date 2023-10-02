@@ -14,6 +14,7 @@ import Loading from "./components/Loading";
 import CookiePermission from "./components/CookiePermission";
 
 import "./App.css";
+import AddToCart from "./components/AddToCart";
 
 const MainApp = () => {
   const stateGlobal = useSelector((state) => state);
@@ -28,6 +29,7 @@ const MainApp = () => {
       <PageRoutes />
       <Footer />
 
+      {stateGlobal.cartBool && <AddToCart cartData={stateGlobal.cartData} />}
       {stateGlobal.premiumFeatureBool && <PremiumPopup />}
       {stateGlobal.sellerOnBoardBool && <SellerOnBoard />}
       {stateGlobal.existingSellerOnBoardBool && <ExistingSellerOnBoard />}

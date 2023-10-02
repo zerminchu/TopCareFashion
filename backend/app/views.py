@@ -659,6 +659,33 @@ def getUserById(request, user_id):
                 "status": "error",
                 "message": str(e)
             }, status=400)
+        
+@api_view(["GET"])
+def getListingByItemId(request, item_id):
+    if request.method == "GET":
+        try:
+            if(len(item_id) <= 0):
+                raise Exception("Item id cannot be empty")
+
+            db = firestore.client()
+            listingRef = db.collection('Listing').where('item_id', '==', item_id)
+            listingData = listingRef.get()
+
+            if(len(listingData) <= 0):
+                raise Exception("Listing not found")
+            
+            listingData = listingData[0].to_dict()
+
+            return JsonResponse({
+                'status': "success",
+                'message': "Listing data retrieved successfully",
+                'data': listingData
+            }, status=200)
+        except Exception as e:
+            return JsonResponse({
+                "status": "error",
+                "message": str(e)
+            }, status=400)
 
 
 @api_view(["POST"])

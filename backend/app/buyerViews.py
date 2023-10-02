@@ -161,3 +161,82 @@ def editReview(request):
           "status": "error",
           "message": str(e)
       }, status=400)
+    
+@api_view(["POST"])
+def addToCart(request):
+  if request.method == "POST":
+    try:
+        data = request.data
+
+        if(len(data["buyer_id"]) <= 0):
+           raise Exception("Buyer id cannot be empty")
+        
+        serializer = CartSeliazer(data=data)
+
+        if(serializer.is_valid()):
+           db = firestore.client()
+
+           
+           cartQuery = db.collection("Cart").where("buyer_id", "==", data["buyer_id"]).limit(1)
+           cartQueryData = cartQuery.get()
+
+           # Check if cart has been created before
+           if(len(cartQueryData) <= 0):
+              cartId = (db.collection('Cart').document()).id
+              cartRef = db.collection('Cart').document(cartId)
+
+              cartRef.set({
+                 "cart_id": cartId,
+                 "buyer_id": data["buyer_id"]
+              })
+
+              cartItemId = (cartRef.collection('CartItem').document()).id
+              cartItemRef = cartRef.collection('CartItem').document(cartItemId)
+
+              cartItemRef.set({
+                 "cart_item_id": cartItemId,
+                 "listing_id": data["listing_id"],
+                 "item_id": data["item_id"],
+                 "created_at": data["created_at"],
+                 "cart_quantity": data["cart_quantity"],
+                 "seller_id": data["seller_id"],
+                 "size": data["size"]
+              })
+
+           else:
+              # Check if there is existing cart item
+
+              cartRef = db.collection("Cart").document((cartQueryData[0].to_dict())["cart_id"])
+
+              cartItemId = (cartRef.collection('CartItem').document()).id
+
+              cartItemRef = cartRef.collection('CartItem').document(cartItemId)
+
+              allCartItems = cartRef.collection("CartItem").get()
+              
+              for cartItem in allCartItems:
+                 if((cartItem.to_dict())["listing_id"] == data["listing_id"]):
+                    raise Exception("Listing already added to cart before")
+
+              cartItemRef.set({
+                 "cart_item_id": cartItemId,
+                 "listing_id": data["listing_id"],
+                 "item_id": data["item_id"],
+                 "created_at": data["created_at"],
+                 "cart_quantity": data["cart_quantity"],
+                 "seller_id": data["seller_id"]
+              })
+
+           return JsonResponse({
+            'status': "success",
+            'message': "Added to cart successfully",
+            'data': data
+        }, status=200)
+        else:
+          raise Exception(serializer.errors)
+
+    except Exception as e:
+      return JsonResponse({
+          "status": "error",
+          "message": str(e)
+      }, status=400)
