@@ -64,10 +64,9 @@ urlpatterns = [
          name="get-premium-feature-checkout-link"),
     path("buyer/submit-review/<str:user_id>",
          buyerViews.submit_review, name="submit-review"),
-   """  path("buyer/get-buyer-reviews/<str:buyer_id>",
-         buyerViews.getBuyerReviews, name="get-buyer-reviews"), """
     path("buyer/<str:user_id>/get-reviews-buyer/",
          buyerViews.getReviews_buyer, name="get-reviews-buyer"),
+
 
 
 
