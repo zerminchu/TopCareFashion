@@ -30,7 +30,6 @@ function WishlistItem(props) {
         </div>
       </td>
       <td>{props.type}</td>
-      <td>{props.color}</td>
       <td>{props.size}</td>
       <td>${props.price}</td>
       <td>
@@ -53,7 +52,7 @@ function WishlistItem(props) {
       >
         <div className={classes.confirmation}>
           <div className={classes.confirmationPrompt}>
-          <Text fw={500}>Are you sure you want to delete this item?</Text>
+            <Text fw={500}>Are you sure you want to delete this item?</Text>
           </div>
           <div className={classes.buttonConfirmation}>
             <Button variant="outline" onClick={cancelDelete}>

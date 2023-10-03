@@ -167,6 +167,7 @@ def addToCart(request):
   if request.method == "POST":
     try:
         data = request.data
+        print("DATA", data)
 
         if(len(data["buyer_id"]) <= 0):
            raise Exception("Buyer id cannot be empty")
@@ -224,7 +225,8 @@ def addToCart(request):
                  "item_id": data["item_id"],
                  "created_at": data["created_at"],
                  "cart_quantity": data["cart_quantity"],
-                 "seller_id": data["seller_id"]
+                 "seller_id": data["seller_id"],
+                 "size": data["size"]
               })
 
            return JsonResponse({
@@ -235,6 +237,114 @@ def addToCart(request):
         else:
           raise Exception(serializer.errors)
 
+    except Exception as e:
+      return JsonResponse({
+          "status": "error",
+          "message": str(e)
+      }, status=400)
+    
+@api_view(["GET"])
+def getCartDetailsByUserId(request, user_id):
+  if request.method == "GET":
+    try:
+      if(len(user_id) <= 0):
+        raise Exception("User id should not be empty")
+      
+      db = firestore.client()
+      cartRef = db.collection("Cart").where("buyer_id", "==", user_id).limit(1)
+      cartQueryData = cartRef.get()
+
+      cartItems = []
+      
+      if(len(cartQueryData) <= 0):
+        return JsonResponse({
+          'status': "success",
+          'message': "Cart detail data retrieved successfully",
+          'data': cartItems
+        }, status=200)
+
+      cartId = (cartQueryData[0].to_dict())["cart_id"]
+      cartItemRef = db.collection('Cart').document(cartId).collection('CartItem').stream()
+      
+      for item in cartItemRef:
+          fullData = {}
+          
+          itemRef = db.collection("Item").document((item.to_dict())["item_id"])
+          itemData = itemRef.get()
+
+          fullData["cart_id"] = cartId
+          fullData["cart_item_id"] = (item.to_dict())["cart_item_id"]
+          fullData["images"] = (itemData.to_dict())["image_urls"]
+          fullData["title"] = (itemData.to_dict())["title"]
+          fullData["category"] = (itemData.to_dict())["category"]
+          fullData["size"] = (item.to_dict())["size"]
+          fullData["quantity"] = (item.to_dict())["cart_quantity"]
+          fullData["price"] = (itemData.to_dict())["price"]
+
+          cartItems.append(fullData)
+
+      return JsonResponse({
+        'status': "success",
+        'message': "Cart detail data retrieved successfully",
+        'data': cartItems
+      }, status=200)
+
+    except Exception as e:
+      return JsonResponse({
+          "status": "error",
+          "message": str(e)
+      }, status=400)
+    
+@api_view(["PUT", "DELETE"])
+def updateCartItem(request, cart_id, cart_item_id):
+  if request.method == "PUT":
+    try:
+      data = request.data
+
+      if(len(cart_id) <= 0):
+        raise Exception("Cart id cannot be empty")
+      
+      if(len(cart_item_id) <= 0):
+        raise Exception("Cart item id cannot be empty")
+      
+      if(data["cart_quantity"] < 1):
+        raise Exception("Cart quantity cannot be below 1")
+      
+      db = firestore.client()
+      cartItemRef = db.collection("Cart").document(cart_id).collection("CartItem").document(cart_item_id)
+      cartItemRef.update({"cart_quantity": data["cart_quantity"]})
+
+      return JsonResponse({
+        'status': "success",
+        'message': "Cart item updated successfully",
+        'data': {
+          "cart_quantity": data["cart_quantity"]
+        }
+      }, status=200)
+
+    except Exception as e:
+      return JsonResponse({
+          "status": "error",
+          "message": str(e)
+      }, status=400)
+  
+  if request.method == "DELETE":
+    try:
+      if(len(cart_id) <= 0):
+        raise Exception("Cart id cannot be empty")
+      
+      if(len(cart_item_id) <= 0):
+        raise Exception("Cart item id cannot be empty")
+      
+      db = firestore.client()
+      cartItemRef = db.collection("Cart").document(cart_id).collection("CartItem").document(cart_item_id)
+      cartItemData = cartItemRef.delete()
+
+      return JsonResponse({
+        'status': "success",
+        'message': "Cart item deleted successfully",
+        'data': cartItemData
+      }, status=200)
     except Exception as e:
       return JsonResponse({
           "status": "error",

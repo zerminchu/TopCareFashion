@@ -58,7 +58,7 @@ function Wishlist() {
           title={item.title}
           type={item.type}
           color={item.color}
-          price={(item.price).toFixed(2)}
+          price={item.price.toFixed(2)}
           size={item.size}
           images={item.images}
           deleteItem={deleteItem}
@@ -74,8 +74,7 @@ function Wishlist() {
           <thead>
             <tr>
               <th>Title</th>
-              <th>Type</th>
-              <th>Color</th>
+              <th>Category</th>
               <th>Size</th>
               <th>Price</th>
               <th>Action</th>

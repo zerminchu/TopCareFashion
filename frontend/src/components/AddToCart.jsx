@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, CloseButton, Group, Radio } from "@mantine/core";
+import { Button, CloseButton, Group, Radio, Text } from "@mantine/core";
 import axios from "axios";
 import Cookies from "js-cookie";
 import classes from "./AddToCart.module.css";
@@ -78,6 +78,8 @@ function AddToCart(props) {
 
       const response = await axios.post(`${url}/buyer/add-to-cart/`, data);
 
+      dispatch({ type: "SET_CART", value: false });
+      dispatch({ type: "SET_CART_DATA", value: null });
       dispatch({ type: "SET_LOADING", value: false });
 
       showNotifications({
@@ -86,7 +88,10 @@ function AddToCart(props) {
         message: response.data.message,
       });
     } catch (error) {
+      dispatch({ type: "SET_CART", value: false });
+      dispatch({ type: "SET_CART_DATA", value: null });
       dispatch({ type: "SET_LOADING", value: false });
+
       showNotifications({
         status: "error",
         title: "Error",
@@ -110,25 +115,26 @@ function AddToCart(props) {
 
   return (
     <div className={classes.popupoverlay}>
-      <div className={classes.popupContainer}>
-        <div className={classes.popupcontent}>
-          <CloseButton
-            className={classes.backButton}
-            onClick={handleBackButtonClick}
-            size={30}
-          />
-          <Radio.Group
-            name="Choose the size"
-            label="Choose the size"
-            value={size}
-            onChange={(value) => setSize(value)}
-            withAsterisk
-          >
+      <div className={classes.popupcontent}>
+        <CloseButton
+          className={classes.backButton}
+          onClick={handleBackButtonClick}
+          size={30}
+        />
+        <Text size="md" fw={500}>
+          Select your size
+        </Text>
+        <Radio.Group
+          value={size}
+          onChange={(value) => setSize(value)}
+          withAsterisk
+        >
+          <div className={classes.availableSizeContainer}>
             {renderAvailableSizes()}
-          </Radio.Group>
+          </div>
+        </Radio.Group>
 
-          <Button onClick={addToCartOnClick}>Add to cart</Button>
-        </div>
+        <Button onClick={addToCartOnClick}>Add to cart</Button>
       </div>
     </div>
   );

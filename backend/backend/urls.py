@@ -56,7 +56,9 @@ urlpatterns = [
     # Buyer
     path("buyer/edit-review/", buyerViews.editReview, name="edit-review"),
     path("buyer/checkout/", buyerViews.getCheckoutLink, name="get-checkout-link"),
+    path("buyer/cart/<str:cart_id>/<str:cart_item_id>/", buyerViews.updateCartItem, name="update-cart-item"),
     path("buyer/add-to-cart/", buyerViews.addToCart, name="add-to-cart"),
+    path("buyer/cart-details/<str:user_id>/", buyerViews.getCartDetailsByUserId, name="get-cart-detail-by-user-id"),
     path("buyer/premium-feature-checkout/", buyerViews.getPremiumFeatureCheckoutLink
          , name="get-premium-feature-checkout-link"),
 ]

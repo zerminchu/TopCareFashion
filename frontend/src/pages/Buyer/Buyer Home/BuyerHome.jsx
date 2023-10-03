@@ -79,7 +79,6 @@ function BuyerHome(props) {
     const visibleProducts = searchResults.slice(0, visibleProductCount);
 
     return visibleProducts.map((product, index) => {
-      console.log("Product ", product);
       return (
         <Product
           key={index}
