@@ -54,11 +54,6 @@ function WishlistItem(props) {
             ? import.meta.env.VITE_API_DEV
             : import.meta.env.VITE_API_PROD;
 
-        console.log(
-          "URL!!!!!",
-          `${url}/buyer/wishlist/${props.userId}/${props.wishlistItemId}/`
-        );
-
         const response = await axios.get(
           `${url}/buyer/wishlist/${props.userId}/${props.wishlistItemId}/`
         );

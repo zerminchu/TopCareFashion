@@ -565,6 +565,7 @@ def getListingDetailByItemId(request, item_id):
                 averageRating = totalRating // len(reviewData)
             
             responseData = {
+                "listing_id": (listingData.to_dict())["listing_id"],
                 "title": (itemData.to_dict())["title"],
                 "user_id": (itemData.to_dict())["user_id"],
                 "collection_address": (listingData.to_dict())["collection_address"],
