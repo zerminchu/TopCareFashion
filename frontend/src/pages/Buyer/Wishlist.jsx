@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Table } from "@mantine/core";
-import WishlistItem from "../../components/WishlistItem";
-import { DUMMY_WISHLIST_PRODUCT } from "../../data/Products";
+import { Table, Text } from "@mantine/core";
 import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
+import { useNavigate } from "react-router-dom";
+import WishlistItem from "../../components/WishlistItem";
 import Cookies from "js-cookie";
+import axios from "axios";
 
 import classes from "./Wishlist.module.css";
-import { useNavigate } from "react-router-dom";
 
 function Wishlist() {
   const navigate = useNavigate();
@@ -43,28 +43,52 @@ function Wishlist() {
   }, [currentUser]);
 
   useEffect(() => {
-    setwishlistItems(DUMMY_WISHLIST_PRODUCT);
-  }, []);
+    const retrieveAllWishlistItems = async () => {
+      try {
+        const url =
+          import.meta.env.VITE_NODE_ENV == "DEV"
+            ? import.meta.env.VITE_API_DEV
+            : import.meta.env.VITE_API_PROD;
 
-  const deleteItem = (title) => {
-    setwishlistItems(wishlistItems.filter((item) => item.title !== title));
+        const response = await axios.get(
+          `${url}/buyer/wishlist/${currentUser.user_id}/`
+        );
+        setwishlistItems(response.data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    if (currentUser) {
+      retrieveAllWishlistItems();
+    }
+  }, [currentUser]);
+
+  const deleteItem = (wishlist_item_id) => {
+    setwishlistItems(
+      wishlistItems.filter((item) => item.wishlist_item_id !== wishlist_item_id)
+    );
   };
 
   const renderWishlistItem = () => {
-    return wishlistItems.map((item, index) => {
-      return (
-        <WishlistItem
-          key={index}
-          title={item.title}
-          type={item.type}
-          color={item.color}
-          price={item.price.toFixed(2)}
-          size={item.size}
-          images={item.images}
-          deleteItem={deleteItem}
-        />
-      );
-    });
+    if (currentUser && wishlistItems) {
+      if (wishlistItems.length <= 0) {
+        return <Text>You do not have any wishlist items</Text>;
+      }
+
+      return wishlistItems.map((item, index) => {
+        return (
+          <WishlistItem
+            key={index}
+            userId={currentUser.user_id}
+            wishlistItemId={item.wishlist_item_id}
+            deleteItem={deleteItem}
+          />
+        );
+      });
+    }
+
+    return <Text>Loading ..</Text>;
   };
 
   return (

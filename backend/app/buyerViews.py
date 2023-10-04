@@ -167,7 +167,6 @@ def addToCart(request):
   if request.method == "POST":
     try:
         data = request.data
-        print("DATA", data)
 
         if(len(data["buyer_id"]) <= 0):
            raise Exception("Buyer id cannot be empty")
@@ -243,6 +242,169 @@ def addToCart(request):
           "message": str(e)
       }, status=400)
     
+@api_view(["POST"])
+def addToWishlist(request):
+  if request.method == "POST":
+    try:
+        data = request.data
+
+        if(len(data["buyer_id"]) <= 0):
+           raise Exception("Buyer id cannot be empty")
+        
+        serializer = WishlistSeliazer(data=data)
+
+        if(serializer.is_valid()):
+          db = firestore.client()
+ 
+          wishlistQuery = db.collection("Wishlist").where("buyer_id", "==", data["buyer_id"]).limit(1)
+          wishlistQueryData = wishlistQuery.get()
+
+          # Check if wishlist has been created before
+          if(len(wishlistQueryData) <= 0):
+            wishlistId = (db.collection('Wishlist').document()).id
+            wishlistRef = db.collection('Wishlist').document(wishlistId)
+
+            wishlistRef.set({
+                "wishlist_id": wishlistId,
+                "buyer_id": data["buyer_id"]
+            })
+
+            wishlistItemId = (wishlistRef.collection('WishlistItem').document()).id
+            wishlistItemRef = wishlistRef.collection('WishlistItem').document(wishlistItemId)
+
+            wishlistItemRef.set({
+                "wishlist_item_id": wishlistItemId,
+                "listing_id": data["listing_id"],
+                "item_id": data["item_id"],
+                "created_at": data["created_at"],
+                "seller_id": data["seller_id"],
+                "size": data["size"]
+            })
+
+          else:
+            # Check if there is existing wishlist item
+            wishlistRef = db.collection("Wishlist").document((wishlistQueryData[0].to_dict())["wishlist_id"])
+
+            wishlistItemId = (wishlistRef.collection('WishlistItem').document()).id
+
+            wishlistItemRef = wishlistRef.collection('WishlistItem').document(wishlistItemId)
+
+            allWishlistItems = wishlistRef.collection("WishlistItem").get()
+            
+            for wishlistItem in allWishlistItems:
+              if((wishlistItem.to_dict())["listing_id"] == data["listing_id"]):
+                raise Exception("Listing already added to wishlist before")
+            
+            wishlistItemRef.set({
+                "wishlist_item_id": wishlistItemId,
+                "listing_id": data["listing_id"],
+                "item_id": data["item_id"],
+                "created_at": data["created_at"],
+                "seller_id": data["seller_id"],
+                "size": data["size"]
+            })
+        else:
+          raise Exception(serializer.errors)
+        
+        return JsonResponse({
+        'status': "success",
+        'message': "Added to wishlist successfully",
+        'data': data
+        }, status=200)
+        
+    except Exception as e:
+      return JsonResponse({
+          "status": "error",
+          "message": str(e)
+      }, status=400)
+    
+@api_view(["GET"])
+def getWishlistListByUserId(request, user_id):
+  if request.method == "GET":
+    try:
+      if(len(user_id) <= 0):
+        raise Exception("User id cannot be empty")
+      
+      db = firestore.client()
+
+      wishlistQuery = db.collection("Wishlist").where("buyer_id", "==", user_id).limit(1)
+      wishlistQueryData = wishlistQuery.get()
+      wishlistItems = []
+
+      if(len(wishlistQueryData) <= 0):
+        return JsonResponse({
+          'status': "success",
+          'message': "Wishlist list retrieved successfully",
+          'data': wishlistItems
+        }, status=200)
+      
+      wishlistId = (wishlistQueryData[0].to_dict())["wishlist_id"]
+      wishlistItemRef = db.collection("Wishlist").document(wishlistId).collection("WishlistItem")
+      wishlistItemData = wishlistItemRef.stream()
+
+      for wishlistItem in wishlistItemData:
+        wishlistItems.append(wishlistItem.to_dict())
+
+      return JsonResponse({
+        'status': "success",
+        'message': "Wishlist list retrieved successfully",
+        'data': wishlistItems
+      }, status=200)
+
+    except Exception as e:
+      return JsonResponse({
+          "status": "error",
+          "message": str(e)
+      }, status=400)
+    
+@api_view(["GET"])
+def getWishlistDetails(request, user_id, wishlist_item_id):
+  if request.method == "GET":
+    try:
+      if(len(user_id) <= 0):
+        raise Exception("User id cannot be empty")
+      
+      if(len(wishlist_item_id) <= 0):
+        raise Exception("Wishlist item id cannot be empty")
+      
+      db = firestore.client()
+
+      wishlistQuery = db.collection("Wishlist").where("buyer_id", "==", user_id).limit(1)
+      wishlistQueryData = wishlistQuery.get()
+
+      if(len(wishlistQueryData) <= 0):
+        raise Exception("User does not have wishlist item")
+      
+      wishlistId = (wishlistQueryData[0].to_dict())["wishlist_id"]
+
+      wishlistItemRef = db.collection("Wishlist").document(wishlistId).collection("WishlistItem").document(wishlist_item_id)
+      wishlistItemData = wishlistItemRef.get()
+
+      itemRef = db.collection("Item").document((wishlistItemData.to_dict())["item_id"])
+      itemData = itemRef.get()
+
+      fullData = {
+        "wishlist_id": wishlistId,
+        "wishlist_item_id":(wishlistItemData.to_dict())["wishlist_item_id"],
+        "images": (itemData.to_dict())["image_urls"],
+        "title": (itemData.to_dict())["title"],
+        "size": (wishlistItemData.to_dict())["size"],
+        "price": (itemData.to_dict())["price"],
+        "category": (itemData.to_dict())["category"]
+      }
+
+      return JsonResponse({
+        'status': "success",
+        'message': "Wishlist detail data retrieved successfully",
+        'data': fullData
+      }, status=200)
+
+    except Exception as e:
+      return JsonResponse({
+          "status": "error",
+          "message": str(e)
+      }, status=400)
+    
 @api_view(["GET"])
 def getCartDetailsByUserId(request, user_id):
   if request.method == "GET":
@@ -255,7 +417,7 @@ def getCartDetailsByUserId(request, user_id):
       cartQueryData = cartRef.get()
 
       cartItems = []
-      
+
       if(len(cartQueryData) <= 0):
         return JsonResponse({
           'status': "success",
@@ -289,6 +451,32 @@ def getCartDetailsByUserId(request, user_id):
         'data': cartItems
       }, status=200)
 
+    except Exception as e:
+      return JsonResponse({
+          "status": "error",
+          "message": str(e)
+      }, status=400)
+    
+@api_view(["DELETE"])
+def updateWishlistItem(request, wishlist_id, wishlist_item_id):
+  if request.method == "DELETE":
+    try:
+      if(len(wishlist_id) <= 0):
+        raise Exception("Wishlist id cannot be empty")
+      
+      if(len(wishlist_item_id) <= 0):
+        raise Exception("Wishlist item id cannot be empty")
+      
+      db = firestore.client()
+      wishlistItemRef = db.collection("Wishlist").document(wishlist_id).collection("WishlistItem").document(wishlist_item_id)
+      wishlistItemData = wishlistItemRef.delete()
+
+      return JsonResponse({
+        'status': "success",
+        'message': "Wishlist item deleted successfully",
+        'data': wishlistItemData
+      }, status=200)
+    
     except Exception as e:
       return JsonResponse({
           "status": "error",

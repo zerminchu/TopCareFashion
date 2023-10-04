@@ -49,6 +49,11 @@ class CartSeliazer (serializers.ModelSerializer):
         model = Cart
         exclude = ['buyer_id']
 
+class WishlistSeliazer (serializers.ModelSerializer):
+    class Meta:
+        model = Wishlist
+        exclude = ['buyer_id']
+
 class ItemSerializer(serializers.ModelSerializer):
 
     class Meta:
