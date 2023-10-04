@@ -5,10 +5,31 @@ import { showNotifications } from "../utils/ShowNotification";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import Cookies from "js-cookie";
+import algoliasearch from "algoliasearch/lite";
+import {
+  InstantSearch,
+  SearchBox,
+  Highlight,
+  Configure,
+  PoweredBy,
+  Hits,
+} from "react-instantsearch";
 
 function Product(props) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const search = algoliasearch(
+    "C27B4SWDRQ",
+    "1cb33681bc07eef867dd5e384c1d0bf5"
+  );
+
+  /*   search.use(
+    instantsearch.middlewares.createInsightsMiddleware({
+      insightsClient: aa,
+    })
+  ); 
+
+  aa("setUserToken", "user-1"); */
 
   const onClick = () => {
     if (props.item_id) {
@@ -27,6 +48,8 @@ function Product(props) {
       dispatch({ type: "SET_SIGN_IN", value: true });
       return;
     }
+
+    sendEvent("conversion", props, "Add to cart");
 
     showNotifications({
       status: "success",

@@ -12,6 +12,16 @@ import classes from "./BuyerHome.module.css";
 import CarouselAds from "./CarouselAds";
 import axios from "axios";
 import Cookies from "js-cookie";
+import algoliasearch from "algoliasearch/lite";
+import {
+  InstantSearch,
+  SearchBox,
+  Highlight,
+  Configure,
+  PoweredBy,
+  Hits,
+} from "react-instantsearch";
+import aa from "search-insights";
 
 function BuyerHome(props) {
   const [searchText, setSearchText] = useState("");
@@ -23,6 +33,10 @@ function BuyerHome(props) {
   const [currentUser, setCurrentUser] = useState();
   const navigate = useNavigate();
   const searchResultCount = searchResults.length;
+  const searchClient = algoliasearch(
+    "C27B4SWDRQ",
+    "1cb33681bc07eef867dd5e384c1d0bf5"
+  );
 
   useEffect(() => {
     const setUserSessionData = async () => {
@@ -60,6 +74,10 @@ function BuyerHome(props) {
 
     retrieveAllItems();
   }, []);
+
+  /*   useEffect(() => {
+    index.search(productID).then(({ hits }) => setproductList(hits[0]));
+  }, []); */
 
   useEffect(() => {
     const filteredProducts = productList.filter((product) =>
@@ -136,14 +154,16 @@ function BuyerHome(props) {
             </h1>
           )}
           <div className={classes.searchContainer}>
-            <TextInput
-              className={classes.searchBar}
-              placeholder="Search for an apprarel"
-              value={searchText}
-              onChange={(e) => {
-                setSearchText(e.target.value);
-              }}
-            />
+            {
+              <TextInput
+                className={classes.searchBar}
+                placeholder="Search for an apprarel"
+                value={searchText}
+                onChange={(e) => {
+                  setSearchText(e.target.value);
+                }}
+              />
+            }
           </div>
         </div>
 
