@@ -26,12 +26,13 @@ function Product(props) {
   };
 
   const addToCartOnClick = async (e) => {
+    e.stopPropagation();
+
     if (!Cookies.get("firebaseIdToken")) {
       dispatch({ type: "SET_SIGN_IN", value: true });
+
       return;
     }
-
-    e.stopPropagation();
 
     setisAddToCart(!isAddToCart);
 
