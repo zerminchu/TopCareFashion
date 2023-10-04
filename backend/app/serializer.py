@@ -44,7 +44,15 @@ class SellerBusinessProfileSerializer (serializers.ModelSerializer):
         model = User
         fields = ["business_name", "business_description", "business_type", "location", "contact_info", "social_media_link"]
 
+class CartSeliazer (serializers.ModelSerializer):
+    class Meta:
+        model = Cart
+        exclude = ['buyer_id']
 
+class WishlistSeliazer (serializers.ModelSerializer):
+    class Meta:
+        model = Wishlist
+        exclude = ['buyer_id']
 
 class ItemSerializer(serializers.ModelSerializer):
 

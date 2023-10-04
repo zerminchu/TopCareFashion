@@ -1,4 +1,4 @@
-import { Button, Text } from "@mantine/core";
+import { Button, Radio, Text, Group } from "@mantine/core";
 import React, { useEffect, useState } from "react";
 import IconChat from "../../assets/icons/ic_chat.svg";
 import IconWishlist from "../../assets/icons/ic_wishlist.svg";
@@ -21,6 +21,7 @@ function ProductDetails() {
   const navigate = useNavigate();
 
   const [currentUser, setCurrentUser] = useState();
+  const [selectedSize, setSelectedSize] = useState();
 
   // Check current user
   useEffect(() => {
@@ -66,8 +67,8 @@ function ProductDetails() {
             : import.meta.env.VITE_API_PROD;
 
         if (itemId) {
-          const response = await axios.get(`${url}/listing/${itemId}`);
-          console.log(response);
+          const response = await axios.get(`${url}/listing-detail/${itemId}`);
+          console.log("hello", response);
           setProductDetails(response.data.data);
         }
       } catch (error) {
@@ -85,21 +86,13 @@ function ProductDetails() {
   const renderAvailableSize = () => {
     if (productDetails) {
       if (!productDetails.size) {
-        return ["S", "M", "L", "XL"].map((size) => {
-          return (
-            <Text size="lg" fw={700} align="right" color="blue">
-              {size}
-            </Text>
-          );
+        return ["S", "M", "XL"].map((size) => {
+          return <Radio fw={500} value={size} label={size} />;
         });
       }
 
       return productDetails.size.map((size) => {
-        return (
-          <Text size="lg" fw={700} align="right" color="blue">
-            {size}
-          </Text>
-        );
+        return <Radio fw={500} value={size} label={size} />;
       });
     }
   };
@@ -153,32 +146,133 @@ function ProductDetails() {
     });
   };
 
-  const addToCartOnClick = () => {
+  const addToCartOnClick = async () => {
     // Check if user sign in before
     if (!Cookies.get("firebaseIdToken")) {
       dispatch({ type: "SET_SIGN_IN", value: true });
       return;
     }
 
-    showNotifications({
-      status: "success",
-      title: "Success",
-      message: "Product has been added to cart",
-    });
+    if (!selectedSize) {
+      showNotifications({
+        status: "error",
+        title: "Error",
+        message: "Please select the size",
+      });
+
+      return;
+    }
+
+    try {
+      dispatch({ type: "SET_LOADING", value: true });
+
+      const date = new Date();
+      const year = date.getFullYear();
+      let month = (date.getMonth() + 1).toString();
+      let day = date.getDate().toString();
+
+      month = month.length === 1 ? "0" + month : month;
+      day = day.length === 1 ? "0" + day : day;
+
+      const today = `${year}-${month}-${day}`;
+
+      const data = {
+        listing_id: productDetails.listing_id,
+        item_id: itemId,
+        cart_quantity: 1,
+        created_at: today,
+        seller_id: productDetails.user_id,
+        buyer_id: currentUser.user_id,
+        size: selectedSize,
+      };
+
+      const url =
+        import.meta.env.VITE_NODE_ENV == "DEV"
+          ? import.meta.env.VITE_API_DEV
+          : import.meta.env.VITE_API_PROD;
+
+      const response = await axios.post(`${url}/buyer/add-to-cart/`, data);
+
+      dispatch({ type: "SET_LOADING", value: false });
+
+      showNotifications({
+        status: "success",
+        title: "Success",
+        message: response.data.message,
+      });
+    } catch (error) {
+      dispatch({ type: "SET_LOADING", value: false });
+
+      showNotifications({
+        status: "error",
+        title: "Error",
+        message: error.response.data.message,
+      });
+    }
   };
 
-  const wishlistOnClick = () => {
+  const wishlistOnClick = async () => {
     // Check if user sign in before
     if (!Cookies.get("firebaseIdToken")) {
       dispatch({ type: "SET_SIGN_IN", value: true });
       return;
     }
 
-    showNotifications({
-      status: "success",
-      title: "Success",
-      message: "Product has been added to wishlist",
-    });
+    if (!selectedSize) {
+      showNotifications({
+        status: "error",
+        title: "Error",
+        message: "Please select the size",
+      });
+
+      return;
+    }
+
+    try {
+      dispatch({ type: "SET_LOADING", value: true });
+
+      const date = new Date();
+      const year = date.getFullYear();
+      let month = (date.getMonth() + 1).toString();
+      let day = date.getDate().toString();
+
+      month = month.length === 1 ? "0" + month : month;
+      day = day.length === 1 ? "0" + day : day;
+
+      const today = `${year}-${month}-${day}`;
+
+      const data = {
+        listing_id: productDetails.listing_id,
+        item_id: itemId,
+        created_at: today,
+        seller_id: productDetails.user_id,
+        buyer_id: currentUser.user_id,
+        size: selectedSize,
+      };
+
+      const url =
+        import.meta.env.VITE_NODE_ENV == "DEV"
+          ? import.meta.env.VITE_API_DEV
+          : import.meta.env.VITE_API_PROD;
+
+      const response = await axios.post(`${url}/buyer/add-to-wishlist/`, data);
+
+      dispatch({ type: "SET_LOADING", value: false });
+
+      showNotifications({
+        status: "success",
+        title: "Success",
+        message: response.data.message,
+      });
+    } catch (error) {
+      dispatch({ type: "SET_LOADING", value: false });
+
+      showNotifications({
+        status: "error",
+        title: "Error",
+        message: error.response.data.message,
+      });
+    }
   };
 
   const buyNowOnClick = () => {
@@ -239,119 +333,6 @@ function ProductDetails() {
     });
   };
 
-  // const renderDummy = () => {
-  //   return (
-  //     <div className={classes.container}>
-  //       <div className={classes.topContainer}>
-  //         <div className={classes.imageContainer}>
-  //           <img src={ILLNullImageListing} className={classes.mainImage} />
-
-  //           <div className={classes.secondaryImageContainer}>
-  //             <img
-  //               src={ILLNullImageListing}
-  //               className={classes.secondaryImage}
-  //             />
-  //             <img
-  //               src={ILLNullImageListing}
-  //               className={classes.secondaryImage}
-  //             />
-  //           </div>
-  //         </div>
-
-  //         <div className={classes.productDetailContainer}>
-  //           <div className={classes.productDetailTopContainer}>
-  //             <div className={classes.productItemAtribute}>
-  //               <Text size="md" fw={500}>
-  //                 Product name
-  //               </Text>
-  //               <Text size="lg" fw={700} align="right" color="blue">
-  //                 {productDetails.title}
-  //               </Text>
-  //             </div>
-
-  //             <div className={classes.productItemAtribute}>
-  //               <Text size="md" fw={500}>
-  //                 Collection address
-  //               </Text>
-  //               <Text size="lg" fw={700} align="right" color="blue">
-  //                 {productDetails.collectionAddress}
-  //               </Text>
-  //             </div>
-
-  //             <div className={classes.productItemAtribute}>
-  //               <Text size="md" fw={500}>
-  //                 Size
-  //               </Text>
-  //               <div className={classes.sizeContainer}>
-  //                 {renderAvailableSize()}
-  //               </div>
-  //             </div>
-
-  //             <div className={classes.productItemAtribute}>
-  //               <Text size="md" fw={500}>
-  //                 Stock
-  //               </Text>
-  //               <Text size="lg" fw={700} align="right" color="blue">
-  //                 {productDetails.stock} stocks left
-  //               </Text>
-  //             </div>
-
-  //             <div className={classes.ratingContainer}>
-  //               <img src={IconRating} width={25} height={25} />
-  //               <Text size="md" fw={500}>
-  //                 {productDetails.averageRating}
-  //               </Text>
-  //               <Text size="md" fw={500}>
-  //                 |
-  //               </Text>
-  //               <Text size="md" fw={500}>
-  //                 Total rating
-  //               </Text>
-  //               <Text size="md" fw={500}>
-  //                 |
-  //               </Text>
-  //               <Text size="md" fw={500}>
-  //                 {productDetails.sold} sold
-  //               </Text>
-  //             </div>
-  //           </div>
-
-  //           <div className={classes.topButtonContainer}>
-  //             <Button>Add to cart</Button>
-  //             <Button>Share</Button>
-  //             <div>
-  //               <img src={IconWishlist} width={30} height={30} />
-  //             </div>
-  //           </div>
-  //         </div>
-  //       </div>
-
-  //       <div className={classes.storeContainer}>
-  //         <Text size="xl" fw={700}>
-  //           {productDetails.storeName}
-  //         </Text>
-  //         <Button variant="outline">
-  //           <img src={IconChat} width={25} height={25} />
-  //           Chat with seller
-  //         </Button>
-  //       </div>
-
-  //       <div className={classes.productDescriptionContainer}>
-  //         <Text size="xl" fw={700}>
-  //           Product Description
-  //         </Text>
-  //         <Text>{productDetails.description}</Text>
-  //       </div>
-  //       <div className={classes.reviewContainer}>
-  //         <Text size="xl" fw={700}>
-  //           Reviews
-  //         </Text>
-  //         {renderReviews()}
-  //       </div>
-  //     </div>
-  //   );
-  // };
-
   const renderReal = () => {
     if (productDetails) {
       return (
@@ -406,19 +387,13 @@ function ProductDetails() {
 
                 <div className={classes.productItemAtribute}>
                   <Text size="md" fw={500}>
-                    Variation
-                  </Text>
-                  <div className={classes.sizeContainer}>
-                    {renderAvailableColour()}
-                  </div>
-                </div>
-
-                <div className={classes.productItemAtribute}>
-                  <Text size="md" fw={500}>
                     Size
                   </Text>
+
                   <div className={classes.sizeContainer}>
-                    {renderAvailableSize()}
+                    <Radio.Group onChange={(value) => setSelectedSize(value)}>
+                      <Group mt="xs">{renderAvailableSize()}</Group>
+                    </Radio.Group>
                   </div>
                 </div>
 

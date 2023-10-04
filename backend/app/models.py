@@ -69,3 +69,20 @@ class Feedback(models.Model):
     title = models.CharField(max_length=255)
     description = models.CharField(max_length=255)
     category = models.CharField(max_length=255)
+
+class Cart(models.Model):
+    listing_id = models.CharField(max_length=255, null=False, blank=False)
+    item_id = models.CharField(max_length=255, null=False, blank=False)
+    cart_quantity = models.PositiveIntegerField(null=False, blank=False)
+    created_at = models.DateTimeField(null=False, blank=False)
+    seller_id = models.CharField(max_length=255, null=False, blank=False)
+    buyer_id = models.CharField(max_length=255, null=False, blank=False)
+    size = models.CharField(max_length=255, null=False, blank=False)
+
+class Wishlist(models.Model):
+    listing_id = models.CharField(max_length=255, null=False, blank=False)
+    item_id = models.CharField(max_length=255, null=False, blank=False)
+    created_at = models.DateTimeField(null=False, blank=False)
+    seller_id = models.CharField(max_length=255, null=False, blank=False)
+    buyer_id = models.CharField(max_length=255, null=False, blank=False)
+    size = models.CharField(max_length=255, null=False, blank=False)

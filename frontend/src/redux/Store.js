@@ -8,6 +8,10 @@ const initialstate = {
   signInBool: false,
   signUpBool: false,
   loadingBool: false,
+
+  // Cart
+  cartBool: false,
+  cartData: null
 }
 
 const reducer = (state = initialstate, action) => {
@@ -15,6 +19,18 @@ const reducer = (state = initialstate, action) => {
     return {
       ...state,
       loadingBool: action.value
+    }
+  }
+  else if (action.type === "SET_CART") {
+    return {
+      ...state,
+      cartBool: action.value
+    }
+  }
+  else if (action.type === "SET_CART_DATA") {
+    return {
+      ...state,
+      cartData: action.value
     }
   }
   else if (action.type === "SET_COOKIE_PERMISSION") {

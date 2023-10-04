@@ -30,10 +30,11 @@ urlpatterns = [
     path("update-profile/", views.updateProfile, name="update-profile"),
     path("listing/advertisement", views.getAdvertisementListing,
          name="get-listing-advertisement"),
-    path("listing/<str:item_id>", views.getListingDetailByItemId,
-         name="get-listing-by-item-id"),
+    path("listing-detail/<str:item_id>", views.getListingDetailByItemId,
+         name="get-listing-detail-by-item-id"),
 
-
+    path("listing-by-item-id/<str:item_id>",
+         views.getListingByItemId, name="get-listing-by-item-id"),
     path("item/", views.getAllItems, name="get-all-item"),
     path("user/", views.getAllUsers, name="get-all-user"),
     path("user/<str:user_id>", views.getUserById, name="get-user-by-id"),
@@ -60,14 +61,22 @@ urlpatterns = [
     # Buyer
     path("buyer/edit-review/", buyerViews.editReview, name="edit-review"),
     path("buyer/checkout/", buyerViews.getCheckoutLink, name="get-checkout-link"),
-    path("buyer/premium-feature-checkout/", buyerViews.getPremiumFeatureCheckoutLink,
-         name="get-premium-feature-checkout-link"),
     path("buyer/submit-review/<str:user_id>",
          buyerViews.submit_review, name="submit-review"),
     path("buyer/<str:user_id>/get-reviews-buyer/",
          buyerViews.getReviews_buyer, name="get-reviews-buyer"),
-
-
-
-
+    path("buyer/cart/<str:cart_id>/<str:cart_item_id>/",
+         buyerViews.updateCartItem, name="update-cart-item"),
+    path("buyer/add-to-cart/", buyerViews.addToCart, name="add-to-cart"),
+    path("buyer/add-to-wishlist/", buyerViews.addToWishlist, name="add-to-wishlist"),
+    path("buyer/wishlist/<str:user_id>/",
+         buyerViews.getWishlistListByUserId, name="get-wishlist-list"),
+    path("buyer/wishlist/<str:user_id>/<str:wishlist_item_id>/",
+         buyerViews.getWishlistDetails, name="get-wishlist-detail"),
+    path("buyer/wishlist-item/<str:wishlist_id>/<str:wishlist_item_id>/",
+         buyerViews.updateWishlistItem, name="get-wishlist-detail"),
+    path("buyer/cart-details/<str:user_id>/",
+         buyerViews.getCartDetailsByUserId, name="get-cart-detail-by-user-id"),
+    path("buyer/premium-feature-checkout/", buyerViews.getPremiumFeatureCheckoutLink,
+         name="get-premium-feature-checkout-link"),
 ]

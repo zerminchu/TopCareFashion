@@ -15,7 +15,7 @@ import CookiePermission from "./components/CookiePermission";
 import ReactGA from "react-ga4";
 
 import "./App.css";
-import { useEffect } from "react";
+import AddToCart from "./components/AddToCart";
 
 const MainApp = () => {
   const stateGlobal = useSelector((state) => state);
@@ -30,6 +30,7 @@ const MainApp = () => {
       <PageRoutes />
       <Footer />
 
+      {stateGlobal.cartBool && <AddToCart cartData={stateGlobal.cartData} />}
       {stateGlobal.premiumFeatureBool && <PremiumPopup />}
       {stateGlobal.sellerOnBoardBool && <SellerOnBoard />}
       {stateGlobal.existingSellerOnBoardBool && <ExistingSellerOnBoard />}

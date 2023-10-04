@@ -115,6 +115,7 @@ function BuyerHome(props) {
           sold={product.sold}
           category={product.category}
           condition={product.condition}
+          seller_id={product.user_id}
         />
       );
     });

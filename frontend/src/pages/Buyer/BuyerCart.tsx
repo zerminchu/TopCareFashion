@@ -29,6 +29,7 @@ import Cookies from "js-cookie";
 import { showNotifications } from "../../utils/ShowNotification";
 import CartItem from "../../components/CartItem";
 import style from "./BuyerCart.module.css";
+import axios from "axios";
 
 const useStyles = createStyles((theme) => ({
   th: {
@@ -75,13 +76,15 @@ const useStyles = createStyles((theme) => ({
 }));
 
 interface RowData {
-  image: string;
+  cart_id: string;
+  cart_item_id: string;
+  images: string[];
   title: string;
-  type: string;
+  category: string;
   color: string;
   size: string;
   price: string;
-  quantity: string;
+  quantity: Number;
   //rate: string; // New property for the rate value
 }
 
@@ -148,49 +151,39 @@ function sortData(
   );
 }
 
-const sampleData: RowData[] = [
-  {
-    image: blueShirt,
-    title: "Blue Shirt",
-    type: "Top Wear",
-    color: "Blue",
-    size: "M",
-    price: "$28.00",
-    quantity: "1",
-  },
-  {
-    image:
-      "https://images.unsplash.com/photo-1597350584914-55bb62285896?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1964&q=80",
-    title: "Trendy White Sneakers",
-    type: "Foot Wear",
-    color: "White",
-    size: "XL",
-    price: "$300.00",
-    quantity: "3",
-  },
-  {
-    image:
-      "https://images.unsplash.com/photo-1606480192262-e3b6a9f37142?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cmVkJTIwZ293bnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60",
-    title: "Red Dress",
-    type: "Top Wear",
-    color: "Red",
-    size: "L",
-    price: "$211.56",
-    quantity: "2",
-  },
-];
-
 export function Transactions() {
   const navigate = useNavigate();
   const { classes } = useStyles();
 
   const [currentUser, setCurrentUser] = useState();
   const [search, setSearch] = useState("");
-  const [sortedData, setSortedData] = useState<RowData[]>(sampleData);
+  const [sortedData, setSortedData] = useState<RowData[]>();
   const [sortBy, setSortBy] = useState<keyof RowData | null>(null);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
-  const [filteredOutItems, setFilteredOutItems] = useState<RowData[]>([]); // Specify the type explicitly
-  //const [filteredOutTitles, setFilteredOutTitles] = useState<string[]>([]);
+  const [filteredOutItems, setFilteredOutItems] = useState<RowData[]>([]);
+
+  useEffect(() => {
+    const retrieveCartDetails = async () => {
+      try {
+        const url =
+          import.meta.env.VITE_NODE_ENV == "DEV"
+            ? import.meta.env.VITE_API_DEV
+            : import.meta.env.VITE_API_PROD;
+
+        const response = await axios.get(
+          `${url}/buyer/cart-details/${currentUser.user_id}/`
+        );
+
+        setSortedData(response.data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    if (currentUser) {
+      retrieveCartDetails();
+    }
+  }, [currentUser]);
 
   // Check current user
   useEffect(() => {
@@ -221,13 +214,6 @@ export function Transactions() {
     }
   }, [currentUser]);
 
-  const [editedQuantity, setEditedQuantity] = useState<Record<string, string>>( //sets the initial value into the text field
-    sampleData.reduce((acc, item) => {
-      acc[item.title] = item.quantity;
-      return acc;
-    }, {})
-  );
-
   const setSorting = (field: keyof RowData) => {
     //sorting
     const reversed = field === sortBy ? !reverseSortDirection : false;
@@ -236,7 +222,7 @@ export function Transactions() {
     // Use the edited quantity when sorting
     setSortedData(
       sortData(
-        sampleData.map((item) => ({
+        sortedData.map((item) => ({
           ...item,
           quantity: editedQuantity[item.title] || item.quantity,
         })),
@@ -261,24 +247,14 @@ export function Transactions() {
     );
   };
 
-  const handleQuantityChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    title: string
-  ) => {
-    const { value } = event.currentTarget;
-    console.log("This is invoked", value);
-
-    // Use a regular expression to check if the value is a number
-    if (/^\d+$/.test(value) || value === "") {
-      setEditedQuantity((prevQuantity) => ({
-        ...prevQuantity,
-        [title]: value,
-      }));
-      console.log("Updated quantity", editedQuantity);
-    } else {
-      // Display an error message or handle invalid input as needed
-      console.log(`Invalid input for ${title}: ${value}`);
-    }
+  const handleQuantityChange = (cart_item_id: string, quantity: Number) => {
+    setSortedData((prevData) => {
+      return prevData.map((item) =>
+        item.cart_item_id === cart_item_id
+          ? { ...item, quantity: quantity }
+          : item
+      );
+    });
   };
 
   const handleBuyButtonClick = (title) => {
@@ -292,21 +268,27 @@ export function Transactions() {
     });
   };
 
+  const handleTrashClick = (cart_item_id: string) => {
+    if (sortedData) {
+      // Find the item with the specified title
+      const itemToFilterOut = sortedData.find(
+        (item) => item.cart_item_id === cart_item_id
+      );
 
-  const handleTrashClick = (title) => {
-    // Find the item with the specified title
-    const itemToFilterOut = sampleData.find((item) => item.title === title);
-    // Filter out the item with the specified title from the current sortedData
-    const updatedData = sortedData.filter((item) => item.title !== title);
+      // Filter out the item with the specified title from the current sortedData
+      const updatedData = sortedData.filter(
+        (item) => item.cart_item_id !== cart_item_id
+      );
 
-    // Update the sortedData state with the filtered data
-    setSortedData(updatedData);
+      // Update the sortedData state with the filtered data
+      setSortedData(updatedData);
 
-    // Add the filtered-out item to the filteredOutItems state
-    setFilteredOutItems((prevFilteredOutItems) => [
-      ...(prevFilteredOutItems || []), // Use a default empty array if prevFilteredOutItems is undefined
-      itemToFilterOut!,
-    ]);
+      // Add the filtered-out item to the filteredOutItems state
+      setFilteredOutItems((prevFilteredOutItems) => [
+        ...(prevFilteredOutItems || []), // Use a default empty array if prevFilteredOutItems is undefined
+        itemToFilterOut!,
+      ]);
+    }
   };
 
   const handleProceedCheckoutClick = () => {
@@ -326,22 +308,43 @@ export function Transactions() {
   };
 
   const renderCartItems = () => {
-    return sortedData.map((item) => {
+    if (sortedData) {
+      if (sortedData.length === 0) {
+        return <Text>You do not have any item on cart</Text>;
+      }
+
+      return sortedData.map((item) => {
+        return (
+          <CartItem
+            cartId={item.cart_id}
+            cartItemId={item.cart_item_id}
+            title={item.title}
+            image={item.images[0]}
+            category={item.category}
+            size={item.size}
+            price={item.price}
+            quantity={item.quantity}
+            handleQuantityChange={handleQuantityChange}
+            handleTrashClick={handleTrashClick}
+            handleBuyButtonClick={handleBuyButtonClick}
+          />
+        );
+      });
+    }
+
+    return <Text>Loading ...</Text>;
+  };
+
+  const renderCheckoutButton = () => {
+    if (sortedData && sortedData.length > 0) {
       return (
-        <CartItem
-          title={item.title}
-          image={item.image}
-          type={item.type}
-          color={item.color}
-          size={item.size}
-          price={item.price}
-          quantity={editedQuantity[item.title]}
-          handleQuantityChange={handleQuantityChange}
-          handleTrashClick={handleTrashClick}
-          handleBuyButtonClick={handleBuyButtonClick}
-        />
+        <Button onClick={handleProceedCheckoutClick}>
+          Proceed to checkout
+        </Button>
       );
-    });
+    }
+
+    return null;
   };
 
   return (
@@ -369,49 +372,42 @@ export function Transactions() {
                 <Th
                   sorted={sortBy === "image"}
                   reversed={reverseSortDirection}
-                  onSort={() => setSorting("image")}
+                  onSort={() => console.log("sort image")}
                 >
                   {/* no title */}
                 </Th>
                 <Th
                   sorted={sortBy === "title"}
                   reversed={reverseSortDirection}
-                  onSort={() => setSorting("title")}
+                  onSort={() => console.log("sort title")}
                 >
                   Title
                 </Th>
                 <Th
                   sorted={sortBy === "type"}
                   reversed={reverseSortDirection}
-                  onSort={() => setSorting("type")}
+                  onSort={() => console.log("sort type")}
                 >
-                  Type
-                </Th>
-                <Th
-                  sorted={sortBy === "color"}
-                  reversed={reverseSortDirection}
-                  onSort={() => setSorting("color")}
-                >
-                  Color
+                  Category
                 </Th>
                 <Th
                   sorted={sortBy === "size"}
                   reversed={reverseSortDirection}
-                  onSort={() => setSorting("size")}
+                  onSort={() => console.log("sort size")}
                 >
                   Size
                 </Th>
                 <Th
                   sorted={sortBy === "price"}
                   reversed={reverseSortDirection}
-                  onSort={() => setSorting("price")}
+                  onSort={() => console.log("sort price")}
                 >
                   Price
                 </Th>
                 <Th
                   sorted={sortBy === "quantity"}
                   reversed={reverseSortDirection}
-                  onSort={() => setSorting("quantity")}
+                  onSort={() => console.log("sort quantity")}
                 >
                   Quantity
                 </Th>
@@ -426,9 +422,7 @@ export function Transactions() {
             <tbody>{renderCartItems()}</tbody>
           </Table>
         </ScrollArea>
-        <Button onClick={handleProceedCheckoutClick}>
-          Proceed to checkout
-        </Button>
+        {renderCheckoutButton()}
       </div>
     </div>
   );
