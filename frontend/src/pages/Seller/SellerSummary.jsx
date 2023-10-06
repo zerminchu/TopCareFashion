@@ -10,15 +10,18 @@ import Cookies from "js-cookie";
 import Orders from "../../components/Orders";
 import Sales from "../../components/Sales";
 import classes from "./SellerSummary.module.css";
+import axios from "axios";
 
-function sellerSummary() {
+function SellerSummary() {
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState();
   const chartRef = useRef(null); // Define chartRef using useRef
   const chartInstanceRef = useRef(null); // Store the chart instance
-  const [orders, setOrderItems] = useState([]);
+  const [orderItems, setOrderItems] = useState();
   const [sales, setSalesItem] = useState([]);
-  const [revenue, setRevenue] = useState([]);
+  const [revenue, setRevenue] = useState(0);
+
+  const [salesData, setSalesData] = useState();
 
   useEffect(() => {
     // Data for your chart (replace with your actual data)
@@ -54,21 +57,6 @@ function sellerSummary() {
     }
   }, []);
 
-  const calculateRevenue = (data) => {
-    setRevenue([...revenue, data]);
-  };
-
-  const RenderTotalRev = () => {
-    const sum = revenue.reduce(
-      (accumulator, currentValue) => accumulator + currentValue,
-      0
-    );
-    return <Text>{sum}</Text>;
-  };
-
-  const totalRev = 1890.5;
-  const ordersCompleted = 9;
-
   useEffect(() => {
     const setUserSessionData = async () => {
       try {
@@ -95,56 +83,113 @@ function sellerSummary() {
   }, [currentUser]);
 
   useEffect(() => {
-    setOrderItems(DUMMY_ORDERS_PPRODUCT);
-  }, []);
-
-  useEffect(() => {
     setSalesItem(DUMMY_PRODUCT_SALES);
   }, []);
 
-  const renderWishlistItem = () => {
-    return orders.map((item, index) => {
-      return (
-        <Orders
-          key={index}
-          buyer={item.buyer}
-          title={item.title}
-          type={item.type}
-          color={item.color}
-          price={item.price}
-          size={item.size}
-          images={item.images}
-          quantity={"x" + item.quantity}
-          status={item.status}
-          button={item.button}
-        />
-      );
-    });
+  useEffect(() => {
+    const retrieveSalesData = async () => {
+      try {
+        const url =
+          import.meta.env.VITE_NODE_ENV == "DEV"
+            ? import.meta.env.VITE_API_DEV
+            : import.meta.env.VITE_API_PROD;
+
+        const response = await axios.get(
+          `${url}/seller/sales/${currentUser.user_id}/`
+        );
+
+        setSalesData(response.data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    if (currentUser) {
+      retrieveSalesData();
+    }
+  }, [currentUser]);
+
+  useEffect(() => {
+    const retrieveAllOrders = async () => {
+      try {
+        const url =
+          import.meta.env.VITE_NODE_ENV == "DEV"
+            ? import.meta.env.VITE_API_DEV
+            : import.meta.env.VITE_API_PROD;
+
+        const response = await axios.get(
+          `${url}/seller/${currentUser.user_id}/orders/`
+        );
+
+        setOrderItems(response.data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    if (currentUser) {
+      retrieveAllOrders();
+    }
+  }, [currentUser]);
+
+  const renderOrderItems = () => {
+    if (orderItems) {
+      if (orderItems.length <= 0) {
+        return <Text>You do not have any order yet</Text>;
+      }
+
+      return orderItems.map((item, index) => {
+        return <Orders key={index} paidOrderId={item.paid_order_id} />;
+      });
+    }
+
+    return <Text>Loading ...</Text>;
   };
 
   const renderSalesItem = () => {
-    return sales.map((product, index) => {
+    if (salesData) {
+      if (salesData.sales.length <= 0) {
+        return <Text>You do not have any sales data yet</Text>;
+      }
+      return salesData.sales.map((product, index) => {
+        return (
+          <Sales
+            key={index}
+            title={product.title}
+            sales={product.sale}
+            price={product.revenue}
+          />
+        );
+      });
+    }
+
+    return <Text>Loading ...</Text>;
+  };
+
+  const renderRevenue = () => {
+    if (salesData) {
+      return <Text>Your Total Revenue: ${salesData.total_revenue}</Text>;
+    }
+
+    return <Text>Loading ...</Text>;
+  };
+
+  const renderOrderCompleted = () => {
+    if (salesData) {
       return (
-        <Sales
-          key={index}
-          title={product.title}
-          sales={product.sales}
-          price={product.price}
-        />
+        <Text>Total Orders Completed: {salesData.order_completed} orders</Text>
       );
-    });
+    }
+
+    return <Text>Loading ...</Text>;
   };
 
   return (
     <div className={classes.container}>
-      <b>Your Summary</b>
+      <Text fw={500}>Your Summary</Text>
       <div className={classes.sideBySideContainer}>
-        <div className={classes.div2}>
-          <Text>Your Total Revenue: ${totalRev}</Text>
-        </div>
-        <div className={classes.div3}>
-          <Text>Total Orders Completed: {ordersCompleted} orders</Text>
-        </div>
+        <div className={classes.div2}>{renderRevenue()}</div>
+        <div className={classes.div3}>{renderOrderCompleted()}</div>
       </div>
       <div className={classes.div1}>
         <u className={classes.titles}>Sales By Product</u>
@@ -171,14 +216,14 @@ function sellerSummary() {
                   <th>Buyer</th>
                   <th>Title</th>
                   <th>Type</th>
-                  <th>Color</th>
                   <th>Size</th>
                   <th>Price</th>
-                  <th>quantity</th>
-                  <th>status</th>
+                  <th>Quantity</th>
+                  <th>Status</th>
+                  <th>Action</th>
                 </tr>
               </thead>
-              <tbody>{renderWishlistItem()}</tbody>
+              <tbody>{renderOrderItems()}</tbody>
             </Table>
           </div>
         </div>
@@ -187,4 +232,4 @@ function sellerSummary() {
   );
 }
 
-export default sellerSummary;
+export default SellerSummary;

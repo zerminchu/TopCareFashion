@@ -26,7 +26,7 @@ import MixAndMatch from "../pages/Buyer/Recommender/MixAndMatch";
 import BuyerHomeWomen from "../pages/Buyer/Buyer Home/BuyerHomeWomen";
 import BuyerHomeMen from "../pages/Buyer/Buyer Home/BuyerHomeMen";
 import ProductStatus from "../pages/Buyer/BuyerViewOrderStatus";
-import SellerSummary from "../pages/Seller/sellerSummary";
+import SellerSummary from "../pages/Seller/SellerSummary";
 
 function PageRoutes() {
   return (

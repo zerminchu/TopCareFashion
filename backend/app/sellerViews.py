@@ -438,3 +438,144 @@ def replyReview(request):
                 "status": "error",
                 "message": str(e)
             }, status=400)
+        
+@api_view(["GET"])
+def getAllOrdersByUserId(request, user_id):
+    if request.method == "GET":
+        try:
+            if(len(user_id) <= 0):
+               raise Exception("User id cannot be empty")
+            
+            db = firestore.client()
+            paidOrderRef = db.collection("PaidOrder").where("seller_id", "==", user_id)
+            paidOrderData= paidOrderRef.stream()
+
+            paidOrderList = []
+
+            for order in paidOrderData:
+              paidOrderList.append(order.to_dict())
+
+            return JsonResponse({
+                'status': "success",
+                'message': "Paid order list retrieved successfully",
+                'data': paidOrderList
+            }, status=200)
+
+        except Exception as e:
+            return JsonResponse({
+                "status": "error",
+                "message": str(e)
+            }, status=400)
+        
+@api_view(["GET"])
+def getOrderDetails(request, paid_order_id):
+    if request.method == "GET":
+        try:
+            if(len(paid_order_id) <= 0):
+               raise Exception("Paid order id cannot be empty")
+            
+            db = firestore.client()
+            paidOrderRef = db.collection("PaidOrder").document(paid_order_id)
+            paidOrderData= paidOrderRef.get()
+
+            if(not paidOrderData.exists):
+               raise Exception("Paid order data does not exists")
+
+            itemRef = db.collection("Item").document((paidOrderData.to_dict())["checkout_data"]["item_id"])
+            itemData = itemRef.get()
+
+            if(not itemData.exists):
+               raise Exception("Item data does not exists")
+
+            userRef = db.collection("Users").document((paidOrderData.to_dict())["buyer_id"])
+            userData = userRef.get()
+
+            if(not userData.exists):
+               raise Exception("User data does not exists")
+
+            responseData = {
+               "buyer_name": (userData.to_dict())["name"]["first_name"],
+               "images": (itemData.to_dict())["image_urls"],
+               "title": (itemData.to_dict())["title"],
+               "category": (itemData.to_dict())["category"],
+               "size": (paidOrderData.to_dict())["checkout_data"]["size"],
+               "price": (itemData.to_dict())["price"],
+               "status": (paidOrderData.to_dict())["status"],
+               "quantity": (paidOrderData.to_dict())["checkout_data"]["quantity"]
+            }
+
+            return JsonResponse({
+                'status': "success",
+                'message': "Paid order detail retrieved successfully",
+                'data': responseData
+            }, status=200)
+
+        except Exception as e:
+            return JsonResponse({
+                "status": "error",
+                "message": str(e)
+            }, status=400)
+        
+def getSalesDetailsByUserId(request, user_id):
+    if request.method == "GET":
+        try:
+            if(len(user_id) <= 0):
+               raise Exception("User id cannot be empty")
+            
+            db = firestore.client()
+            paidOrderRef = db.collection("PaidOrder").where("seller_id", "==", user_id)
+            paidOrderData= paidOrderRef.stream()
+
+            preSalesData = []
+
+            for order in paidOrderData:
+              sale = {}
+
+              itemRef = db.collection("Item").document((order.to_dict())["checkout_data"]["item_id"])
+              itemData = itemRef.get()
+
+              sale["title"] = (itemData.to_dict())["title"]
+              sale["quantity"] = ((order.to_dict())["checkout_data"]["quantity"])
+              sale["price"] = (itemData.to_dict())["price"]
+              sale["status"] = ((order.to_dict())["status"])
+
+              preSalesData.append(sale)
+
+            summary = {}
+            orderCompleted = 0
+            totalRevenue = 0
+
+            for item in preSalesData:
+              title = item["title"]
+              price = float(item["price"])
+              quantity = int(item["quantity"])
+              status = item["status"]
+
+              if(status == "completed"):
+                orderCompleted += 1
+
+                if(title not in summary):
+                    summary[title] = {"title": title, "sale": 0, "revenue": 0.00}
+                
+                
+                summary[title]["sale"] += quantity
+                summary[title]["revenue"] += (price * quantity)
+                totalRevenue += (price * quantity)
+
+            responseData = list(summary.values())
+
+            return JsonResponse({
+                'status': "success",
+                'message': "Sales data retrieved successfully",
+                'data': {
+                   "sales": responseData,
+                   "total_revenue": totalRevenue,
+                   "order_completed": orderCompleted
+                }
+            }, status=200)
+
+        except Exception as e:
+            return JsonResponse({
+                "status": "error",
+                "message": str(e)
+            }, status=400)

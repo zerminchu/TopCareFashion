@@ -52,6 +52,9 @@ urlpatterns = [
     path("seller/<str:user_id>/update-business-profile/", sellerViews.updateBusinessProfile, name="update-business-profile"),
     path("feedback/<str:user_id>/feedback-form/", views.feedbackForm, name="feedback-form"),
     path("seller/<str:user_id>/ratings/", sellerViews.getReviews, name="get-seller-reviews"),
+    path("seller/<str:user_id>/orders/", sellerViews.getAllOrdersByUserId, name="get-all-orders-by-user-id"),
+    path("seller/orders/<str:paid_order_id>/", sellerViews.getOrderDetails, name="get-orders-detail"),
+    path("seller/sales/<str:user_id>/", sellerViews.getSalesDetailsByUserId, name="get-sales-details-by-user-id"),
 
     # Buyer
     path("buyer/edit-review/", buyerViews.editReview, name="edit-review"),
