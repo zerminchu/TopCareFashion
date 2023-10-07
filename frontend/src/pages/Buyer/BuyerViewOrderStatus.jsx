@@ -1,26 +1,23 @@
 import React, { useState, useEffect } from "react";
-import { Button, Text, Textarea, Rating, Stepper} from "@mantine/core";
+import { Button, Text, Stepper } from "@mantine/core";
 
 import classes from "./BuyerViewOrderStatus.module.css";
-import CheckoutItem from "../../components/CheckoutItem";
 import { useLocation, useNavigate } from "react-router";
 import { showNotifications } from "../../utils/ShowNotification";
 import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
 import Cookies from "js-cookie";
-
+import axios from "axios";
+import OrderStatusItem from "./OrderStatusItem";
 
 function productOrderStatus() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [active, setActive] = useState(2);
-  const [checkoutItems, setCheckoutItems] = useState([]);
-  const [currentUser, setCurrentUser] = useState();
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [currentDate, setCurrentDate] = useState(""); // State variable to store the current date
-  
 
-  // Using params to pass data from cart / product detail page
-  const data = location.state?.data;
+  const paidOrderId = location.state?.paidOrderId;
+
+  const [active, setActive] = useState();
+  const [orderStatusDetails, setOrderStatusDetails] = useState();
+  const [currentUser, setCurrentUser] = useState();
 
   // Check current user
   useEffect(() => {
@@ -52,86 +49,101 @@ function productOrderStatus() {
   }, [currentUser]);
 
   useEffect(() => {
-    if (data) {
-      setCheckoutItems(data);
-    }
-  }, []);
+    const retrieveOrderStatusData = async () => {
+      try {
+        const url =
+          import.meta.env.VITE_NODE_ENV == "DEV"
+            ? import.meta.env.VITE_API_DEV
+            : import.meta.env.VITE_API_PROD;
 
-  useEffect(() => {
-    // Function to get the current date and format it
-    const getCurrentDate = () => {
-      const date = new Date();
-      const hours = date.getHours();
-      const amOrPm = hours >= 12 ? "PM" : "AM";
-      const formattedHours = (hours % 12 || 12).toString().padStart(2, "0");
-      const formattedDate = `${date.getDate().toString().padStart(2, "0")}-${
-        (date.getMonth() + 1).toString().padStart(2, "0")
-      }-${date.getFullYear()} | ${formattedHours}:${date
-        .getMinutes()
-        .toString()
-        .padStart(2, "0")} ${amOrPm}`;
-      return formattedDate;
+        const response = await axios.get(
+          `${url}/buyer/order-status/${paidOrderId}/`
+        );
+
+        setOrderStatusDetails(response.data.data);
+      } catch (error) {
+        console.log(error);
+      }
     };
 
-    // Update the current date when the component mounts
-    setCurrentDate(getCurrentDate());
-  }, []);
+    if (paidOrderId) {
+      retrieveOrderStatusData();
+    }
+  }, [paidOrderId]);
 
-  const renderCheckoutItems = () => {
-    return checkoutItems.map((item) => {
-      return (
-        <CheckoutItem
-          title={item.title}
-          collection_address={item.collection_address}
-          price={item.price}
-          cart_quantity={item.cart_quantity}
-          quantity_available={item.quantity_available}
-          store_name={item.store_name}
-          variation={item.color}
-          images={item.images}
-        />
-      );
+  useEffect(() => {
+    if (orderStatusDetails) {
+      if (orderStatusDetails.status === "paid") {
+        setActive(2);
+      } else if (orderStatusDetails.status === "waiting for collection") {
+        setActive(3);
+      } else if (orderStatusDetails.status === "completed") {
+        setActive(4);
+      }
+    }
+  }, [orderStatusDetails]);
+
+  const collectedOnClick = () => {
+    showNotifications({
+      status: "success",
+      title: "Success",
+      message: "Thank you for using TopCare! enjoy the product!",
     });
+
+    navigate("/buyer/transactions");
   };
 
-  const handleCollectedClick = () => {
-    setShowSuccessMessage(true);
-    setTimeout(() => {
-        navigate("/buyer/transactions");
-      }, 1500);
+  const renderCollectedButton = () => {
+    if (orderStatusDetails) {
+      if (orderStatusDetails.status === "waiting for collection") {
+        return <Button onClick={collectedOnClick}>Collected</Button>;
+      }
+
+      return <Button disabled>Collected</Button>;
+    }
   };
 
-  return (
-    <div className={classes.container}>
-      
+  const renderContent = () => {
+    if (orderStatusDetails && active) {
+      return (
+        <div className={classes.container}>
+          <div className={classes.itemList}>
+            <OrderStatusItem
+              title={orderStatusDetails.title}
+              collectionAddress={orderStatusDetails.collection_address}
+              price={orderStatusDetails.price}
+              size={orderStatusDetails.size}
+              quantity={orderStatusDetails.quantity}
+              storeName={orderStatusDetails.store_name}
+              images={orderStatusDetails.images}
+              subTotal={orderStatusDetails.sub_total}
+            />
+          </div>
 
-      <div className={classes.itemList}>{renderCheckoutItems()}</div>
-
-      <div className={classes.orderStatusContainer}>
-      <Stepper active={active} onStepClick={setActive} breakpoint="sm" clickable={false}>
-        <Stepper.Step label="Shopping cart"  allowStepSelect={active < 0}></Stepper.Step> 
-        <Stepper.Step label="Purchased" allowStepSelect={active < 0}>
-        
-          
-        </Stepper.Step>
-        <Stepper.Step label="Available for pickup" allowStepSelect={active < 0}>
-        <p>{currentDate} | Order Placed</p>
-          Waiting for Vendor to prepare the product for pickup.
-        </Stepper.Step>
-        <Stepper.Step label="Completed" allowStepSelect={active < 0}> Available for Pickup</Stepper.Step>
-        
-      </Stepper>
-      </div>
-        <div className={classes.submitContainer}>
-          <Button onClick={handleCollectedClick}>Collected</Button>
-          {showSuccessMessage && (
-        <Text style={{ color: 'green' }}>Thank you for using TopCare! enjoy the product!</Text>
-      )}
+          <div className={classes.orderStatusContainer}>
+            <Stepper active={active} breakpoint="sm" clickable={false}>
+              <Stepper.Step label="Shopping cart" disabled></Stepper.Step>
+              <Stepper.Step label="Purchased" disabled></Stepper.Step>
+              <Stepper.Step
+                label="Available for pickup"
+                disabled
+              ></Stepper.Step>
+              <Stepper.Step label="Completed" disabled>
+                Available for Pickup
+              </Stepper.Step>
+            </Stepper>
+          </div>
+          <div className={classes.submitContainer}>
+            {renderCollectedButton()}
+          </div>
         </div>
-      </div>
-    
-  );
+      );
+    }
+
+    return <Text>Loading ...</Text>;
+  };
+
+  return <div>{renderContent()}</div>;
 }
 
 export default productOrderStatus;
-

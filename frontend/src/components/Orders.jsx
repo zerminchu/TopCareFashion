@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ILLNullImageListing from "../assets/illustrations/il_null_image_clothes.svg";
 import classes from "./Orders.module.css";
-import { Text, Button, Modal, Paper, Skeleton } from "@mantine/core";
+import { Text, Button, Modal, Paper, Skeleton, Badge } from "@mantine/core";
 import axios from "axios";
 
 function OrderedItems(props) {
@@ -33,6 +33,30 @@ function OrderedItems(props) {
     }));
 
     setConfirmationVisible(false);
+  };
+
+  const renderStatus = () => {
+    if (orderDetails) {
+      if (orderDetails.status === "paid") {
+        return (
+          <Badge variant="filled" color="blue" size="lg">
+            {orderDetails.status}
+          </Badge>
+        );
+      } else if (orderDetails.status === "waiting for collection") {
+        return (
+          <Badge variant="filled" color="yellow" size="lg">
+            {orderDetails.status}
+          </Badge>
+        );
+      } else if (orderDetails.status === "completed") {
+        return (
+          <Badge variant="filled" color="green" size="lg">
+            {orderDetails.status}
+          </Badge>
+        );
+      }
+    }
   };
 
   const renderButton = () => {
@@ -72,7 +96,7 @@ function OrderedItems(props) {
           <td>{orderDetails.size}</td>
           <td>${parseFloat(orderDetails.price).toFixed(2)}</td>
           <td>{orderDetails.quantity}</td>
-          <td>{orderDetails.status}</td>
+          <td>{renderStatus()}</td>
           <td>{renderButton()}</td>
 
           <Modal

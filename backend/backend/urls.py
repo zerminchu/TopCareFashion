@@ -66,6 +66,10 @@ urlpatterns = [
     path("buyer/wishlist/<str:user_id>/<str:wishlist_item_id>/", buyerViews.getWishlistDetails, name="get-wishlist-detail"),
     path("buyer/wishlist-item/<str:wishlist_id>/<str:wishlist_item_id>/", buyerViews.updateWishlistItem, name="get-wishlist-detail"),
     path("buyer/cart-details/<str:user_id>/", buyerViews.getCartDetailsByUserId, name="get-cart-detail-by-user-id"),
+    path("buyer/<str:user_id>/orders/", buyerViews.getAllOrdersByUserId, name="get-all-orders-by-user-id"),
+    path("buyer/orders/<str:paid_order_id>/", buyerViews.getOrderDetails, name="get-orders-detail"),
+    path("buyer/order-status/<str:paid_order_id>/", buyerViews.getOrderStatus, name="get-order-status"),
     path("buyer/premium-feature-checkout/", buyerViews.getPremiumFeatureCheckoutLink
          , name="get-premium-feature-checkout-link"),
+     
 ]

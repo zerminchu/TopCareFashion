@@ -1,13 +1,13 @@
 import React from "react";
-import { Stepper, Button, Group, Text, Table, TextInput } from "@mantine/core";
-import ILProductImage from "../assets/illustrations/il_category_top.jpg";
-import ILLNullImageListing from "../assets/illustrations/il_null_image_clothes.svg";
-import IconLocation from "../assets/icons/ic_location.svg";
-
-import classes from "./CheckoutItem.module.css";
+import { Button, Text, Table } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
+import ILLNullImageListing from "../../assets/illustrations/il_null_image_clothes.svg";
+import IconLocation from "../../assets/icons/ic_location.svg";
 
-function CheckoutItem(props) {
+import classes from "./OrderStatusItem.module.css";
+import { Badge } from "flowbite-react";
+
+function OrderStatusItem(props) {
   const navigate = useNavigate();
 
   const chatOnClick = () => {
@@ -23,12 +23,12 @@ function CheckoutItem(props) {
         </Text>
       </div>
       <div className={classes.collectionAddress}>
-        <Text fw={500}>{props.collection_address}</Text>
+        <Text fw={500}>{props.collectionAddress}</Text>
       </div>
 
       <div className={classes.chatWithSeller}>
         <Text fw={500} size="lg">
-          {props.store_name}
+          {props.storeName}
         </Text>
         <Button onClick={chatOnClick}>Chat with seller</Button>
       </div>
@@ -57,8 +57,8 @@ function CheckoutItem(props) {
               <td>{props.title}</td>
               <td>{props.size}</td>
               <td>${props.price}</td>
-              <td>{props.cart_quantity}</td>
-              <td>${props.sub_total}</td>
+              <td>{props.quantity}</td>
+              <td>${props.subTotal}</td>
             </tr>
           </tbody>
         </Table>
@@ -67,4 +67,4 @@ function CheckoutItem(props) {
   );
 }
 
-export default CheckoutItem;
+export default OrderStatusItem;
