@@ -19,12 +19,17 @@ from rest_framework.decorators import (api_view, parser_classes,
 from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from tensorflow.keras.models import load_model
-from tensorflow.keras.preprocessing.image import img_to_array, load_img
+
+import tensorflow as tf
+import torch
+from fastai.vision.all import *
 
 from .exceptions import *
 from .models import *
 from .serializer import *
+
+# from fastai.imports import *
+# from fastai.vision.data import ImageDataLoaders
 
 
 @api_view(["POST"])
@@ -666,21 +671,23 @@ def getUserById(request, user_id):
                 "status": "error",
                 "message": str(e)
             }, status=400)
-        
+
+
 @api_view(["GET"])
 def getListingByItemId(request, item_id):
     if request.method == "GET":
         try:
-            if(len(item_id) <= 0):
+            if (len(item_id) <= 0):
                 raise Exception("Item id cannot be empty")
 
             db = firestore.client()
-            listingRef = db.collection('Listing').where('item_id', '==', item_id)
+            listingRef = db.collection('Listing').where(
+                'item_id', '==', item_id)
             listingData = listingRef.get()
 
-            if(len(listingData) <= 0):
+            if (len(listingData) <= 0):
                 raise Exception("Listing not found")
-            
+
             listingData = listingData[0].to_dict()
 
             return JsonResponse({
@@ -709,6 +716,7 @@ def add_product(request):
                 validated_data = serializer.validated_data
                 gender = validated_data["gender"]
                 category = validated_data["category"]
+                sub_category = validated_data["sub_category"]
                 condition = validated_data["condition"]
                 colour = validated_data["colour"]
                 title = validated_data["title"]
@@ -742,6 +750,7 @@ def add_product(request):
                     "item_id": item_id.id,
                     "gender": gender,
                     "category": category,
+                    "sub_category": sub_category,
                     "condition": condition,
                     "colour": colour,
                     "title": title,
@@ -955,48 +964,52 @@ def delete_item(request, user_id, item_id):
             return Response({"error": str(e)}, status=500)
 
 
-@api_view(["POST"])
+""" @api_view(["POST"])
 @parser_classes([MultiPartParser])
 def classify_image(request):
     try:
         image_data = request.data.get("image")
+        img = PILImage.create(image_data)
 
-        model_path = os.path.join('./ML/', "clothing_classification_model.h5")
+        # Load the saved model and classes
+        model_path = os.path.join('./ML/', "stage-1_resnet34.pkl")
+        classes_path = os.path.join('./ML/', "classes.txt")
 
-        # Load the saved model
-        model = load_model(model_path)
+        # Load the classes from the classes.txt file
+        with open(classes_path, 'r') as f:
+            categories = f.read().splitlines()
 
-        # Function to load and prepare the image in the right shape
-        def load_image(image_data):
-            # Read the content of the uploaded image
-            image_content = image_data.read()
+        # Set the number of output classes based on the length of categories
+        n_out = len(categories)
 
-            # Convert the image content to a BytesIO object
-            image_stream = io.BytesIO(image_content)
+        # Create empty data loaders to initialize the model
+        dls = ImageDataLoaders.from_df(pd.DataFrame(
+            {'path': []}), path='./ML/', valid_pct=0)
 
-            img = load_img(image_stream, grayscale=True, target_size=(28, 28))
-            img = img_to_array(img)
-            img = img.reshape(1, 28, 28, 1)
-            img = img.astype('float32')
-            img = img / 255.0
-            return img
+        # Load the model architecture and weights, explicitly setting n_out and data loaders
+        model = cnn_learner(dls, resnet34, n_out=n_out, pretrained=False)
+        model.load(model_path)
 
-        img = load_image(image_data)
-        class_prediction = np.argmax(model.predict(img), axis=-1)
+        # Preprocess the image using data transformations
+        img = model.dls.test_dl([img])
+        img = img.to(model.dls.device)
 
-        categories = ["T-shirt/top", "Trouser", "Pullover", "Dress",
-                      "Coat", "Sandal", "Shirt", "Sneaker", "Bag", "Ankle boot"]
-        predicted_category = categories[class_prediction[0]]
+        # Make a prediction
+        class_prediction, _, _ = model.get_preds(dl=img)
+        predicted_class = class_prediction.argmax(dim=1).item()
 
-        # Narrow down to 3 categories
+        # Get the predicted category
+        predicted_category = categories[predicted_class]
+
+        # Map predicted category to your specified categories
         category = None
-        if class_prediction[0] in [0, 2, 3, 4, 6]:
+        if predicted_category in ["T-shirt/top", "Blouse", "Tank"]:
             category = "Top"
-        elif class_prediction[0] == 1:
+        elif predicted_category in ["Jeans", "Shorts", "Trousers"]:
             category = "Bottom"
-        elif class_prediction[0] in [5, 7, 9]:
+        elif predicted_category in ["Sandal", "Sneaker", "Ankle boot"]:
             category = "Footwear"
-        elif class_prediction[0] == 8:
+        elif predicted_category == "Bag":
             category = "Accessory"
         else:
             category = "Unknown"
@@ -1005,6 +1018,98 @@ def classify_image(request):
             "predicted_category": predicted_category,
             "category": category
         }
+        return JsonResponse(response_data)
+
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=400) """
+
+model_path = './ML/stage-1_resnet34.pkl'
+class_labels_path = './ML/class.txt'
+
+with open(class_labels_path, 'r') as f:
+    class_labels = f.read().splitlines()
+
+model = torch.load(model_path, map_location=torch.device('cpu'))
+model.eval()
+
+
+@api_view(["POST"])
+@parser_classes([MultiPartParser])
+def classify_image(request):
+    try:
+        uploaded_image = request.data['image']
+
+        image = Image.open(uploaded_image)
+
+        if image.mode != 'RGB':
+            image = image.convert('RGB')
+
+        image = image.resize((224, 224))
+        image = np.array(image) / 255.0
+        image_tensor = torch.tensor(
+            image.transpose(2, 0, 1), dtype=torch.float32)
+        image_tensor = image_tensor.unsqueeze(0)
+
+        with torch.no_grad():
+            outputs = model(image_tensor)
+
+        _, predicted_idx = torch.max(outputs, 1)
+        predicted_class = class_labels[predicted_idx]
+
+        class_to_subcategory = {
+            "Anorak": "Top",
+            "Blazer": "Top",
+            "Blouse": "Top",
+            "Bomber": "Top",
+            "Button-Down": "Top",
+            "Caftan": "Top",
+            "Capris": "Bottom",
+            "Cardigan": "Top",
+            "Chinos": "Bottom",
+            "Coat": "Top",
+            "Coverup": "Accessories",
+            "Culottes": "Bottom",
+            "Cutoffs": "Bottom",
+            "Dress": "Top",
+            "Flannel": "Top",
+            "Gauchos": "Bottom",
+            "Halter": "Top",
+            "Henley": "Top",
+            "Hoodie": "Top",
+            "Jacket": "Top",
+            "Jeans": "Bottom",
+            "Jeggings": "Bottom",
+            "Jersey": "Top",
+            "Jodhpurs": "Bottom",
+            "Joggers": "Bottom",
+            "Jumpsuit": "Top",
+            "Kaftan": "Top",
+            "Kimono": "Top",
+            "Leggings": "Bottom",
+            "Onesie": "Top",
+            "Parka": "Top",
+            "Peacoat": "Top",
+            "Poncho": "Top",
+            "Robe": "Accessories",
+            "Romper": "Top",
+            "Sarong": "Accessories",
+            "Shorts": "Bottom",
+            "Skirt": "Bottom",
+            "Sweater": "Top",
+            "Sweatpants": "Bottom",
+            "Sweatshorts": "Bottom",
+            "Tank": "Top",
+            "Tee": "Top",
+            "Top": "Top",
+            "Trunks": "Bottom",
+            "Turtleneck": "Top"
+        }
+
+        predicted_subcategory = class_to_subcategory.get(
+            predicted_class, "Unknown")
+
+        response_data = {"predicted_class": predicted_class,
+                         "predicted_subcategory": predicted_subcategory}
         return JsonResponse(response_data)
 
     except Exception as e:

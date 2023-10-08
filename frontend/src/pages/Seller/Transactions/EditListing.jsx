@@ -451,7 +451,7 @@ function EditListing() {
         />
         <br />
         <TextInput
-          label="Collection Address"
+          label="Collection Address (with Postal)"
           style={{ width: "50%" }}
           classNames={classes}
           disabled={!isEditing}

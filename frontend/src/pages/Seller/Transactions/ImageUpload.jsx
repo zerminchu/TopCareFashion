@@ -1,18 +1,10 @@
 /* eslint-disable no-unused-vars */
 import { useRef, useState, useEffect } from "react";
-import {
-  Text,
-  Group,
-  Button,
-  createStyles,
-  Progress,
-  rem,
-} from "@mantine/core";
+import { Text, Group, Button, createStyles, rem, Modal } from "@mantine/core";
 import { Dropzone } from "@mantine/dropzone";
 import { IconCloudUpload, IconX, IconDownload } from "@tabler/icons-react";
 import { useInterval } from "@mantine/hooks";
-import { useNavigate } from "react-router-dom";
-import { Container, SimpleGrid } from "@mantine/core";
+import { useNavigate, Link } from "react-router-dom";
 import { retrieveUserInfo } from "../../../utils/RetrieveUserInfoFromToken";
 import Cookies from "js-cookie";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
@@ -59,6 +51,39 @@ const useStyles = createStyles((theme) => ({
     position: "relative",
     zIndex: 1,
   },
+  confirmation: {
+    display: "flex",
+    flexDirection: "column",
+    /* padding: rem(10),
+    gap: rem(5),
+    width: rem(200),
+    borderRadius: rem(5),
+    backgroundColor: theme.colors.blue[0], */
+  },
+
+  buttonConfirmation: {
+    display: "flex",
+    flexDirection: "row",
+    gap: rem(5),
+    justifyContent: "center",
+  },
+
+  deleteContainer: {
+    display: "flex",
+    flexDirection: "column",
+    gap: rem(10),
+  },
+
+  confirmationPrompt: {
+    paddingBottom: "2.5%",
+  },
+
+  modalTitle: {
+    fontSize: rem(18),
+    fontWeight: 700,
+    textAlign: "center",
+    margin: `${rem(10)} 0`,
+  },
 }));
 
 function ImageUpload() {
@@ -70,28 +95,36 @@ function ImageUpload() {
   const [showButtons, setShowButtons] = useState(false);
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState();
-  const [newlyUploadedIndex, setNewlyUploadedIndex] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [predictedCategory, setPredictedCategory] = useState("");
+  const [predictedSubCategory, setPredictedSubCategory] = useState("");
+
+  const [imageUploaded, setImageUploaded] = useState(false);
+  const [correctCategory, setCorrectCategory] = useState("");
+  const [showCorrectCategoryModal, setShowCorrectCategoryModal] =
+    useState(false);
 
   const handleDrop = (files) => {
-    const allowedFormats = ["image/jpeg", "image/png"];
+    const allowedFormats = ["image/jpeg", "image/png", "image/jpg"];
     const newImages = [...uploadedImages];
 
     for (const file of files) {
-      if (allowedFormats.includes(file.type) && newImages.length < 3) {
+      if (allowedFormats.includes(file.type) && newImages.length < 1) {
         newImages.push(URL.createObjectURL(file));
+        setImageUploaded(true);
       }
     }
 
     setUploadedImages(newImages);
-    localStorage.setItem("uploadedImages", JSON.stringify(newImages)); // Save to local storage
-    setShowButtons(true); // Show buttons when images are uploaded
+    localStorage.setItem("uploadedImages", JSON.stringify(newImages));
+    setShowButtons(true);
   };
 
   useEffect(() => {
     const storedImages = localStorage.getItem("uploadedImages");
     if (storedImages) {
       setUploadedImages(JSON.parse(storedImages));
-      setShowButtons(true); // Show buttons if there are stored images
+      setShowButtons(true);
     }
   }, []);
 
@@ -100,7 +133,6 @@ function ImageUpload() {
       try {
         const user = await retrieveUserInfo();
         setCurrentUser(user);
-        console.log(user);
       } catch (error) {
         console.log(error);
       }
@@ -128,12 +160,11 @@ function ImageUpload() {
       fetch(firstImageUrl)
         .then((response) => response.blob())
         .then((blob) => {
-          // Create a FormData object and append the first image as a File
           const formData = new FormData();
 
           formData.append(
             "image",
-            new File([blob], `image.png`, { type: "image/png" })
+            new File([blob], `image.jpeg`, { type: "image/jpeg" })
           );
 
           const url =
@@ -141,32 +172,12 @@ function ImageUpload() {
               ? import.meta.env.VITE_API_DEV
               : import.meta.env.VITE_API_PROD;
 
-          axios
-            .post(`${url}/classify-image/`, formData)
-            .then((response) => {
-              const data = response.data;
-              console.log(data);
-
-              if (uploadedImages.length === 3) {
-                const imageFiles = uploadedImages.map((blobUrl, index) => {
-                  const blob = fetch(blobUrl).then((r) => r.blob());
-                  return new File([blob], `image_${index}.png`, {
-                    type: "image/png",
-                  });
-                });
-                navigate("/seller/create-listing", {
-                  state: {
-                    uploadedImages: imageFiles,
-                    predictedCategory: data.category,
-                  },
-                });
-              } else {
-                console.log("Less than three images uploaded.");
-              }
-            })
-            .catch((error) => {
-              console.error("Error:", error);
-            });
+          axios.post(`${url}/classify-image/`, formData).then((response) => {
+            const data = response.data;
+            setPredictedCategory(data.predicted_class);
+            setPredictedSubCategory(data.predicted_subcategory);
+            setShowModal(true);
+          });
         });
     } else if (loaded) {
       setLoaded(false);
@@ -175,6 +186,27 @@ function ImageUpload() {
     } else if (!interval.active) {
       interval.start();
     }
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
+  const proceedToCreateListing = () => {
+    const imageFiles = uploadedImages.map((blobUrl, index) => {
+      const blob = fetch(blobUrl).then((r) => r.blob());
+      return new File([blob], `image_${index}.png`, {
+        type: "image/png",
+      });
+    });
+
+    navigate("/seller/create-listing", {
+      state: {
+        uploadedImages: imageFiles,
+        predictedCategory: predictedCategory,
+        predictedSubCategory: predictedSubCategory,
+      },
+    });
   };
 
   const handleDragEnd = (result) => {
@@ -210,9 +242,66 @@ function ImageUpload() {
     localStorage.setItem("uploadedImages", JSON.stringify(newImages));
 
     if (newImages.length === 0) {
-      setShowButtons(false); // Hide buttons when images are removed
+      setShowButtons(false);
     }
+
+    setImageUploaded(false);
+    setShowModal(false);
   };
+
+  const handleSomethingIsWrong = () => {
+    setShowCorrectCategoryModal(true);
+    setShowModal(false);
+  };
+
+  const clothingCategories = [
+    "Anorak",
+    "Blazer",
+    "Blouse",
+    "Bomber",
+    "Button-Down",
+    "Caftan",
+    "Capris",
+    "Cardigan",
+    "Chinos",
+    "Coat",
+    "Coverup",
+    "Culottes",
+    "Cutoffs",
+    "Dress",
+    "Flannel",
+    "Gauchos",
+    "Halter",
+    "Henley",
+    "Hoodie",
+    "Jacket",
+    "Jeans",
+    "Jeggings",
+    "Jersey",
+    "Jodhpurs",
+    "Joggers",
+    "Jumpsuit",
+    "Kaftan",
+    "Kimono",
+    "Leggings",
+    "Onesie",
+    "Parka",
+    "Peacoat",
+    "Poncho",
+    "Robe",
+    "Romper",
+    "Sarong",
+    "Shorts",
+    "Skirt",
+    "Sweater",
+    "Sweatpants",
+    "Sweatshorts",
+    "Tank",
+    "Tee",
+    "Top",
+    "Trunks",
+    "Turtleneck",
+  ];
 
   return (
     <div>
@@ -231,7 +320,7 @@ function ImageUpload() {
               onDrop={handleDrop}
               className={classes.dropzone}
               radius="md"
-              accept={["image/png", "image/jpeg"]}
+              accept={["image/png", "image/jpeg", "image/jpg"]}
               maxSize={30 * 1024 ** 2}
             >
               <div style={{ pointerEvents: "none" }}>
@@ -266,23 +355,23 @@ function ImageUpload() {
                 <Text ta="center" fw={700} fz="lg" mt="xl">
                   <Dropzone.Accept>Drop files here</Dropzone.Accept>
                   <Dropzone.Reject>Pdf file less than 30mb</Dropzone.Reject>
-                  <Dropzone.Idle>Upload images</Dropzone.Idle>
+                  <Dropzone.Idle>Upload an image</Dropzone.Idle>
                 </Text>
                 <Text ta="center" fz="sm" mt="xs" c="dimmed">
                   Drag&apos;n&apos;drop files here to upload. We can accept only{" "}
-                  <i>.jpg or .png</i> and a maximum of 3 images are allowed.
+                  <i>.jpg or .png</i> and a maximum of 1 image are allowed.
                 </Text>
               </div>
             </Dropzone>
           </div>
-
           <Button
             className={classes.control}
             size="md"
             radius="xl"
             onClick={() => openRef.current?.()}
+            disabled={imageUploaded}
           >
-            Select images
+            Select image
           </Button>
         </div>
 
@@ -337,7 +426,7 @@ function ImageUpload() {
           </Droppable>
         </DragDropContext>
 
-        {showButtons && uploadedImages.length === 3 && (
+        {showButtons && uploadedImages.length === 1 && (
           <div
             style={{
               display: "flex",
@@ -350,7 +439,7 @@ function ImageUpload() {
               className={classes.button_1}
               size="md"
               radius="md"
-              onClick={handleClick}
+              onClick={() => handleClick(true)}
               color="teal"
               style={{
                 width: "200px", // Set a fixed width for both buttons
@@ -389,6 +478,135 @@ function ImageUpload() {
           </div>
         )}
       </div>
+
+      <Modal
+        opened={showModal}
+        onClose={closeModal}
+        contentLabel="Predicted Category Modal"
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          textAlign: "center",
+        }}
+      >
+        <div
+          className={classes.modalTitle}
+          style={{ fontSize: "18px", fontWeight: 700 }}
+        >
+          Perfect! You are one step closer...
+        </div>
+        <div className={classes.confirmation}>
+          <div className={classes.confirmationPrompt}>
+            <Text fw={500}>Our system has identified the item as a:</Text>
+            <Text fw={700} style={{ fontSize: "24px", color: "violet" }}>
+              {predictedCategory}
+            </Text>
+          </div>
+        </div>
+        <div
+          className={classes.buttonConfirmation}
+          style={{ justifyContent: "center", display: "flex" }}
+        >
+          <Button
+            variant="filled"
+            color="green"
+            onClick={proceedToCreateListing}
+          >
+            Proceed
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => handleImageRemove(uploadedImages.length - 1)}
+          >
+            Re-upload
+          </Button>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "right",
+            marginTop: "20px",
+          }}
+        >
+          <Link
+            to="#"
+            onClick={handleSomethingIsWrong}
+            style={{ alignSelf: "flex-end" }}
+          >
+            Something is wrong?
+          </Link>
+        </div>
+      </Modal>
+      <Modal
+        opened={showCorrectCategoryModal}
+        onClose={() => setShowCorrectCategoryModal(false)}
+        contentLabel="Correct Category Modal"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          padding: "20px",
+          maxWidth: "400px",
+          background: "white",
+          borderRadius: "8px",
+          boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.2)",
+        }}
+      >
+        <div
+          className={classes.modalTitle}
+          style={{ fontSize: "18px", fontWeight: "bold", margin: "10px 0" }}
+        >
+          Kindly assist us in enhancing our categorisation by refining the
+          category
+        </div>
+        <div style={{ margin: "20px 0" }}>
+          <select
+            value={correctCategory}
+            onChange={(e) => setCorrectCategory(e.target.value)}
+            style={{
+              padding: "10px",
+              width: "100%",
+              border: "1px solid #ccc",
+              borderRadius: "4px",
+              outline: "none",
+            }}
+          >
+            <option value="" disabled>
+              Select the Most Appropriate Category
+            </option>
+            {clothingCategories.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <Button
+            variant="filled"
+            color="green"
+            onClick={proceedToCreateListing}
+            style={{
+              padding: "10px",
+              width: "100%",
+              background: "#4CAF50",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+            }}
+          >
+            Continue
+          </Button>
+        </div>
+        <div style={{ marginTop: "20px", fontSize: "14px", lineHeight: "1.5" }}>
+          <p>
+            Your valuable input in refining categories is indispensable and
+            contributes significantly to the continuous improvement of our
+            services. Thank you for your role in enhancing our service.
+          </p>
+        </div>
+      </Modal>
     </div>
   );
 }

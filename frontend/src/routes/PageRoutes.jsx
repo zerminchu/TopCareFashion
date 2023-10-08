@@ -26,7 +26,7 @@ import ImageUpload from "../pages/Seller/Transactions/ImageUpload";
 import ListItem from "../pages/Seller/Transactions/ListItem";
 import UserProfile from "../pages/Seller/UserProfile";
 import SellerSummary from "../pages/Seller/sellerSummary";
-
+import CategorySelection from "../pages/Seller/Transactions/CategorySelection";
 function PageRoutes() {
   return (
     <Routes>
@@ -48,7 +48,11 @@ function PageRoutes() {
       <Route path="/seller/ratings" element={<Ratings />} />
       <Route path="/seller/order-status" element={<OrderStatus />} />;
       <Route path="/seller/summary" element={<SellerSummary />} />;
-      {/* Private route for buyer */}
+      <Route
+        path="/seller/category-selection"
+        element={<CategorySelection />}
+      />
+      ;{/* Private route for buyer */}
       <Route path="/men" element={<BuyerHomeMen />} />
       <Route path="/women" element={<BuyerHomeWomen />} />
       <Route path="/buyer/product-detail" element={<ProductDetails />} />

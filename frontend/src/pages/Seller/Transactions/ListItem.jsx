@@ -1,21 +1,24 @@
 import {
-  SimpleGrid,
+  Badge,
+  Button,
   Container,
-  useMantineTheme,
+  Select,
+  SimpleGrid,
+  TextInput,
   createStyles,
   rem,
-  TextInput,
-  Button,
-  Select,
+  useMantineTheme,
+  Modal,
+  Text,
 } from "@mantine/core";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
 import axios from "axios";
-import { retrieveUserInfo } from "../../../utils/RetrieveUserInfoFromToken";
 import Cookies from "js-cookie";
-import { showNotifications } from "../../../utils/ShowNotification";
+import { useEffect, useState } from "react";
+import { BiUpload } from "react-icons/bi";
 import { useDispatch } from "react-redux";
-import { Badge } from "@mantine/core";
+import { useLocation, useNavigate } from "react-router-dom";
+import { retrieveUserInfo } from "../../../utils/RetrieveUserInfoFromToken";
+import { showNotifications } from "../../../utils/ShowNotification";
 
 const useStyles = createStyles((theme) => ({
   root: {
@@ -36,6 +39,40 @@ const useStyles = createStyles((theme) => ({
     paddingTop: `calc(${theme.spacing.sm} / 2)`,
     zIndex: 1,
   },
+
+  confirmation: {
+    display: "flex",
+    flexDirection: "column",
+    /* padding: rem(10),
+    gap: rem(5),
+    width: rem(200),
+    borderRadius: rem(5),
+    backgroundColor: theme.colors.blue[0], */
+  },
+
+  buttonConfirmation: {
+    display: "flex",
+    flexDirection: "row",
+    gap: rem(5),
+    justifyContent: "center",
+  },
+
+  deleteContainer: {
+    display: "flex",
+    flexDirection: "column",
+    gap: rem(10),
+  },
+
+  confirmationPrompt: {
+    paddingBottom: "2.5%",
+  },
+
+  modalTitle: {
+    fontSize: rem(18),
+    fontWeight: 700,
+    textAlign: "center",
+    margin: `${rem(10)} 0`,
+  },
 }));
 
 function ListItem() {
@@ -43,10 +80,15 @@ function ListItem() {
   const location = useLocation();
   const uploadedImagesFromRoute = location.state?.uploadedImages || [];
   const predictedCategoryFromRoute = location.state?.predictedCategory || "";
+  const predictedSubCategoryFromRoute =
+    location.state?.predictedSubCategory || "";
 
   const { classes } = useStyles();
   const [uploadedImages, setUploadedImages] = useState(uploadedImagesFromRoute);
   const [category, setCategory] = useState(predictedCategoryFromRoute);
+  const [sub_category, setSubCategory] = useState(
+    predictedSubCategoryFromRoute
+  );
   const [condition, setCondition] = useState("");
   const [colour, setColour] = useState("");
   const [gender, setGender] = useState("");
@@ -58,6 +100,14 @@ function ListItem() {
   const [avail_status, setAvailStatus] = useState("");
   const [submissionSuccessful, setSubmissionSuccessful] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [additionalUploadedImages, setAdditionalUploadedImages] = useState([
+    ["", ""],
+  ]);
+  const [selectedContainerIndex, setSelectedContainerIndex] = useState(null);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(null);
+
+  const [showCategoryMismatchModal, setShowCategoryMismatchModal] =
+    useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -94,6 +144,12 @@ function ListItem() {
     }
   }, [location.state]);
 
+  useEffect(() => {
+    if (location.state?.sub_category) {
+      setSubCategory(location.state.sub_category);
+    }
+  }, [location.state]);
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setFormSubmitted(true);
@@ -101,21 +157,35 @@ function ListItem() {
     try {
       dispatch({ type: "SET_LOADING", value: true });
 
-      // Convert blob URLs to File objects
-      const filePromises = uploadedImages.map((blobUrl) =>
-        fetch(blobUrl).then((response) => response.blob())
+      const imageUrls = [];
+
+      const uploadedFiles = await Promise.all(
+        uploadedImages.map(async (blobUrl) => {
+          const response = await fetch(blobUrl);
+          return new Blob([await response.blob()]);
+        })
       );
 
-      const files = await Promise.all(filePromises);
+      const additionalImagesFiles = await Promise.all(
+        additionalUploadedImages.flat().map(async (blobUrl) => {
+          const response = await fetch(blobUrl);
+          return new Blob([await response.blob()]);
+        })
+      );
 
       const formData = new FormData();
-      // eslint-disable-next-line no-unused-vars
-      files.forEach((file, index) => {
-        formData.append("files", file); // Use the key 'files' for the array of files
+
+      uploadedFiles.forEach((file, index) => {
+        formData.append("files", file);
+      });
+
+      additionalImagesFiles.forEach((file, index) => {
+        formData.append("files", file);
       });
 
       formData.append("gender", gender);
       formData.append("category", category);
+      formData.append("sub_category", sub_category);
       formData.append("condition", condition);
       formData.append("colour", colour);
       formData.append("title", title);
@@ -144,6 +214,7 @@ function ListItem() {
 
       setSubmissionSuccessful(true);
       localStorage.removeItem("uploadedImages");
+
       navigate("/");
     } catch (error) {
       dispatch({ type: "SET_LOADING", value: false });
@@ -237,6 +308,47 @@ function ListItem() {
     return null;
   };
 
+  const handleAdditionalImageChange = async (containerIndex, index, event) => {
+    const files = event.target.files;
+    setSelectedContainerIndex(containerIndex);
+    setSelectedImageIndex(index);
+
+    if (files.length > 0) {
+      const newImages = [...additionalUploadedImages];
+      newImages[containerIndex][index] = URL.createObjectURL(files[0]);
+      setAdditionalUploadedImages(newImages);
+
+      try {
+        const response = await fetch(newImages[containerIndex][index]);
+        const blob = new Blob([await response.blob()]);
+        const formData = new FormData();
+        formData.append("image", blob);
+
+        const url =
+          import.meta.env.VITE_NODE_ENV === "DEV"
+            ? import.meta.env.VITE_API_DEV
+            : import.meta.env.VITE_API_PROD;
+
+        axios.post(`${url}/classify-image/`, formData).then((response) => {
+          const data = response.data;
+          console.log(data);
+
+          if (data.predicted_class !== category) {
+            setShowCategoryMismatchModal(true);
+          }
+        });
+      } catch (error) {}
+    }
+  };
+
+  const handleReuploadImage = () => {
+    const newImages = [...additionalUploadedImages];
+    newImages[selectedContainerIndex][selectedImageIndex] = "";
+    setAdditionalUploadedImages(newImages);
+
+    setShowCategoryMismatchModal(false);
+  };
+
   return (
     <form onSubmit={handleSubmit}>
       <Container my="md">
@@ -285,6 +397,100 @@ function ListItem() {
                 />
               </div>
             ))}
+            {additionalUploadedImages.map((imageRow, containerIndex) =>
+              imageRow.map((imageSrc, index) => (
+                <div
+                  key={`additional-${containerIndex}-${index}`}
+                  style={{
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    marginBottom: "16px",
+                    padding: "16px",
+                    border: "1px solid #ccc",
+                    borderRadius: theme.radius.md,
+                    justifyContent: "center",
+                    textAlign: "center",
+                    overflow: "hidden",
+                  }}
+                >
+                  {imageSrc ? (
+                    <img
+                      src={imageSrc}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  ) : (
+                    <label
+                      htmlFor={`image-upload-${index}`}
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        marginTop: "8px",
+                        cursor: "pointer",
+                        color: theme.colors.blue[6],
+                      }}
+                    >
+                      <BiUpload size={24} />
+                      <input
+                        id={`image-upload-${index}`}
+                        type="file"
+                        accept="image/*"
+                        onChange={(event) =>
+                          handleAdditionalImageChange(
+                            containerIndex,
+                            index,
+                            event
+                          )
+                        }
+                        style={{ display: "none" }}
+                      />
+                    </label>
+                  )}
+                  <Modal
+                    opened={showCategoryMismatchModal}
+                    onClose={() => setShowCategoryMismatchModal(false)}
+                    contentLabel="Category Mismatch Modal"
+                  >
+                    <div className={classes.modalTitle}>
+                      Oops, a Category Mix-up!
+                    </div>
+
+                    <div className={classes.confirmation}>
+                      <div className={classes.confirmationPrompt}>
+                        <Text fw={500}>
+                          The uploaded image doesn't align with the intended
+                          category for your listing. Please upload the correct
+                          image.
+                        </Text>
+                      </div>
+                      <div className={classes.buttonConfirmation}>
+                        <Button
+                          variant="filled"
+                          color="red"
+                          onClick={() => setShowCategoryMismatchModal(false)}
+                        >
+                          I'm A-okay with that!
+                        </Button>
+                        <Button
+                          variant="outline"
+                          onClick={() =>
+                            handleReuploadImage(selectedContainerIndex, index)
+                          }
+                        >
+                          Re-upload
+                        </Button>
+                      </div>
+                    </div>
+                  </Modal>
+                </div>
+              ))
+            )}
           </SimpleGrid>
         </div>
       </Container>
@@ -305,23 +511,26 @@ function ListItem() {
         >
           <TextInput
             label="Category"
-            value={category}
-            onChange={(event) => setCategory(event.target.value)}
+            value={sub_category}
+            onChange={(event) => setSubCategory(event.target.value)}
             placeholder="Top"
             classNames={classes}
-            error={validateCategory(category)}
+            error={validateCategory(sub_category)}
           />
-          <Badge
-            color="violet"
-            style={{
-              position: "absolute",
-              top: "50%",
-              right: "5px",
-              transform: "translateY(-50%)",
-            }}
-          >
-            PREDICTED
-          </Badge>
+          <div>
+            <Badge
+              color="violet"
+              style={{
+                position: "absolute",
+                top: "50%",
+                right: "5px",
+                transform: "translateY(-50%)",
+                fontSize: "80%",
+              }}
+            >
+              Apparel Type: {category}
+            </Badge>
+          </div>
         </div>
 
         <Select
@@ -342,15 +551,6 @@ function ListItem() {
         />
         <br />
 
-        {/*  <TextInput
-          label="Condition"
-          value={condition}
-          onChange={(event) => setCondition(event.target.value)}
-          placeholder="New"
-          classNames={classes}
-          style={{ width: "50%" }}
-        />
-        <br /> */}
         <TextInput
           label="Colour"
           value={colour}
@@ -417,10 +617,10 @@ function ListItem() {
         />
         <br />
         <TextInput
-          label="Collection Address"
+          label="Collection Address (with Postal Code)"
           value={collection_address}
           onChange={(event) => setCollectionAddress(event.target.value)}
-          placeholder="123, Clementi Road"
+          placeholder="Address Line 1"
           classNames={classes}
           style={{ width: "50%" }}
           error={validateCollectionAddress(collection_address)}
