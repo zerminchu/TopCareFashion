@@ -5,11 +5,6 @@ import classes from "./Sales.module.css";
 import { Text } from "@mantine/core";
 
 function Sales(props) {
-
-  // useEffect(() => {
-  //   props.addRevenue(props.price * props.quantity)
-  // }, []);
-
   return (
     <tr key="sales">
       <td>
@@ -18,7 +13,7 @@ function Sales(props) {
         </div>
       </td>
       <td>{props.sales}</td>
-      <td>${(props.price * props.sales).toFixed(2)}</td>
+      <td>${props.price.toFixed(2)}</td>
     </tr>
   );
 }
