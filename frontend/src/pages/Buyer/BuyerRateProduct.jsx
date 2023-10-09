@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button, Text, Textarea, Rating } from "@mantine/core";
+import { useForm } from "@mantine/form";
 
 import classes from "./BuyerRateProduct.module.css";
 import { useLocation, useNavigate } from "react-router";
@@ -19,8 +20,20 @@ function productRate() {
 
   const [currentUser, setCurrentUser] = useState();
   const [productDetails, setProductDetails] = useState();
-  const [rating, setRating] = useState(0);
-  const [feedback, setFeedback] = useState("");
+
+  const form = useForm({
+    initialValues: {
+      rating: 0,
+      feedback: "",
+    },
+    validate: {
+      feedback: (value) => {
+        if (value.length === 0) return "Feedback comment should not be blank";
+        if (/^\s$|^\s+.|.\s+$/.test(value))
+          return "Feedback should not contain trailing/leading whitespaces";
+      },
+    },
+  });
 
   // Check current user
   useEffect(() => {
@@ -74,77 +87,51 @@ function productRate() {
     }
   }, [paidOrderId]);
 
-  const handleRatingChange = (value) => {
-    setRating(value);
-  };
-
-  const handleFeedbackChange = (event) => {
-    setFeedback(event.target.value);
-  };
-
   const handleSubmitRating = () => {
     const submitRating = async () => {
       try {
-        if (rating <= 0) {
+        if (!form.validate().hasErrors) {
+          dispatch({ type: "SET_LOADING", value: true });
+
+          const date = new Date();
+
+          const year = date.getFullYear();
+          let month = (date.getMonth() + 1).toString();
+          let day = date.getDate().toString();
+
+          month = month.length === 1 ? "0" + month : month;
+          day = day.length === 1 ? "0" + day : day;
+
+          const today = `${year}-${month}-${day}`;
+
+          const data = {
+            paid_order_id: paidOrderId,
+            listing_id: productDetails.listing_id,
+            date: today,
+            description: form.values.feedback,
+            rating: form.values.rating,
+            reply: "",
+            seller_id: productDetails.seller_id,
+            buyer_id: currentUser.user_id,
+          };
+
+          const url =
+            import.meta.env.VITE_NODE_ENV == "DEV"
+              ? import.meta.env.VITE_API_DEV
+              : import.meta.env.VITE_API_PROD;
+
+          const response = await axios.post(`${url}/reviews/`, data);
+
+          dispatch({ type: "SET_LOADING", value: false });
+
+          navigate("/buyer/transactions", { replace: true });
+
           showNotifications({
-            status: "error",
-            title: "Error",
-            message: "Please enter the rating",
+            status: "success",
+            title: "Success",
+            message: response.data.message,
           });
-
-          return;
         }
-
-        if (feedback.length <= 0) {
-          showNotifications({
-            status: "error",
-            title: "Error",
-            message: "Feedback cannot be empty",
-          });
-
-          return;
-        }
-
-        dispatch({ type: "SET_LOADING", value: true });
-
-        const date = new Date();
-
-        const year = date.getFullYear();
-        let month = (date.getMonth() + 1).toString();
-        let day = date.getDate().toString();
-
-        month = month.length === 1 ? "0" + month : month;
-        day = day.length === 1 ? "0" + day : day;
-
-        const today = `${year}-${month}-${day}`;
-
-        const data = {
-          paid_order_id: paidOrderId,
-          listing_id: productDetails.listing_id,
-          date: today,
-          description: feedback,
-          rating: rating,
-          reply: "",
-          seller_id: productDetails.seller_id,
-          buyer_id: currentUser.user_id,
-        };
-
-        const url =
-          import.meta.env.VITE_NODE_ENV == "DEV"
-            ? import.meta.env.VITE_API_DEV
-            : import.meta.env.VITE_API_PROD;
-
-        const response = await axios.post(`${url}/reviews/`, data);
-
-        dispatch({ type: "SET_LOADING", value: false });
-
-        navigate("/buyer/transactions", { replace: true });
-
-        showNotifications({
-          status: "success",
-          title: "Success",
-          message: response.data.message,
-        });
       } catch (error) {
         dispatch({ type: "SET_LOADING", value: false });
         showNotifications({
@@ -182,15 +169,17 @@ function productRate() {
               Product Quality
             </Text>
             <div className={classes.starRatingContainer}>
-              <Rating defaultValue={rating} onChange={handleRatingChange} />
+              <Rating
+                defaultValue={form.values.rating}
+                onChange={(value) => form.setValues({ rating: value })}
+              />
             </div>
             <div className={classes.ratingDescriptionContainer}>
               <Text fw={500} style={{ paddingBottom: "10px" }}>
                 Satisfaction feedback:
               </Text>
               <Textarea
-                value={feedback}
-                onChange={handleFeedbackChange}
+                {...form.getInputProps("feedback")}
                 placeholder="Describe your satisfaction with the product..."
               />
             </div>

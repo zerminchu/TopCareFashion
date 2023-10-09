@@ -1006,6 +1006,9 @@ def addReview(request):
 
             if(len(data["paid_order_id"]) <= 0):
                 raise Exception("Paid order id cannot be empty")
+            
+            if(data["rating"] == 0):
+                raise Exception("Rating cannot be empty")
 
             serializer = ReviewSerializer(data=data)
 
