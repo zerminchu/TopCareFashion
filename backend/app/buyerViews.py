@@ -601,7 +601,8 @@ def getOrderDetails(request, paid_order_id):
                "size": (paidOrderData.to_dict())["checkout_data"]["size"],
                "price": (itemData.to_dict())["price"],
                "status": (paidOrderData.to_dict())["status"],
-               "quantity": (paidOrderData.to_dict())["checkout_data"]["quantity"]
+               "quantity": (paidOrderData.to_dict())["checkout_data"]["quantity"],
+               "rated": (paidOrderData.to_dict())["rated"]
             }
 
             return JsonResponse({
@@ -651,6 +652,8 @@ def getOrderStatus(request, paid_order_id):
             subTotal = int((paidOrderData.to_dict())["checkout_data"]["quantity"]) * float((itemData.to_dict())["price"])
 
             responseData = {
+               "seller_id": (userData.to_dict())["user_id"],
+               "listing_id": (listingData.to_dict())["listing_id"],
                "store_name": (userData.to_dict())["business_profile"]["business_name"],
                "images": (itemData.to_dict())["image_urls"],
                "title": (itemData.to_dict())["title"],

@@ -5,7 +5,6 @@ import ILLNullImageListing from "../../assets/illustrations/il_null_image_clothe
 import IconLocation from "../../assets/icons/ic_location.svg";
 
 import classes from "./OrderStatusItem.module.css";
-import { Badge } from "flowbite-react";
 
 function OrderStatusItem(props) {
   const navigate = useNavigate();

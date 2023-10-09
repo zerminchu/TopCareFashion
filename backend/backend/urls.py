@@ -40,6 +40,7 @@ urlpatterns = [
     path("item/", views.getAllItems, name="get-all-item"),
     path("user/", views.getAllUsers, name="get-all-user"),
     path("user/<str:user_id>", views.getUserById, name="get-user-by-id"),
+    path("reviews/", views.addReview, name="add-review"),
 
 
     # Seller
@@ -69,6 +70,7 @@ urlpatterns = [
     path("buyer/<str:user_id>/orders/", buyerViews.getAllOrdersByUserId, name="get-all-orders-by-user-id"),
     path("buyer/orders/<str:paid_order_id>/", buyerViews.getOrderDetails, name="get-orders-detail"),
     path("buyer/order-status/<str:paid_order_id>/", buyerViews.getOrderStatus, name="get-order-status"),
+    
     path("buyer/premium-feature-checkout/", buyerViews.getPremiumFeatureCheckoutLink
          , name="get-premium-feature-checkout-link"),
      

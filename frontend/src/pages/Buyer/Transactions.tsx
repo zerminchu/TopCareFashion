@@ -69,6 +69,10 @@ export function Transactions() {
 
   const renderTransactionItem = () => {
     if (sortedData) {
+      if (sortedData.length <= 0) {
+        return <Text>You do not have any transactions yet</Text>;
+      }
+
       return sortedData.map((item, index) => {
         return <TransactionItem key={index} paidOrderId={item.paid_order_id} />;
       });

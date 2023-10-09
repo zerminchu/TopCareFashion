@@ -54,21 +54,24 @@ class WishlistSeliazer (serializers.ModelSerializer):
         model = Wishlist
         exclude = ['buyer_id']
 
-class ItemSerializer(serializers.ModelSerializer):
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = '__all__'
 
+class ItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
         fields = '__all__'
 
 
 class ListingSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Listing
         fields = '__all__'
 
 class FeedbackSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Feedback
         fields = '__all__'
+        

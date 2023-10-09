@@ -998,4 +998,39 @@ def classify_image(request):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=400)
 
+@api_view(["POST"])
+def addReview(request):
+    if request.method == "POST":
+        try:
+            data = request.data
 
+            if(len(data["paid_order_id"]) <= 0):
+                raise Exception("Paid order id cannot be empty")
+
+            serializer = ReviewSerializer(data=data)
+
+            if(serializer.is_valid()):
+                db = firestore.client()
+                reviewId = (db.collection("Review").document()).id
+                reviewRef = db.collection("Review").document(reviewId)
+
+                data["review_id"] = reviewId
+
+                reviewRef.set(data)
+
+                paidOrderRef = db.collection("PaidOrder").document(data["paid_order_id"])
+                paidOrderRef.update({"rated": True})
+
+                return JsonResponse({
+                'status': "success",
+                'message': "Review submitted successfully",
+                'data': data
+            }, status=200)
+            else:
+                raise Exception(serializer.errors)
+            
+        except Exception as e:
+            return JsonResponse({
+                "status": "error",
+                "message": str(e)
+            }, status=400)
