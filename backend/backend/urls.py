@@ -41,6 +41,7 @@ urlpatterns = [
     path("user/", views.getAllUsers, name="get-all-user"),
     path("user/<str:user_id>", views.getUserById, name="get-user-by-id"),
     path("reviews/", views.addReview, name="add-review"),
+    path("paid-orders/<str:paid_order_id>/", views.updatePaidOrderStatus, name="update-paid-order-status"),
 
 
     # Seller

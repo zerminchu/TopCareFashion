@@ -17,6 +17,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser
 from config.firebase import firebase
 
+import stripe
 import os
 import uuid
 import random
@@ -1032,6 +1033,80 @@ def addReview(request):
             else:
                 raise Exception(serializer.errors)
             
+        except Exception as e:
+            return JsonResponse({
+                "status": "error",
+                "message": str(e)
+            }, status=400)
+
+@api_view(["PUT"])
+def updatePaidOrderStatus(request, paid_order_id):
+    if request.method == "PUT":
+        try:
+            data = request.data
+
+            db = firestore.client()
+            paidOrderRef = db.collection("PaidOrder").document(paid_order_id)
+            paidOrderData = paidOrderRef.get()
+
+            if(not paidOrderData.exists):
+                raise Exception("Paid order does not exists")
+            
+            if(data["status"] == "waiting for collection"):
+                paidOrderRef.update({"status": data["status"]})
+
+                return JsonResponse({
+                    'status': "success",
+                    'message': "Order status changed successfully",
+                    'data': {
+                        "status": data["status"]
+                    }
+                }, status=200)
+            
+            elif(data["status"] == "completed"):
+                userRef = db.collection("Users").document((paidOrderData.to_dict())["seller_id"])
+                userData = userRef.get()
+
+                if(not userData.exists):
+                    raise Exception("Seller order does not exists")
+                
+                itemRef = db.collection("Item").document((paidOrderData.to_dict())["checkout_data"]["item_id"])
+                itemData = itemRef.get()
+
+                if(not itemData.exists):
+                    raise Exception("Item order does not exists")
+                
+                stripe.api_key = "sk_test_51LmU0QEDeJsL7mvQWznZX85lQ8T28onhbUw2otE3hnte3MeDZjNyYxjwbwIZhq2Cdp1vj4XfebLExzdxpQ64UHiV000sGoCmKR"
+
+                price = (itemData.to_dict())["price"]
+                quantity = (paidOrderData.to_dict())["checkout_data"]["quantity"]
+
+                transferAmount = round(float(price) * int(quantity) * 0.95, 2)
+                transferAmountInCents = int(transferAmount * 100)
+                platformFee = round(float(price) * int(quantity) * 0.05, 2)
+
+                transfer = stripe.Transfer.create(
+                    amount = transferAmountInCents,
+                    currency = "sgd",
+                    source_transaction = (paidOrderData.to_dict())["charge_id"],
+                    destination = (userData.to_dict())["stripe_id"],
+                )
+
+                paidOrderRef.update({"status": data["status"]})
+
+                return JsonResponse({
+                    'status': "success",
+                    'message': "Order status changed successfully",
+                    'data': {
+                        "status": data["status"],
+                        "transfer_amount": transferAmount,
+                        "transfer_destination": transfer["destination"],
+                        "platform_fee": platformFee
+                    }
+                }, status=200)
+            else:
+                raise Exception("Unknown order status")
+ 
         except Exception as e:
             return JsonResponse({
                 "status": "error",

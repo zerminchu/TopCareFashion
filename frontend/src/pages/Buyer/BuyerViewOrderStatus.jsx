@@ -8,10 +8,12 @@ import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
 import Cookies from "js-cookie";
 import axios from "axios";
 import OrderStatusItem from "./OrderStatusItem";
+import { useDispatch } from "react-redux";
 
 function productOrderStatus() {
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const paidOrderId = location.state?.paidOrderId;
 
@@ -83,14 +85,39 @@ function productOrderStatus() {
     }
   }, [orderStatusDetails]);
 
-  const collectedOnClick = () => {
-    showNotifications({
-      status: "success",
-      title: "Success",
-      message: "Thank you for using TopCare! enjoy the product!",
-    });
+  const collectedOnClick = async () => {
+    if (paidOrderId) {
+      try {
+        dispatch({ type: "SET_LOADING", value: true });
 
-    navigate("/buyer/transactions");
+        const url =
+          import.meta.env.VITE_NODE_ENV == "DEV"
+            ? import.meta.env.VITE_API_DEV
+            : import.meta.env.VITE_API_PROD;
+
+        const response = await axios.put(`${url}/paid-orders/${paidOrderId}/`, {
+          status: "completed",
+        });
+
+        dispatch({ type: "SET_LOADING", value: false });
+
+        navigate("/buyer/transactions", { replace: true });
+
+        showNotifications({
+          status: response.data.status,
+          title: "Success",
+          message: "Thank you for using TopCare! enjoy the product!",
+        });
+      } catch (error) {
+        console.log(error);
+        dispatch({ type: "SET_LOADING", value: false });
+        showNotifications({
+          status: "error",
+          title: "Error",
+          message: error.response.data.message,
+        });
+      }
+    }
   };
 
   const renderCollectedButton = () => {

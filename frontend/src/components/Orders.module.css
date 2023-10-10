@@ -26,3 +26,7 @@
   flex-direction: column;
   gap: 10px;
 }
+
+.modal {
+  z-index: 2;
+}
