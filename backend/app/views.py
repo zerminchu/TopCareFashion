@@ -1114,3 +1114,80 @@ def classify_image(request):
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=400)
+    
+@api_view(["GET"])
+def get_subcategories(request):
+    category = request.query_params.get("category")
+
+    if not category:
+        return Response({"error": "Category parameter is missing"}, status=400)
+
+    try:
+        db = firestore.Client()
+        categories_ref = db.collection("FashionCategory")
+
+        query = categories_ref.where("category", "==", category)
+        sub_category = []
+
+        for doc in query.stream():
+            data = doc.to_dict()
+            sub_category.append(data.get("sub_category"))
+
+        return Response({"subcategory": sub_category})
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
+    
+@api_view(["GET"])
+def get_all_categories(request):
+    try:
+        db = firestore.Client()
+        categories_ref = db.collection("FashionCategory")
+        query = categories_ref.stream()
+        
+        all_categories = []
+
+        for doc in query:
+            data = doc.to_dict()
+            all_categories.append({
+                "category": data.get("category"),
+                "sub_category": data.get("sub_category")
+            })
+
+        return Response({"categories": all_categories})
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
+    
+@api_view(["POST"])
+def save_user_categories(request):
+    if request.method == "POST":
+        try:
+            user_id = request.data.get("user_id")
+
+            serializer = CategorySelectionSerializer(
+                data=request.data
+            )
+
+            if serializer.is_valid():
+                selected_categories = serializer.validated_data.get("selected_categories")
+
+                # Initialize Firestore
+                db = firestore.client()
+
+                # Get a reference to the user's document in the "User" collection
+                user_ref = db.collection("User").document(user_id)
+
+                # Update the user's "seller_preferences" attribute with the selected categories
+                user_ref.update({
+                    "seller_preferences": selected_categories
+                })
+
+                return Response({"message": "Selected categories saved successfully"})
+            else:
+                return Response({"errors": serializer.errors}, status=400)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
+
+

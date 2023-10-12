@@ -1,3 +1,6 @@
+/* eslint-disable no-empty */
+/* eslint-disable react/no-unescaped-entities */
+/* eslint-disable no-unused-vars */
 import {
   Badge,
   Button,
@@ -82,6 +85,8 @@ function ListItem() {
   const predictedCategoryFromRoute = location.state?.predictedCategory || "";
   const predictedSubCategoryFromRoute =
     location.state?.predictedSubCategory || "";
+  const correctCategory = location.state?.correctCategory || "";
+  const [subCategoryFromBackend, setSubCategoryFromBackend] = useState("");
 
   const { classes } = useStyles();
   const [uploadedImages, setUploadedImages] = useState(uploadedImagesFromRoute);
@@ -349,6 +354,30 @@ function ListItem() {
     setShowCategoryMismatchModal(false);
   };
 
+  const fetchSubCategory = (correctCategory) => {
+    let params = {};
+    params["category"] = correctCategory;
+
+    const url =
+      import.meta.env.VITE_NODE_ENV === "DEV"
+        ? import.meta.env.VITE_API_DEV
+        : import.meta.env.VITE_API_PROD;
+
+    axios
+      .get(`${url}/get-subcategory/`, { params })
+      .then((response) => {
+        const subCategory = response.data.subcategory[0];
+        setSubCategoryFromBackend(subCategory);
+      })
+      .catch((error) => {});
+  };
+
+  useEffect(() => {
+    if (correctCategory) {
+      fetchSubCategory(correctCategory);
+    }
+  }, [correctCategory]);
+
   return (
     <form onSubmit={handleSubmit}>
       <Container my="md">
@@ -511,11 +540,12 @@ function ListItem() {
         >
           <TextInput
             label="Category"
-            value={sub_category}
-            onChange={(event) => setSubCategory(event.target.value)}
+            value={correctCategory !== "" ? correctCategory : category}
+            onChange={(event) => setCategory(event.target.value)}
             placeholder="Top"
             classNames={classes}
-            error={validateCategory(sub_category)}
+            error={validateCategory(category)}
+            disabled={true}
           />
           <div>
             <Badge
@@ -528,7 +558,7 @@ function ListItem() {
                 fontSize: "80%",
               }}
             >
-              Apparel Type: {category}
+              Apparel Type: {subCategoryFromBackend || sub_category}
             </Badge>
           </div>
         </div>

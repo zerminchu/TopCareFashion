@@ -1,10 +1,11 @@
+/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable no-unused-vars */
 import { useRef, useState, useEffect } from "react";
 import { Text, Group, Button, createStyles, rem, Modal } from "@mantine/core";
 import { Dropzone } from "@mantine/dropzone";
 import { IconCloudUpload, IconX, IconDownload } from "@tabler/icons-react";
 import { useInterval } from "@mantine/hooks";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { retrieveUserInfo } from "../../../utils/RetrieveUserInfoFromToken";
 import Cookies from "js-cookie";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
@@ -103,6 +104,14 @@ function ImageUpload() {
   const [correctCategory, setCorrectCategory] = useState("");
   const [showCorrectCategoryModal, setShowCorrectCategoryModal] =
     useState(false);
+  const [showWarningModal, setShowWarningModal] = useState(false);
+  const [fetchedCategory, setFetchedCategory] = useState("");
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const subCategory = searchParams.get("subCategories");
+    setFetchedCategory(subCategory);
+  }, []);
 
   const handleDrop = (files) => {
     const allowedFormats = ["image/jpeg", "image/png", "image/jpg"];
@@ -176,7 +185,12 @@ function ImageUpload() {
             const data = response.data;
             setPredictedCategory(data.predicted_class);
             setPredictedSubCategory(data.predicted_subcategory);
-            setShowModal(true);
+
+            if (fetchedCategory.includes(data.predicted_subcategory)) {
+              setShowModal(true);
+            } else {
+              setShowWarningModal(true);
+            }
           });
         });
     } else if (loaded) {
@@ -190,6 +204,7 @@ function ImageUpload() {
 
   const closeModal = () => {
     setShowModal(false);
+    setShowWarningModal(false);
   };
 
   const proceedToCreateListing = () => {
@@ -205,6 +220,7 @@ function ImageUpload() {
         uploadedImages: imageFiles,
         predictedCategory: predictedCategory,
         predictedSubCategory: predictedSubCategory,
+        correctCategory: correctCategory,
       },
     });
   };
@@ -302,6 +318,10 @@ function ImageUpload() {
     "Trunks",
     "Turtleneck",
   ];
+
+  const handleCategorySelect = (category) => {
+    setCorrectCategory(category);
+  };
 
   return (
     <div>
@@ -478,6 +498,48 @@ function ImageUpload() {
           </div>
         )}
       </div>
+      <Modal
+        opened={showWarningModal}
+        onClose={closeModal}
+        size="md"
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <div style={{ textAlign: "center", marginBottom: "20px" }}>
+          <h1
+            style={{
+              color: "#ff5454",
+              fontSize: "24px",
+              fontWeight: "bold",
+            }}
+          >
+            Please review your selections...
+          </h1>
+          <p style={{ color: "#333", fontSize: "18px", fontWeight: "bold" }}>
+            We've noticed some variations between your preferences and the item
+            you've uploaded.
+          </p>
+        </div>
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <Button
+            variant="filled"
+            color="red"
+            onClick={closeModal}
+            style={{
+              backgroundColor: "#ff5454",
+              color: "white",
+              padding: "12px 24px",
+              borderRadius: "4px",
+              fontWeight: "bold",
+            }}
+          >
+            Got it, thanks!
+          </Button>
+        </div>
+      </Modal>
 
       <Modal
         opened={showModal}
@@ -498,7 +560,9 @@ function ImageUpload() {
         </div>
         <div className={classes.confirmation}>
           <div className={classes.confirmationPrompt}>
-            <Text fw={500}>Our system has identified the item as a:</Text>
+            <Text fw={500}>
+              Our system has identified the item you uploaded as a:
+            </Text>
             <Text fw={700} style={{ fontSize: "24px", color: "violet" }}>
               {predictedCategory}
             </Text>

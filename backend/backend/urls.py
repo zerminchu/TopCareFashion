@@ -38,6 +38,14 @@ urlpatterns = [
     path("item/", views.getAllItems, name="get-all-item"),
     path("user/", views.getAllUsers, name="get-all-user"),
     path("user/<str:user_id>", views.getUserById, name="get-user-by-id"),
+     
+    path('get-subcategory/', views.get_subcategories, name='get-subcategory'),
+    path('get-all-category/', views.get_all_categories, name='get-all-category'),
+    path('save-user-category/', views.save_user_categories, name='save-user-category'),
+
+
+     
+
 
 
     # Seller
