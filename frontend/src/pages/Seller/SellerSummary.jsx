@@ -83,6 +83,10 @@ function SellerSummary() {
   }, [currentUser]);
 
   useEffect(() => {
+    setSalesItem(DUMMY_PRODUCT_SALES);
+  }, []);
+
+  useEffect(() => {
     const retrieveSalesData = async () => {
       try {
         const url =

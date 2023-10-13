@@ -39,7 +39,7 @@ function CheckoutItem(props) {
             <tr>
               <th>Product ordered</th>
               <th>Title</th>
-              <th>Size</th>
+              <th>Variation</th>
               <th>Unit price</th>
               <th>Quantity</th>
               <th>Item subtotal</th>
@@ -55,10 +55,10 @@ function CheckoutItem(props) {
                 />
               </td>
               <td>{props.title}</td>
-              <td>{props.size}</td>
+              <td>{props.variation}</td>
               <td>${props.price}</td>
               <td>{props.cart_quantity}</td>
-              <td>${props.sub_total}</td>
+              <td>${props.price * props.cart_quantity}</td>
             </tr>
           </tbody>
         </Table>

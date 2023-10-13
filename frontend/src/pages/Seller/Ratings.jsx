@@ -165,19 +165,6 @@ function Ratings() {
     retrieveSellerRatings();
   }, [currentUser]);
 
-  const replyReview = (reviewId, reply) => {
-    const updatedData = [...ratings];
-
-    const indexToUpdate = updatedData.findIndex(
-      (item) => item.review_id === reviewId
-    );
-
-    if (indexToUpdate !== -1) {
-      updatedData[indexToUpdate].reply = reply;
-      setRatings(updatedData);
-    }
-  };
-
   const renderRatings = () => {
     if (ratings.length <= 0) {
       return !isRetrievingLoading ? (
@@ -196,7 +183,6 @@ function Ratings() {
           rating={review.rating}
           description={review.description}
           reply={review.reply}
-          replyReview={replyReview}
         />
       );
     });

@@ -1,25 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { Button, Text, Stepper } from "@mantine/core";
+import { Button, Text, Textarea, Rating, Stepper} from "@mantine/core";
 
 import classes from "./BuyerViewOrderStatus.module.css";
+import CheckoutItem from "../../components/CheckoutItem";
 import { useLocation, useNavigate } from "react-router";
 import { showNotifications } from "../../utils/ShowNotification";
 import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
 import Cookies from "js-cookie";
-import axios from "axios";
-import OrderStatusItem from "./OrderStatusItem";
-import { useDispatch } from "react-redux";
+
 
 function productOrderStatus() {
   const location = useLocation();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-
-  const paidOrderId = location.state?.paidOrderId;
-
-  const [active, setActive] = useState();
-  const [orderStatusDetails, setOrderStatusDetails] = useState();
+  const [active, setActive] = useState(2);
+  const [checkoutItems, setCheckoutItems] = useState([]);
   const [currentUser, setCurrentUser] = useState();
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [currentDate, setCurrentDate] = useState(""); // State variable to store the current date
+  
+
+  // Using params to pass data from cart / product detail page
+  const data = location.state?.data;
 
   // Check current user
   useEffect(() => {
@@ -51,126 +52,86 @@ function productOrderStatus() {
   }, [currentUser]);
 
   useEffect(() => {
-    const retrieveOrderStatusData = async () => {
-      try {
-        const url =
-          import.meta.env.VITE_NODE_ENV == "DEV"
-            ? import.meta.env.VITE_API_DEV
-            : import.meta.env.VITE_API_PROD;
-
-        const response = await axios.get(
-          `${url}/buyer/order-status/${paidOrderId}/`
-        );
-
-        setOrderStatusDetails(response.data.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    if (paidOrderId) {
-      retrieveOrderStatusData();
+    if (data) {
+      setCheckoutItems(data);
     }
-  }, [paidOrderId]);
+  }, []);
 
   useEffect(() => {
-    if (orderStatusDetails) {
-      if (orderStatusDetails.status === "paid") {
-        setActive(2);
-      } else if (orderStatusDetails.status === "waiting for collection") {
-        setActive(3);
-      } else if (orderStatusDetails.status === "completed") {
-        setActive(4);
-      }
-    }
-  }, [orderStatusDetails]);
+    // Function to get the current date and format it
+    const getCurrentDate = () => {
+      const date = new Date();
+      const hours = date.getHours();
+      const amOrPm = hours >= 12 ? "PM" : "AM";
+      const formattedHours = (hours % 12 || 12).toString().padStart(2, "0");
+      const formattedDate = `${date.getDate().toString().padStart(2, "0")}-${
+        (date.getMonth() + 1).toString().padStart(2, "0")
+      }-${date.getFullYear()} | ${formattedHours}:${date
+        .getMinutes()
+        .toString()
+        .padStart(2, "0")} ${amOrPm}`;
+      return formattedDate;
+    };
 
-  const collectedOnClick = async () => {
-    if (paidOrderId) {
-      try {
-        dispatch({ type: "SET_LOADING", value: true });
+    // Update the current date when the component mounts
+    setCurrentDate(getCurrentDate());
+  }, []);
 
-        const url =
-          import.meta.env.VITE_NODE_ENV == "DEV"
-            ? import.meta.env.VITE_API_DEV
-            : import.meta.env.VITE_API_PROD;
-
-        const response = await axios.put(`${url}/paid-orders/${paidOrderId}/`, {
-          status: "completed",
-        });
-
-        dispatch({ type: "SET_LOADING", value: false });
-
-        navigate("/buyer/transactions", { replace: true });
-
-        showNotifications({
-          status: response.data.status,
-          title: "Success",
-          message: "Thank you for using TopCare! enjoy the product!",
-        });
-      } catch (error) {
-        console.log(error);
-        dispatch({ type: "SET_LOADING", value: false });
-        showNotifications({
-          status: "error",
-          title: "Error",
-          message: error.response.data.message,
-        });
-      }
-    }
-  };
-
-  const renderCollectedButton = () => {
-    if (orderStatusDetails) {
-      if (orderStatusDetails.status === "waiting for collection") {
-        return <Button onClick={collectedOnClick}>Collected</Button>;
-      }
-
-      return <Button disabled>Collected</Button>;
-    }
-  };
-
-  const renderContent = () => {
-    if (orderStatusDetails && active) {
+  const renderCheckoutItems = () => {
+    return checkoutItems.map((item) => {
       return (
-        <div className={classes.container}>
-          <div className={classes.itemList}>
-            <OrderStatusItem
-              title={orderStatusDetails.title}
-              collectionAddress={orderStatusDetails.collection_address}
-              price={orderStatusDetails.price}
-              size={orderStatusDetails.size}
-              quantity={orderStatusDetails.quantity}
-              storeName={orderStatusDetails.store_name}
-              images={orderStatusDetails.images}
-              subTotal={orderStatusDetails.sub_total}
-            />
-          </div>
-
-          <div className={classes.orderStatusContainer}>
-            <Stepper active={active} breakpoint="sm" clickable={false}>
-              <Stepper.Step label="Shopping cart" disabled></Stepper.Step>
-              <Stepper.Step label="Purchased" disabled></Stepper.Step>
-              <Stepper.Step
-                label="Available for pickup"
-                disabled
-              ></Stepper.Step>
-              <Stepper.Step label="Completed" disabled>
-                Available for Pickup
-              </Stepper.Step>
-            </Stepper>
-          </div>
-          <div className={classes.submitContainer}>
-            {renderCollectedButton()}
-          </div>
-        </div>
+        <CheckoutItem
+          title={item.title}
+          collection_address={item.collection_address}
+          price={item.price}
+          cart_quantity={item.cart_quantity}
+          quantity_available={item.quantity_available}
+          store_name={item.store_name}
+          variation={item.color}
+          images={item.images}
+        />
       );
-    }
-
-    return <Text>Loading ...</Text>;
+    });
   };
 
-  return <div>{renderContent()}</div>;
+  const handleCollectedClick = () => {
+    setShowSuccessMessage(true);
+    setTimeout(() => {
+        navigate("/buyer/transactions");
+      }, 1500);
+  };
+
+  return (
+    <div className={classes.container}>
+      
+
+      <div className={classes.itemList}>{renderCheckoutItems()}</div>
+
+      <div className={classes.orderStatusContainer}>
+      <Stepper active={active} onStepClick={setActive} breakpoint="sm" clickable={false}>
+        <Stepper.Step label="Shopping cart"  allowStepSelect={active < 0}></Stepper.Step> 
+        <Stepper.Step label="Purchased" allowStepSelect={active < 0}>
+        
+          
+        </Stepper.Step>
+        <Stepper.Step label="Available for pickup" allowStepSelect={active < 0}>
+        <p>{currentDate} | Order Placed</p>
+          Waiting for Vendor to prepare the product for pickup.
+        </Stepper.Step>
+        <Stepper.Step label="Completed" allowStepSelect={active < 0}> Available for Pickup</Stepper.Step>
+        
+      </Stepper>
+      </div>
+        <div className={classes.submitContainer}>
+          <Button onClick={handleCollectedClick}>Collected</Button>
+          {showSuccessMessage && (
+        <Text style={{ color: 'green' }}>Thank you for using TopCare! enjoy the product!</Text>
+      )}
+        </div>
+      </div>
+    
+  );
 }
 
 export default productOrderStatus;
+

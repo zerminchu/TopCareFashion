@@ -92,13 +92,3 @@ class Wishlist(models.Model):
     seller_id = models.CharField(max_length=255, null=False, blank=False)
     buyer_id = models.CharField(max_length=255, null=False, blank=False)
     size = models.CharField(max_length=255, null=False, blank=False)
-
-
-class Review(models.Model):
-    listing_id = models.CharField(max_length=255, null=False, blank=False)
-    description = models.CharField(max_length=255, null=False, blank=False)
-    date = models.DateTimeField(null=False, blank=False)
-    rating = models.PositiveIntegerField(null=False, blank=False)
-    seller_id = models.CharField(max_length=255, null=False, blank=False)
-    buyer_id = models.CharField(max_length=255, null=False, blank=False)
-    reply = models.CharField(max_length=255, null=False, blank=True)
