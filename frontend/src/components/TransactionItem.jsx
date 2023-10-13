@@ -1,9 +1,9 @@
-/* eslint-disable react/prop-types */
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Badge, Button, Skeleton } from "@mantine/core";
 import ILLNullImageListing from "../assets/illustrations/il_null_image_clothes.svg";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { DUMMY_TRANSACTION_PRODUCT } from "../data/Products";
 
 function TransactionItem(props) {
   const navigate = useNavigate();
