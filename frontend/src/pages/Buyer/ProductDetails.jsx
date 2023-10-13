@@ -1,4 +1,4 @@
-import { Button, Radio, Text, Group } from "@mantine/core";
+import { Button, Radio, Text, Group, NumberInput } from "@mantine/core";
 import React, { useEffect, useState } from "react";
 import IconChat from "../../assets/icons/ic_chat.svg";
 import IconWishlist from "../../assets/icons/ic_wishlist.svg";
@@ -22,6 +22,7 @@ function ProductDetails() {
 
   const [currentUser, setCurrentUser] = useState();
   const [selectedSize, setSelectedSize] = useState();
+  const [quantity, setQuantity] = useState(1);
 
   // Check current user
   useEffect(() => {
@@ -56,7 +57,7 @@ function ProductDetails() {
   // Real data
   const itemId = location.state?.itemId;
 
-  const [productDetails, setProductDetails] = useState(data);
+  const [productDetails, setProductDetails] = useState();
 
   useEffect(() => {
     const retrieveProductDetailByItemId = async () => {
@@ -282,25 +283,42 @@ function ProductDetails() {
       return;
     }
 
+    if (!selectedSize) {
+      showNotifications({
+        status: "error",
+        title: "Error",
+        message: "Please select the size",
+      });
+
+      return;
+    }
+
     const date = new Date();
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, "0");
     const day = date.getDate().toString().padStart(2, "0");
     const today = `${year}-${month}-${day}`;
 
+    const subTotal = quantity * productDetails.price;
+
     const data = [
       {
+        listing_id: productDetails.listing_id,
+        item_id: productDetails.item_id,
         store_name: productDetails.store_name,
         title: productDetails.title,
+        size: selectedSize,
         collection_address: productDetails.collection_address,
-        color: "blue",
         price: productDetails.price,
-        cart_quantity: 1,
+        cart_quantity: quantity,
         quantity_available: productDetails.quantity_available,
         created_at: today,
         images: productDetails.images,
+        sub_total: parseFloat(subTotal).toFixed(2),
       },
     ];
+
+    console.log("data: ", data);
 
     navigate("/buyer/checkout", {
       state: { data: data },
@@ -404,6 +422,17 @@ function ProductDetails() {
                   <Text size="lg" fw={700} align="right" color="blue">
                     {productDetails.quantity_available} stocks left
                   </Text>
+                </div>
+
+                <div className={classes.productItemAtribute}>
+                  <Text size="md" fw={500}>
+                    Quantity
+                  </Text>
+                  <NumberInput
+                    min={1}
+                    value={quantity}
+                    onChange={setQuantity}
+                  />
                 </div>
 
                 <div className={classes.ratingContainer}>

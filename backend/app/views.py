@@ -20,6 +20,7 @@ from config.firebase import firebase
 import stripe
 import os
 import uuid
+import json
 import random
 import re
 import io
@@ -569,6 +570,7 @@ def getListingDetailByItemId(request, item_id):
                 "listing_id": (listingData.to_dict())["listing_id"],
                 "title": (itemData.to_dict())["title"],
                 "user_id": (itemData.to_dict())["user_id"],
+                "item_id": (itemData.to_dict())["item_id"],
                 "collection_address": (listingData.to_dict())["collection_address"],
                 "size": ["S", "M", "L", "XL"],
                 "images": (itemData.to_dict())["image_urls"],
@@ -1106,6 +1108,40 @@ def updatePaidOrderStatus(request, paid_order_id):
                 }, status=200)
             else:
                 raise Exception("Unknown order status")
+ 
+        except Exception as e:
+            return JsonResponse({
+                "status": "error",
+                "message": str(e)
+            }, status=400)
+        
+@api_view(["POST"])
+def webhookStripe(request):
+    if request.method == "POST":
+        try:
+            payload = request.body
+            event = None
+
+            stripe.api_key = "sk_test_51LmU0QEDeJsL7mvQWznZX85lQ8T28onhbUw2otE3hnte3MeDZjNyYxjwbwIZhq2Cdp1vj4XfebLExzdxpQ64UHiV000sGoCmKR"
+            endpointSecret = "whsec_55LxoMXRzZ1YahRk9hw4titHnVLl6B64"
+
+            sig_header = request.META['HTTP_STRIPE_SIGNATURE']
+            
+            event = stripe.Webhook.construct_event(
+                payload, sig_header, endpointSecret
+            )
+
+            if event.type == 'checkout.session.completed':
+                print("web hook receive 88")
+                session = event.data.object
+                amount = session.amount_total / 100  # Convert to dollars, assuming you're using cents
+                currency = session.currency
+
+        
+            return JsonResponse({
+                'status': "success",
+                'message': "Web hook changed successfully",
+            }, status=200)
  
         except Exception as e:
             return JsonResponse({

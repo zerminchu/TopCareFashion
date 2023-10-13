@@ -19,6 +19,7 @@ from rest_framework.permissions import IsAuthenticated
 from config.firebase import firebase
 
 import stripe
+import json
 
 @api_view(["POST"])
 def getCheckoutLink(request):
@@ -28,6 +29,13 @@ def getCheckoutLink(request):
 
         if(len(data["checkout"]) <= 0):
            raise Exception("Checkout should have at least 1 item")
+        
+        if(len(data["meta_data"]) <= 0):
+           raise Exception("Meta data cannot be empty")
+        
+        metaData = {}
+        metaData["buyer_id"] = data["meta_data"]["buyer_id"]
+        metaData["checkout_data"] = json.dumps(data["meta_data"]["checkout_data"])
         
         items = []
         
@@ -66,7 +74,8 @@ def getCheckoutLink(request):
             success_url='http://localhost:5173/',
             cancel_url='http://localhost:5173/',
             payment_method_types=['card'],
-            line_items=items
+            line_items=items,
+            metadata=metaData
         )
 
         return JsonResponse({
