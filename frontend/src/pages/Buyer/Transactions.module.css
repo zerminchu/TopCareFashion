@@ -1,0 +1,14 @@
+.container {
+  display: flex;
+  padding-left: 10%;
+  padding-right: 10%;
+  flex-direction: column;
+}
+
+.tableContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  border: 1px solid rgb(201, 201, 201);
+  border-radius: 5px;
+}

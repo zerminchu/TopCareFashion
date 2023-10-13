@@ -30,6 +30,9 @@ function SellerReview(props) {
 
       const response = await axios.post(`${url}/seller/reply-review/`, data);
 
+      props.replyReview(props.reviewId, comment);
+      setIsReply(!isReply);
+
       dispatch({ type: "SET_LOADING", value: false });
 
       showNotifications({
@@ -39,6 +42,7 @@ function SellerReview(props) {
       });
     } catch (error) {
       dispatch({ type: "SET_LOADING", value: false });
+      console.log(error);
 
       showNotifications({
         status: "error",
