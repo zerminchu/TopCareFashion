@@ -1132,18 +1132,58 @@ def webhookStripe(request):
             )
 
             if event.type == 'checkout.session.completed':
-                print("web hook receive 88")
-                session = event.data.object
-                amount = session.amount_total / 100  # Convert to dollars, assuming you're using cents
-                currency = session.currency
+                data = event.data.object
 
-        
-            return JsonResponse({
-                'status': "success",
-                'message': "Web hook changed successfully",
-            }, status=200)
- 
+                paymentIntent = data["payment_intent"]
+                buyerId = data["metadata"]["buyer_id"]
+                createdAt = data["metadata"]["created_at"]
+                checkoutData = json.loads(data["metadata"]["checkout_data"])
+                chargeId = (stripe.PaymentIntent.retrieve(paymentIntent)).charges.data[0].id
+
+                responseData = []
+
+                for checkoutItem in checkoutData:
+                    db = firestore.client()
+                    paidOrderId = (db.collection("PaidOrder").document()).id
+
+                    paidOrderData = {
+                        "paid_order_id": paidOrderId,
+                        "charge_id": chargeId,
+                        "buyer_id": buyerId,
+                        "seller_id": checkoutItem["seller_id"],
+                        "status": "paid",
+                        "created_at": createdAt,
+                        "rated": False,
+                        "checkout_data": {
+                            "listing_id": checkoutItem["listing_id"],
+                            "item_id": checkoutItem["item_id"],
+                            "quantity": checkoutItem["quantity"],
+                            "size": checkoutItem["size"]
+                        }
+                    }
+
+                    paidOrderSerializer = PaidOrderSerializer(data=paidOrderData)
+                    checkoutDataSerializer = CheckoutDataSerializer(data=paidOrderData["checkout_data"])
+
+                    if(paidOrderSerializer.is_valid()):
+                        if(checkoutDataSerializer.is_valid()):
+                            paidOrderRef = db.collection("PaidOrder").document(paidOrderId)
+                            paidOrderRef.set(paidOrderData)
+                            responseData.append(paidOrderData)
+                        else:
+                            raise Exception(checkoutDataSerializer.errors)
+                    
+                    else:
+                        raise Exception(paidOrderSerializer.errors)
+
+                return JsonResponse({
+                    'status': "success",
+                    'message': "Paid order data saved successfully",
+                    'data': responseData
+                }, status=200)
+                
         except Exception as e:
+            print("ERROR WEBHOOK: ", str(e))
             return JsonResponse({
                 "status": "error",
                 "message": str(e)

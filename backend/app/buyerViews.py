@@ -35,6 +35,7 @@ def getCheckoutLink(request):
         
         metaData = {}
         metaData["buyer_id"] = data["meta_data"]["buyer_id"]
+        metaData["created_at"] = data["meta_data"]["created_at"]
         metaData["checkout_data"] = json.dumps(data["meta_data"]["checkout_data"])
         
         items = []

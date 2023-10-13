@@ -110,15 +110,27 @@ function Checkout() {
           };
 
           const additionalData = {
+            seller_id: item.seller_id,
             listing_id: item.listing_id,
             item_id: item.item_id,
             quantity: item.cart_quantity,
-            price: parseFloat(item.price),
+            size: item.size,
           };
 
           checkoutMetaData.push(additionalData);
           checkoutData.push(data);
         });
+
+        const date = new Date();
+
+        const year = date.getFullYear();
+        let month = (date.getMonth() + 1).toString();
+        let day = date.getDate().toString();
+
+        month = month.length === 1 ? "0" + month : month;
+        day = day.length === 1 ? "0" + day : day;
+
+        const today = `${year}-${month}-${day}`;
 
         const url =
           import.meta.env.VITE_NODE_ENV == "DEV"
@@ -129,6 +141,7 @@ function Checkout() {
           checkout: checkoutData,
           meta_data: {
             buyer_id: currentUser.user_id,
+            created_at: today,
             checkout_data: checkoutMetaData,
           },
         };

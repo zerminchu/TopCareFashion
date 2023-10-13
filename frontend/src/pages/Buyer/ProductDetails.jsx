@@ -314,6 +314,7 @@ function ProductDetails() {
         quantity_available: productDetails.quantity_available,
         created_at: today,
         images: productDetails.images,
+        seller_id: productDetails.user_id,
         sub_total: parseFloat(subTotal).toFixed(2),
       },
     ];
