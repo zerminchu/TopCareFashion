@@ -38,14 +38,18 @@ urlpatterns = [
     path("item/", views.getAllItems, name="get-all-item"),
     path("user/", views.getAllUsers, name="get-all-user"),
     path("user/<str:user_id>", views.getUserById, name="get-user-by-id"),
-     
+
     path('get-subcategory/', views.get_subcategories, name='get-subcategory'),
     path('get-all-category/', views.get_all_categories, name='get-all-category'),
-    path('save-user-category/', views.save_user_categories, name='save-user-category'),
+    path('save-user-category/', views.save_user_categories,
+         name='save-user-category'),
 
 
-     
 
+
+    path("reviews/", views.addReview, name="add-review"),
+    path("paid-orders/<str:paid_order_id>/",
+         views.updatePaidOrderStatus, name="update-paid-order-status"),
 
 
     # Seller
@@ -93,8 +97,16 @@ urlpatterns = [
          buyerViews.updateWishlistItem, name="get-wishlist-detail"),
     path("buyer/cart-details/<str:user_id>/",
          buyerViews.getCartDetailsByUserId, name="get-cart-detail-by-user-id"),
+    path("buyer/<str:user_id>/orders/", buyerViews.getAllOrdersByUserId,
+         name="get-all-orders-by-user-id"),
+    path("buyer/orders/<str:paid_order_id>/",
+         buyerViews.getOrderDetails, name="get-orders-detail"),
+    path("buyer/order-status/<str:paid_order_id>/",
+         buyerViews.getOrderStatus, name="get-order-status"),
+
     path("buyer/premium-feature-checkout/", buyerViews.getPremiumFeatureCheckoutLink,
          name="get-premium-feature-checkout-link"),
+
 ]
 
 
