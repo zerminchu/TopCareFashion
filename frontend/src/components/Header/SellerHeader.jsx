@@ -16,17 +16,29 @@ function SellerHeader(props) {
   const [currentUser, setCurrentUser] = useState(props.currentUser);
 
   const listItem = () => {
-    navigate("/seller/category-selection");
+    if (
+      currentUser.seller_preferences &&
+      currentUser.seller_preferences.selectedSubCategories
+    ) {
+      navigate("/seller/upload-image");
+    } else {
+      navigate("/seller/category-selection");
+    }
   };
 
   const chatOnClick = () => {
     navigate("/chatting");
   };
 
+  const handleLogoClick = () => {
+    navigate("/");
+    window.location.reload();
+  };
+
   return (
     <div className={classes.container}>
       <div className={classes.leftside}>
-        <Link to="/">
+        <Link onClick={handleLogoClick}>
           <img src={ILLogo} width={50} height={50} />
         </Link>
         <Text fw={700} fz="xl">

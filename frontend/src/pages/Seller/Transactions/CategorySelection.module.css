@@ -1,40 +1,60 @@
-.button {
-  display: flex;
+.cardContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(25%, 1fr));
+  grid-gap: 20px;
+  max-width: 75%;
+  margin: 0 auto;
+}
+
+.subCategoryItem {
+  flex: 0 0 calc(25% - 20px);
+  /* Set a fixed width for all items */
   border: 1px solid var(--mantine-color-gray-3);
-  border-radius: var(--mantine-radius-lg);
-  padding: var(--mantine-spacing-xl);
-  background-color: var(--mantine-color-white);
+  border-radius: 12px;
+  /* Increase border-radius for a softer look */
+  padding: 20px;
+  background-color: #ffffff;
+  /* Use a white background */
   margin: 20px;
   text-align: center;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-  flex: 0 0 calc(25% - 20px);
-
-  &:hover {
-    background-color: var(--mantine-color-gray-0);
-    border-color: var(--mantine-color-primary);
-    color: var(--mantine-color-primary);
-  }
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  /* Enhance the box shadow */
 }
 
-.mantine-checkbox {
-  display: flex;
-  align-items: center;
-  
+.subCategoryItem:hover {
+  background-color: #f0f0f0;
+  /* Change the background color on hover */
+  border-color: #007BFF;
+  /* Highlight border color on hover */
+  color: #007BFF;
+  /* Change text color on hover */
 }
 
-.selected {
-  border-color: var(--mantine-color-primary);
-  color: var(--mantine-color-primary);
+.subCategoryItem .Text {
+  font-size: 22px;
+  /* Reduce the font size for text to make it more readable */
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #333;
 }
 
-.cardContainer {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+.header {
+  text-align: center;
+  padding: 20px;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #333;
+  background-color: #f8f8f8;
+  border-radius: 12px;
+  /* Match border-radius with subCategoryItem */
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  /* Apply the same shadow to the header */
 }
 
 .selectButton {
@@ -42,19 +62,51 @@
   justify-content: center;
   align-items: center;
   width: 20%;
-  margin: 20px;
+  flex-direction: column;
+  text-align: center;
 }
 
-.button .Text {
-  fz: 50px;
+.iconContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  margin-right: 10px;
+  width: 48px;
+  height: 48px;
+  font-size: 36px;
+  /* Slightly reduce the icon size */
+  color: #007BFF;
+  /* Apply a color to the icon */
 }
-.header {
-  text-align: center;
-  padding: 20px;
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 20px;
+
+.categoryText {
+  font-weight: 600;
   color: #333;
-  background-color: #f8f8f8;
+}
+
+.categoryItem {
+  color: #007BFF;
+  font-weight: 500;
+  margin-right: 5px;
+  border: 1px solid #007BFF;
   border-radius: 4px;
+  padding: 4px 8px;
+  background-color: #E6F7FF;
+}
+
+.categorySeparator {
+  color: #333;
+}
+
+.categoryMore {
+  color: #FF4500;
+  font-weight: 600;
+}
+
+.pageContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }

@@ -1,8 +1,7 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState, useRef } from "react";
 import { Table, Text, Button } from "@mantine/core";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { DUMMY_ORDERS_PPRODUCT } from "../../data/Products";
-import { DUMMY_PRODUCT_SALES } from "../../data/Products";
 import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
 import Chart from "chart.js/auto"; // Import 'chart.js/auto' for Chart.js v3
 import Cookies from "js-cookie";
@@ -18,8 +17,6 @@ function SellerSummary() {
   const chartRef = useRef(null); // Define chartRef using useRef
   const chartInstanceRef = useRef(null); // Store the chart instance
   const [orderItems, setOrderItems] = useState();
-  const [sales, setSalesItem] = useState([]);
-  const [revenue, setRevenue] = useState(0);
 
   const [salesData, setSalesData] = useState();
 

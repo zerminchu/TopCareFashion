@@ -49,7 +49,7 @@ function PageRoutes() {
       <Route path="/seller/order-status" element={<OrderStatus />} />;
       <Route path="/seller/summary" element={<SellerSummary />} />;
       <Route
-        path="/seller/category-selection"
+        path="/seller/category-selection/"
         element={<CategorySelection />}
       />
       ;{/* Private route for buyer */}

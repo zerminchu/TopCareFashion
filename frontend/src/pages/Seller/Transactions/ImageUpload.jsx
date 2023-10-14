@@ -94,7 +94,6 @@ function ImageUpload() {
   const [loaded, setLoaded] = useState(false);
   const [uploadedImages, setUploadedImages] = useState([]);
   const [showButtons, setShowButtons] = useState(false);
-  const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState();
   const [showModal, setShowModal] = useState(false);
   const [predictedCategory, setPredictedCategory] = useState("");
@@ -106,12 +105,13 @@ function ImageUpload() {
     useState(false);
   const [showWarningModal, setShowWarningModal] = useState(false);
   const [fetchedCategory, setFetchedCategory] = useState("");
+  const navigate = useNavigate();
 
-  useEffect(() => {
+  /*   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
     const subCategory = searchParams.get("subCategories");
     setFetchedCategory(subCategory);
-  }, []);
+  }, []); */
 
   const handleDrop = (files) => {
     const allowedFormats = ["image/jpeg", "image/png", "image/jpg"];
@@ -142,6 +142,10 @@ function ImageUpload() {
       try {
         const user = await retrieveUserInfo();
         setCurrentUser(user);
+        const sellerPreferences = user.seller_preferences || {};
+        const selectedSubCategories =
+          sellerPreferences.selectedSubCategories || [];
+        setFetchedCategory(selectedSubCategories.join(","));
       } catch (error) {
         console.log(error);
       }
@@ -325,13 +329,26 @@ function ImageUpload() {
 
   return (
     <div>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <h1>
+          Start the style revolution, by sharing your fashion treasures with us
+          today!
+        </h1>
+      </div>
+
       <div>
         <div className={classes.wrapper}>
           <div
             style={{
               width: "500px",
               margin: "0 auto",
-              marginTop: "80px",
+              marginTop: "50px",
               padding: "0 20px",
             }}
           >
@@ -501,7 +518,7 @@ function ImageUpload() {
       <Modal
         opened={showWarningModal}
         onClose={closeModal}
-        size="md"
+        size="lg"
         style={{
           display: "flex",
           flexDirection: "column",
@@ -523,10 +540,12 @@ function ImageUpload() {
             you've uploaded.
           </p>
         </div>
+
         <div style={{ display: "flex", justifyContent: "center" }}>
           <Button
             variant="filled"
             color="red"
+            marginLeft="-100px"
             onClick={closeModal}
             style={{
               backgroundColor: "#ff5454",
@@ -538,6 +557,26 @@ function ImageUpload() {
           >
             Got it, thanks!
           </Button>
+
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: "-1px",
+              marginLeft: "50px",
+            }}
+          >
+            <Button
+              // onClick={handleEditPreferences}
+              style={{
+                fontSize: "14px",
+                fontWeight: "bold",
+              }}
+              color="blue "
+            >
+              Edit my category preferences
+            </Button>
+          </div>
         </div>
       </Modal>
 

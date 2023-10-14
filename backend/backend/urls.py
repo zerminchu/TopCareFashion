@@ -17,6 +17,8 @@ urlpatterns = [
          views.edit_item, name="edit-item/user_id/item_id"),
     path("delete-item/<str:user_id>/<str:item_id>/",
          views.delete_item, name="delete-item/user_id/item_id"),
+    path("add-preference/<str:user_id>/",
+         views.update_seller_preferences, name="update_seller_preferences/user_id"),
 
 
     # Generals
@@ -81,10 +83,7 @@ urlpatterns = [
     # Buyer
     path("buyer/edit-review/", buyerViews.editReview, name="edit-review"),
     path("buyer/checkout/", buyerViews.getCheckoutLink, name="get-checkout-link"),
-    path("buyer/submit-review/<str:user_id>",
-         buyerViews.submit_review, name="submit-review"),
-    path("buyer/<str:user_id>/get-reviews-buyer/",
-         buyerViews.getReviews_buyer, name="get-reviews-buyer"),
+   
     path("buyer/cart/<str:cart_id>/<str:cart_item_id>/",
          buyerViews.updateCartItem, name="update-cart-item"),
     path("buyer/add-to-cart/", buyerViews.addToCart, name="add-to-cart"),
@@ -117,4 +116,8 @@ urlpatterns = [
     path("feedback/<str:user_id>/feedback-form/",
          views.feedbackForm, name="feedback-form"),
     path("seller/<str:user_id>/ratings/",
-         sellerViews.getReviews, name="get-seller-reviews"), """
+         sellerViews.getReviews, name="get-seller-reviews"), 
+          path("buyer/submit-review/<str:user_id>",
+         buyerViews.submit_review, name="submit-review"),
+    path("buyer/<str:user_id>/get-reviews-buyer/",
+         buyerViews.getReviews_buyer, name="get-reviews-buyer"),"""

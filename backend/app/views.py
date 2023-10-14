@@ -855,6 +855,70 @@ def get_seller_and_item(request, user_id, item_id):
             return Response(item)
         except Exception as e:
             return Response({"error": str(e)}, status=500)
+        
+
+""" @api_view(["PUT"])
+@permission_classes([])
+def update_seller_preferences(request):
+    if request.method == "PUT":
+        try:
+            user_id = request.user.id
+
+            # Assuming you have a Firestore client instance
+            db = firestore.client()
+
+            # Get the reference to the user's document in Firestore
+            user_ref = db.collection("Users").document(user_id)
+
+            # Retrieve the existing data
+            user_data = user_ref.get().to_dict()
+
+            # Update the 'seller_preferences' with the selected sub-categories
+            user_data["seller_preferences"] = {
+                "subCategories": request.data.get("seller_preferences", {}).get("subCategories", [])
+            }
+
+            # Update the Firestore document with the new data
+            user_ref.set(user_data)
+
+            return Response(
+                {
+                    "message": "Seller preferences updated successfully",
+                    "data": user_data,
+                },
+                status=status.HTTP_200_OK,
+            )
+
+        except Exception as e:
+            return Response(
+                {
+                    "message": f"An error occurred: {str(e)}",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            ) """
+
+@api_view(["PUT"])
+def update_seller_preferences(request, user_id):
+    if request.method == "PUT":
+        try:
+            db = firestore.Client()
+
+            user_ref = db.collection("Users").document(user_id)
+            user_doc = user_ref.get()
+
+            if not user_doc.exists:
+                return Response({"message": "User not found"}, status=404)
+
+            seller_preferences = request.data.get("seller_preferences", {})
+
+            user_ref.update({
+                "seller_preferences": seller_preferences,
+            })
+
+            return Response({"message": "Seller preferences updated successfully"})
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
 
 
 @api_view(["PUT"])
@@ -1176,13 +1240,10 @@ def save_user_categories(request):
                 selected_categories = serializer.validated_data.get(
                     "selected_categories")
 
-                # Initialize Firestore
                 db = firestore.client()
 
-                # Get a reference to the user's document in the "User" collection
                 user_ref = db.collection("User").document(user_id)
 
-                # Update the user's "seller_preferences" attribute with the selected categories
                 user_ref.update({
                     "seller_preferences": selected_categories
                 })
