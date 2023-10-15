@@ -83,7 +83,7 @@ function Checkout() {
 
     if (checkoutItems) {
       checkoutItems.map((item) => {
-        totalPrice += item.price * item.cart_quantity;
+        totalPrice += parseFloat(item.sub_total);
       });
     }
 

@@ -251,21 +251,42 @@ export function Transactions() {
     setSortedData((prevData) => {
       return prevData.map((item) =>
         item.cart_item_id === cart_item_id
-          ? { ...item, quantity: quantity }
+          ? { ...item, cart_quantity: quantity }
           : item
       );
     });
   };
 
-  const handleBuyButtonClick = (title) => {
-    const data = DUMMY_CART_PRODUCT;
+  const handleBuyButtonClick = (cartItemId: string) => {
+    console.log("click on: ", cartItemId);
+    if (sortedData) {
+      let filteredData = sortedData.filter(
+        (item) => item.cart_item_id === cartItemId
+      );
 
-    const filteredData = data.filter((item) => item.title === title);
-    console.log("pressed buy" + title); //title passes the param
+      let data = filteredData[0];
 
-    navigate("/buyer/checkout", {
-      state: { data: filteredData },
-    });
+      const date = new Date();
+
+      const year = date.getFullYear();
+      let month = (date.getMonth() + 1).toString();
+      let day = date.getDate().toString();
+
+      month = month.length === 1 ? "0" + month : month;
+      day = day.length === 1 ? "0" + day : day;
+
+      const today = `${year}-${month}-${day}`;
+      const subTotal = data.cart_quantity * data.price;
+
+      data.created_at = today;
+      data.sub_total = parseFloat(subTotal).toFixed(2);
+
+      filteredData = [data];
+
+      navigate("/buyer/checkout", {
+        state: { data: filteredData },
+      });
+    }
   };
 
   const handleTrashClick = (cart_item_id: string) => {
@@ -292,19 +313,33 @@ export function Transactions() {
   };
 
   const handleProceedCheckoutClick = () => {
-    const data = DUMMY_CART_PRODUCT;
+    if (sortedData) {
+      const date = new Date();
 
-    // Filter out the items with titles that are in filteredOutItems
-    const filteredData = data.filter(
-      (item) =>
-        !filteredOutItems.some(
-          (filteredItem) => filteredItem.title === item.title
-        )
-    );
+      const year = date.getFullYear();
+      let month = (date.getMonth() + 1).toString();
+      let day = date.getDate().toString();
 
-    navigate("/buyer/checkout", {
-      state: { data: filteredData },
-    });
+      month = month.length === 1 ? "0" + month : month;
+      day = day.length === 1 ? "0" + day : day;
+
+      const today = `${year}-${month}-${day}`;
+
+      const filteredData = sortedData.map((item) => {
+        const subTotal = item.cart_quantity * item.price;
+
+        item.created_at = today;
+        item.sub_total = parseFloat(subTotal).toFixed(2);
+
+        return item;
+      });
+
+      console.log("ALL DATA: ", filteredData);
+
+      navigate("/buyer/checkout", {
+        state: { data: filteredData },
+      });
+    }
   };
 
   const renderCartItems = () => {
@@ -314,6 +349,7 @@ export function Transactions() {
       }
 
       return sortedData.map((item) => {
+        console.log("EACH ITEM: ", item);
         return (
           <CartItem
             cartId={item.cart_id}
@@ -323,7 +359,7 @@ export function Transactions() {
             category={item.category}
             size={item.size}
             price={item.price}
-            quantity={item.quantity}
+            quantity={item.cart_quantity}
             handleQuantityChange={handleQuantityChange}
             handleTrashClick={handleTrashClick}
             handleBuyButtonClick={handleBuyButtonClick}
