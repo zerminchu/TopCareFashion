@@ -53,6 +53,9 @@ urlpatterns = [
     path("paid-orders/<str:paid_order_id>/",
          views.updatePaidOrderStatus, name="update-paid-order-status"),
 
+    # Webhook
+    path("webhook/stripe/", views.webhookStripe, name="webhook-stripe"),
+
 
     # Seller
     path("add-product/", views.add_product, name="add-product"),

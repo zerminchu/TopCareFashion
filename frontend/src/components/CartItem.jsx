@@ -107,7 +107,7 @@ function CartItem(props) {
         </div>
       </td>
       <td>
-        <Button onClick={() => props.handleBuyButtonClick(props.title)}>
+        <Button onClick={() => props.handleBuyButtonClick(props.cartItemId)}>
           Buy Now
         </Button>
       </td>

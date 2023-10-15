@@ -84,6 +84,18 @@ class Cart(models.Model):
     buyer_id = models.CharField(max_length=255, null=False, blank=False)
     size = models.CharField(max_length=255, null=False, blank=False)
 
+class PaidOrder(models.Model):
+    paid_order_id = models.CharField(max_length=255, null=False, blank=False)
+    charge_id = models.CharField(max_length=255, null=False, blank=False)
+    buyer_id = models.CharField(max_length=255, null=False, blank=False)
+    status = models.CharField(max_length=255, null=False, blank=False)
+    rated = models.BooleanField(default=False)
+    seller_id = models.CharField(max_length=255, null=False, blank=False)
+    created_at = models.DateTimeField(null=False, blank=False)
+    listing_id = models.CharField(max_length=255, null=False, blank=False)
+    item_id = models.CharField(max_length=255, null=False, blank=False)
+    quantity = models.PositiveIntegerField(null=False, blank=False)
+    size = models.CharField(max_length=255, null=False, blank=False)
 
 class Wishlist(models.Model):
     listing_id = models.CharField(max_length=255, null=False, blank=False)

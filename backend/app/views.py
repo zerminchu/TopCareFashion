@@ -1,5 +1,7 @@
 import io
 import os
+import uuid
+import json
 import random
 import re
 import uuid
@@ -576,6 +578,7 @@ def getListingDetailByItemId(request, item_id):
                 "listing_id": (listingData.to_dict())["listing_id"],
                 "title": (itemData.to_dict())["title"],
                 "user_id": (itemData.to_dict())["user_id"],
+                "item_id": (itemData.to_dict())["item_id"],
                 "collection_address": (listingData.to_dict())["collection_address"],
                 "size": ["S", "M", "L", "XL"],
                 "images": (itemData.to_dict())["image_urls"],
@@ -1369,6 +1372,80 @@ def updatePaidOrderStatus(request, paid_order_id):
                 raise Exception("Unknown order status")
 
         except Exception as e:
+            return JsonResponse({
+                "status": "error",
+                "message": str(e)
+            }, status=400)
+        
+@api_view(["POST"])
+def webhookStripe(request):
+    if request.method == "POST":
+        try:
+            payload = request.body
+            event = None
+
+            stripe.api_key = "sk_test_51LmU0QEDeJsL7mvQWznZX85lQ8T28onhbUw2otE3hnte3MeDZjNyYxjwbwIZhq2Cdp1vj4XfebLExzdxpQ64UHiV000sGoCmKR"
+            endpointSecret = "whsec_55LxoMXRzZ1YahRk9hw4titHnVLl6B64"
+
+            sig_header = request.META['HTTP_STRIPE_SIGNATURE']
+            
+            event = stripe.Webhook.construct_event(
+                payload, sig_header, endpointSecret
+            )
+
+            if event.type == 'checkout.session.completed':
+                data = event.data.object
+
+                paymentIntent = data["payment_intent"]
+                buyerId = data["metadata"]["buyer_id"]
+                createdAt = data["metadata"]["created_at"]
+                checkoutData = json.loads(data["metadata"]["checkout_data"])
+                chargeId = (stripe.PaymentIntent.retrieve(paymentIntent)).charges.data[0].id
+
+                responseData = []
+
+                for checkoutItem in checkoutData:
+                    db = firestore.client()
+                    paidOrderId = (db.collection("PaidOrder").document()).id
+
+                    paidOrderData = {
+                        "paid_order_id": paidOrderId,
+                        "charge_id": chargeId,
+                        "buyer_id": buyerId,
+                        "seller_id": checkoutItem["seller_id"],
+                        "status": "paid",
+                        "created_at": createdAt,
+                        "rated": False,
+                        "checkout_data": {
+                            "listing_id": checkoutItem["listing_id"],
+                            "item_id": checkoutItem["item_id"],
+                            "quantity": checkoutItem["quantity"],
+                            "size": checkoutItem["size"]
+                        }
+                    }
+
+                    paidOrderSerializer = PaidOrderSerializer(data=paidOrderData)
+                    checkoutDataSerializer = CheckoutDataSerializer(data=paidOrderData["checkout_data"])
+
+                    if(paidOrderSerializer.is_valid()):
+                        if(checkoutDataSerializer.is_valid()):
+                            paidOrderRef = db.collection("PaidOrder").document(paidOrderId)
+                            paidOrderRef.set(paidOrderData)
+                            responseData.append(paidOrderData)
+                        else:
+                            raise Exception(checkoutDataSerializer.errors)
+                    
+                    else:
+                        raise Exception(paidOrderSerializer.errors)
+
+                return JsonResponse({
+                    'status': "success",
+                    'message': "Paid order data saved successfully",
+                    'data': responseData
+                }, status=200)
+                
+        except Exception as e:
+            print("ERROR WEBHOOK: ", str(e))
             return JsonResponse({
                 "status": "error",
                 "message": str(e)

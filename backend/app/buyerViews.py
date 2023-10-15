@@ -19,6 +19,7 @@ from rest_framework.permissions import IsAuthenticated
 from config.firebase import firebase
 
 import stripe
+import json
 
 @api_view(["POST"])
 def getCheckoutLink(request):
@@ -28,6 +29,14 @@ def getCheckoutLink(request):
 
         if(len(data["checkout"]) <= 0):
            raise Exception("Checkout should have at least 1 item")
+        
+        if(len(data["meta_data"]) <= 0):
+           raise Exception("Meta data cannot be empty")
+        
+        metaData = {}
+        metaData["buyer_id"] = data["meta_data"]["buyer_id"]
+        metaData["created_at"] = data["meta_data"]["created_at"]
+        metaData["checkout_data"] = json.dumps(data["meta_data"]["checkout_data"])
         
         items = []
         
@@ -59,14 +68,15 @@ def getCheckoutLink(request):
 
           items.append(item)
 
-        stripe.api_key = "sk_test_51LmU0QEDeJsL7mvQWznZX85lQ8T28onhbUw2otE3hnte3MeDZjNyYxjwbwIZhq2Cdp1vj4XfebLExzdxpQ64UHiV000sGoCmKR"
+        stripe.api_key = "sk_test_51LmU0QEDeJsL7mvQWznZX85lQ8T28onhbUw2otE3hnte3MeDZjNyYxjwbwIZhq2Cdp1vj4XfebLExzdxpQ64UHiV000sGoCmKR"        
 
         checkoutSession = stripe.checkout.Session.create(
             mode="payment",
             success_url='http://localhost:5173/',
             cancel_url='http://localhost:5173/',
             payment_method_types=['card'],
-            line_items=items
+            line_items=items,
+            metadata=metaData
         )
 
         return JsonResponse({
@@ -434,14 +444,36 @@ def getCartDetailsByUserId(request, user_id):
           itemRef = db.collection("Item").document((item.to_dict())["item_id"])
           itemData = itemRef.get()
 
+          userRef = db.collection("Users").document((item.to_dict())["seller_id"])
+          userData = userRef.get()
+
+          sellerId = (item.to_dict())["seller_id"]
+
+          if(not userData.exists):
+             raise Exception(f"Seller {sellerId} does not exists")
+          
+          listingRef = db.collection("Listing").document((item.to_dict())["listing_id"])
+          listingData = listingRef.get()
+
+          listingId = (item.to_dict())["listing_id"]
+
+          if(not userData.exists):
+             raise Exception(f"Listing {listingId} does not exists")
+
+          fullData["listing_id"] = (item.to_dict())["listing_id"]
+          fullData["seller_id"] = (item.to_dict())["seller_id"]
+          fullData["store_name"] = (userData.to_dict())["business_profile"]["business_name"]
+          fullData["collection_address"] = (listingData.to_dict())["collection_address"]
+          fullData["quantity_available"] = (listingData.to_dict())["quantity_available"]
+          fullData["item_id"] = (item.to_dict())["item_id"]
           fullData["cart_id"] = cartId
           fullData["cart_item_id"] = (item.to_dict())["cart_item_id"]
           fullData["images"] = (itemData.to_dict())["image_urls"]
           fullData["title"] = (itemData.to_dict())["title"]
           fullData["category"] = (itemData.to_dict())["category"]
           fullData["size"] = (item.to_dict())["size"]
-          fullData["quantity"] = (item.to_dict())["cart_quantity"]
-          fullData["price"] = (itemData.to_dict())["price"]
+          fullData["cart_quantity"] = (item.to_dict())["cart_quantity"]
+          fullData["price"] = float((itemData.to_dict())["price"])
 
           cartItems.append(fullData)
 

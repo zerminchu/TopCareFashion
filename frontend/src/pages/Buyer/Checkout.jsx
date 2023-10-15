@@ -59,12 +59,15 @@ function Checkout() {
   const [active, setActive] = useState(1);
 
   const renderCheckoutItems = () => {
-    return checkoutItems.map((item) => {
+    return checkoutItems.map((item, index) => {
       return (
         <CheckoutItem
+          key={index}
           title={item.title}
           collection_address={item.collection_address}
           price={item.price}
+          size={item.size}
+          sub_total={item.sub_total}
           cart_quantity={item.cart_quantity}
           quantity_available={item.quantity_available}
           store_name={item.store_name}
@@ -80,7 +83,7 @@ function Checkout() {
 
     if (checkoutItems) {
       checkoutItems.map((item) => {
-        totalPrice += item.price * item.cart_quantity;
+        totalPrice += parseFloat(item.sub_total);
       });
     }
 
@@ -92,52 +95,94 @@ function Checkout() {
   };
 
   const orderOnClick = async () => {
-    try {
-      dispatch({ type: "SET_LOADING", value: true });
+    if (currentUser) {
+      try {
+        dispatch({ type: "SET_LOADING", value: true });
 
-      let checkoutData = [];
+        let checkoutData = [];
+        let checkoutMetaData = [];
 
-      checkoutItems.map((item) => {
+        checkoutItems.map((item) => {
+          const data = {
+            title: item.title,
+            quantity: item.cart_quantity,
+            price: parseFloat(item.price),
+          };
+
+          const additionalData = {
+            seller_id: item.seller_id,
+            listing_id: item.listing_id,
+            item_id: item.item_id,
+            quantity: item.cart_quantity,
+            size: item.size,
+          };
+
+          checkoutMetaData.push(additionalData);
+          checkoutData.push(data);
+        });
+
+        const date = new Date();
+
+        const year = date.getFullYear();
+        let month = (date.getMonth() + 1).toString();
+        let day = date.getDate().toString();
+
+        month = month.length === 1 ? "0" + month : month;
+        day = day.length === 1 ? "0" + day : day;
+
+        const today = `${year}-${month}-${day}`;
+
+        const url =
+          import.meta.env.VITE_NODE_ENV == "DEV"
+            ? import.meta.env.VITE_API_DEV
+            : import.meta.env.VITE_API_PROD;
+
         const data = {
-          title: item.title,
-          quantity: item.cart_quantity,
-          price: parseFloat(item.price),
+          checkout: checkoutData,
+          meta_data: {
+            buyer_id: currentUser.user_id,
+            created_at: today,
+            checkout_data: checkoutMetaData,
+          },
         };
 
-        checkoutData.push(data);
-      });
+        console.log("Data sent: ", data);
 
-      const url =
-        import.meta.env.VITE_NODE_ENV == "DEV"
-          ? import.meta.env.VITE_API_DEV
-          : import.meta.env.VITE_API_PROD;
+        const response = await axios.post(`${url}/buyer/checkout/`, data);
 
-      const response = await axios.post(`${url}/buyer/checkout/`, {
-        checkout: checkoutData,
-      });
+        dispatch({ type: "SET_LOADING", value: false });
 
-      dispatch({ type: "SET_LOADING", value: false });
-
-      window.open(response.data.data.url);
-    } catch (error) {
-      dispatch({ type: "SET_LOADING", value: false });
-      showNotifications({
-        status: "error",
-        title: "Error",
-        message: error.response.data.message,
-      });
+        window.open(response.data.data.url);
+      } catch (error) {
+        console.log(error);
+        dispatch({ type: "SET_LOADING", value: false });
+        showNotifications({
+          status: "error",
+          title: "Error",
+          message: error.response.data.message,
+        });
+      }
     }
   };
 
   return (
     <div className={classes.container}>
       <Stepper active={active} onStepClick={setActive} breakpoint="sm">
-        <Stepper.Step label="Shopping cart" allowStepSelect={active < 0}></Stepper.Step>
-        <Stepper.Step label="Purchased" allowStepSelect={active < 0}></Stepper.Step>
+        <Stepper.Step
+          label="Shopping cart"
+          allowStepSelect={active < 0}
+        ></Stepper.Step>
+        <Stepper.Step
+          label="Purchased"
+          allowStepSelect={active < 0}
+        ></Stepper.Step>
         <Stepper.Step label="Available for pickup" allowStepSelect={active < 0}>
           Available for pickup
         </Stepper.Step>
-        <Stepper.Step label="Completed" allowStepSelect={active < 0}></Stepper.Step>
+        <Stepper.Step
+          label="Completed"
+          allowStepSelect={active < 0}
+        ></Stepper.Step>
       </Stepper>
 
       <div className={classes.itemList}>{renderCheckoutItems()}</div>

@@ -93,3 +93,26 @@ class CategorySelectionSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
         #exclude = ['date_of_birth','role']
+        
+class PaidOrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PaidOrder
+        fields = [
+            "charge_id",
+            "buyer_id",
+            "seller_id",
+            "status",
+            "rated",
+            "created_at"
+        ]
+
+
+class CheckoutDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PaidOrder
+        fields = [
+            'listing_id',
+            'item_id',
+            'quantity',
+            'size',
+        ]
