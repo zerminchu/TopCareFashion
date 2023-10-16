@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/jsx-key */
 import { Button, Radio, Text, Group, NumberInput } from "@mantine/core";
 import { useEffect, useState } from "react";
@@ -183,6 +184,7 @@ function ProductDetails() {
         buyer_id: currentUser.user_id,
         size: selectedSize,
       };
+      console.log(selectedSize);
 
       const url =
         import.meta.env.VITE_NODE_ENV == "DEV"
@@ -304,7 +306,7 @@ function ProductDetails() {
         item_id: productDetails.item_id,
         store_name: productDetails.store_name,
         title: productDetails.title,
-        size: productDetails.size,
+        size: selectedSize,
         collection_address: productDetails.collection_address,
         price: productDetails.price,
         cart_quantity: quantity,
@@ -315,8 +317,6 @@ function ProductDetails() {
         sub_total: parseFloat(subTotal).toFixed(2),
       },
     ];
-
-    console.log("data: ", data);
 
     navigate("/buyer/checkout", {
       state: { data: data },
