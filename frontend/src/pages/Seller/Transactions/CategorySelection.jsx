@@ -13,7 +13,7 @@ function CategorySelection() {
   const [topCategories, setTopCategories] = useState({});
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState();
-  const [sellerPreferences, setSellerPreferences] = useState([]);
+  const [selectedPreferences, setSelectedPreferences] = useState([]);
 
   const url =
     import.meta.env.VITE_NODE_ENV === "DEV"
@@ -36,30 +36,36 @@ function CategorySelection() {
   }, []);
 
   const toggleSubCategory = (subCategory) => {
-    if (selectedSubCategories.includes(subCategory)) {
-      setSelectedSubCategories(
-        selectedSubCategories.filter((selected) => selected !== subCategory)
-      );
+    const updatedSelectedSubCategories = [...selectedSubCategories];
+    const updatedSelectedPreferences = [...selectedPreferences];
+
+    if (updatedSelectedSubCategories.includes(subCategory)) {
+      const subIndex = updatedSelectedSubCategories.indexOf(subCategory);
+      updatedSelectedSubCategories.splice(subIndex, 1);
+      updatedSelectedPreferences.splice(subIndex, 1);
     } else {
-      setSelectedSubCategories([...selectedSubCategories, subCategory]);
+      updatedSelectedSubCategories.push(subCategory);
+      updatedSelectedPreferences.push(subCategory);
     }
+
+    setSelectedSubCategories(updatedSelectedSubCategories);
+    setSelectedPreferences(updatedSelectedPreferences);
   };
 
-  const hasSelectedSubCategories = selectedSubCategories.length > 0;
-
   const listItem = () => {
-    const selectedSubCategoriesString = selectedSubCategories.join(",");
-    navigate(
-      `/seller/upload-image?subCategories=${selectedSubCategoriesString}`
-    );
-
     axios
       .put(`${url}/add-preference/${currentUser.user_id}/`, {
         seller_preferences: {
           selectedSubCategories,
         },
       })
-      .then(() => {})
+      .then(() => {
+        navigate("/seller/upload-image", {
+          state: {
+            selectedSubCategories,
+          },
+        });
+      })
       .catch((error) => {
         console.error("Error saving preferences:", error);
       });
@@ -97,17 +103,30 @@ function CategorySelection() {
   useEffect(() => {
     const fetchSellerPreferences = async () => {
       try {
-        const response = await axios.get(`${url}/user/${currentUser.user_id}`);
-        const sellerPreferences = response.data.seller_preferences;
-        setSellerPreferences(sellerPreferences);
-        console.log(sellerPreferences);
+        if (currentUser) {
+          const response = await axios.get(
+            `${url}/user/${currentUser.user_id}`
+          );
+          const preference =
+            response.data.data.seller_preferences.selectedSubCategories;
+
+          setSelectedSubCategories(preference);
+          setSelectedPreferences(preference);
+          console.log(preference);
+        }
       } catch (error) {
         console.error("Error fetching seller preferences:", error);
       }
     };
 
-    fetchSellerPreferences();
-  }, []);
+    if (currentUser) {
+      fetchSellerPreferences();
+    }
+  }, [currentUser]);
+
+  const combinedSelectedCategories = [
+    ...new Set([...selectedPreferences, ...selectedSubCategories]),
+  ];
 
   return (
     <div className={classes.pageContainer}>
@@ -126,9 +145,9 @@ function CategorySelection() {
               }`}
             >
               <div className={classes.iconContainer}>
-                {selectedSubCategories.includes(subCategory) ? (
+                {combinedSelectedCategories.includes(subCategory) && (
                   <AiOutlineCheck />
-                ) : null}
+                )}
               </div>
               <div className={classes.content}>
                 <Text fz="xl" fw={600} mb={2} lh={1.2}>
@@ -158,7 +177,7 @@ function CategorySelection() {
       <br />
       <br />
 
-      {hasSelectedSubCategories && (
+      {combinedSelectedCategories.length > 0 && (
         <Button onClick={listItem} className={classes.selectButton}>
           Select
         </Button>

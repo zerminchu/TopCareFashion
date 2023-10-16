@@ -87,7 +87,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-function ImageUpload() {
+function ImageUpload(props) {
   const { classes, theme } = useStyles();
   const openRef = useRef(null);
   const [progress, setProgress] = useState(0);
@@ -166,9 +166,17 @@ function ImageUpload() {
     }
   }, [currentUser]);
 
-  const handleClick = () => {
+  const handleClick = async () => {
     if (uploadedImages.length > 0) {
       const firstImageUrl = uploadedImages[0];
+
+      try {
+        const user = await retrieveUserInfo();
+        setCurrentUser(user);
+        console.log(user);
+      } catch (error) {
+        console.log(error);
+      }
 
       fetch(firstImageUrl)
         .then((response) => response.blob())
@@ -327,7 +335,7 @@ function ImageUpload() {
     setCorrectCategory(category);
   };
 
-  const handleEditPreferences = () => {
+  const handleEditPreferences = (sellerPreferences) => {
     navigate("/seller/category-selection");
   };
 
@@ -410,7 +418,7 @@ function ImageUpload() {
             size="md"
             radius="xl"
             onClick={() => openRef.current?.()}
-            disabled={imageUploaded}
+            disabled={uploadedImages.length > 0}
           >
             Select image
           </Button>
