@@ -5,6 +5,7 @@ import json
 import random
 import re
 import uuid
+import stripe
 
 import numpy as np
 import tensorflow as tf
@@ -21,6 +22,7 @@ from rest_framework.decorators import (api_view, parser_classes,
 from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+
 
 import tensorflow as tf
 import torch
@@ -580,7 +582,7 @@ def getListingDetailByItemId(request, item_id):
                 "user_id": (itemData.to_dict())["user_id"],
                 "item_id": (itemData.to_dict())["item_id"],
                 "collection_address": (listingData.to_dict())["collection_address"],
-                "size": ["S", "M", "L", "XL"],
+                "size": (itemData.to_dict())["size"],
                 "images": (itemData.to_dict())["image_urls"],
                 "price": (itemData.to_dict())["price"],
                 "quantity_available": (listingData.to_dict())["quantity_available"],
@@ -725,7 +727,10 @@ def add_product(request):
                 title = validated_data["title"]
                 description = validated_data["description"]
                 price = validated_data["price"]
+                size = validated_data["size"]
                 uploaded_files = request.FILES.getlist('files')
+
+                size_list = [s.strip() for s in size.split(",")]
 
                 image_urls = []
 
@@ -761,7 +766,8 @@ def add_product(request):
                     "description": description,
                     "price": price,
                     "image_urls": image_urls,
-                    "user_id": user_id
+                    "user_id": user_id,
+                    "size": size_list
                 })
 
                 collection_address = request.data.get("collection_address")
@@ -1030,65 +1036,6 @@ def delete_item(request, user_id, item_id):
         except Exception as e:
             return Response({"error": str(e)}, status=500)
 
-
-""" @api_view(["POST"])
-@parser_classes([MultiPartParser])
-def classify_image(request):
-    try:
-        image_data = request.data.get("image")
-        img = PILImage.create(image_data)
-
-        # Load the saved model and classes
-        model_path = os.path.join('./ML/', "stage-1_resnet34.pkl")
-        classes_path = os.path.join('./ML/', "classes.txt")
-
-        # Load the classes from the classes.txt file
-        with open(classes_path, 'r') as f:
-            categories = f.read().splitlines()
-
-        # Set the number of output classes based on the length of categories
-        n_out = len(categories)
-
-        # Create empty data loaders to initialize the model
-        dls = ImageDataLoaders.from_df(pd.DataFrame(
-            {'path': []}), path='./ML/', valid_pct=0)
-
-        # Load the model architecture and weights, explicitly setting n_out and data loaders
-        model = cnn_learner(dls, resnet34, n_out=n_out, pretrained=False)
-        model.load(model_path)
-
-        # Preprocess the image using data transformations
-        img = model.dls.test_dl([img])
-        img = img.to(model.dls.device)
-
-        # Make a prediction
-        class_prediction, _, _ = model.get_preds(dl=img)
-        predicted_class = class_prediction.argmax(dim=1).item()
-
-        # Get the predicted category
-        predicted_category = categories[predicted_class]
-
-        # Map predicted category to your specified categories
-        category = None
-        if predicted_category in ["T-shirt/top", "Blouse", "Tank"]:
-            category = "Top"
-        elif predicted_category in ["Jeans", "Shorts", "Trousers"]:
-            category = "Bottom"
-        elif predicted_category in ["Sandal", "Sneaker", "Ankle boot"]:
-            category = "Footwear"
-        elif predicted_category == "Bag":
-            category = "Accessory"
-        else:
-            category = "Unknown"
-
-        response_data = {
-            "predicted_category": predicted_category,
-            "category": category
-        }
-        return JsonResponse(response_data)
-
-    except Exception as e:
-        return JsonResponse({"error": str(e)}, status=400) """
 
 model_path = './ML/stage-1_resnet34.pkl'
 class_labels_path = './ML/class.txt'

@@ -327,6 +327,10 @@ function ImageUpload() {
     setCorrectCategory(category);
   };
 
+  const handleEditPreferences = () => {
+    navigate("/seller/category-selection");
+  };
+
   return (
     <div>
       <div
@@ -567,7 +571,7 @@ function ImageUpload() {
             }}
           >
             <Button
-              // onClick={handleEditPreferences}
+              onClick={handleEditPreferences}
               style={{
                 fontSize: "14px",
                 fontWeight: "bold",

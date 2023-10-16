@@ -13,6 +13,7 @@ import {
   useMantineTheme,
   Modal,
   Text,
+  MultiSelect,
 } from "@mantine/core";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -110,6 +111,14 @@ function ListItem() {
   ]);
   const [selectedContainerIndex, setSelectedContainerIndex] = useState(null);
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
+  const sizeOptions = ["S", "M", "L", "XL", "XXL", "Free Size"];
+  const [selectedSizes, setSelectedSizes] = useState([]);
+
+  const handleSizeChange = (value) => {
+    setSelectedSizes([value]);
+  };
+
+  console.log(selectedSizes);
 
   const [showCategoryMismatchModal, setShowCategoryMismatchModal] =
     useState(false);
@@ -123,6 +132,7 @@ function ListItem() {
       try {
         const user = await retrieveUserInfo();
         setCurrentUser(user);
+        console.log(user);
       } catch (error) {
         console.log(error);
       }
@@ -200,7 +210,7 @@ function ListItem() {
       formData.append("collection_address", collection_address);
       formData.append("user_id", currentUser.user_id);
       formData.append("avail_status", avail_status);
-
+      formData.append("size", selectedSizes.join(","));
       const url =
         import.meta.env.VITE_NODE_ENV == "DEV"
           ? import.meta.env.VITE_API_DEV
@@ -562,7 +572,6 @@ function ListItem() {
             </Badge>
           </div>
         </div>
-
         <Select
           mt="md"
           withinPortal
@@ -580,7 +589,6 @@ function ListItem() {
           error={validateCondition(condition)}
         />
         <br />
-
         <TextInput
           label="Colour"
           value={colour}
@@ -634,6 +642,18 @@ function ListItem() {
           classNames={classes}
           style={{ width: "50%" }}
           error={validatePrice(price)}
+        />
+        <br />
+
+        <MultiSelect
+          label="Select Sizes"
+          placeholder="S,M,L,XL,XXL,Free size"
+          data={sizeOptions}
+          value={handleSizeChange}
+          onChange={setSelectedSizes}
+          hidePickedOptions
+          classNames={classes}
+          style={{ width: "50%" }}
         />
         <br />
         <TextInput

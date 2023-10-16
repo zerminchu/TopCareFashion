@@ -61,6 +61,8 @@ class Item(models.Model):
     price = models.CharField(max_length=255)
     description = models.CharField(max_length=255)
     image_urls = models.JSONField(default=list)
+    size = models.CharField(max_length=20, blank=True, null=True)
+
 
 
 class Listing(models.Model):

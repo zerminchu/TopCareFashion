@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React, { useState } from "react";
 import classes from "./Product.module.css";
@@ -32,7 +33,7 @@ function Product(props) {
 
   aa("setUserToken", "user-1"); */
 
-  const [isAddToCart, setisAddToCart] = useState(false);
+  //const [isAddToCart, setisAddToCart] = useState(false);
 
   const onClick = () => {
     if (props.item_id) {
@@ -45,7 +46,7 @@ function Product(props) {
       });
     }
   };
-
+  /* 
   const addToCartOnClick = async (e) => {
     e.stopPropagation();
 
@@ -73,7 +74,7 @@ function Product(props) {
       }
     }
   };
-
+ */
   return (
     <div className={classes.card} onClick={onClick}>
       <div className={classes.cardHeader}>
@@ -87,8 +88,8 @@ function Product(props) {
         <Text className={classes.greyCategory}>{props.condition}</Text>
       </div>
       <div className={classes.cardFooter}>
-        <Button variant="outline" onClick={addToCartOnClick}>
-          Add to cart
+        <Button variant="outline" onClick={onClick}>
+          View
         </Button>
       </div>
     </div>

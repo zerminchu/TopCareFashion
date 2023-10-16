@@ -13,6 +13,7 @@ function CategorySelection() {
   const [topCategories, setTopCategories] = useState({});
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState();
+  const [sellerPreferences, setSellerPreferences] = useState([]);
 
   const url =
     import.meta.env.VITE_NODE_ENV === "DEV"
@@ -91,6 +92,21 @@ function CategorySelection() {
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
+  }, []);
+
+  useEffect(() => {
+    const fetchSellerPreferences = async () => {
+      try {
+        const response = await axios.get(`${url}/user/${currentUser.user_id}`);
+        const sellerPreferences = response.data.seller_preferences;
+        setSellerPreferences(sellerPreferences);
+        console.log(sellerPreferences);
+      } catch (error) {
+        console.error("Error fetching seller preferences:", error);
+      }
+    };
+
+    fetchSellerPreferences();
   }, []);
 
   return (
