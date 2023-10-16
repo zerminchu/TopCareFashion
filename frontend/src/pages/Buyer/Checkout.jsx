@@ -85,6 +85,8 @@ function Checkout() {
       checkoutItems.map((item) => {
         totalPrice += parseFloat(item.sub_total);
       });
+
+      totalPrice = totalPrice.toFixed(2)
     }
 
     return (
@@ -109,13 +111,19 @@ function Checkout() {
             price: parseFloat(item.price),
           };
 
+          // const additionalData = {
+          //   seller_id: item.seller_id,
+          //   listing_id: item.listing_id,
+          //   item_id: item.item_id,
+          //   quantity: item.cart_quantity,
+          //   size: item.size,
+          // };
+
           const additionalData = {
-            seller_id: item.seller_id,
-            listing_id: item.listing_id,
-            item_id: item.item_id,
-            quantity: item.cart_quantity,
-            size: item.size,
-          };
+            id: item.listing_id,
+            q: item.cart_quantity,
+            s: item.size
+          }
 
           checkoutMetaData.push(additionalData);
           checkoutData.push(data);

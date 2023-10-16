@@ -1144,21 +1144,36 @@ def webhookStripe(request):
 
                 for checkoutItem in checkoutData:
                     db = firestore.client()
+                    
+                    listingId = checkoutItem["id"]
+                    listingRef = db.collection("Listing").document(checkoutItem["id"])
+                    listingData = listingRef.get()
+
+                    if(not listingData.exists):
+                        raise Exception(f"Listing ID {listingId} does not exists")
+                    
+                    itemId = (listingData.to_dict())["item_id"]
+                    itemRef = db.collection("Item").document(itemId)
+                    itemData = itemRef.get()
+
+                    if(not itemData.exists):
+                        raise Exception(f"Item ID {itemId} does not exists" )
+                    
                     paidOrderId = (db.collection("PaidOrder").document()).id
 
                     paidOrderData = {
                         "paid_order_id": paidOrderId,
                         "charge_id": chargeId,
                         "buyer_id": buyerId,
-                        "seller_id": checkoutItem["seller_id"],
+                        "seller_id": (itemData.to_dict())["user_id"],
                         "status": "paid",
                         "created_at": createdAt,
                         "rated": False,
                         "checkout_data": {
-                            "listing_id": checkoutItem["listing_id"],
-                            "item_id": checkoutItem["item_id"],
-                            "quantity": checkoutItem["quantity"],
-                            "size": checkoutItem["size"]
+                            "listing_id": listingId,
+                            "item_id": itemId,
+                            "quantity": checkoutItem["q"],
+                            "size": checkoutItem["s"]
                         }
                     }
 

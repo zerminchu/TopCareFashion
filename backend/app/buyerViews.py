@@ -37,6 +37,10 @@ def getCheckoutLink(request):
         metaData["buyer_id"] = data["meta_data"]["buyer_id"]
         metaData["created_at"] = data["meta_data"]["created_at"]
         metaData["checkout_data"] = json.dumps(data["meta_data"]["checkout_data"])
+        print(len(metaData["checkout_data"]))
+
+        if(len(metaData["checkout_data"]) > 500):
+           raise Exception("You cannot checkout too many items")
         
         items = []
         
