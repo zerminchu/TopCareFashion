@@ -179,7 +179,7 @@ function SellerSummary() {
 
   return (
     <div className={classes.container}>
-      <Text fw={500}>Your Summary</Text>
+      <h2>Your Summaries and Orders</h2>
       <div className={classes.sideBySideContainer}>
         <div className={classes.div2}>{renderRevenue()}</div>
         <div className={classes.div3}>{renderOrderCompleted()}</div>
