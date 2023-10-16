@@ -1347,7 +1347,8 @@ def webhookStripe(request):
                 buyerId = data["metadata"]["buyer_id"]
                 createdAt = data["metadata"]["created_at"]
                 checkoutData = json.loads(data["metadata"]["checkout_data"])
-                chargeId = (stripe.PaymentIntent.retrieve(paymentIntent)).charges.data[0].id
+                #chargeId = (stripe.PaymentIntent.retrieve(paymentIntent)).charges.data[0].id
+                chargeId = stripe.PaymentIntent.retrieve(paymentIntent)["charges"]["data"][0]["id"]
 
                 responseData = []
 

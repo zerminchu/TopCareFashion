@@ -304,7 +304,7 @@ function ProductDetails() {
         item_id: productDetails.item_id,
         store_name: productDetails.store_name,
         title: productDetails.title,
-        size: productDetails.size,
+        size: selectedSize,
         collection_address: productDetails.collection_address,
         price: productDetails.price,
         cart_quantity: quantity,
