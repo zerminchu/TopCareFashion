@@ -660,7 +660,6 @@ function ImageUpload() {
         style={{
           display: "flex",
           alignItems: "center",
-          padding: "20px",
           maxWidth: "400px",
           background: "white",
           borderRadius: "8px",

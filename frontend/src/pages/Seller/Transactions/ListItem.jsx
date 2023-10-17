@@ -118,8 +118,6 @@ function ListItem() {
     setSelectedSizes([value]);
   };
 
-  console.log(selectedSizes);
-
   const [showCategoryMismatchModal, setShowCategoryMismatchModal] =
     useState(false);
 
@@ -303,6 +301,13 @@ function ListItem() {
   const validateQuantityAvailable = (value) => {
     if (formSubmitted) {
       if (value.length === 0) return "Quantity Available should not be blank";
+    }
+    return null;
+  };
+
+  const validateSize = (value) => {
+    if (formSubmitted) {
+      if (value.length === 0) return "Size should not be empty";
     }
     return null;
   };
@@ -647,13 +652,14 @@ function ListItem() {
 
         <MultiSelect
           label="Select Sizes"
-          placeholder="S,M,L,XL,XXL,Free size"
+          placeholder="S, M, L, XL, XXL, Free size"
           data={sizeOptions}
           value={handleSizeChange}
           onChange={setSelectedSizes}
           hidePickedOptions
           classNames={classes}
           style={{ width: "50%" }}
+          error={validateSize(quantity_available)}
         />
         <br />
         <TextInput
