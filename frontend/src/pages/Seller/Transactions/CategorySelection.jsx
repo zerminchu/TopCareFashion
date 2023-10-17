@@ -36,8 +36,12 @@ function CategorySelection() {
   }, []);
 
   const toggleSubCategory = (subCategory) => {
-    const updatedSelectedSubCategories = [...selectedSubCategories];
-    const updatedSelectedPreferences = [...selectedPreferences];
+    const updatedSelectedSubCategories = Array.isArray(selectedSubCategories)
+      ? [...selectedSubCategories]
+      : [];
+    const updatedSelectedPreferences = Array.isArray(selectedPreferences)
+      ? [...selectedPreferences]
+      : [];
 
     if (updatedSelectedSubCategories.includes(subCategory)) {
       const subIndex = updatedSelectedSubCategories.indexOf(subCategory);
@@ -112,7 +116,6 @@ function CategorySelection() {
 
           setSelectedSubCategories(preference);
           setSelectedPreferences(preference);
-          console.log(preference);
         }
       } catch (error) {
         console.error("Error fetching seller preferences:", error);
@@ -125,7 +128,10 @@ function CategorySelection() {
   }, [currentUser]);
 
   const combinedSelectedCategories = [
-    ...new Set([...selectedPreferences, ...selectedSubCategories]),
+    ...new Set([
+      ...(selectedPreferences || []),
+      ...(selectedSubCategories || []),
+    ]),
   ];
 
   return (
@@ -139,6 +145,7 @@ function CategorySelection() {
             <UnstyledButton
               onClick={() => toggleSubCategory(subCategory)}
               className={`${classes.button} ${
+                selectedSubCategories &&
                 selectedSubCategories.includes(subCategory)
                   ? classes.selected
                   : ""
