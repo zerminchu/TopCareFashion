@@ -494,7 +494,7 @@ function ListItem() {
                   <Modal
                     opened={showCategoryMismatchModal}
                     onClose={() => setShowCategoryMismatchModal(false)}
-                    contentLabel="Category Mismatch Modal"
+                    contentlabel="Category Mismatch Modal"
                   >
                     <div className={classes.modalTitle}>
                       Oops, a Category Mix-up!

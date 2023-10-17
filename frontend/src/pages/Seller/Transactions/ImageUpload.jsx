@@ -87,7 +87,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-function ImageUpload(props) {
+function ImageUpload() {
   const { classes, theme } = useStyles();
   const openRef = useRef(null);
   const [progress, setProgress] = useState(0);
@@ -557,7 +557,7 @@ function ImageUpload(props) {
           <Button
             variant="filled"
             color="red"
-            marginLeft="-100px"
+            marginleft="-100px"
             onClick={closeModal}
             style={{
               backgroundColor: "#ff5454",
@@ -595,7 +595,7 @@ function ImageUpload(props) {
       <Modal
         opened={showModal}
         onClose={closeModal}
-        contentLabel="Predicted Category Modal"
+        contentlabel="Predicted Category Modal"
         style={{
           display: "flex",
           flexDirection: "column",
@@ -656,7 +656,7 @@ function ImageUpload(props) {
       <Modal
         opened={showCorrectCategoryModal}
         onClose={() => setShowCorrectCategoryModal(false)}
-        contentLabel="Correct Category Modal"
+        contentlabel="Correct Category Modal"
         style={{
           display: "flex",
           alignItems: "center",
