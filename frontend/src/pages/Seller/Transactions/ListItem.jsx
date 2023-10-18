@@ -170,8 +170,6 @@ function ListItem() {
     try {
       dispatch({ type: "SET_LOADING", value: true });
 
-      const imageUrls = [];
-
       const uploadedFiles = await Promise.all(
         uploadedImages.map(async (blobUrl) => {
           const response = await fetch(blobUrl);
@@ -181,8 +179,11 @@ function ListItem() {
 
       const additionalImagesFiles = await Promise.all(
         additionalUploadedImages.flat().map(async (blobUrl) => {
-          const response = await fetch(blobUrl);
-          return new Blob([await response.blob()]);
+          if (blobUrl) {
+            const response = await fetch(blobUrl);
+            return new Blob([await response.blob()]);
+          }
+          return null;
         })
       );
 

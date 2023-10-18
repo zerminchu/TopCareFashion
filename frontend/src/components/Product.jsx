@@ -30,6 +30,7 @@ function Product(props) {
       insightsClient: aa,
     })
   ); 
+  
 
   aa("setUserToken", "user-1"); */
 

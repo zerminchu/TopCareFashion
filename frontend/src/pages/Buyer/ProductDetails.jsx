@@ -69,6 +69,7 @@ function ProductDetails() {
         if (itemId) {
           const response = await axios.get(`${url}/listing-detail/${itemId}`);
           setProductDetails(response.data.data);
+          console.log(response.data);
         }
       } catch (error) {
         showNotifications({

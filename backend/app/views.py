@@ -578,6 +578,7 @@ def getListingDetailByItemId(request, item_id):
 
             responseData = {
                 "listing_id": (listingData.to_dict())["listing_id"],
+                "avail_status": (listingData.to_dict())["avail_status"],
                 "title": (itemData.to_dict())["title"],
                 "user_id": (itemData.to_dict())["user_id"],
                 "item_id": (itemData.to_dict())["item_id"],
