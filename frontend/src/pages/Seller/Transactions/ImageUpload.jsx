@@ -1,15 +1,15 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable no-unused-vars */
-import { useRef, useState, useEffect } from "react";
-import { Text, Group, Button, createStyles, rem, Modal } from "@mantine/core";
+import { Button, Group, Modal, Text, createStyles, rem } from "@mantine/core";
 import { Dropzone } from "@mantine/dropzone";
-import { IconCloudUpload, IconX, IconDownload } from "@tabler/icons-react";
 import { useInterval } from "@mantine/hooks";
-import { useNavigate, Link, useLocation } from "react-router-dom";
-import { retrieveUserInfo } from "../../../utils/RetrieveUserInfoFromToken";
-import Cookies from "js-cookie";
-import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { IconCloudUpload, IconDownload, IconX } from "@tabler/icons-react";
 import axios from "axios";
+import Cookies from "js-cookie";
+import { useEffect, useRef, useState } from "react";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { Link, useNavigate } from "react-router-dom";
+import { retrieveUserInfo } from "../../../utils/RetrieveUserInfoFromToken";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -106,6 +106,7 @@ function ImageUpload() {
   const [showWarningModal, setShowWarningModal] = useState(false);
   const [fetchedCategory, setFetchedCategory] = useState("");
   const navigate = useNavigate();
+  const [clothingCategories, setClothingCategories] = useState([]);
 
   /*   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
@@ -282,55 +283,6 @@ function ImageUpload() {
     setShowModal(false);
   };
 
-  const clothingCategories = [
-    "Anorak",
-    "Blazer",
-    "Blouse",
-    "Bomber",
-    "Button-Down",
-    "Caftan",
-    "Capris",
-    "Cardigan",
-    "Chinos",
-    "Coat",
-    "Coverup",
-    "Culottes",
-    "Cutoffs",
-    "Dress",
-    "Flannel",
-    "Gauchos",
-    "Halter",
-    "Henley",
-    "Hoodie",
-    "Jacket",
-    "Jeans",
-    "Jeggings",
-    "Jersey",
-    "Jodhpurs",
-    "Joggers",
-    "Jumpsuit",
-    "Kaftan",
-    "Kimono",
-    "Leggings",
-    "Onesie",
-    "Parka",
-    "Peacoat",
-    "Poncho",
-    "Robe",
-    "Romper",
-    "Sarong",
-    "Shorts",
-    "Skirt",
-    "Sweater",
-    "Sweatpants",
-    "Sweatshorts",
-    "Tank",
-    "Tee",
-    "Top",
-    "Trunks",
-    "Turtleneck",
-  ];
-
   const handleCategorySelect = (category) => {
     setCorrectCategory(category);
   };
@@ -338,6 +290,30 @@ function ImageUpload() {
   const handleEditPreferences = (sellerPreferences) => {
     navigate("/seller/category-selection");
   };
+
+  useEffect(() => {
+    fetchClothingCategories();
+  }, []);
+
+  const fetchClothingCategories = async () => {
+    try {
+      const url =
+        import.meta.env.VITE_NODE_ENV === "DEV"
+          ? import.meta.env.VITE_API_DEV
+          : import.meta.env.VITE_API_PROD;
+
+      const response = await axios.get(`${url}/get-all-category/`);
+      const categoryFetch =
+        response.data?.categories?.map((item) => item.category) || [];
+      setClothingCategories(categoryFetch);
+    } catch (error) {
+      console.error("Error fetching clothing categories:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchClothingCategories();
+  }, []);
 
   return (
     <div>
