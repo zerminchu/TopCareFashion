@@ -197,12 +197,24 @@ function ProductDetails() {
       };
       console.log(selectedSize);
 
-      aa('convertedObjectIDs', {
+      aa('convertedObjectIDs', { //for trending 
         userToken: currentUser.user_id,
         eventName: 'Add To Cart',
         index: 'Item_Index',
         objectIDs: [itemId],
         
+      });
+
+      aa('addedToCartObjectIDs', { //for related
+        userToken: currentUser.user_id,
+        eventName: 'Add_To_Cart',
+        index: 'Item_Index',
+        objectIDs: [itemId],
+        objectData: [{
+          price: productDetails.price,
+          color: productDetails.color
+        }],
+        currency: 'SGD'
       });
 
       const url =
