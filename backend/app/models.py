@@ -98,6 +98,7 @@ class PaidOrder(models.Model):
     item_id = models.CharField(max_length=255, null=False, blank=False)
     quantity = models.PositiveIntegerField(null=False, blank=False)
     size = models.CharField(max_length=255, null=False, blank=False)
+    receipt_url = models.CharField(max_length=255, null=False, blank=False)
 
 class Wishlist(models.Model):
     listing_id = models.CharField(max_length=255, null=False, blank=False)

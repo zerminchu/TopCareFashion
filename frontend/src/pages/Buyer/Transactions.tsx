@@ -9,7 +9,7 @@ import axios from "axios";
 
 import classes from "./Transactions.module.css";
 
- function Transactions() {
+function Transactions() {
   const navigate = useNavigate();
 
   const [currentUser, setCurrentUser] = useState();
@@ -44,7 +44,7 @@ import classes from "./Transactions.module.css";
       try {
         const user = await retrieveUserInfo();
         setCurrentUser(user);
-        console.log(user)
+        console.log(user);
       } catch (error) {
         showNotifications({
           status: "error",
@@ -61,9 +61,7 @@ import classes from "./Transactions.module.css";
     }
   }, []);
 
-  
-
-/*   useEffect(() => {
+  /*   useEffect(() => {
     const fetchBuyerReviews = async () => {
       try {
         const url =
@@ -92,9 +90,6 @@ import classes from "./Transactions.module.css";
     }
   }, [currentUser]);
  */
-
-
-
 
   const renderTransactionItem = () => {
     if (sortedData) {
@@ -193,6 +188,7 @@ import classes from "./Transactions.module.css";
               <th>Status</th>
               <th>Rate</th>
               <th>Details</th>
+              <th>Invoice</th>
             </tr>
           </thead>
           <tbody>{renderTransactionItem()}</tbody>

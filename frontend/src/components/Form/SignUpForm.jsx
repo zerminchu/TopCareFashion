@@ -106,8 +106,6 @@ function SignUpForm(props) {
           data.preferences = JSON.parse(Cookies.get("buyerPreferences"));
         }
 
-        console.log("PASS DATA TO SERVER: ", data);
-
         const url =
           import.meta.env.VITE_NODE_ENV == "DEV"
             ? import.meta.env.VITE_API_DEV

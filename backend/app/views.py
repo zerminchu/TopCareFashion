@@ -1357,6 +1357,7 @@ def webhookStripe(request):
                 print(stripe.PaymentIntent.retrieve(paymentIntent))
 
                 chargeId = stripe.PaymentIntent.retrieve(paymentIntent)["charges"]["data"][0]["id"]
+                receiptUrl = stripe.PaymentIntent.retrieve(paymentIntent)["charges"]["data"][0]["receipt_url"]
 
                 responseData = []
 
@@ -1381,6 +1382,7 @@ def webhookStripe(request):
 
                     paidOrderData = {
                         "paid_order_id": paidOrderId,
+                        "receipt_url": receiptUrl,
                         "charge_id": chargeId,
                         "buyer_id": buyerId,
                         "seller_id": (itemData.to_dict())["user_id"],

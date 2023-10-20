@@ -33,6 +33,9 @@ def getCheckoutLink(request):
         if(len(data["meta_data"]) <= 0):
            raise Exception("Meta data cannot be empty")
         
+        if(len(data["email"]) <= 0):
+           raise Exception("Email cannot be empty")
+        
         metaData = {}
         metaData["buyer_id"] = data["meta_data"]["buyer_id"]
         metaData["created_at"] = data["meta_data"]["created_at"]
@@ -80,7 +83,9 @@ def getCheckoutLink(request):
             cancel_url='http://localhost:5173/',
             payment_method_types=['card'],
             line_items=items,
-            metadata=metaData
+            metadata=metaData,
+            invoice_creation={"enabled": True},
+            customer_email=data["email"]
         )
 
         return JsonResponse({
@@ -630,6 +635,7 @@ def getOrderDetails(request, paid_order_id):
                raise Exception("User data does not exists")
 
             responseData = {
+               "receipt_url": (paidOrderData.to_dict())["receipt_url"],
                "buyer_name": (userData.to_dict())["name"]["first_name"],
                "images": (itemData.to_dict())["image_urls"],
                "title": (itemData.to_dict())["title"],
