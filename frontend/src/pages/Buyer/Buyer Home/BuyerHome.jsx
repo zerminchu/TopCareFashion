@@ -23,8 +23,11 @@ import {
   Hits,
 } from "react-instantsearch";
 import aa from "search-insights";
+import { useDispatch } from "react-redux";
 
 function BuyerHome(props) {
+  const dispatch = useDispatch();
+
   const [searchText, setSearchText] = useState("");
   const [productList, setproductList] = useState([]);
   const [visibleProductCount, setVisibleProductCount] = useState(10);
@@ -42,6 +45,12 @@ function BuyerHome(props) {
     "C27B4SWDRQ",
     "1cb33681bc07eef867dd5e384c1d0bf5"
   );
+
+  useEffect(() => {
+    if (!Cookies.get("buyerPreferences")) {
+      dispatch({ type: "SET_BUYER_PREFERENCES", value: true });
+    }
+  }, []);
 
   useEffect(() => {
     const setUserSessionData = async () => {

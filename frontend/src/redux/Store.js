@@ -9,6 +9,9 @@ const initialstate = {
   signUpBool: false,
   loadingBool: false,
 
+  // Buyer preferences
+  buyerPreferencesBool: false,
+
   // Cart
   cartBool: false,
   cartData: null
@@ -19,6 +22,12 @@ const reducer = (state = initialstate, action) => {
     return {
       ...state,
       loadingBool: action.value
+    }
+  }
+  else if (action.type === "SET_BUYER_PREFERENCES") {
+    return {
+      ...state,
+      buyerPreferencesBool: action.value
     }
   }
   else if (action.type === "SET_CART") {

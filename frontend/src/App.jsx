@@ -16,6 +16,7 @@ import ReactGA from "react-ga4";
 
 import "./App.css";
 import AddToCart from "./components/AddToCart";
+import BuyerPreferences from "./pages/Buyer/BuyerPreferences";
 
 const MainApp = () => {
   const stateGlobal = useSelector((state) => state);
@@ -25,6 +26,7 @@ const MainApp = () => {
       {stateGlobal.signUpBool && <SignUpForm />}
 
       {stateGlobal.loadingBool && <Loading />}
+      {stateGlobal.buyerPreferencesBool && <BuyerPreferences />}
 
       <Header />
       <PageRoutes />

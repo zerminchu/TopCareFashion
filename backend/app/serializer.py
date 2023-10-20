@@ -37,7 +37,7 @@ class SellerSerializer (serializers.ModelSerializer):
         exclude = (
             'user_id',
             'gender',
-            'color',
+            'category',
             'size',
             'type'
         )

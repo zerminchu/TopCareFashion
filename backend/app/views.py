@@ -57,15 +57,20 @@ def signUp(request):
             if (data["role"] == "buyer"):
                 # Add additional data to buyer
                 data["profile_image_url"] = ""
-                data["preferences"] = {
-                    "colour": "",
-                    "size": "",
-                    "category": ""
-                }
+                print("helo1", data)
+                if(not "preferences" in data):
+                    data["preferences"] = {
+                        "type": "",
+                        "size": "",
+                        "category": ""
+                    }
+
                 data["verified_status"] = False
                 data["premium_feature"] = False
                 data["gender"] = ""
                 data["phone_number"] = ""
+
+                print("TOTAL DATA: ", data)
 
                 # Serialize
                 buyerData = dict(data)
