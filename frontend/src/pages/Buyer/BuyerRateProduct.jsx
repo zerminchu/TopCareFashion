@@ -15,6 +15,8 @@ function productRate() {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [rating, setRating] = useState(0);
+  const [description, setDescription] = useState("");
 
   const paidOrderId = location.state?.paidOrderId;
 
@@ -86,6 +88,79 @@ function productRate() {
       retrieveOrderStatusData();
     }
   }, [paidOrderId]);
+
+  const renderCheckoutItems = () => {
+    return checkoutItems.map((item) => {
+      return (
+        <CheckoutItem
+          title={item.title}
+          collection_address={item.collection_address}
+          price={item.price}
+          cart_quantity={item.cart_quantity}
+          quantity_available={item.quantity_available}
+          store_name={item.store_name}
+          variation={item.color}
+          images={item.images}
+        />
+      );
+    });
+  };
+
+  const handleRatingChange = (value) => {
+    // Handle changes in the rating value
+    setRating(value);
+  };
+
+  const handleFeedbackChange = (event) => {
+    // Handle changes in the feedback text
+    setDescription(event.target.value);
+  };
+
+  /*   const handleSubmitRating = () => {
+    const url =
+      import.meta.env.VITE_API_DEV == "DEV"
+        ? import.meta.env.VITE_API_DEV
+        : import.meta.env.VITE_API_PROD;
+
+    if (!currentUser) {
+      return;
+    }
+
+    const user_id = currentUser.user_id;
+
+    if (!rating) {
+      showNotifications({
+        status: "error",
+        title: "Error",
+        message: "Rating cannot be blank. Please select a rating.",
+      });
+      return;
+    }
+
+    const trimmedDescription = description.trim();
+
+    if (trimmedDescription === "") {
+      showNotifications({
+        status: "error",
+        title: "Error",
+        message:
+          "Feedback description cannot be blank. Please provide feedback.",
+      });
+      return;
+    }
+
+    const ratingData = {
+      rating: rating,
+      description: trimmedDescription,
+    };
+
+    axios
+      .post(`${url}/buyer/submit-review/${user_id}`, ratingData)
+      .then((response) => {
+        if (
+          response.data.message === "Rating and feedback submitted successfully"
+        ) {
+  }, [paidOrderId]); */
 
   const handleSubmitRating = () => {
     const submitRating = async () => {

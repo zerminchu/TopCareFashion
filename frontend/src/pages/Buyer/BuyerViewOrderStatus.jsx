@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+/* eslint-disable react-hooks/rules-of-hooks */
+import { useState, useEffect } from "react";
 import { Button, Text, Stepper } from "@mantine/core";
 
 import classes from "./BuyerViewOrderStatus.module.css";

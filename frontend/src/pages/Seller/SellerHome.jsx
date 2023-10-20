@@ -89,9 +89,6 @@ function SellerCards() {
 
   const [currentUser, setCurrentUser] = useState();
 
-  const [itemURL, setItemURL] = useState("");
-  const [itemTitle, setItemTitle] = useState("");
-
   useEffect(() => {
     const fetchData = async () => {
       try {

@@ -154,8 +154,6 @@ function Checkout() {
           },
         };
 
-        console.log("Data sent: ", data);
-
         const response = await axios.post(`${url}/buyer/checkout/`, data);
 
         dispatch({ type: "SET_LOADING", value: false });

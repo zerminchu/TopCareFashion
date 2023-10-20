@@ -39,8 +39,10 @@ class User(models.Model):
     # Seller
     stripe_id = models.CharField(max_length=100, blank=True, null=True)
     business_name = models.CharField(max_length=100, blank=True, null=True)
-    business_description = models.CharField(max_length=1000, blank=True, null=True)
-    business_type = models.CharField(max_length=50, choices=BUSINESS_TYPE_CHOICES, blank=True, null=True)
+    business_description = models.CharField(
+        max_length=1000, blank=True, null=True)
+    business_type = models.CharField(
+        max_length=50, choices=BUSINESS_TYPE_CHOICES, blank=True, null=True)
     location = models.CharField(max_length=200, blank=True, null=True)
     contact_info = models.CharField(max_length=200, blank=True, null=True)
     social_media_link = models.URLField(blank=True, null=True)
@@ -52,12 +54,15 @@ class User(models.Model):
 class Item(models.Model):
     gender = models.CharField(max_length=255)
     category = models.CharField(max_length=255)
+    sub_category = models.CharField(max_length=255)
     condition = models.CharField(max_length=255)
     colour = models.CharField(max_length=255)
     title = models.CharField(max_length=255)
     price = models.CharField(max_length=255)
     description = models.CharField(max_length=255)
     image_urls = models.JSONField(default=list)
+    size = models.CharField(max_length=20, blank=True, null=True)
+
 
 
 class Listing(models.Model):
@@ -65,10 +70,12 @@ class Listing(models.Model):
     quantity_available = models.CharField(max_length=255)
     collection_address = models.CharField(max_length=255)
 
+
 class Feedback(models.Model):
     title = models.CharField(max_length=255)
     description = models.CharField(max_length=255)
     category = models.CharField(max_length=255)
+
 
 class Cart(models.Model):
     listing_id = models.CharField(max_length=255, null=False, blank=False)
@@ -99,6 +106,7 @@ class Wishlist(models.Model):
     seller_id = models.CharField(max_length=255, null=False, blank=False)
     buyer_id = models.CharField(max_length=255, null=False, blank=False)
     size = models.CharField(max_length=255, null=False, blank=False)
+
 
 class Review(models.Model):
     listing_id = models.CharField(max_length=255, null=False, blank=False)

@@ -10,6 +10,8 @@ import IconSettings from "../../assets/icons/ic_settings.svg";
 import IconAnalytics from "../../assets/icons/ic_analytics.svg";
 import IconManageListing from "../../assets/icons/ic_manage_listing.svg";
 import IconLogout from "../../assets/icons/ic_logout.svg";
+import IconBlog from "../../assets/icons/ic_blog.svg";
+
 import IconQuestionMark from "../../assets/icons/ic_questionmark.svg";
 import { Badge } from "@mantine/core";
 
@@ -169,7 +171,7 @@ function DropDownMenu(props) {
             </Menu.Item>
 
             <Menu.Item
-              icon={<img src={IconLogout} />}
+              icon={<img src={IconBlog} />}
               onClick={fashionRecommender}
               style={{
                 display: "flex",
@@ -177,7 +179,7 @@ function DropDownMenu(props) {
                 alignItems: "center",
               }}
             >
-              <span style={{ marginRight: "10px" }}>Fashion Recommender</span>
+              <span style={{ marginRight: "10px" }}>Fashion Blog</span>
               <Badge>Premium</Badge>
             </Menu.Item>
             <Menu.Item

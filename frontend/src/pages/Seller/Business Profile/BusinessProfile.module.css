@@ -89,3 +89,11 @@
 .setupButton:hover {
   background-color: #0056b3;
 }
+
+.retriveDataLoadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+  align-items: center;
+  justify-content: center;
+}

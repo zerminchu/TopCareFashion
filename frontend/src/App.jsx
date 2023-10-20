@@ -12,6 +12,7 @@ import PremiumPopup from "./pages/Buyer/Recommender/PremiumPage";
 import Footer from "./components/Footer";
 import Loading from "./components/Loading";
 import CookiePermission from "./components/CookiePermission";
+import ReactGA from "react-ga4";
 
 import "./App.css";
 import AddToCart from "./components/AddToCart";
@@ -38,6 +39,25 @@ const MainApp = () => {
 };
 
 function App() {
+  ReactGA.initialize([
+    {
+      trackingId: "G-0X2BFHBPSP",
+    },
+  ]);
+  /* ReactGA.send({
+    hitType: "pageview",
+    page: "/",
+    title: "Custom Title",
+  }); */
+
+  const pageViewsTracking = (props) => {
+    const pathname = props.match.path;
+    let pageView;
+    if (pathname === "*") pageView = "/not-found";
+    else pageView = pathname;
+
+    ReactGA.pageView(pageView);
+  };
   return (
     <Provider store={Store}>
       <MantineProvider withNormalizeCSS withGlobalStyles>

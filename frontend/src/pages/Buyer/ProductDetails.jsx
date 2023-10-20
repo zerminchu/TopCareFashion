@@ -1,5 +1,7 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/jsx-key */
 import { Button, Radio, Text, Group, NumberInput } from "@mantine/core";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import IconChat from "../../assets/icons/ic_chat.svg";
 import IconWishlist from "../../assets/icons/ic_wishlist.svg";
 import ProductRating from "../../components/Rating/ProductRating";
@@ -51,9 +53,6 @@ function ProductDetails() {
     }
   }, [currentUser]);
 
-  // Dummy data
-  const data = location.state?.data;
-
   // Real data
   const itemId = location.state?.itemId;
 
@@ -69,8 +68,8 @@ function ProductDetails() {
 
         if (itemId) {
           const response = await axios.get(`${url}/listing-detail/${itemId}`);
-          console.log("hello", response);
           setProductDetails(response.data.data);
+          console.log(response.data);
         }
       } catch (error) {
         showNotifications({
@@ -186,6 +185,7 @@ function ProductDetails() {
         buyer_id: currentUser.user_id,
         size: selectedSize,
       };
+      console.log(selectedSize);
 
       const url =
         import.meta.env.VITE_NODE_ENV == "DEV"
@@ -318,8 +318,6 @@ function ProductDetails() {
         sub_total: parseFloat(subTotal).toFixed(2),
       },
     ];
-
-    console.log("data: ", data);
 
     navigate("/buyer/checkout", {
       state: { data: data },

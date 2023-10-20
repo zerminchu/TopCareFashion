@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 import React from "react";
 import { Stepper, Button, Group, Text, Table, TextInput } from "@mantine/core";
 import ILProductImage from "../assets/illustrations/il_category_top.jpg";

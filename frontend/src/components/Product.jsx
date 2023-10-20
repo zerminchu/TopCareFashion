@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React, { useState } from "react";
 import classes from "./Product.module.css";
@@ -6,12 +7,34 @@ import { showNotifications } from "../utils/ShowNotification";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import Cookies from "js-cookie";
+import algoliasearch from "algoliasearch/lite";
+import {
+  InstantSearch,
+  SearchBox,
+  Highlight,
+  Configure,
+  PoweredBy,
+  Hits,
+} from "react-instantsearch";
 
 function Product(props) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const search = algoliasearch(
+    "C27B4SWDRQ",
+    "1cb33681bc07eef867dd5e384c1d0bf5"
+  );
 
-  const [isAddToCart, setisAddToCart] = useState(false);
+  /*   search.use(
+    instantsearch.middlewares.createInsightsMiddleware({
+      insightsClient: aa,
+    })
+  ); 
+  
+
+  aa("setUserToken", "user-1"); */
+
+  //const [isAddToCart, setisAddToCart] = useState(false);
 
   const onClick = () => {
     if (props.item_id) {
@@ -24,7 +47,7 @@ function Product(props) {
       });
     }
   };
-
+  /* 
   const addToCartOnClick = async (e) => {
     e.stopPropagation();
 
@@ -34,6 +57,13 @@ function Product(props) {
       return;
     }
 
+    sendEvent("conversion", props, "Add to cart");
+
+    showNotifications({
+      status: "success",
+      title: "Success",
+      message: "Product has been added to cart",
+    });
     setisAddToCart(!isAddToCart);
 
     if (props.size) {
@@ -45,7 +75,7 @@ function Product(props) {
       }
     }
   };
-
+ */
   return (
     <div className={classes.card} onClick={onClick}>
       <div className={classes.cardHeader}>
@@ -59,8 +89,8 @@ function Product(props) {
         <Text className={classes.greyCategory}>{props.condition}</Text>
       </div>
       <div className={classes.cardFooter}>
-        <Button variant="outline" onClick={addToCartOnClick}>
-          Add to cart
+        <Button variant="outline" onClick={onClick}>
+          View
         </Button>
       </div>
     </div>
