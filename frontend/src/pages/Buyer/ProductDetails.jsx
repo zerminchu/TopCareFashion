@@ -16,6 +16,13 @@ import classes from "./ProductDetails.module.css";
 import { showNotifications } from "../../utils/ShowNotification";
 import { useDispatch } from "react-redux";
 import copy from "copy-to-clipboard";
+import aa from 'search-insights';
+
+// Initialize Algolia insights client
+aa('init', {
+  appId: 'BWO4H6S1WK',
+  apiKey: '7a3a143223fb1c672795a76c755ef375'
+});
 
 function ProductDetails() {
   const dispatch = useDispatch();
@@ -164,6 +171,9 @@ function ProductDetails() {
     }
 
     try {
+      //add add to cart event for personalization/trending
+      
+
       dispatch({ type: "SET_LOADING", value: true });
 
       const date = new Date();
@@ -186,6 +196,14 @@ function ProductDetails() {
         size: selectedSize,
       };
       console.log(selectedSize);
+
+      aa('convertedObjectIDs', {
+        userToken: currentUser.user_id,
+        eventName: 'Add To Cart',
+        index: 'Item_Index',
+        objectIDs: [itemId],
+        
+      });
 
       const url =
         import.meta.env.VITE_NODE_ENV == "DEV"
