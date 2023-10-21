@@ -1,24 +1,27 @@
+/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable no-unused-vars */
-import { useEffect, useState } from "react";
-import axios from "axios";
 import {
-  SimpleGrid,
+  Badge,
+  Button,
   Container,
-  useMantineTheme,
+  Modal,
+  Select,
+  SimpleGrid,
+  Text,
+  TextInput,
   createStyles,
   rem,
-  TextInput,
-  Button,
-  Select,
+  useMantineTheme,
 } from "@mantine/core";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useForm } from "@mantine/form";
-import { showNotifications } from "../../../utils/ShowNotification";
-import { BiUpload } from "react-icons/bi";
-import { retrieveUserInfo } from "../../../utils/RetrieveUserInfoFromToken";
+import axios from "axios";
 import Cookies from "js-cookie";
-import { Badge } from "@mantine/core";
+import { useEffect, useRef, useState } from "react";
+import { BiUpload } from "react-icons/bi";
 import { useDispatch } from "react-redux";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { retrieveUserInfo } from "../../../utils/RetrieveUserInfoFromToken";
+import { showNotifications } from "../../../utils/ShowNotification";
 
 const useStyles = createStyles((theme) => ({
   root: {
@@ -39,11 +42,46 @@ const useStyles = createStyles((theme) => ({
     paddingTop: `calc(${theme.spacing.sm} / 2)`,
     zIndex: 1,
   },
+  confirmation: {
+    display: "flex",
+    flexDirection: "column",
+    /* padding: rem(10),
+    gap: rem(5),
+    width: rem(200),
+    borderRadius: rem(5),
+    backgroundColor: theme.colors.blue[0], */
+  },
+
+  buttonConfirmation: {
+    display: "flex",
+    flexDirection: "row",
+    gap: rem(5),
+    justifyContent: "center",
+  },
+
+  deleteContainer: {
+    display: "flex",
+    flexDirection: "column",
+    gap: rem(10),
+  },
+
+  confirmationPrompt: {
+    paddingBottom: "2.5%",
+  },
+
+  modalTitle: {
+    fontSize: rem(18),
+    fontWeight: 700,
+    textAlign: "center",
+    margin: `${rem(10)} 0`,
+  },
 }));
 
 function EditListing() {
   const dispatch = useDispatch();
+  const location = useLocation();
   const theme = useMantineTheme();
+
   const { id, item_id } = useParams();
   const { classes } = useStyles();
   const navigate = useNavigate();
@@ -52,8 +90,9 @@ function EditListing() {
   const [item, setItem] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [selectedImages, setSelectedImages] = useState(Array(3).fill(null));
-  const [selectedImageUrls, setSelectedImageUrls] = useState([]);
-  const [selectedImageFile, setSelectedImageFile] = useState(null);
+  const [showCategoryMismatchModal, setShowCategoryMismatchModal] =
+    useState(false);
+  const predictedClassRef = useRef(null);
 
   const validateField = (fieldName, value) => {
     if (value.length === 0) return `${fieldName} is empty`;
@@ -75,6 +114,7 @@ function EditListing() {
       quantity_available: "",
       avail_status: "",
       image_urls: "",
+      sub_category: "",
     },
     validate: {
       gender: (value) => validateField("Gender", value),
@@ -90,48 +130,57 @@ function EditListing() {
     },
   });
 
-  const handleImageChange = async (index, event) => {
+  const handleImageChange = (index, event) => {
     const file = event.target.files[0];
 
     if (file) {
-      setSelectedImageFile(file);
+      const newSelectedImages = [...selectedImages];
+      newSelectedImages[index] = URL.createObjectURL(file);
+      setSelectedImages(newSelectedImages);
 
-      const reader = new FileReader();
+      const url =
+        import.meta.env.VITE_NODE_ENV == "DEV"
+          ? import.meta.env.VITE_API_DEV
+          : import.meta.env.VITE_API_PROD;
 
-      reader.onload = async (e) => {
-        const newSelectedImages = [...selectedImages];
-        newSelectedImages[index] = e.target.result;
+      const formData = new FormData();
+      formData.append("image", file);
 
-        const newSelectedImageUrls = [...selectedImageUrls];
-        newSelectedImageUrls[index] = null;
+      try {
+        dispatch({ type: "SET_LOADING", value: true });
 
-        setSelectedImages(newSelectedImages);
-        setSelectedImageUrls(newSelectedImageUrls);
+        axios
+          .put(`${url}/replace-image/${id}/${item_id}/${index}/`, formData)
+          .then((response) => {
+            newSelectedImages[index] = response.data.imageUrl;
+            setSelectedImages(newSelectedImages);
 
-        if (index === 0) {
-          try {
-            const formData = new FormData();
-            formData.append("image", file);
+            axios
+              .post(`${url}/classify-image/`, formData)
+              .then((classifier_response) => {
+                const data = classifier_response.data;
 
-            const url =
-              import.meta.env.VITE_NODE_ENV == "DEV"
-                ? import.meta.env.VITE_API_DEV
-                : import.meta.env.VITE_API_PROD;
+                predictedClassRef.current = data.predicted_subcategory;
 
-            const response = await axios.post(
-              `${url}/classify-image/`,
-              formData
-            );
-            const classifiedCategory = response.data.category;
+                if (data.predicted_subcategory !== form.values.sub_category) {
+                  setShowCategoryMismatchModal(true);
+                }
+                setItem((prevItem) => {
+                  const newItem = { ...prevItem };
+                  newItem.image_urls[index] = response.data.imageUrl;
+                  return newItem;
+                });
+                dispatch({ type: "SET_LOADING", value: false });
+              })
 
-            form.setValues({ ...form.values, category: classifiedCategory });
-          } catch (error) {
-            console.error("Error classifying image:", error);
-          }
-        }
-      };
-
-      reader.readAsDataURL(file);
+              .catch((error) => {
+                console.error("Error classifying image:", error);
+                dispatch({ type: "SET_LOADING", value: false });
+              });
+          });
+      } catch (error) {
+        console.error("Error replacing image:", error);
+      }
     }
   };
 
@@ -170,11 +219,11 @@ function EditListing() {
 
         const response = await axios.get(`${url}/view-item/${id}/${item_id}/`);
         const itemData = response.data;
-
         setItem(itemData);
 
         form.setValues({ gender: itemData.gender });
         form.setValues({ category: itemData.category });
+        form.setValues({ sub_category: itemData.sub_category });
         form.setValues({ condition: itemData.condition });
         form.setValues({ colour: itemData.colour });
         form.setValues({ title: itemData.title });
@@ -183,11 +232,6 @@ function EditListing() {
         form.setValues({ quantity_available: itemData.quantity_available });
         form.setValues({ avail_status: itemData.avail_status });
         form.setValues({ collection_address: itemData.collection_address });
-
-        setSelectedImages(itemData.image_urls);
-        setSelectedImageUrls(itemData.image_urls);
-
-        console.log(itemData);
       } catch (error) {
         console.error("Error fetching Item details:", error);
       }
@@ -216,21 +260,38 @@ function EditListing() {
           form.values
         );
 
-        setIsEditing(false);
-
         dispatch({ type: "SET_LOADING", value: false });
 
-        showNotifications({
-          status: "success",
-          title: "Updated Sucessfully",
-          message: response.data.message,
-        });
+        const predictedClass = predictedClassRef.current;
 
-        navigate(`/`);
+        if (predictedClass !== form.values.category) {
+          showNotifications({
+            status: "warning",
+            title: "Category Mismatch",
+            message:
+              "The uploaded image doesn't match the selected category. Please re-upload the image.",
+          });
+        } else {
+          showNotifications({
+            status: "success",
+            title: "Updated Successfully",
+            message: response.data.message,
+          });
+
+          setIsEditing(false);
+
+          navigate(`/`);
+        }
       } catch (error) {
         console.error("Error updating item:", error);
         dispatch({ type: "SET_LOADING", value: false });
       }
+    } else {
+      showNotifications({
+        status: "error",
+        title: "Form Validation Error",
+        message: "Please fix the form validation errors before saving.",
+      });
     }
   };
 
@@ -282,7 +343,7 @@ function EditListing() {
             Preview Images
           </div>
           <SimpleGrid cols={3} breakpoints={[{ maxWidth: "xs", cols: 1 }]}>
-            {selectedImages.map((imageUrl, index) => (
+            {item.image_urls.map((imageUrl, index) => (
               <div
                 key={index}
                 onClick={() => setSelectedImageIndex(index)}
@@ -304,39 +365,44 @@ function EditListing() {
                   }`,
                 }}
               >
-                <img
-                  src={imageUrl || item.image_urls[index]}
-                  alt={`Uploaded ${index}`}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    overflow: "hidden",
-                  }}
-                />
-                <label
-                  htmlFor={`image-upload-${index}`}
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    marginTop: "8px",
-                    cursor: "pointer",
-                    color: theme.colors.blue[6],
-                  }}
-                >
-                  <BiUpload size={24} />
-                </label>
-                <input
-                  id={`image-upload-${index}`}
-                  type="file"
-                  accept="image/*"
-                  onChange={(event) => handleImageChange(index, event)}
-                  style={{ display: "none" }}
-                />
+                {imageUrl ? (
+                  <>
+                    <img
+                      src={imageUrl}
+                      alt={`Uploaded ${index}`}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        overflow: "hidden",
+                      }}
+                    />
+                    <label
+                      htmlFor={`image-upload-${index}`}
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        marginTop: "8px",
+                        cursor: "pointer",
+                        color: theme.colors.blue[6],
+                      }}
+                    >
+                      <BiUpload size={24} />
+                    </label>
+                    <input
+                      id={`image-upload-${index}`}
+                      type="file"
+                      accept="image/*"
+                      onChange={(event) => handleImageChange(index, event)}
+                      style={{ display: "none" }}
+                    />
+                  </>
+                ) : (
+                  <div>No image available</div>
+                )}
               </div>
             ))}
-            {item.image_urls.length === 0 && <div>No images available</div>}
           </SimpleGrid>
         </div>
       </Container>
@@ -357,8 +423,8 @@ function EditListing() {
           <TextInput
             label="Category"
             classNames={classes}
-            disabled={!isEditing}
-            {...form.getInputProps("category")}
+            disabled={true}
+            {...form.getInputProps("sub_category")}
           />
           <Badge
             color="violet"
@@ -369,7 +435,7 @@ function EditListing() {
               transform: "translateY(-50%)",
             }}
           >
-            PREDICTED
+            Apparel Type: {form.values.category}
           </Badge>
         </div>
         {/*   <TextInput
@@ -508,6 +574,31 @@ function EditListing() {
             Cancel
           </Button>
         </div>
+        <Modal
+          opened={showCategoryMismatchModal}
+          onClose={() => setShowCategoryMismatchModal(false)}
+          contentlabel="Category Mismatch Modal"
+        >
+          <div className={classes.modalTitle}>Oops, a Category Mix-up!</div>
+
+          <div className={classes.confirmation}>
+            <div className={classes.confirmationPrompt}>
+              <Text fw={500}>
+                The uploaded image doesn't align with the intended category for
+                your listing. Please upload the correct image.
+              </Text>
+            </div>
+            <div className={classes.buttonConfirmation}>
+              <Button
+                variant="filled"
+                color="red"
+                onClick={() => setShowCategoryMismatchModal(false)}
+              >
+                Ok
+              </Button>
+            </div>
+          </div>
+        </Modal>
       </div>
     </form>
   );

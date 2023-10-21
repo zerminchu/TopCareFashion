@@ -1,20 +1,21 @@
 import io
-import os
-import uuid
 import json
+import os
 import random
 import re
 import uuid
-import stripe
 
 import numpy as np
+import stripe
 import tensorflow as tf
+import torch
 from config.firebase import firebase
 from django.core.files.base import ContentFile
 from django.core.files.storage import FileSystemStorage
 from django.core.validators import validate_email
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
+from fastai.vision.all import *
 from firebase_admin import auth, firestore, storage
 from PIL import Image
 from rest_framework.decorators import (api_view, parser_classes,
@@ -22,11 +23,6 @@ from rest_framework.decorators import (api_view, parser_classes,
 from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-
-
-import tensorflow as tf
-import torch
-from fastai.vision.all import *
 
 from .exceptions import *
 from .models import *
@@ -872,46 +868,6 @@ def get_seller_and_item(request, user_id, item_id):
             return Response({"error": str(e)}, status=500)
         
 
-""" @api_view(["PUT"])
-@permission_classes([])
-def update_seller_preferences(request):
-    if request.method == "PUT":
-        try:
-            user_id = request.user.id
-
-            # Assuming you have a Firestore client instance
-            db = firestore.client()
-
-            # Get the reference to the user's document in Firestore
-            user_ref = db.collection("Users").document(user_id)
-
-            # Retrieve the existing data
-            user_data = user_ref.get().to_dict()
-
-            # Update the 'seller_preferences' with the selected sub-categories
-            user_data["seller_preferences"] = {
-                "subCategories": request.data.get("seller_preferences", {}).get("subCategories", [])
-            }
-
-            # Update the Firestore document with the new data
-            user_ref.set(user_data)
-
-            return Response(
-                {
-                    "message": "Seller preferences updated successfully",
-                    "data": user_data,
-                },
-                status=status.HTTP_200_OK,
-            )
-
-        except Exception as e:
-            return Response(
-                {
-                    "message": f"An error occurred: {str(e)}",
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            ) """
-
 @api_view(["PUT"])
 def update_seller_preferences(request, user_id):
     if request.method == "PUT":
@@ -1013,6 +969,63 @@ def edit_item(request, user_id, item_id):
                 return Response({"errors": serializer.errors}, status=400)
         except Exception as e:
             return Response({"error": str(e)}, status=500)
+
+
+
+
+@api_view(["PUT"])
+def replace_image(request, id, item_id, index):
+    if request.method == "PUT":
+        try:
+            db = firestore.Client()
+            firebaseStorage = firebase.storage()
+
+            products_ref = db.collection("Item").where(
+                "user_id", "==", id).where("item_id", "==", item_id)
+            items = list(products_ref.stream())
+
+            if not items:
+                return Response({"message": "Product not found"}, status=404)
+
+            item = items[0]
+
+            if int(index) < 0 or int(index) >= len(item.get("image_urls")):
+                return Response({"message": "Invalid image index"}, status=400)
+
+            uploaded_file = request.FILES.get('image')
+
+            if uploaded_file:
+                content_type = uploaded_file.content_type
+                file_extension = os.path.splitext(uploaded_file.name)[1]
+                unique_filename = f"{uuid.uuid4().hex}{file_extension}"
+
+                file_content = ContentFile(uploaded_file.read())
+
+                firebaseStorage.child(
+                    f"{unique_filename}").put(file_content, content_type=content_type)
+
+                # Generate public image URL
+                image_url = firebaseStorage.child(
+                    f"{unique_filename}").get_url(None)
+
+                # Replace the image URL in the item's image_urls list
+                item_image_urls = item.get("image_urls")
+                item_image_urls[int(index)] = image_url
+
+                # Create a new document reference and set the updated data
+                item.reference.set({
+                    "image_urls": item_image_urls
+                }, merge=True)
+
+                return Response({"message": "Image updated successfully", "imageUrl": image_url})
+
+            return Response({"message": "No image was provided for update"}, status=400)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
+
+
+
 
 
 @api_view(["DELETE"])

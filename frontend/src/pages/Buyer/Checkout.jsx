@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { Stepper, Button, Group, Text, Table, TextInput } from "@mantine/core";
+import { Button, Stepper, Text } from "@mantine/core";
+import { useEffect, useState } from "react";
 
-import classes from "./Checkout.module.css";
-import CheckoutItem from "../../components/CheckoutItem";
-import { useLocation, useNavigate } from "react-router";
-import { showNotifications } from "../../utils/ShowNotification";
-import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
-import Cookies from "js-cookie";
 import axios from "axios";
+import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
+import { useLocation, useNavigate } from "react-router";
+import CheckoutItem from "../../components/CheckoutItem";
+import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
+import { showNotifications } from "../../utils/ShowNotification";
+import classes from "./Checkout.module.css";
 
 function Checkout() {
   const location = useLocation();

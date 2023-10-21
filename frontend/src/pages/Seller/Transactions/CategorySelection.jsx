@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { Button, Text, UnstyledButton } from "@mantine/core";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { UnstyledButton, Text, Button } from "@mantine/core";
-import classes from "./CategorySelection.module.css";
-import { AiOutlineCheck } from "react-icons/ai";
 import Cookies from "js-cookie";
+import { useEffect, useState } from "react";
+import { AiOutlineCheck } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
 import { retrieveUserInfo } from "../../../utils/RetrieveUserInfoFromToken";
+import classes from "./CategorySelection.module.css";
 
 function CategorySelection() {
   const [selectedSubCategories, setSelectedSubCategories] = useState([]);
@@ -37,20 +37,20 @@ function CategorySelection() {
 
   const toggleSubCategory = (subCategory) => {
     const updatedSelectedSubCategories = Array.isArray(selectedSubCategories)
-      ? [...selectedSubCategories]
+      ? [subCategory]
       : [];
     const updatedSelectedPreferences = Array.isArray(selectedPreferences)
-      ? [...selectedPreferences]
-      : [];
+      ? [subCategory]
+      : [subCategory];
 
-    if (updatedSelectedSubCategories.includes(subCategory)) {
+    /* if (updatedSelectedSubCategories.includes(subCategory)) {
       const subIndex = updatedSelectedSubCategories.indexOf(subCategory);
       updatedSelectedSubCategories.splice(subIndex, 1);
       updatedSelectedPreferences.splice(subIndex, 1);
     } else {
       updatedSelectedSubCategories.push(subCategory);
       updatedSelectedPreferences.push(subCategory);
-    }
+    } */
 
     setSelectedSubCategories(updatedSelectedSubCategories);
     setSelectedPreferences(updatedSelectedPreferences);
@@ -137,7 +137,7 @@ function CategorySelection() {
   return (
     <div className={classes.pageContainer}>
       <header className={classes.header}>
-        <h2>Help us identify what fashion items you would like to sell</h2>
+        <h2>Help us identify what fashion item you would like to sell</h2>
       </header>
       <div className={classes.cardContainer}>
         {Object.keys(subCategories).map((subCategory, index) => (

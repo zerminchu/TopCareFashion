@@ -8,7 +8,6 @@ import Cookies from "js-cookie";
 import IconPerson from "../../assets/icons/ic_person.svg";
 import IconSettings from "../../assets/icons/ic_settings.svg";
 import IconAnalytics from "../../assets/icons/ic_analytics.svg";
-import IconManageListing from "../../assets/icons/ic_manage_listing.svg";
 import IconLogout from "../../assets/icons/ic_logout.svg";
 import IconBlog from "../../assets/icons/ic_blog.svg";
 
@@ -85,6 +84,10 @@ function DropDownMenu(props) {
     navigate("/seller/summary");
   };
 
+  const categorySelection = () => {
+    navigate("/seller/category-selection");
+  };
+
   const renderDropDownSeller = () => {
     return (
       <div className={classes.container}>
@@ -109,6 +112,13 @@ function DropDownMenu(props) {
               onClick={businessProfileOnClick}
             >
               Business Profile
+            </Menu.Item>
+
+            <Menu.Item
+              icon={<img src={IconSettings} />}
+              onClick={categorySelection}
+            >
+              Item Category Preference
             </Menu.Item>
 
             <Menu.Item
