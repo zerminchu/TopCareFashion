@@ -304,6 +304,16 @@ function ProductDetails() {
       return;
     }
 
+    if (parseInt(quantity) > parseInt(productDetails.quantity_available)) {
+      showNotifications({
+        status: "error",
+        title: "Error",
+        message: "Your quantity exceeds the product stock",
+      });
+
+      return;
+    }
+
     const date = new Date();
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, "0");

@@ -1417,6 +1417,10 @@ def webhookStripe(request):
                         if(checkoutDataSerializer.is_valid()):
                             paidOrderRef = db.collection("PaidOrder").document(paidOrderId)
                             paidOrderRef.set(paidOrderData)
+
+                            updatedQuantityAvailable = int((listingData.to_dict())["quantity_available"]) - int(checkoutItem["q"])
+                            listingRef.update({"quantity_available": updatedQuantityAvailable})
+                            
                             responseData.append(paidOrderData)
                         else:
                             raise Exception(checkoutDataSerializer.errors)
