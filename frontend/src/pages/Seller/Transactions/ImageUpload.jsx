@@ -315,6 +315,14 @@ function ImageUpload() {
     fetchClothingCategories();
   }, []);
 
+  const handleImageAltChange = (index) => {
+    return (event) => {
+      if (event.target.getAttribute("alt") === `Uploaded ${index}`) {
+        handleImageRemove(index);
+      }
+    };
+  };
+
   return (
     <div>
       <div
@@ -440,6 +448,7 @@ function ImageUpload() {
                             maxWidth: "100%", // Ensure the image fits within the container
                             maxHeight: "100%", // Ensure the image fits within the container
                           }}
+                          onError={() => handleImageRemove(index)}
                         />
                       </div>
                     )}

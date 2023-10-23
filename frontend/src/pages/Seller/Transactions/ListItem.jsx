@@ -5,15 +5,15 @@ import {
   Badge,
   Button,
   Container,
+  Modal,
+  MultiSelect,
   Select,
   SimpleGrid,
+  Text,
   TextInput,
   createStyles,
   rem,
   useMantineTheme,
-  Modal,
-  Text,
-  MultiSelect,
 } from "@mantine/core";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -352,7 +352,6 @@ function ListItem() {
 
         axios.post(`${url}/classify-image/`, formData).then((response) => {
           const data = response.data;
-          console.log(data);
 
           if (data.predicted_class !== category) {
             setShowCategoryMismatchModal(true);
@@ -413,6 +412,7 @@ function ListItem() {
           >
             {submissionSuccessful ? "Uploaded Images" : "Preview Images"}
           </div>
+
           <SimpleGrid cols={3} breakpoints={[{ maxWidth: "xs", cols: 1 }]}>
             {uploadedImages.map((imageSrc, index) => (
               <div

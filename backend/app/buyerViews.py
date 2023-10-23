@@ -1,25 +1,22 @@
-from django.shortcuts import render
-from django.http import JsonResponse
-from django.http import HttpResponse
-from . models import *
-from . serializer import *
-from .exceptions import *
-from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
-from firebase_admin import firestore
-from django.core.files.base import ContentFile
+import json
 from datetime import datetime
 
-from firebase_admin import storage
-from firebase_admin import auth
-from django.core.validators import validate_email
-from django.core.files.storage import FileSystemStorage
-from rest_framework.permissions import IsAuthenticated
-
-from config.firebase import firebase
-
 import stripe
-import json
+from config.firebase import firebase
+from django.core.files.base import ContentFile
+from django.core.files.storage import FileSystemStorage
+from django.core.validators import validate_email
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render
+from firebase_admin import auth, firestore, storage
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+
+from .exceptions import *
+from .models import *
+from .serializer import *
+
 
 @api_view(["POST"])
 def getCheckoutLink(request):
@@ -33,10 +30,17 @@ def getCheckoutLink(request):
         if(len(data["meta_data"]) <= 0):
            raise Exception("Meta data cannot be empty")
         
+        if(len(data["email"]) <= 0):
+           raise Exception("Email cannot be empty")
+        
         metaData = {}
         metaData["buyer_id"] = data["meta_data"]["buyer_id"]
         metaData["created_at"] = data["meta_data"]["created_at"]
         metaData["checkout_data"] = json.dumps(data["meta_data"]["checkout_data"])
+        print(len(metaData["checkout_data"]))
+
+        if(len(metaData["checkout_data"]) > 500):
+           raise Exception("You cannot checkout too many items")
         
         items = []
         
@@ -76,7 +80,9 @@ def getCheckoutLink(request):
             cancel_url='http://localhost:5173/',
             payment_method_types=['card'],
             line_items=items,
-            metadata=metaData
+            metadata=metaData,
+            invoice_creation={"enabled": True},
+            customer_email=data["email"]
         )
 
         return JsonResponse({
@@ -626,6 +632,7 @@ def getOrderDetails(request, paid_order_id):
                raise Exception("User data does not exists")
 
             responseData = {
+               "receipt_url": (paidOrderData.to_dict())["receipt_url"],
                "buyer_name": (userData.to_dict())["name"]["first_name"],
                "images": (itemData.to_dict())["image_urls"],
                "title": (itemData.to_dict())["title"],

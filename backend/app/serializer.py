@@ -37,7 +37,7 @@ class SellerSerializer (serializers.ModelSerializer):
         exclude = (
             'user_id',
             'gender',
-            'color',
+            'category',
             'size',
             'type'
         )
@@ -98,6 +98,7 @@ class PaidOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaidOrder
         fields = [
+            "receipt_url",
             "charge_id",
             "buyer_id",
             "seller_id",

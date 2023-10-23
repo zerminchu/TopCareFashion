@@ -68,6 +68,13 @@ function TransactionItem(props) {
     });
   };
 
+  const viewInvoiceOnClick = () => {
+    if (transactionDetails) {
+      console.log("click here", transactionDetails);
+      window.open(transactionDetails.receipt_url);
+    }
+  };
+
   const renderRatingButton = () => {
     if (transactionDetails) {
       if (
@@ -104,6 +111,11 @@ function TransactionItem(props) {
           <td>{renderRatingButton()}</td>
           <td>
             <Button onClick={viewDetailsOnClick}>View Details</Button>
+          </td>
+          <td>
+            <Button onClick={viewInvoiceOnClick} variant="outline">
+              View invoice
+            </Button>
           </td>
         </tr>
       );

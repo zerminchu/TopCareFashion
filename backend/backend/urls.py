@@ -19,6 +19,8 @@ urlpatterns = [
          views.delete_item, name="delete-item/user_id/item_id"),
     path("add-preference/<str:user_id>/",
          views.update_seller_preferences, name="update_seller_preferences/user_id"),
+    path('replace-image/<str:id>/<str:item_id>/<int:index>/', views.replace_image, name='replace_image'),
+
 
 
     # Generals

@@ -1,21 +1,21 @@
-import React, { useState, useEffect } from "react";
-import { Stepper, Button, Group, Text, Table, TextInput } from "@mantine/core";
+import { Button, Stepper, Text } from "@mantine/core";
+import { useEffect, useState } from "react";
 
-import classes from "./Checkout.module.css";
-import CheckoutItem from "../../components/CheckoutItem";
-import { useLocation, useNavigate } from "react-router";
-import { showNotifications } from "../../utils/ShowNotification";
-import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
-import Cookies from "js-cookie";
 import axios from "axios";
+import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
-import aa from 'search-insights';
+import aa from "search-insights";
 
 // Initialize Algolia insights client
-aa('init', {
-  appId: 'BWO4H6S1WK',
-  apiKey: '7a3a143223fb1c672795a76c755ef375'
+aa("init", {
+  appId: "BWO4H6S1WK",
+  apiKey: "7a3a143223fb1c672795a76c755ef375",
 });
+import { useLocation, useNavigate } from "react-router";
+import CheckoutItem from "../../components/CheckoutItem";
+import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
+import { showNotifications } from "../../utils/ShowNotification";
+import classes from "./Checkout.module.css";
 
 function Checkout() {
   const location = useLocation();
@@ -92,6 +92,8 @@ function Checkout() {
       checkoutItems.map((item) => {
         totalPrice += parseFloat(item.sub_total);
       });
+
+      totalPrice = totalPrice.toFixed(2);
     }
 
     return (
@@ -117,11 +119,9 @@ function Checkout() {
           };
 
           const additionalData = {
-            seller_id: item.seller_id,
-            listing_id: item.listing_id,
-            item_id: item.item_id,
-            quantity: item.cart_quantity,
-            size: item.size,
+            id: item.listing_id,
+            q: item.cart_quantity,
+            s: item.size,
           };
 
           checkoutMetaData.push(additionalData);
@@ -146,6 +146,7 @@ function Checkout() {
 
         const data = {
           checkout: checkoutData,
+          email: currentUser.email,
           meta_data: {
             buyer_id: currentUser.user_id,
             created_at: today,
@@ -154,17 +155,16 @@ function Checkout() {
         };
 
         //add event capturer
-        aa('purchasedObjectIDs', {
+        aa("purchasedObjectIDs", {
           userToken: currentUser.user_id,
-          eventName: 'buy_product',
-          index: 'Item_Index',
-          objectIDs: checkoutItems.map(item => item.item_id),
-          objectData: checkoutItems.map(item => ({
-            price: parseFloat(item.price)
+          eventName: "buy_product",
+          index: "Item_Index",
+          objectIDs: checkoutItems.map((item) => item.item_id),
+          objectData: checkoutItems.map((item) => ({
+            price: parseFloat(item.price),
           })),
-          currency: 'SGD'
+          currency: "SGD",
         });
-        
 
         const response = await axios.post(`${url}/buyer/checkout/`, data);
 

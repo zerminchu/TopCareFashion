@@ -8,6 +8,7 @@ import { DateInput } from "@mantine/dates";
 import { useDispatch } from "react-redux";
 import { showNotifications } from "../../utils/ShowNotification";
 import ILLogo from "../../assets/illustrations/il_logo.png";
+import Cookies from "js-cookie";
 
 function SignUpForm(props) {
   const dispatch = useDispatch();
@@ -100,6 +101,10 @@ function SignUpForm(props) {
           password: form.values.password,
           confirm_password: form.values.confirmPassword,
         };
+
+        if (Cookies.get("buyerPreferences") && data.role === "buyer") {
+          data.preferences = JSON.parse(Cookies.get("buyerPreferences"));
+        }
 
         const url =
           import.meta.env.VITE_NODE_ENV == "DEV"
