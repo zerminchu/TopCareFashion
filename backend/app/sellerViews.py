@@ -451,3 +451,43 @@ def getSalesDetailsByUserId(request, user_id):
                 "status": "error",
                 "message": str(e)
             }, status=400)
+
+@api_view(["GET"])
+def getAllListingBySellerId(request, seller_id):
+    if request.method == "GET":
+        try:
+            if(len(seller_id) <= 0):
+               raise Exception("Seller id cannot be empty")
+            
+            db = firestore.client()
+            itemRef = db.collection('Item')
+
+            query = itemRef.where('user_id', '==', seller_id).stream()
+
+            responseData = []
+
+            for doc in query:
+                itemId = doc.to_dict()["item_id"]
+                listingQuery = db.collection("Listing").where("item_id", "==", itemId).limit(1)
+                listingQueryData = listingQuery.get()
+
+                if(len(listingQueryData) <= 0):
+                    return JsonResponse({
+                        'status': "error",
+                        'message': f"Listing with item id {itemId} does not exists"
+                    }, status=400)
+                
+                if((listingQueryData[0].to_dict())["avail_status"] == "Available"):
+                    responseData.append(doc.to_dict())
+
+            return JsonResponse({
+                'status': "success",
+                'message': f"All listing by {seller_id} retrieved successfully",
+                'data': responseData
+            }, status=200)
+
+        except Exception as e:
+            return JsonResponse({
+                "status": "error",
+                "message": str(e)
+            }, status=400)

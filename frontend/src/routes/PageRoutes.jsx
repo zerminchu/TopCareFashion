@@ -27,6 +27,7 @@ import ListItem from "../pages/Seller/Transactions/ListItem";
 import UserProfile from "../pages/Seller/UserProfile";
 import SellerSummary from "../pages/Seller/sellerSummary";
 import CategorySelection from "../pages/Seller/Transactions/CategorySelection";
+import SpecificSellerListings from "../pages/Buyer/SpecificSellerListings";
 function PageRoutes() {
   return (
     <Routes>
@@ -68,6 +69,10 @@ function PageRoutes() {
       <Route path="/buyer/product-order-status" element={<ProductStatus />} />
       <Route path="/buyer/premium-feature" element={<MixAndMatch />} />
       <Route path="/not-found" element={<NotFoundImage />} />
+      <Route
+        path="/buyer/specific-seller-listings/"
+        element={<SpecificSellerListings />}
+      />
       {/* <Route path="/outfit-recommender" element={<OutfitRecommender />} />; */}
       {/* Private route */}
       <Route path="/user-profile" element={<UserProfile />} />;

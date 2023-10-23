@@ -119,6 +119,17 @@ function ProductDetails() {
     }
   };
 
+  const visitShopOnClick = () => {
+    if (productDetails) {
+      navigate("/buyer/specific-seller-listings/", {
+        state: {
+          sellerId: productDetails.user_id,
+          storeName: productDetails.store_name,
+        },
+      });
+    }
+  };
+
   const chatOnClick = () => {
     if (productDetails) {
       navigate("/chatting", {
@@ -472,9 +483,16 @@ function ProductDetails() {
           </div>
 
           <div className={classes.storeContainer}>
-            <Text size="xl" fw={700}>
-              {productDetails.store_name}
-            </Text>
+            <div
+              className={classes.visitShopContainer}
+              onClick={visitShopOnClick}
+            >
+              <Text size="xl" fw={700}>
+                {productDetails.store_name}
+              </Text>
+              <Button variant="outline">View shop</Button>
+            </div>
+
             <Button onClick={chatOnClick} variant="outline">
               <img src={IconChat} width={25} height={25} />
               Chat with seller
