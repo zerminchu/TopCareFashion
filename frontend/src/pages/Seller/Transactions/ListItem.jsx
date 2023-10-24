@@ -111,7 +111,7 @@ function ListItem() {
   ]);
   const [selectedContainerIndex, setSelectedContainerIndex] = useState(null);
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
-  const sizeOptions = ["S", "M", "L", "XL", "XXL", "Free Size"];
+  const sizeOptions = ["XS", "S", "M", "L", "X-Large", "XXL", "Free Size"];
   const [selectedSizes, setSelectedSizes] = useState([]);
 
   const handleSizeChange = (value) => {
@@ -653,7 +653,7 @@ function ListItem() {
 
         <MultiSelect
           label="Select Sizes"
-          placeholder="S, M, L, XL, XXL, Free size"
+          placeholder="XS, S, M, L, X-Large, XXL, Free Size"
           data={sizeOptions}
           value={handleSizeChange}
           onChange={setSelectedSizes}

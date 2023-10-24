@@ -5,6 +5,7 @@ import {
   Button,
   Container,
   Modal,
+  MultiSelect,
   Select,
   SimpleGrid,
   Text,
@@ -92,7 +93,8 @@ function EditListing() {
   const [selectedImages, setSelectedImages] = useState(Array(3).fill(null));
   const [showCategoryMismatchModal, setShowCategoryMismatchModal] =
     useState(false);
-  const predictedClassRef = useRef(null);
+  useState(false);
+  const [imageFormData, setImageFormData] = useState(null);
 
   const validateField = (fieldName, value) => {
     if (value.length === 0) return `${fieldName} is empty`;
@@ -115,6 +117,7 @@ function EditListing() {
       avail_status: "",
       image_urls: "",
       sub_category: "",
+      size: [],
     },
     validate: {
       gender: (value) => validateField("Gender", value),
@@ -127,60 +130,62 @@ function EditListing() {
       collection_address: (value) => validateField("Collection Address", value),
       quantity_available: (value) => validateField("Quantity Available", value),
       avail_status: (value) => validateField("Available Status", value),
+      size: (value) => validateField("Size", value),
     },
   });
 
-  const handleImageChange = (index, event) => {
+  const handleImageChange = async (index, event) => {
     const file = event.target.files[0];
 
-    if (file) {
-      const newSelectedImages = [...selectedImages];
-      newSelectedImages[index] = URL.createObjectURL(file);
+    if (!file) {
+      return;
+    }
+
+    const newSelectedImages = [...selectedImages];
+    newSelectedImages[index] = URL.createObjectURL(file);
+    setSelectedImages(newSelectedImages);
+
+    const url =
+      import.meta.env.VITE_NODE_ENV === "DEV"
+        ? import.meta.env.VITE_API_DEV
+        : import.meta.env.VITE_API_PROD;
+
+    const formData = new FormData();
+    formData.append("image", file);
+    setImageFormData(formData);
+
+    try {
+      dispatch({ type: "SET_LOADING", value: true });
+
+      const classifier_response = await axios.post(
+        `${url}/classify-image/`,
+        formData
+      );
+      const data = classifier_response.data;
+
+      if (data.predicted_subcategory !== form.values.sub_category) {
+        setShowCategoryMismatchModal(true);
+        return;
+      }
+
+      const response = await axios.put(
+        `${url}/replace-image/${id}/${item_id}/${index}/`,
+        formData
+      );
+
+      newSelectedImages[index] = response.data.imageUrl;
       setSelectedImages(newSelectedImages);
 
-      const url =
-        import.meta.env.VITE_NODE_ENV == "DEV"
-          ? import.meta.env.VITE_API_DEV
-          : import.meta.env.VITE_API_PROD;
-
-      const formData = new FormData();
-      formData.append("image", file);
-
-      try {
-        dispatch({ type: "SET_LOADING", value: true });
-
-        axios
-          .put(`${url}/replace-image/${id}/${item_id}/${index}/`, formData)
-          .then((response) => {
-            newSelectedImages[index] = response.data.imageUrl;
-            setSelectedImages(newSelectedImages);
-
-            axios
-              .post(`${url}/classify-image/`, formData)
-              .then((classifier_response) => {
-                const data = classifier_response.data;
-
-                predictedClassRef.current = data.predicted_subcategory;
-
-                if (data.predicted_subcategory !== form.values.sub_category) {
-                  setShowCategoryMismatchModal(true);
-                }
-                setItem((prevItem) => {
-                  const newItem = { ...prevItem };
-                  newItem.image_urls[index] = response.data.imageUrl;
-                  return newItem;
-                });
-                dispatch({ type: "SET_LOADING", value: false });
-              })
-
-              .catch((error) => {
-                console.error("Error classifying image:", error);
-                dispatch({ type: "SET_LOADING", value: false });
-              });
-          });
-      } catch (error) {
-        console.error("Error replacing image:", error);
-      }
+      setItem((prevItem) => ({
+        ...prevItem,
+        image_urls: prevItem.image_urls.map((imageUrl, i) =>
+          i === index ? response.data.imageUrl : imageUrl
+        ),
+      }));
+    } catch (error) {
+      console.error("Error in updating image:", error);
+    } finally {
+      dispatch({ type: "SET_LOADING", value: false });
     }
   };
 
@@ -232,6 +237,7 @@ function EditListing() {
         form.setValues({ quantity_available: itemData.quantity_available });
         form.setValues({ avail_status: itemData.avail_status });
         form.setValues({ collection_address: itemData.collection_address });
+        form.setValues({ size: itemData.size || [] });
       } catch (error) {
         console.error("Error fetching Item details:", error);
       }
@@ -246,52 +252,52 @@ function EditListing() {
   const handleSubmit = async () => {
     const errors = form.validate();
 
-    if (!form.validate().hasErrors) {
-      try {
-        dispatch({ type: "SET_LOADING", value: true });
-
-        const url =
-          import.meta.env.VITE_NODE_ENV == "DEV"
-            ? import.meta.env.VITE_API_DEV
-            : import.meta.env.VITE_API_PROD;
-
-        const response = await axios.put(
-          `${url}/edit-item/${id}/${item_id}/`,
-          form.values
-        );
-
-        dispatch({ type: "SET_LOADING", value: false });
-
-        const predictedClass = predictedClassRef.current;
-
-        if (predictedClass !== form.values.category) {
-          showNotifications({
-            status: "warning",
-            title: "Category Mismatch",
-            message:
-              "The uploaded image doesn't match the selected category. Please re-upload the image.",
-          });
-        } else {
-          showNotifications({
-            status: "success",
-            title: "Updated Successfully",
-            message: response.data.message,
-          });
-
-          setIsEditing(false);
-
-          navigate(`/`);
-        }
-      } catch (error) {
-        console.error("Error updating item:", error);
-        dispatch({ type: "SET_LOADING", value: false });
-      }
-    } else {
+    if (errors.hasErrors) {
       showNotifications({
         status: "error",
         title: "Form Validation Error",
         message: "Please fix the form validation errors before saving.",
       });
+      return;
+    }
+
+    try {
+      dispatch({ type: "SET_LOADING", value: true });
+      const size = Array.isArray(form.values.size)
+        ? form.values.size
+        : [form.values.size];
+
+      const url =
+        import.meta.env.VITE_NODE_ENV == "DEV"
+          ? import.meta.env.VITE_API_DEV
+          : import.meta.env.VITE_API_PROD;
+
+      const formData = new FormData();
+
+      formData.append("image", imageFormData);
+
+      const updateItemData = {
+        ...form.values,
+        size,
+      };
+      const response = await axios.put(
+        `${url}/edit-item/${id}/${item_id}/`,
+        updateItemData
+      );
+
+      dispatch({ type: "SET_LOADING", value: false });
+
+      showNotifications({
+        status: "success",
+        title: "Updated Successfully",
+        message: response.data.message,
+      });
+
+      setIsEditing(false);
+      navigate(`/`);
+    } catch (error) {
+      console.error("Error updating item:", error);
+      dispatch({ type: "SET_LOADING", value: false });
     }
   };
 
@@ -506,6 +512,26 @@ function EditListing() {
           classNames={classes}
           disabled={!isEditing}
           {...form.getInputProps("price")}
+        />
+        <br />
+        <MultiSelect
+          label="Sizes"
+          data={[
+            { value: "XS", label: "XS" },
+            { value: "S", label: "S" },
+            { value: "M", label: "M" },
+            { value: "L", label: "L" },
+            { value: "XL", label: "X-Large" },
+            { value: "XXL", label: "XXL" },
+            { value: "Free Size", label: "Free Size" },
+          ]}
+          placeholder="Select sizes"
+          style={{ width: "50%" }}
+          classNames={classes}
+          value={form.values.size}
+          onChange={(selectedSizes) => form.setValues({ size: selectedSizes })}
+          disabled={!isEditing}
+          {...form.getInputProps("size")}
         />
         <br />
         <TextInput

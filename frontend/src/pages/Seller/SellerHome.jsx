@@ -1,30 +1,28 @@
 /* eslint-disable no-unused-vars */
-import { useEffect, useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
 import {
+  Burger,
   Card,
-  Image,
-  Text,
   Group,
+  Image,
+  Menu,
+  Select,
+  Text,
+  TextInput,
   createStyles,
   rem,
-  Menu,
 } from "@mantine/core";
-import axios from "axios";
-import BusinessProfile from "./Business Profile/BusinessProfile";
-import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
-import Cookies from "js-cookie";
-import classes from "./SellerHome.module.css";
-import { Select } from "@mantine/core";
-import { TextInput } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { Burger } from "@mantine/core";
-import { IconSettings, IconSearch, IconCopy } from "@tabler/icons-react";
-import { useDispatch } from "react-redux";
+import { IconCopy, IconSearch, IconSettings } from "@tabler/icons-react";
+import axios from "axios";
 import copy from "copy-to-clipboard";
-import { toast } from "react-toastify";
+import Cookies from "js-cookie";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer } from "react-toastify";
+import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
+import classes from "./SellerHome.module.css";
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -84,10 +82,50 @@ function SellerCards() {
   const [openedMenus, setOpenedMenus] = useState(
     new Array(filteredItems.length).fill(false)
   );
-  const [isShareModalOpen, setShareModalOpen] = useState(false);
-  const [selectedItemForShare, setSelectedItemForShare] = useState(null);
+  const [clothingCategories, setClothingCategories] = useState([]);
+  const [subCategory, setSubCategory] = useState([]);
+
+  const [selectedCondition, setSelectedCondition] = useState("");
+  const [selectedSubCategory, setSelectedSubCategory] = useState("");
 
   const [currentUser, setCurrentUser] = useState();
+
+  const filterItems = (
+    selectedCategory,
+    selectedSubCategory,
+    selectedCondition,
+    search
+  ) => {
+    let filtered = items;
+
+    // Filter by category
+    if (selectedCategory !== "") {
+      filtered = filtered.filter((item) => item.category === selectedCategory);
+    }
+
+    // Filter by sub-category
+    if (selectedSubCategory !== "") {
+      filtered = filtered.filter(
+        (item) => item.sub_category === selectedSubCategory
+      );
+    }
+
+    // Filter by condition
+    if (selectedCondition !== "") {
+      filtered = filtered.filter(
+        (item) => item.condition === selectedCondition
+      );
+    }
+
+    // Filter by search text
+    if (search !== "") {
+      filtered = filtered.filter((item) =>
+        item.title.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+
+    setFilteredItems(filtered);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -127,6 +165,38 @@ function SellerCards() {
     }
   }, []);
 
+  const fetchClothingCategories = async () => {
+    try {
+      const url =
+        import.meta.env.VITE_NODE_ENV === "DEV"
+          ? import.meta.env.VITE_API_DEV
+          : import.meta.env.VITE_API_PROD;
+
+      const response = await axios.get(`${url}/get-all-category/`);
+      if (response.data?.categories) {
+        const categorySet = new Set();
+        const subCategorySet = new Set();
+
+        response.data.categories.forEach((item) => {
+          categorySet.add(item.category);
+          subCategorySet.add(item.sub_category);
+        });
+
+        const categoryArray = Array.from(categorySet);
+        const subCategoryArray = Array.from(subCategorySet);
+
+        setClothingCategories(categoryArray);
+        setSubCategory(subCategoryArray);
+      }
+    } catch (error) {
+      console.error("Error fetching clothing categories:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchClothingCategories();
+  }, []);
+
   useEffect(() => {
     const checkOnBoardingCompleted = async () => {
       try {
@@ -161,30 +231,27 @@ function SellerCards() {
 
   const handleCategoryChange = (selectedCategory) => {
     setCategory(selectedCategory);
-    filterItems(selectedCategory, searchText);
+    filterItems(
+      selectedCategory,
+      selectedSubCategory,
+      selectedCondition,
+      searchText
+    );
   };
 
   const handleSearchTextChange = (value) => {
     setSearchText(value);
-    filterItems(category, value);
+    filterItems(category, selectedSubCategory, selectedCondition, value);
   };
 
-  const filterItems = (selectedCategory, search) => {
-    let filtered = items;
+  const handleSubCategoryChange = (selectedSubCategory) => {
+    setSelectedSubCategory(selectedSubCategory);
+    filterItems(category, selectedSubCategory, selectedCondition, searchText);
+  };
 
-    // Filter by category
-    if (selectedCategory !== "") {
-      filtered = filtered.filter((item) => item.category === selectedCategory);
-    }
-
-    // Filter by search text
-    if (search !== "") {
-      filtered = filtered.filter((item) =>
-        item.title.toLowerCase().includes(search.toLowerCase())
-      );
-    }
-
-    setFilteredItems(filtered);
+  const handleConditionChange = (selectedCondition) => {
+    setSelectedCondition(selectedCondition);
+    filterItems(category, selectedSubCategory, selectedCondition, searchText);
   };
 
   const handleBurgerClick = (index) => {
@@ -192,18 +259,6 @@ function SellerCards() {
     updatedMenus[index] = !updatedMenus[index];
     setOpenedMenus(updatedMenus);
   };
-
-  /*  const openShareModal = (item) => {
-    if (!isShareModalOpen) {
-      setSelectedItemForShare(item);
-      setShareModalOpen(true);
-    }
-  };
-
-  const closeShareModal = () => {
-    setSelectedItemForShare(null);
-    setShareModalOpen(false);
-  }; */
 
   const handleShareClick = (item) => {
     const itemURL = `https://topcarefashion/listing/${item.item_id}`;
@@ -229,9 +284,21 @@ function SellerCards() {
             placeholder="Select by category"
             searchable
             nothingFound="No options"
-            data={["Top", "Bottom", "Footwear"]}
+            data={[
+              { label: "All Categories", value: "" },
+              ...clothingCategories,
+            ]}
             value={category}
             onChange={(value) => handleCategoryChange(value)}
+            className={classes.categoryDropdown}
+          />
+          <Select
+            placeholder="Select by sub category"
+            searchable
+            nothingFound="No options"
+            data={[{ label: "All Sub Categories", value: "" }, ...subCategory]}
+            value={selectedSubCategory}
+            onChange={(value) => handleSubCategoryChange(value)}
             className={classes.categoryDropdown}
           />
 
