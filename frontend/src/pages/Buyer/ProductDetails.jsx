@@ -1,21 +1,21 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/jsx-key */
-import { Button, Radio, Text, Group, NumberInput } from "@mantine/core";
-import { useEffect, useState } from "react";
-import IconChat from "../../assets/icons/ic_chat.svg";
-import IconWishlist from "../../assets/icons/ic_wishlist.svg";
-import ProductRating from "../../components/Rating/ProductRating";
-import IconRating from "../../assets/icons/ic_rating.svg";
-import { useLocation, useNavigate } from "react-router-dom";
-import ILLNullImageListing from "../../assets/illustrations/il_null_image_clothes.svg";
+import { Button, Group, NumberInput, Radio, Text } from "@mantine/core";
 import axios from "axios";
-import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
 import Cookies from "js-cookie";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import IconChat from "../../assets/icons/ic_chat.svg";
+import IconRating from "../../assets/icons/ic_rating.svg";
+import IconWishlist from "../../assets/icons/ic_wishlist.svg";
+import ILLNullImageListing from "../../assets/illustrations/il_null_image_clothes.svg";
+import ProductRating from "../../components/Rating/ProductRating";
+import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
 
-import classes from "./ProductDetails.module.css";
-import { showNotifications } from "../../utils/ShowNotification";
-import { useDispatch } from "react-redux";
 import copy from "copy-to-clipboard";
+import { useDispatch } from "react-redux";
+import { showNotifications } from "../../utils/ShowNotification";
+import classes from "./ProductDetails.module.css";
 
 function ProductDetails() {
   const dispatch = useDispatch();

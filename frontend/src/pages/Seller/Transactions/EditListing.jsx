@@ -17,7 +17,7 @@ import {
 import { useForm } from "@mantine/form";
 import axios from "axios";
 import Cookies from "js-cookie";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { BiUpload } from "react-icons/bi";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";

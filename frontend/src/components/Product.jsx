@@ -1,21 +1,11 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import React, { useState } from "react";
-import classes from "./Product.module.css";
 import { Button, Text } from "@mantine/core";
-import { showNotifications } from "../utils/ShowNotification";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import Cookies from "js-cookie";
 import algoliasearch from "algoliasearch/lite";
-import {
-  InstantSearch,
-  SearchBox,
-  Highlight,
-  Configure,
-  PoweredBy,
-  Hits,
-} from "react-instantsearch";
+import React from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import classes from "./Product.module.css";
 
 function Product(props) {
   const navigate = useNavigate();
