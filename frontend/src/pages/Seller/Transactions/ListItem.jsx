@@ -210,6 +210,11 @@ function ListItem() {
       formData.append("user_id", currentUser.user_id);
       formData.append("avail_status", avail_status);
       formData.append("size", selectedSizes.join(","));
+
+      console.log("Form Data:");
+      console.log("Gender:", gender);
+      // Log other form data here
+
       const url =
         import.meta.env.VITE_NODE_ENV == "DEV"
           ? import.meta.env.VITE_API_DEV
@@ -608,15 +613,17 @@ function ListItem() {
           mt="md"
           withinPortal
           data={[
-            { value: "men", label: "Men" },
             { value: "women", label: "Women" },
+            { value: "men", label: "Men" },
           ]}
           placeholder="Men"
           label="Product Gender Specification"
           value={gender}
           classNames={classes}
           style={{ width: "50%" }}
-          onChange={(selectedValue) => setGender(selectedValue)}
+          onChange={(selectedValue) => {
+            setGender(selectedValue);
+          }}
           error={validateCondition(gender)}
         />
         <br />
