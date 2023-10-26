@@ -55,9 +55,10 @@ def signUp(request):
                 data["profile_image_url"] = ""
                 if(not "preferences" in data):
                     data["preferences"] = {
-                        "type": "",
-                        "size": "",
-                        "category": ""
+                        "condition": "",
+                        "gender": "",
+                        "price": [],
+                        "size": ""
                     }
 
                 data["verified_status"] = False
@@ -65,15 +66,9 @@ def signUp(request):
                 data["gender"] = ""
                 data["phone_number"] = ""
 
-
                 # Serialize
                 buyerData = dict(data)
 
-                preferences = buyerData.pop("preferences")
-                name = buyerData.pop("name")
-
-                buyerData.update(preferences)
-                buyerData.update(name)
                 serializer = BuyerSerializer(data=buyerData)
 
                 if (serializer.is_valid()):
