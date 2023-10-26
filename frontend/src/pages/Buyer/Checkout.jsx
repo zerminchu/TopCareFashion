@@ -185,6 +185,14 @@ function Checkout() {
           currency: "SGD",
         });
 
+        aa('convertedObjectIDs', { //for trending 
+          userToken: currentUser.user_id,
+          eventName: 'Buy Product',
+          index: 'Item_Index',
+          objectIDs: checkoutItems.map((item) => item.item_id),
+          
+        });
+
         const response = await axios.post(`${url}/buyer/checkout/`, data);
 
         dispatch({ type: "SET_LOADING", value: false });
