@@ -53,11 +53,13 @@ function BuyerHome(props) {
   );
 
   useEffect(() => {
-    console.log("CALLLED!");
     if (!localStorage.getItem("buyerPreferences")) {
+      if (Cookies.get("userRole") && Cookies.get("userRole") !== "buyer") {
+        return;
+      }
       dispatch({ type: "SET_BUYER_PREFERENCES", value: true });
     }
-  }, []);
+  }, [currentUser]);
 
   useEffect(() => {
     const setUserSessionData = async () => {

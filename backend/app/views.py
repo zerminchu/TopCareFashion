@@ -201,11 +201,18 @@ def signIn(request):
 
             user = firebaseAuth.sign_in_with_email_and_password(
                 data["email"], data["password"])
+            
+            db = firestore.client()
+            userRef = db.collection("Users").document(user["localId"])
+            userData = userRef.get()
+
+            responseData = dict(user)
+            responseData["role"] = (userData.to_dict())["role"]
 
             return JsonResponse({
                 'status': "success",
                 'message': "Logged in Successful",
-                'data': user
+                'data': responseData
             }, status=200)
 
         except Exception as e:
