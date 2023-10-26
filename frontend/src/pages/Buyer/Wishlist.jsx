@@ -10,7 +10,7 @@ import classes from "./Wishlist.module.css";
 
 function Wishlist() {
   const navigate = useNavigate();
-  const [wishlistItems, setwishlistItems] = useState([]);
+  const [wishlistItems, setwishlistItems] = useState();
   const [currentUser, setCurrentUser] = useState();
 
   // Check current user
