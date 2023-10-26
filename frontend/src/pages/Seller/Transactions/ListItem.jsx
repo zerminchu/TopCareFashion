@@ -258,6 +258,8 @@ function ListItem() {
       if (value.length === 0) return "Category should not be blank";
       if (/^\s$|^\s+.|.\s+$/.test(value))
         return "Category should not contain trailing/leading whitespaces";
+      if (!/^[a-zA-Z0-9\s]+$/.test(value))
+        return "Category should not contain special characters";
     }
     return null;
   };
@@ -267,6 +269,8 @@ function ListItem() {
       if (value.length === 0) return "Condition should not be blank";
       if (/^\s$|^\s+.|.\s+$/.test(value))
         return "Condition should not contain trailing/leading whitespaces";
+      if (!/^[a-zA-Z0-9\s]+$/.test(value))
+        return "Condition should not contain special characters";
     }
     return null;
   };
@@ -276,14 +280,19 @@ function ListItem() {
       if (value.length === 0) return "Colour should not be blank";
       if (/^\s$|^\s+.|.\s+$/.test(value))
         return "Colour should not contain trailing/leading whitespaces";
+      if (!/^[a-zA-Z0-9\s]+$/.test(value))
+        return "Colour should not contain special characters";
     }
     return null;
   };
+
   const validateTitle = (value) => {
     if (formSubmitted) {
       if (value.length === 0) return "Title should not be blank";
       if (/^\s$|^\s+.|.\s+$/.test(value))
         return "Title should not contain trailing/leading whitespaces";
+      if (!/^[a-zA-Z0-9\s]+$/.test(value))
+        return "Title should not contain special characters";
     }
     return null;
   };
@@ -293,6 +302,8 @@ function ListItem() {
       if (value.length === 0) return "Description should not be blank";
       if (/^\s$|^\s+.|.\s+$/.test(value))
         return "Description should not contain trailing/leading whitespaces";
+      if (!/^[a-zA-Z0-9\s]+$/.test(value))
+        return "Description should not contain special characters";
     }
     return null;
   };
@@ -300,6 +311,10 @@ function ListItem() {
   const validatePrice = (value) => {
     if (formSubmitted) {
       if (value.length === 0) return "Price should not be blank";
+      if (/^\s$|^\s+.|.\s+$/.test(value))
+        return "Price should not contain trailing/leading whitespaces";
+      if (!/^[0-9.]+$/.test(value))
+        return "Price should not contain special characters (except decimal point)";
     }
     return null;
   };
@@ -307,6 +322,10 @@ function ListItem() {
   const validateQuantityAvailable = (value) => {
     if (formSubmitted) {
       if (value.length === 0) return "Quantity Available should not be blank";
+      if (/^\s$|^\s+.|.\s+$/.test(value))
+        return "Quantity Available should not contain trailing/leading whitespaces";
+      if (!/^\d+$/.test(value))
+        return "Quantity Available should only contain digits";
     }
     return null;
   };
@@ -314,22 +333,46 @@ function ListItem() {
   const validateSize = (value) => {
     if (formSubmitted) {
       if (value.length === 0) return "Size should not be empty";
+      if (/^\s$|^\s+.|.\s+$/.test(value))
+        return "Size should not contain trailing/leading whitespaces";
+      if (!/^[a-zA-Z0-9\s,]+$/.test(value))
+        return "Size should not contain special characters (except comma)";
     }
     return null;
   };
 
   const validateCollectionAddress = (value) => {
     if (formSubmitted) {
-      if (value.length === 0) return "Collection Address should not be blank";
-      if (/^\s$|^\s+.|.\s+$/.test(value))
+      if (value.trim() === "") {
+        return "Collection Address should not be blank";
+      }
+
+      if (/^\s$|^\s+.|.\s+$/.test(value)) {
         return "Collection Address should not contain trailing/leading whitespaces";
+      }
+
+      if (/\d{6}/.test(value)) {
+        const postalCode = value.match(/\d{6}/)[0];
+        if (!/^\d{6}$/.test(postalCode)) {
+          return "Please enter a valid 6-digit postal code in the address.";
+        }
+      } else {
+        return "Please enter a 6-digit postal code in the address.";
+      }
+      if (!/^[a-zA-Z0-9\s,]+$/.test(value))
+        return "Collection Address should not contain special characters (except comma)";
     }
+
     return null;
   };
 
   const validateAvailStatus = (value) => {
     if (formSubmitted) {
       if (value.length === 0) return "Available Status should not be blank";
+      if (/^\s$|^\s+.|.\s+$/.test(value))
+        return "Available Status should not contain trailing/leading whitespaces";
+      if (!/^[a-zA-Z0-9\s]+$/.test(value))
+        return "Available Status should not contain special characters";
     }
     return null;
   };
@@ -591,7 +634,7 @@ function ListItem() {
             { value: "Lightly Used", label: "Lightly Used" },
             { value: "Well Used", label: "Well Used" },
           ]}
-          placeholder="Brand New"
+          placeholder="Select Condition"
           label="Condition"
           value={condition}
           classNames={classes}
@@ -604,7 +647,7 @@ function ListItem() {
           label="Colour"
           value={colour}
           onChange={(event) => setColour(event.target.value)}
-          placeholder="Red"
+          placeholder="Enter Colour (e.g., Red)"
           classNames={classes}
           style={{ width: "50%" }}
           error={validateColour(colour)}
@@ -616,7 +659,7 @@ function ListItem() {
             { value: "women", label: "Women" },
             { value: "men", label: "Men" },
           ]}
-          placeholder="Men"
+          placeholder="Select Item's Gender"
           label="Product Gender Specification"
           value={gender}
           classNames={classes}
@@ -631,7 +674,7 @@ function ListItem() {
           label="Title"
           value={title}
           onChange={(event) => setTitle(event.target.value)}
-          placeholder="Oversized T-Shirt"
+          placeholder="Enter Title (e.g., Oversized T-Shirt)"
           classNames={classes}
           style={{ width: "50%" }}
           error={validateTitle(title)}
@@ -641,7 +684,7 @@ function ListItem() {
           label="Description"
           value={description}
           onChange={(event) => setDescription(event.target.value)}
-          placeholder="Give your item a description"
+          placeholder="Provide Item Description"
           classNames={classes}
           style={{ width: "50%" }}
           error={validateDescription(description)}
@@ -651,16 +694,15 @@ function ListItem() {
           label="Price"
           value={price}
           onChange={(event) => setPrice(event.target.value)}
-          placeholder="$ 123"
+          placeholder="Enter Price (e.g., $123)"
           classNames={classes}
           style={{ width: "50%" }}
           error={validatePrice(price)}
         />
         <br />
-
         <MultiSelect
-          label="Select Sizes"
-          placeholder="XS, S, M, L, X-Large, XXL, Free Size"
+          label="Sizes"
+          placeholder="Select Sizes (e.g., XS, S, M)"
           data={sizeOptions}
           value={handleSizeChange}
           onChange={setSelectedSizes}
@@ -674,21 +716,22 @@ function ListItem() {
           label="Quantity Available"
           value={quantity_available}
           onChange={(event) => setQuantityAvailable(event.target.value)}
-          placeholder="10"
+          placeholder="Enter Quantity Available (e.g., 10)"
           classNames={classes}
           style={{ width: "50%" }}
           error={validateQuantityAvailable(quantity_available)}
         />
         <br />
         <TextInput
-          label="Collection Address (with Postal Code)"
+          label="Collection Address including Postal Code"
           value={collection_address}
           onChange={(event) => setCollectionAddress(event.target.value)}
-          placeholder="Address Line 1"
+          placeholder="Enter Address (e.g., Address Line 1, 200901)"
           classNames={classes}
           style={{ width: "50%" }}
-          error={validateCollectionAddress(collection_address)}
+          error={validateCollectionAddress(collection_address, formSubmitted)}
         />
+
         <br />
         <Select
           mt="mt"
@@ -697,8 +740,8 @@ function ListItem() {
             { value: "Available", label: "Available" },
             { value: "Unavailable", label: "Unavailable" },
           ]}
-          placeholder="Available"
-          label="Available Status"
+          placeholder="Select Availability Status"
+          label="Availability Status"
           value={avail_status}
           classNames={classes}
           style={{ width: "50%" }}

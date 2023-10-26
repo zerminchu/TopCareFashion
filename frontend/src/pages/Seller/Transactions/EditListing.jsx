@@ -96,10 +96,17 @@ function EditListing() {
   useState(false);
   const [imageFormData, setImageFormData] = useState(null);
 
-  const validateField = (fieldName, value) => {
+  const validateField = (fieldName, value, ignoreSpecialChars = false) => {
     if (value.length === 0) return `${fieldName} is empty`;
-    if (/^\s*$|^\s+.*|.*\s+$/.test(value))
+
+    if (!ignoreSpecialChars && /[^a-zA-Z0-9\s]/.test(value)) {
+      return `${fieldName} contains special characters`;
+    }
+
+    if (/^\s*$|^\s+.*|.*\s+$/.test(value)) {
       return `${fieldName} contains trailing/leading whitespaces`;
+    }
+
     return null;
   };
 
@@ -126,11 +133,26 @@ function EditListing() {
       colour: (value) => validateField("Colour", value),
       title: (value) => validateField("Title", value),
       description: (value) => validateField("Description", value),
-      price: (value) => validateField("Price", value),
-      collection_address: (value) => validateField("Collection Address", value),
-      quantity_available: (value) => validateField("Quantity Available", value),
+      price: (value) => {
+        if (!/^[0-9.]+$/.test(value)) {
+          return "Price should only contain decimal values.";
+        }
+        return null;
+      },
+      collection_address: (value) => {
+        const pattern = /^\d{6}\s.+/;
+
+        if (!pattern.test(value)) {
+          return "Collection Address should start with a 6-digit postal code";
+        }
+
+        return null;
+      },
+
+      quantity_available: (value) =>
+        validateField("Quantity Available", value, true),
       avail_status: (value) => validateField("Available Status", value),
-      size: (value) => validateField("Size", value),
+      size: (value) => validateField("Size", value, true),
     },
   });
 
@@ -444,12 +466,7 @@ function EditListing() {
             Apparel Type: {form.values.category}
           </Badge>
         </div>
-        {/*   <TextInput
-          label="Condition"
-          style={{ width: "50%" }}
-          classNames={classes}
-          disabled={!isEditing}
-          {...form.getInputProps("condition")} */}
+
         <Select
           mt="md"
           withinPortal
@@ -543,19 +560,13 @@ function EditListing() {
         />
         <br />
         <TextInput
-          label="Collection Address (with Postal)"
+          label="Collection Address including Postal Code"
           style={{ width: "50%" }}
           classNames={classes}
           disabled={!isEditing}
           {...form.getInputProps("collection_address")}
         />
         <br />
-        {/* <TextInput
-          label="Available Status"
-          style={{ width: "50%" }}
-          classNames={classes}
-          disabled={!isEditing}
-          {...form.getInputProps("avail_status")} */}
         <Select
           mt="mt"
           withinPortal
