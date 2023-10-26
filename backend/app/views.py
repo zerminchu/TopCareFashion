@@ -53,7 +53,6 @@ def signUp(request):
             if (data["role"] == "buyer"):
                 # Add additional data to buyer
                 data["profile_image_url"] = ""
-                print("helo1", data)
                 if(not "preferences" in data):
                     data["preferences"] = {
                         "type": "",
@@ -66,7 +65,6 @@ def signUp(request):
                 data["gender"] = ""
                 data["phone_number"] = ""
 
-                print("TOTAL DATA: ", data)
 
                 # Serialize
                 buyerData = dict(data)
@@ -764,7 +762,6 @@ def add_product(request):
                     "condition": condition,
                     "colour": colour,
                     "title": title,
-                    "gender": "men",
                     "description": description,
                     "price": price,
                     "image_urls": image_urls,
@@ -909,21 +906,30 @@ def edit_item(request, user_id, item_id):
 
             product_doc = matching_products[0].reference
 
-            serializer = ItemSerializer(data=request.data, partial=True)
+            serializer = EditItemSerializer(data=request.data, partial=True)
+                    
 
             if serializer.is_valid():
                 validated_data = serializer.validated_data
 
+                size = validated_data.get("size", [])
+                if size:
+                    size = [s.strip() for s in size]
+                
                 product_doc.update({
-                    "category": validated_data["category"],
-                    "condition": validated_data["condition"],
-                    "colour": validated_data["colour"],
-                    "title": validated_data["title"],
-                    "gender": validated_data["gender"],
-                    "description": validated_data["description"],
-                    "price": validated_data["price"],
+                        "category": validated_data["category"],
+                        "condition": validated_data["condition"],
+                        "colour": validated_data["colour"],
+                        "title": validated_data["title"],
+                        "gender": validated_data["gender"],
+                        "description": validated_data["description"],
+                        "price": validated_data["price"],
+                        "size": size,
 
-                })
+                    })
+
+              
+
 
                 collection_address = request.data.get("collection_address")
                 quantity_available = request.data.get("quantity_available")
@@ -939,7 +945,7 @@ def edit_item(request, user_id, item_id):
                         "quantity_available": quantity_available,
                         "avail_status": avail_status,
                     })
-
+               
                 uploaded_files = request.FILES.getlist('files')
 
                 image_urls = []
@@ -1367,7 +1373,6 @@ def webhookStripe(request):
                 createdAt = data["metadata"]["created_at"]
                 checkoutData = json.loads(data["metadata"]["checkout_data"])
                 #chargeId = (stripe.PaymentIntent.retrieve(paymentIntent)).charges.data[0].id
-                print(stripe.PaymentIntent.retrieve(paymentIntent))
 
                 chargeId = stripe.PaymentIntent.retrieve(paymentIntent)["charges"]["data"][0]["id"]
                 receiptUrl = stripe.PaymentIntent.retrieve(paymentIntent)["charges"]["data"][0]["receipt_url"]
@@ -1417,6 +1422,10 @@ def webhookStripe(request):
                         if(checkoutDataSerializer.is_valid()):
                             paidOrderRef = db.collection("PaidOrder").document(paidOrderId)
                             paidOrderRef.set(paidOrderData)
+
+                            updatedQuantityAvailable = int((listingData.to_dict())["quantity_available"]) - int(checkoutItem["q"])
+                            listingRef.update({"quantity_available": updatedQuantityAvailable})
+                            
                             responseData.append(paidOrderData)
                         else:
                             raise Exception(checkoutDataSerializer.errors)

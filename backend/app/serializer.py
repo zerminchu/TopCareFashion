@@ -73,6 +73,14 @@ class ItemSerializer(serializers.ModelSerializer):
         model = Item
         fields = '__all__'
 
+class EditItemSerializer(serializers.ModelSerializer):
+    size = serializers.ListField(child=serializers.CharField(), allow_empty=True, required=False)
+
+    class Meta:
+        model = Item
+        fields = '__all__'
+       
+
 
 class ListingSerializer(serializers.ModelSerializer):
     class Meta:

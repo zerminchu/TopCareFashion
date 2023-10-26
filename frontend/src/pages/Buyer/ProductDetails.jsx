@@ -1,20 +1,20 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/jsx-key */
-import { Button, Radio, Text, Group, NumberInput } from "@mantine/core";
-import { useEffect, useState } from "react";
-import IconChat from "../../assets/icons/ic_chat.svg";
-import IconWishlist from "../../assets/icons/ic_wishlist.svg";
-import ProductRating from "../../components/Rating/ProductRating";
-import IconRating from "../../assets/icons/ic_rating.svg";
-import { useLocation, useNavigate } from "react-router-dom";
-import ILLNullImageListing from "../../assets/illustrations/il_null_image_clothes.svg";
+import { Button, Group, NumberInput, Radio, Text } from "@mantine/core";
 import axios from "axios";
-import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
 import Cookies from "js-cookie";
-
-import classes from "./ProductDetails.module.css";
-import { showNotifications } from "../../utils/ShowNotification";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import IconChat from "../../assets/icons/ic_chat.svg";
+import IconRating from "../../assets/icons/ic_rating.svg";
+import IconWishlist from "../../assets/icons/ic_wishlist.svg";
+import ILLNullImageListing from "../../assets/illustrations/il_null_image_clothes.svg";
+import ProductRating from "../../components/Rating/ProductRating";
+import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
 import { useDispatch } from "react-redux";
+import { showNotifications } from "../../utils/ShowNotification";
+import classes from "./ProductDetails.module.css";
+
 import copy from "copy-to-clipboard";
 import aa from 'search-insights';
 
@@ -23,6 +23,7 @@ aa('init', {
   appId: 'BWO4H6S1WK',
   apiKey: '7a3a143223fb1c672795a76c755ef375'
 });
+
 
 function ProductDetails() {
   const dispatch = useDispatch();
@@ -122,6 +123,17 @@ function ProductDetails() {
             {colour}
           </Text>
         );
+      });
+    }
+  };
+
+  const visitShopOnClick = () => {
+    if (productDetails) {
+      navigate("/buyer/specific-seller-listings/", {
+        state: {
+          sellerId: productDetails.user_id,
+          storeName: productDetails.store_name,
+        },
       });
     }
   };
@@ -323,6 +335,16 @@ function ProductDetails() {
       return;
     }
 
+    if (parseInt(quantity) > parseInt(productDetails.quantity_available)) {
+      showNotifications({
+        status: "error",
+        title: "Error",
+        message: "Your quantity exceeds the product stock",
+      });
+
+      return;
+    }
+
     const date = new Date();
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, "0");
@@ -502,9 +524,16 @@ function ProductDetails() {
           </div>
 
           <div className={classes.storeContainer}>
-            <Text size="xl" fw={700}>
-              {productDetails.store_name}
-            </Text>
+            <div
+              className={classes.visitShopContainer}
+              onClick={visitShopOnClick}
+            >
+              <Text size="xl" fw={700}>
+                {productDetails.store_name}
+              </Text>
+              <Button variant="outline">View shop</Button>
+            </div>
+
             <Button onClick={chatOnClick} variant="outline">
               <img src={IconChat} width={25} height={25} />
               Chat with seller
