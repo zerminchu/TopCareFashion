@@ -167,6 +167,39 @@ function ListItem() {
     event.preventDefault();
     setFormSubmitted(true);
 
+    const categoryError = validateCategory(category);
+    const conditionError = validateCondition(condition);
+    const colourError = validateColour(colour);
+    const titleError = validateTitle(title);
+    const descriptionError = validateDescription(description);
+    const priceError = validatePrice(price);
+    const quantityAvailableError =
+      validateQuantityAvailable(quantity_available);
+    const sizeError = validateSize(selectedSizes.join(","));
+    const collectionAddressError =
+      validateCollectionAddress(collection_address);
+    const availStatusError = validateAvailStatus(avail_status);
+
+    if (
+      categoryError ||
+      conditionError ||
+      colourError ||
+      titleError ||
+      descriptionError ||
+      priceError ||
+      quantityAvailableError ||
+      sizeError ||
+      collectionAddressError ||
+      availStatusError
+    ) {
+      showNotifications({
+        status: "error",
+        title: "Form Validation Error",
+        message: "Please fix the form validation errors before saving.",
+      });
+      return;
+    }
+
     try {
       dispatch({ type: "SET_LOADING", value: true });
 
@@ -210,10 +243,6 @@ function ListItem() {
       formData.append("user_id", currentUser.user_id);
       formData.append("avail_status", avail_status);
       formData.append("size", selectedSizes.join(","));
-
-      console.log("Form Data:");
-      console.log("Gender:", gender);
-      // Log other form data here
 
       const url =
         import.meta.env.VITE_NODE_ENV == "DEV"
@@ -351,18 +380,16 @@ function ListItem() {
         return "Collection Address should not contain trailing/leading whitespaces";
       }
 
-      if (/\d{6}/.test(value)) {
-        const postalCode = value.match(/\d{6}/)[0];
-        if (!/^\d{6}$/.test(postalCode)) {
-          return "Please enter a valid 6-digit postal code in the address.";
-        }
-      } else {
-        return "Please enter a 6-digit postal code in the address.";
+      const postalCodeMatch = value.match(/\d{6}/);
+      if (!postalCodeMatch) {
+        return "Please include a 6-digit postal code in the collection address.";
       }
-      if (!/^[a-zA-Z0-9\s,]+$/.test(value))
-        return "Collection Address should not contain special characters (except comma)";
-    }
 
+      const postalCode = postalCodeMatch[0];
+      if (!/^\d{6}$/.test(postalCode)) {
+        return "Please enter a valid 6-digit postal code in the collection address.";
+      }
+    }
     return null;
   };
 
@@ -694,7 +721,7 @@ function ListItem() {
           label="Price"
           value={price}
           onChange={(event) => setPrice(event.target.value)}
-          placeholder="Enter Price (e.g., $123)"
+          placeholder="Enter Price (e.g., 123)"
           classNames={classes}
           style={{ width: "50%" }}
           error={validatePrice(price)}
@@ -709,7 +736,7 @@ function ListItem() {
           hidePickedOptions
           classNames={classes}
           style={{ width: "50%" }}
-          error={validateSize(quantity_available)}
+          error={validateSize(selectedSizes)}
         />
         <br />
         <TextInput

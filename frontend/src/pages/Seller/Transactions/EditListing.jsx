@@ -140,10 +140,14 @@ function EditListing() {
         return null;
       },
       collection_address: (value) => {
-        const pattern = /^\d{6}\s.+/;
+        const postalCodeMatch = value.match(/\d{6}/);
+        if (!postalCodeMatch) {
+          return "Please include a 6-digit postal code in the address.";
+        }
 
-        if (!pattern.test(value)) {
-          return "Collection Address should start with a 6-digit postal code";
+        const postalCode = postalCodeMatch[0];
+        if (!/^\d{6}$/.test(postalCode)) {
+          return "Please enter a valid 6-digit postal code in the address.";
         }
 
         return null;
