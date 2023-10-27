@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
 import { showNotifications } from "../../utils/ShowNotification";
 import { useForm } from "@mantine/form";
-import { TextInput, Button, Group, Radio, Image } from "@mantine/core";
+import { TextInput, Button, Group, Radio, Image, Select } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import IlDefaultAvatar from "../../assets/illustrations/il_avatar.png";
 import Cookies from "js-cookie";
@@ -29,6 +29,10 @@ function UserProfile() {
       showImage: "",
       profileImage: "",
       phoneNumber: "",
+      preferencesGender: "",
+      preferencesPriceRange: "",
+      preferencesCondition: "",
+      preferencesSize: "",
     },
     validate: {
       firstName: (value) => {
@@ -98,6 +102,11 @@ function UserProfile() {
           dateOfBirth: currentUser.date_of_birth,
           showImage: currentUser.profile_image_url,
           phoneNumber: currentUser.phone_number,
+          preferencesGender: currentUser.preferences.gender || "",
+          preferencesCondition: currentUser.preferences.condition || "",
+          preferencesSize: currentUser.preferences.size || "",
+          preferencesPriceRange:
+            JSON.stringify(currentUser.preferences.price) || "",
         });
       } else if (currentUser.role === "seller") {
         form.setValues({
@@ -154,6 +163,16 @@ function UserProfile() {
 
         if (currentUser.role === "buyer") {
           formData.append("phone_number", form.values.phoneNumber);
+          formData.append(
+            "preferences_condition",
+            form.values.preferencesCondition
+          );
+          formData.append("preferences_gender", form.values.preferencesGender);
+          formData.append(
+            "preferences_price_range",
+            form.values.preferencesPriceRange
+          );
+          formData.append("preferences_size", form.values.preferencesSize);
         }
 
         const url =
@@ -197,6 +216,76 @@ function UserProfile() {
           placeholder="Phone number"
           {...form.getInputProps("phoneNumber")}
         />
+      );
+    }
+  };
+
+  const renderBuyerPreferences = () => {
+    if (currentUser && currentUser.role === "buyer") {
+      return (
+        <>
+          <Select
+            withAsterisk
+            className={classes.element}
+            label="Which of the following category do you prefer?"
+            data={[
+              { value: "men", label: "men" },
+              { value: "women", label: "women" },
+            ]}
+            value={form.values.preferencesGender}
+            onChange={(value) => form.setValues({ preferencesGender: value })}
+          />
+
+          <Select
+            withAsterisk
+            className={classes.element}
+            label="Which of the following condition do you prefer?"
+            data={[
+              { value: "Brand New", label: "Brand New" },
+              { value: "Lightly Used", label: "Lightly Used" },
+              { value: "Well Used", label: "Well Used" },
+            ]}
+            value={form.values.preferencesCondition}
+            onChange={(value) =>
+              form.setValues({ preferencesCondition: value })
+            }
+          />
+
+          <Select
+            withAsterisk
+            className={classes.element}
+            label="What is your clothing size?"
+            data={[
+              { value: "XS", label: "XS" },
+              { value: "S", label: "S" },
+              { value: "M", label: "M" },
+              { value: "L", label: "L" },
+              { value: "XL", label: "XL" },
+              { value: "XXL", label: "XXL" },
+              { value: "Free Size", label: "Free Size" },
+            ]}
+            value={form.values.preferencesSize}
+            onChange={(value) => form.setValues({ preferencesSize: value })}
+          />
+
+          <Select
+            withAsterisk
+            className={classes.element}
+            label="Which of the following price range do you prefer?"
+            data={[
+              { value: '["all price"]', label: "All Price" },
+              { value: "[10]", label: "Below $10" },
+              { value: "[10,50]", label: "$10 - $50" },
+              { value: "[50,100]", label: "$50 - $100" },
+              { value: "[100,200]", label: "$100 - $200" },
+              { value: "[200]", label: "Above  $200" },
+            ]}
+            value={form.values.preferencesPriceRange}
+            onChange={(value) =>
+              form.setValues({ preferencesPriceRange: value })
+            }
+          />
+        </>
       );
     }
   };
@@ -260,6 +349,8 @@ function UserProfile() {
             <Radio value="female" label="Female" />
           </Group>
         </Radio.Group>
+
+        {renderBuyerPreferences()}
 
         <Button type="submit">Save</Button>
       </form>
