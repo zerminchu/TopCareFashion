@@ -32,6 +32,9 @@ class User(models.Model):
     # Buyer
     premium_feature = models.BooleanField(default=False)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
+    preferences_condition = models.CharField(max_length=20, blank=True, null=True)
+    preferences_gender = models.CharField(max_length=20, blank=True, null=True)
+    preferences_size = models.CharField(max_length=20, blank=True, null=True)
 
     # Seller
     stripe_id = models.CharField(max_length=100, blank=True, null=True)

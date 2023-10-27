@@ -360,7 +360,13 @@ def updateProfile(request):
             last_name = data.get('last_name')
             profile_image = data.get('profile_image')
             gender = data.get('gender')
+
+            # Buyer
             phone_number = data.get('phone_number')
+            preferences_condition = data.get('preferences_condition')
+            preferences_gender = data.get('preferences_gender')
+            preferences_price_range = data.get('preferences_price_range')
+            preferences_size = data.get('preferences_size')
 
             userRef = db.collection("Users").document(user_id)
             userData = (userRef.get()).to_dict()
@@ -371,6 +377,9 @@ def updateProfile(request):
                 serializer = SellerUpdateProfileSerializer(data=data)
 
             if (serializer.is_valid()):
+                updatedData = {}
+
+
                 # User want to update profile image
                 if (profile_image):
                     # Validate file format
@@ -408,8 +417,13 @@ def updateProfile(request):
                     }
 
                 # Check whether it has phone number data or not
-                if (phone_number):
+                if (phone_number and preferences_condition and preferences_gender and preferences_price_range and preferences_size):
                     updatedData["phone_number"] = phone_number
+                    updatedData["preferences.condition"] = preferences_condition
+                    updatedData["preferences.gender"] = preferences_gender
+                    updatedData["preferences.price"]= json.loads(preferences_price_range)
+                    updatedData["preferences.size"] = preferences_size
+
 
                 # Update data into firestore
                 collectionRef = db.collection('Users').document(user_id)
