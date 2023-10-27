@@ -1076,6 +1076,7 @@ model.eval()
 @parser_classes([MultiPartParser])
 def classify_image(request):
     try:
+        db = firestore.Client()
         uploaded_image = request.data['image']
 
         image = Image.open(uploaded_image)
@@ -1095,57 +1096,15 @@ def classify_image(request):
         _, predicted_idx = torch.max(outputs, 1)
         predicted_class = class_labels[predicted_idx]
 
-        class_to_subcategory = {
-            "Anorak": "Top",
-            "Blazer": "Top",
-            "Blouse": "Top",
-            "Bomber": "Top",
-            "Button-Down": "Top",
-            "Caftan": "Top",
-            "Capris": "Bottom",
-            "Cardigan": "Top",
-            "Chinos": "Bottom",
-            "Coat": "Top",
-            "Coverup": "Accessories",
-            "Culottes": "Bottom",
-            "Cutoffs": "Bottom",
-            "Dress": "Top",
-            "Flannel": "Top",
-            "Gauchos": "Bottom",
-            "Halter": "Top",
-            "Henley": "Top",
-            "Hoodie": "Top",
-            "Jacket": "Top",
-            "Jeans": "Bottom",
-            "Jeggings": "Bottom",
-            "Jersey": "Top",
-            "Jodhpurs": "Bottom",
-            "Joggers": "Bottom",
-            "Jumpsuit": "Top",
-            "Kaftan": "Top",
-            "Kimono": "Top",
-            "Leggings": "Bottom",
-            "Onesie": "Top",
-            "Parka": "Top",
-            "Peacoat": "Top",
-            "Poncho": "Top",
-            "Robe": "Accessories",
-            "Romper": "Top",
-            "Sarong": "Accessories",
-            "Shorts": "Bottom",
-            "Skirt": "Bottom",
-            "Sweater": "Top",
-            "Sweatpants": "Bottom",
-            "Sweatshorts": "Bottom",
-            "Tank": "Top",
-            "Tee": "Top",
-            "Top": "Top",
-            "Trunks": "Bottom",
-            "Turtleneck": "Top"
-        }
+        fashion_category_ref = db.collection("FashionCategory")
+        query = fashion_category_ref.where("category", "==", predicted_class).limit(1)
+        results = query.stream()
 
-        predicted_subcategory = class_to_subcategory.get(
-            predicted_class, "Unknown")
+        predicted_subcategory = "Unknown" 
+
+        for result in results:
+            data = result.to_dict()
+            predicted_subcategory = data.get("sub_category", "Unknown")
 
         response_data = {"predicted_class": predicted_class,
                          "predicted_subcategory": predicted_subcategory}
@@ -1153,6 +1112,7 @@ def classify_image(request):
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=400)
+
 
 
 @api_view(["GET"])
@@ -1173,7 +1133,7 @@ def get_subcategories(request):
             data = doc.to_dict()
             sub_category.append(data.get("sub_category"))
 
-        return Response({"subcategory": sub_category})
+        return Response({"subcategory": sub_category})  
 
     except Exception as e:
         return Response({"error": str(e)}, status=500)
