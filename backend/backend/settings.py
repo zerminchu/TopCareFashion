@@ -19,6 +19,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+WSGI_APPLICATION = 'vercel_app.wsgi.app'
+
+
 
 # Application definition
 
@@ -32,6 +35,7 @@ INSTALLED_APPS = [
     'app',
     'rest_framework',
     'corsheaders',
+    'backend',
 
 ]
 
