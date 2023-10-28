@@ -183,7 +183,6 @@ def addToCart(request):
   if request.method == "POST":
     try:
         data = request.data
-        print(data)
 
         if(len(data["buyer_id"]) <= 0):
            raise Exception("Buyer id cannot be empty")
@@ -232,19 +231,8 @@ def addToCart(request):
               allCartItems = cartRef.collection("CartItem").get()
               
               for cartItem in allCartItems:
-                 if(((cartItem.to_dict())["listing_id"] == data["listing_id"]) and ((cartItem.to_dict())["size"] == data["size"])):
-                      updatedCartQuantity = int((cartItem.to_dict())["cart_quantity"]) + 1
-
-                      cartItemRef = cartRef.collection('CartItem').document((cartItem.to_dict())["cart_item_id"])
-                      cartItemRef.update({
-                        "cart_quantity": updatedCartQuantity
-                      })
-
-                      return JsonResponse({
-                        'status': "success",
-                        'message': "Added to cart successfully",
-                        'data': data
-                      }, status=200)
+                 if((cartItem.to_dict())["listing_id"] == data["listing_id"]):
+                    raise Exception("Listing already added to cart before")
 
               cartItemRef.set({
                  "cart_item_id": cartItemId,
@@ -257,10 +245,10 @@ def addToCart(request):
               })
 
            return JsonResponse({
-              'status': "success",
-              'message': "Added to cart successfully",
-              'data': data
-            }, status=200)
+            'status': "success",
+            'message': "Added to cart successfully",
+            'data': data
+        }, status=200)
         else:
           raise Exception(serializer.errors)
 
