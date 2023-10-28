@@ -6,6 +6,7 @@ import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
 import aa from "search-insights";
 
+
 // Initialize Algolia insights client
 aa("init", {
   appId: "BWO4H6S1WK",
@@ -103,6 +104,31 @@ function Checkout() {
     );
   };
 
+  const exportEventsToCSV = () => {
+    const storedEvents = JSON.parse(localStorage.getItem("events") || "[]");
+  
+    if (storedEvents.length === 0) {
+      alert("No events to export.");
+      return;
+    }
+  
+    const csvHeader = "userToken,timestamp,eventType,eventName,objectID\n";
+    const csvRows = storedEvents.map(event => 
+      `${event.userToken},${event.timestamp},${event.eventType},${event.eventName},${event.objectID}`
+    );
+  
+    const csvData = csvHeader + csvRows.join("\n");
+    const blob = new Blob([csvData], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = url;
+    a.download = 'events.csv';
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
+
   const orderOnClick = async () => {
     if (currentUser) {
       try {
@@ -192,6 +218,21 @@ function Checkout() {
           objectIDs: checkoutItems.map((item) => item.item_id),
           
         });
+
+        // Store the event in localStorage
+    const event = {
+      userToken: currentUser.user_id,
+      timestamp: new Date().toISOString(),
+      eventType: "conversion", // Or whatever event type it is
+      eventName: 'Buy Product',
+      objectID: checkoutItems.map((item) => item.item_id)
+    };
+
+    const storedEvents = JSON.parse(localStorage.getItem("events") || "[]");
+    storedEvents.push(event);
+    localStorage.setItem("events", JSON.stringify(storedEvents));
+
+    exportEventsToCSV(); //trigger
 
         const response = await axios.post(`${url}/buyer/checkout/`, data);
 
