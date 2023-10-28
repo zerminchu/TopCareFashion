@@ -26,19 +26,25 @@ import aa from "search-insights";
 import { useDispatch } from "react-redux";
 
 function BuyerHome(props) {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const [searchText, setSearchText] = useState("");
-  const [productList, setproductList] = useState([]);
-  const [visibleProductCount, setVisibleProductCount] = useState(10);
+  const [visibleProductCount, setVisibleProductCount] = useState(4);
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
   const [searchResultCount, setSearchResultCount] = useState(0);
 
   const [user, setUser] = useState([]);
   const [currentUser, setCurrentUser] = useState();
-  const navigate = useNavigate();
+
+  const [productList, setproductList] = useState([]);
   const [productsWithAvailability, setProductsWithAvailability] = useState([]);
+
+  const [buyerPreferencesProduct, setBuyerPreferencesProduct] = useState([]);
+  const [algoliaProduct, setAlgoliaProduct] = useState([]);
+
+  const [combinedProductList, setCombinedProductList] = useState([]);
+  const [searchResults, setSearchResults] = useState([]);
 
   //const searchResultCount = searchResults.length;
   const searchClient = algoliasearch(
@@ -47,10 +53,13 @@ function BuyerHome(props) {
   );
 
   useEffect(() => {
-    if (!Cookies.get("buyerPreferences")) {
+    if (!localStorage.getItem("buyerPreferences")) {
+      if (Cookies.get("userRole") && Cookies.get("userRole") !== "buyer") {
+        return;
+      }
       dispatch({ type: "SET_BUYER_PREFERENCES", value: true });
     }
-  }, []);
+  }, [currentUser]);
 
   useEffect(() => {
     const setUserSessionData = async () => {
@@ -137,11 +146,121 @@ function BuyerHome(props) {
 
       const availableProducts = productsWithAvailability.filter(Boolean);
       setProductsWithAvailability(availableProducts);
-      setSearchResults(availableProducts.length);
+      setSearchResultCount(availableProducts.length);
+    }
+    if (searchResults) {
+      fetchData();
+    }
+  }, [searchResults]);
+
+  const setBuyerPreferences = () => {
+    const visibleProducts = productsWithAvailability;
+
+    let buyerPreferences = {};
+
+    if (localStorage.getItem("buyerPreferences")) {
+      buyerPreferences = JSON.parse(localStorage.getItem("buyerPreferences"));
     }
 
-    fetchData();
-  }, [searchResults]);
+    if (currentUser && currentUser.preferences) {
+      buyerPreferences = currentUser.preferences;
+    }
+
+    let filteredProducts = visibleProducts;
+
+    if (buyerPreferences.gender) {
+      filteredProducts = filteredProducts.filter((product) => {
+        return product.gender === buyerPreferences.gender;
+      });
+    }
+
+    if (buyerPreferences.condition) {
+      filteredProducts = filteredProducts.filter((product) => {
+        return product.condition === buyerPreferences.condition;
+      });
+    }
+
+    if (buyerPreferences.price) {
+      const price = buyerPreferences.price;
+
+      if (price.length === 1 && price[0] === 200) {
+        filteredProducts = filteredProducts.filter((product) => {
+          return parseFloat(product.price) >= parseFloat(price[0]);
+        });
+      } else if (price.length === 1 && price[0] === 10) {
+        filteredProducts = filteredProducts.filter((product) => {
+          return parseFloat(product.price) <= parseFloat(price[0]);
+        });
+      } else if (price.length === 2) {
+        filteredProducts = filteredProducts.filter((product) => {
+          return (
+            parseFloat(product.price) >= parseFloat(price[0]) &&
+            parseFloat(product.price) <= parseFloat(price[1])
+          );
+        });
+      }
+    }
+
+    filteredProducts = filteredProducts.slice(0, 4);
+
+    setBuyerPreferencesProduct(filteredProducts);
+  };
+
+  const setAlgoliaPreferences = () => {
+    // setAlgoliaProduct(....something ......)
+  };
+
+  useEffect(() => {
+    if (productsWithAvailability) {
+      setBuyerPreferences();
+      setAlgoliaPreferences();
+    }
+  }, [productsWithAvailability]);
+
+  useEffect(() => {
+    if (buyerPreferencesProduct && productsWithAvailability && algoliaProduct) {
+      const concatenatedArray = buyerPreferencesProduct.concat(
+        productsWithAvailability,
+        algoliaProduct
+      );
+
+      console.log("All product: ", productsWithAvailability);
+      console.log("buyer preferences: ", buyerPreferencesProduct);
+      console.log("Algolia product: ", algoliaProduct);
+
+      const combinedProducts = Array.from(new Set(concatenatedArray));
+      setCombinedProductList(combinedProducts);
+    }
+  }, [buyerPreferencesProduct, productsWithAvailability, algoliaProduct]);
+
+  const renderCombinedProducts = () => {
+    if (combinedProductList) {
+      return combinedProductList
+        .slice(0, visibleProductCount)
+        .map((product, index) => (
+          <Product
+            key={index}
+            item_id={product.item_id}
+            title={product.title}
+            price={product.price}
+            size={product.size}
+            quantity_available={product.quantity_available}
+            avail_status={product.avail_status}
+            images={product.image_urls}
+            description={product.description}
+            average_rating={product.average_rating}
+            reviews={product.reviews}
+            total_ratings={product.total_ratings}
+            store_name={product.store_name}
+            collection_address={product.collection_address}
+            sold={product.sold}
+            category={product.category}
+            condition={product.condition}
+            seller_id={product.user_id}
+          />
+        ));
+    }
+  };
 
   const renderRealProducts = () => {
     const visibleProducts = productsWithAvailability.slice(
@@ -174,14 +293,17 @@ function BuyerHome(props) {
   };
 
   const renderViewMoreButton = () => {
-    if (searchResults.length > 0 && visibleProductCount < productList.length) {
+    if (
+      searchResults.length > 0 &&
+      visibleProductCount < productsWithAvailability.length
+    ) {
       return (
         <div className={classes.viewMoreButtonContainer}>
           <Button
             variant="outline"
             className={classes.viewMoreButton}
             onClick={() => {
-              setVisibleProductCount(visibleProductCount + 10);
+              setVisibleProductCount(visibleProductCount + 4);
             }}
           >
             View More
@@ -251,7 +373,7 @@ function BuyerHome(props) {
               : "Top picks by sellers"}
           </h2>
 
-          <div className={classes.listProduct}>{renderRealProducts()}</div>
+          <div className={classes.listProduct}>{renderCombinedProducts()}</div>
           {renderViewMoreButton()}
         </div>
       </div>

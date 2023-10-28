@@ -196,25 +196,34 @@ def getReviews(request, user_id):
                 # Get user
                 buyerRef = db.collection('Users').document(
                     (doc.to_dict())['buyer_id'])
-                buyerData = (buyerRef.get()).to_dict()
+                buyerData = buyerRef.get()
+
+                if(not buyerData.exists):
+                    continue
 
                 # Get listing
                 listingRef = db.collection('Listing').document(
                     (doc.to_dict())['listing_id'])
-                listingData = (listingRef.get()).to_dict()
+                listingData = listingRef.get()
+
+                if(not listingData.exists):
+                    continue
 
                 # Get item
                 itemRef = db.collection('Item').document(
-                    listingData['item_id'])
-                itemData = (itemRef.get()).to_dict()
+                    (listingData.to_dict())['item_id'])
+                itemData = itemRef.get()
+
+                if(not itemData.exists):
+                    continue
 
                 eachReview['review_id'] = (doc.to_dict())['review_id']
-                eachReview['product_name'] = itemData['title']
+                eachReview['product_name'] = (itemData.to_dict())['title']
                 eachReview['rating'] = (doc.to_dict())['rating']
                 eachReview['description'] = (doc.to_dict())['description']
                 eachReview['listing_id'] = (doc.to_dict())['listing_id']
                 eachReview['buyer_id'] = (doc.to_dict())['buyer_id']
-                eachReview['buyer_name'] = buyerData['name']['first_name']
+                eachReview['buyer_name'] = (buyerData.to_dict())['name']['first_name']
                 eachReview['seller_id'] = (doc.to_dict())['seller_id']
                 eachReview['date'] = (doc.to_dict())['date']
                 eachReview['reply'] = (doc.to_dict())['reply']
@@ -318,6 +327,34 @@ def getAllOrdersByUserId(request, user_id):
             paidOrderList = []
 
             for order in paidOrderData:
+                # Check for buyer id
+                buyerRef = db.collection("Users").document((order.to_dict())["buyer_id"])
+                buyerData = buyerRef.get()
+                
+                if(not buyerData.exists):
+                    continue
+                
+                # Check for seller id
+                sellerRef = db.collection("Users").document((order.to_dict())["seller_id"])
+                sellerData = sellerRef.get()
+
+                if(not sellerData.exists):
+                    continue
+                
+                # Check for listing id
+                listingRef = db.collection("Listing").document((order.to_dict())["checkout_data"]["listing_id"])
+                listingData = listingRef.get()
+
+                if(not listingData.exists):
+                    continue
+                
+                # Check for item id
+                itemRef = db.collection("Item").document((order.to_dict())["checkout_data"]["item_id"])
+                itemData = itemRef.get()
+
+                if(not itemData.exists):
+                    continue
+              
                 paidOrderList.append(order.to_dict())
 
             return JsonResponse({
@@ -404,6 +441,9 @@ def getSalesDetailsByUserId(request, user_id):
                 itemRef = db.collection("Item").document(
                     (order.to_dict())["checkout_data"]["item_id"])
                 itemData = itemRef.get()
+
+                if(not itemData.exists):
+                    continue
 
                 sale["title"] = (itemData.to_dict())["title"]
                 sale["quantity"] = (
