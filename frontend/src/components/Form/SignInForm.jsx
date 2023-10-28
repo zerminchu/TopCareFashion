@@ -63,6 +63,10 @@ function SignInForm(props) {
             expires: expirationDate,
           });
 
+          Cookies.set("userRole", response.data.data.role, {
+            expires: expirationDate,
+          });
+
           dispatch({ type: "SET_LOADING", value: false });
           dispatch({ type: "SET_SIGN_IN", value: false });
 
