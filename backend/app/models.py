@@ -33,12 +33,9 @@ class User(models.Model):
     premium_feature = models.BooleanField(default=False)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
 <<<<<<< HEAD
-<<<<<<< HEAD
     category = models.CharField(max_length=50, blank=True, null=True)
     size = models.CharField(max_length=20, blank=True, null=True)
     type = models.CharField(max_length=50, blank=True, null=True)
-=======
->>>>>>> parent of 0e2887b (Allow buyer to edit preferences on profile page)
 =======
 >>>>>>> parent of 0e2887b (Allow buyer to edit preferences on profile page)
 
