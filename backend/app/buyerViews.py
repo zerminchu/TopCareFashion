@@ -359,27 +359,6 @@ def getWishlistListByUserId(request, user_id):
       wishlistItemData = wishlistItemRef.stream()
 
       for wishlistItem in wishlistItemData:
-        # Check if listing id exists
-        listingRef = db.collection("Listing").document((wishlistItem.to_dict())["listing_id"])
-        listingData =listingRef.get()
-
-        if(not listingData.exists):
-           continue
-        
-        # Check if item id exists
-        itemRef = db.collection("Item").document((wishlistItem.to_dict())["item_id"])
-        itemData = itemRef.get()
-
-        if(not itemData.exists):
-           continue
-        
-        # Check if seller id exists
-        userRef = db.collection("Users").document((wishlistItem.to_dict())["seller_id"])
-        userData = userRef.get()
-
-        if(not userData.exists):
-           continue
-        
         wishlistItems.append(wishlistItem.to_dict())
 
       return JsonResponse({
@@ -471,20 +450,21 @@ def getCartDetailsByUserId(request, user_id):
           itemRef = db.collection("Item").document((item.to_dict())["item_id"])
           itemData = itemRef.get()
 
-          if(not itemData.exists):
-             continue
-
           userRef = db.collection("Users").document((item.to_dict())["seller_id"])
           userData = userRef.get()
 
-          if(not userData.exists):
-             continue
+          sellerId = (item.to_dict())["seller_id"]
 
+          if(not userData.exists):
+             raise Exception(f"Seller {sellerId} does not exists")
+          
           listingRef = db.collection("Listing").document((item.to_dict())["listing_id"])
           listingData = listingRef.get()
 
-          if(not listingData.exists):
-             continue
+          listingId = (item.to_dict())["listing_id"]
+
+          if(not userData.exists):
+             raise Exception(f"Listing {listingId} does not exists")
 
           fullData["listing_id"] = (item.to_dict())["listing_id"]
           fullData["seller_id"] = (item.to_dict())["seller_id"]
@@ -611,34 +591,6 @@ def getAllOrdersByUserId(request, user_id):
             paidOrderList = []
 
             for order in paidOrderData:
-              # Check for buyer id
-              buyerRef = db.collection("Users").document((order.to_dict())["buyer_id"])
-              buyerData = buyerRef.get()
-              
-              if(not buyerData.exists):
-                 continue
-              
-              # Check for seller id
-              sellerRef = db.collection("Users").document((order.to_dict())["seller_id"])
-              sellerData = sellerRef.get()
-
-              if(not sellerData.exists):
-                 continue
-              
-              # Check for listing id
-              listingRef = db.collection("Listing").document((order.to_dict())["checkout_data"]["listing_id"])
-              listingData = listingRef.get()
-
-              if(not listingData.exists):
-                 continue
-              
-              # Check for item id
-              itemRef = db.collection("Item").document((order.to_dict())["checkout_data"]["item_id"])
-              itemData = itemRef.get()
-
-              if(not itemData.exists):
-                 continue
-
               paidOrderList.append(order.to_dict())
 
             return JsonResponse({
