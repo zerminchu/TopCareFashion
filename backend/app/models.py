@@ -32,9 +32,12 @@ class User(models.Model):
     # Buyer
     premium_feature = models.BooleanField(default=False)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
+<<<<<<< HEAD
     category = models.CharField(max_length=50, blank=True, null=True)
     size = models.CharField(max_length=20, blank=True, null=True)
     type = models.CharField(max_length=50, blank=True, null=True)
+=======
+>>>>>>> parent of 0e2887b (Allow buyer to edit preferences on profile page)
 
     # Seller
     stripe_id = models.CharField(max_length=100, blank=True, null=True)
