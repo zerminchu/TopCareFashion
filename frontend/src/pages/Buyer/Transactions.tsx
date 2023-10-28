@@ -101,6 +101,8 @@ function Transactions() {
         return <TransactionItem key={index} paidOrderId={item.paid_order_id} />;
       });
     }
+
+    return <Text>Loading ...</Text>;
   };
 
   /* const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {

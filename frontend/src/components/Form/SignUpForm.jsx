@@ -102,8 +102,10 @@ function SignUpForm(props) {
           confirm_password: form.values.confirmPassword,
         };
 
-        if (Cookies.get("buyerPreferences") && data.role === "buyer") {
-          data.preferences = JSON.parse(Cookies.get("buyerPreferences"));
+        if (localStorage.getItem("buyerPreferences") && data.role === "buyer") {
+          data.preferences = JSON.parse(
+            localStorage.getItem("buyerPreferences")
+          );
         }
 
         const url =
