@@ -22,7 +22,7 @@ class BuyerUpdateProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["user_id", "first_name",
-                  "last_name", "gender", "phone_number", "preferences_condition", "preferences_gender", "preferences_size"]
+                  "last_name", "gender", "phone_number"]
 
 
 class SellerUpdateProfileSerializer(serializers.ModelSerializer):

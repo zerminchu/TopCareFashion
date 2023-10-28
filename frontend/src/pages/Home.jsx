@@ -31,10 +31,8 @@ function Home() {
   }, []);
 
   useEffect(() => {
-    if (currentUser) {
-      if (currentRole && currentRole === "seller") {
-        navigate(`/seller-home/${currentUser ? currentUser.user_id : ""}`);
-      }
+    if (currentRole === "seller") {
+      navigate(`/seller-home/${currentUser ? currentUser.user_id : ""}`);
     }
   }, [currentRole, currentUser, navigate]);
 

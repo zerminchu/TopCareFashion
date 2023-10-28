@@ -63,7 +63,6 @@ function DropDownMenu(props) {
 
   const logoutOnClick = () => {
     Cookies.remove("firebaseIdToken");
-    Cookies.remove("userRole");
     window.location.reload();
   };
 
