@@ -22,12 +22,12 @@ function CategoryListingsPage(props) {
   const [productList, setProductList] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
   const [searchText, setSearchText] = useState("");
-  const [filteredProducts, setFilteredProducts] = useState([]);
   const [selectedCondition, setSelectedCondition] = useState("");
   const [selectedSort, setSelectedSort] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [categoryOptions, setCategoryOptions] = useState([]);
 
   const gender = location.state?.gender;
-  const numberOfListings = searchResults.length;
 
   useEffect(() => {
     const retrieveAllItems = async () => {
@@ -40,28 +40,12 @@ function CategoryListingsPage(props) {
         const response = await axios.get(`${url}/item/`);
         let items = [];
 
-        if (gender === "men") {
-          const menProducts = response.data.data.filter(
-            (item) =>
-              item.hasOwnProperty("gender") &&
-              item.gender.toLowerCase() === "men"
-          );
-          items = menProducts;
-        } else if (gender === "women") {
-          const womenProducts = response.data.data.filter(
-            (item) =>
-              item.hasOwnProperty("gender") &&
-              item.gender.toLowerCase() === "women"
-          );
-          items = womenProducts;
-        } else {
-          const menProducts = response.data.data.filter(
-            (item) =>
-              item.hasOwnProperty("gender") &&
-              item.gender.toLowerCase() === "men"
-          );
-          items = menProducts;
-        }
+        items = response.data.data.filter(
+          (item) =>
+            item.hasOwnProperty("gender") &&
+            item.gender.toLowerCase() === gender &&
+            item.sub_category === category
+        );
 
         setProductList(items);
       } catch (error) {
@@ -70,7 +54,7 @@ function CategoryListingsPage(props) {
     };
 
     retrieveAllItems();
-  }, []);
+  }, [gender, category]);
 
   // Check current user
   useEffect(() => {
@@ -100,45 +84,45 @@ function CategoryListingsPage(props) {
   }, [currentUser]);
 
   useEffect(() => {
-    // Filter products by category, search text, and condition
-    const filteredProducts = productList.filter((product) => {
+    const filteredAndSortedProducts = [...productList];
+
+    const filteredProducts = filteredAndSortedProducts.filter((product) => {
       return (
-        (category === "" || product.category === category) &&
         (searchText === "" ||
           product.title.toLowerCase().includes(searchText.toLowerCase())) &&
-        (selectedCondition === "" || product.condition === selectedCondition)
+        (selectedCondition === "" || product.condition === selectedCondition) &&
+        (selectedCategory === "" || product.category === selectedCategory)
       );
     });
 
-    let sortedProducts = [...filteredProducts];
     if (selectedSort === "lowestToHighest") {
-      sortedProducts.sort((a, b) => a.price - b.price);
+      filteredProducts.sort((a, b) => a.price - b.price);
     } else if (selectedSort === "highestToLowest") {
-      sortedProducts.sort((a, b) => b.price - a.price);
+      filteredProducts.sort((a, b) => b.price - a.price);
     }
 
-    setSearchResults(sortedProducts);
-  }, [category, productList, searchText, selectedCondition, selectedSort]);
-
-  const handleSearch = () => {
-    setSearchResults(
-      productList.filter((product) =>
-        product.title.toLowerCase().includes(searchText.toLowerCase())
-      )
-    );
-  };
+    setSearchResults(filteredProducts);
+  }, [
+    productList,
+    searchText,
+    selectedCondition,
+    selectedSort,
+    selectedCategory,
+  ]);
 
   const renderProductListings = () => {
-    const filteredAndSortedProducts = searchResults;
+    const itemsToDisplay =
+      searchResults.length > 0 ? searchResults : productList;
 
-    if (filteredAndSortedProducts.length === 0) {
+    if (searchResults.length === 0) {
       return (
         <div className={classes.centeredContainer}>
           <NotFoundImage />
         </div>
       );
     }
-    return filteredAndSortedProducts.map((product, index) => (
+
+    return itemsToDisplay.map((product, index) => (
       <Product
         key={index}
         item_id={product.item_id}
@@ -160,18 +144,38 @@ function CategoryListingsPage(props) {
     ));
   };
 
+  useEffect(() => {
+    const allCategories = [
+      ...new Set(productList.map((product) => product.category)),
+    ];
+
+    const categoryOptions = allCategories.map((category) => ({
+      value: category,
+      label: category,
+    }));
+
+    setCategoryOptions(categoryOptions);
+  }, [productList]);
+
   return (
     <div className={classes.container}>
       <div>
         <div className={classes.searchContainer}>
-          {/*   <Button className={classes.searchButton} onClick={handleSearch}>
-            Search
-          </Button> */}
           <Select
             data={[
-              { value: "New", label: "New" },
-              { value: "Heavily Used", label: "Heavily Used" },
+              { label: "All Available Items", value: "" },
+              ...categoryOptions,
+            ]}
+            value={selectedCategory}
+            onChange={(value) => setSelectedCategory(value)}
+            placeholder="Category"
+          />
+          <Select
+            data={[
+              { value: "", label: "All Conditions" },
+              { value: "Brand New", label: "Brand New" },
               { value: "Lightly Used", label: "Lightly Used" },
+              { value: "Well Used", label: "Well Used" },
             ]}
             value={selectedCondition}
             onChange={(value) => setSelectedCondition(value)}
@@ -179,12 +183,13 @@ function CategoryListingsPage(props) {
           />
           <Select
             data={[
+              { value: "", label: "All Price Range" },
               { value: "lowestToHighest", label: "Lowest to Highest " },
               { value: "highestToLowest", label: "Highest to Lowest " },
             ]}
             value={selectedSort}
             onChange={(value) => setSelectedSort(value)}
-            placeholder="Price"
+            placeholder="Price Range"
           />
           <TextInput
             placeholder="Search"
@@ -200,7 +205,7 @@ function CategoryListingsPage(props) {
       <div>
         <h1
           style={{ marginBottom: "10px", marginTop: "-25px" }}
-        >{`${numberOfListings} listings for ${category}`}</h1>
+        >{`${searchResults.length} listings for ${category}`}</h1>
         <h2 style={{ fontWeight: "normal", fontSize: "18px" }}>
           Looking for New or Used {category}s in Singapore? Browse great deals
           on Top Care Fashion and find your new {category}!

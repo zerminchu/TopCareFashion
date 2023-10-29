@@ -5,25 +5,16 @@ import { Button, TextInput } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import ProductCategory from "../../../components/ProductCategory";
-import CategoryListing from "../../../components/CategoryListing";
-import { retrieveUserInfo } from "../../../utils/RetrieveUserInfoFromToken";
-import Product from "../../../components/Product";
-import classes from "./BuyerHome.module.css";
-import CarouselAds from "./CarouselAds";
+import algoliasearch from "algoliasearch/lite";
 import axios from "axios";
 import Cookies from "js-cookie";
-import algoliasearch from "algoliasearch/lite";
-import {
-  InstantSearch,
-  SearchBox,
-  Highlight,
-  Configure,
-  PoweredBy,
-  Hits,
-} from "react-instantsearch";
-import aa from "search-insights";
 import { useDispatch } from "react-redux";
+import CategoryListing from "../../../components/CategoryListing";
+import Product from "../../../components/Product";
+import ProductCategory from "../../../components/ProductCategory";
+import { retrieveUserInfo } from "../../../utils/RetrieveUserInfoFromToken";
+import classes from "./BuyerHome.module.css";
+import CarouselAds from "./CarouselAds";
 
 function BuyerHomeWomen(props) {
   const navigate = useNavigate();
@@ -34,8 +25,12 @@ function BuyerHomeWomen(props) {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [searchResultCount, setSearchResultCount] = useState(0);
 
+  const [categories, setCategories] = useState([]);
+
   const [user, setUser] = useState([]);
   const [currentUser, setCurrentUser] = useState();
+
+  const [subCategories, setSubCategories] = useState();
 
   const [productList, setproductList] = useState([]);
   const [productsWithAvailability, setProductsWithAvailability] = useState([]);
@@ -93,6 +88,36 @@ function BuyerHomeWomen(props) {
   /*   useEffect(() => {
     index.search(productID).then(({ hits }) => setproductList(hits[0]));
   }, []); */
+
+  useEffect(() => {
+    const retrieveCategoryData = async () => {
+      try {
+        const url =
+          import.meta.env.VITE_NODE_ENV == "DEV"
+            ? import.meta.env.VITE_API_DEV
+            : import.meta.env.VITE_API_PROD;
+        const response = await axios.get(`${url}/get-all-category/`);
+        const categoryData = response.data.categories;
+
+        const uniqueSubCategories = Array.from(
+          new Set(
+            categoryData
+              .filter(
+                (category) =>
+                  category.category_gender === "women" ||
+                  category.category_gender === "unisex"
+              )
+              .map((category) => category.sub_category)
+          )
+        );
+        setSubCategories(uniqueSubCategories);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    retrieveCategoryData();
+  }, []);
 
   const fetchAvailStatus = async (itemId) => {
     try {
@@ -216,9 +241,9 @@ function BuyerHomeWomen(props) {
         algoliaProduct
       );
 
-      console.log("All product: ", productsWithAvailability);
+      /*   console.log("All product: ", productsWithAvailability);
       console.log("buyer preferences: ", buyerPreferencesProduct);
-      console.log("Algolia product: ", algoliaProduct);
+      console.log("Algolia product: ", algoliaProduct); */
 
       const combinedProducts = Array.from(new Set(concatenatedArray));
       setCombinedProductList(combinedProducts);
@@ -324,7 +349,7 @@ function BuyerHomeWomen(props) {
             {
               <TextInput
                 className={classes.searchBar}
-                placeholder="Search for an apprarel"
+                placeholder="Search Women's Fashion"
                 value={searchText}
                 onChange={(e) => {
                   setSearchText(e.target.value);
@@ -336,25 +361,22 @@ function BuyerHomeWomen(props) {
 
         <CarouselAds />
         <div className={classes.categoryTitle}>
-          <h2>Categories</h2>
+          <h2>Shop by category</h2>
         </div>
         <div className={classes.categoryContainer}>
           <div className={classes.listProductCategory}>
-            <ProductCategory
-              category="Top"
-              gender="men"
-              setSelectedCategory={setSelectedCategory}
-            />
-            <ProductCategory
-              category="Bottom"
-              gender="men"
-              setSelectedCategory={setSelectedCategory}
-            />
-            <ProductCategory
-              category="Footwear"
-              gender="men"
-              setSelectedCategory={setSelectedCategory}
-            />
+            {subCategories ? (
+              subCategories.map((subCategory, index) => (
+                <ProductCategory
+                  key={index}
+                  category={subCategory}
+                  gender="women"
+                  setSelectedCategory={setSelectedCategory}
+                />
+              ))
+            ) : (
+              <p>Loading categories...</p>
+            )}
           </div>
         </div>
 
@@ -362,7 +384,7 @@ function BuyerHomeWomen(props) {
           <h2>
             {searchText
               ? `${searchResultCount} search results for '${searchText}'`
-              : "Top picks by sellers"}
+              : "Top picks by sellers in women's fashion"}
           </h2>
 
           <div className={classes.listProduct}>{renderCombinedProducts()}</div>

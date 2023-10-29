@@ -1174,7 +1174,8 @@ def get_all_categories(request):
             data = doc.to_dict()
             all_categories.append({
                 "category": data.get("category"),
-                "sub_category": data.get("sub_category")
+                "sub_category": data.get("sub_category"),
+                "category_gender": data.get("category_gender")
             })
 
         return Response({"categories": all_categories})
