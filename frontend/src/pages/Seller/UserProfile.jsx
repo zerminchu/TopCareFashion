@@ -1,13 +1,15 @@
+/* eslint-disable no-undef */
+/* eslint-disable react/no-unescaped-entities */
+import { Button, Group, Image, Radio, Select, TextInput } from "@mantine/core";
+import { useForm } from "@mantine/form";
+import axios from "axios";
+import Cookies from "js-cookie";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
-import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
-import { showNotifications } from "../../utils/ShowNotification";
-import { useForm } from "@mantine/form";
-import { TextInput, Button, Group, Radio, Image, Select } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import IlDefaultAvatar from "../../assets/illustrations/il_avatar.png";
-import Cookies from "js-cookie";
-import axios from "axios";
+import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
+import { showNotifications } from "../../utils/ShowNotification";
 
 import classes from "./UserProfile.module.css";
 
@@ -227,10 +229,10 @@ function UserProfile() {
           <Select
             withAsterisk
             className={classes.element}
-            label="Which of the following category do you prefer?"
+            label="Preferred Product's Category"
             data={[
-              { value: "men", label: "men" },
-              { value: "women", label: "women" },
+              { value: "men", label: "Men" },
+              { value: "women", label: "Women" },
             ]}
             value={form.values.preferencesGender}
             onChange={(value) => form.setValues({ preferencesGender: value })}
@@ -239,7 +241,7 @@ function UserProfile() {
           <Select
             withAsterisk
             className={classes.element}
-            label="Which of the following condition do you prefer?"
+            label="Preferred Product's Condition"
             data={[
               { value: "Brand New", label: "Brand New" },
               { value: "Lightly Used", label: "Lightly Used" },
@@ -254,7 +256,7 @@ function UserProfile() {
           <Select
             withAsterisk
             className={classes.element}
-            label="What is your clothing size?"
+            label="Clothing Sizes Preference"
             data={[
               { value: "XS", label: "XS" },
               { value: "S", label: "S" },
@@ -271,7 +273,7 @@ function UserProfile() {
           <Select
             withAsterisk
             className={classes.element}
-            label="Which of the following price range do you prefer?"
+            label="Preferred Price Range"
             data={[
               { value: '["all price"]', label: "All Price" },
               { value: "[10]", label: "Below $10" },
@@ -293,6 +295,8 @@ function UserProfile() {
   return (
     <div className={classes.container}>
       <form className={classes.content} onSubmit={saveOnClick}>
+        <h2>Update your profile's information. </h2>
+
         <Image
           width={100}
           height={100}
@@ -302,6 +306,7 @@ function UserProfile() {
           alt="Selected"
           onClick={imageOnClickHandler}
         />
+
         <input
           type="file"
           accept="image/*"
@@ -309,35 +314,29 @@ function UserProfile() {
           ref={fileInputRef}
           style={{ display: "none" }}
         />
-
         <TextInput
           label="Email"
           placeholder="Email"
           disabled
           {...form.getInputProps("email")}
         />
-
         <TextInput
           label="Date Of Birth"
           placeholder="Date Of Birth"
           disabled
           {...form.getInputProps("dateOfBirth")}
         />
-
         <TextInput
           label="First Name"
           placeholder="First Name"
           {...form.getInputProps("firstName")}
         />
-
         <TextInput
           label="Last Name"
           placeholder="Last Name"
           {...form.getInputProps("lastName")}
         />
-
         {renderPhoneNumber()}
-
         <Radio.Group
           name="genderRadioGroup"
           value={form.values.gender}
@@ -349,9 +348,10 @@ function UserProfile() {
             <Radio value="female" label="Female" />
           </Group>
         </Radio.Group>
-
+        <br />
+        <h2>Modify based on your personal's buying preferences. </h2>
         {renderBuyerPreferences()}
-
+        <br />
         <Button type="submit">Save</Button>
       </form>
     </div>

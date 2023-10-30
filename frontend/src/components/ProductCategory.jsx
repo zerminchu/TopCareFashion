@@ -47,7 +47,7 @@ function ProductCategory(props) {
     if (props.category === "Bottom") {
       return <Text>Find the perfect pair of pants or short </Text>;
     } else if (props.category === "Top") {
-      return <Text>Find the perfect pair of top</Text>;
+      return <Text>Find the perfect pair of tops and sets </Text>;
     } else if (props.category === "Footwear") {
       return <Text>Find the perfect pair of footwear</Text>;
     }
