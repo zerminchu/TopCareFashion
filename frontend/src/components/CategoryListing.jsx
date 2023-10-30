@@ -1,17 +1,16 @@
 /* eslint-disable no-prototype-builtins */
 /* eslint-disable no-unused-vars */
+import { Select, TextInput } from "@mantine/core";
+import { IconSearch } from "@tabler/icons-react";
+import axios from "axios";
+import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import Product from "./Product";
-import ProductCategory from "./ProductCategory";
-import classes from "./CategoryListing.module.css";
-import axios from "axios";
-import { TextInput, Button, Select } from "@mantine/core";
-import { IconSettings, IconSearch, IconCopy } from "@tabler/icons-react";
-import NotFoundImage from "./NotFound";
-import Cookies from "js-cookie";
 import { retrieveUserInfo } from "../utils/RetrieveUserInfoFromToken";
 import { showNotifications } from "../utils/ShowNotification";
+import classes from "./CategoryListing.module.css";
+import NotFoundImage from "./NotFound";
+import Product from "./Product";
 
 function CategoryListingsPage(props) {
   const navigate = useNavigate();
@@ -157,6 +156,10 @@ function CategoryListingsPage(props) {
     setCategoryOptions(categoryOptions);
   }, [productList]);
 
+  const handleCategoryChange = (value) => {
+    setSelectedCategory(value);
+  };
+
   return (
     <div className={classes.container}>
       <div>
@@ -167,7 +170,7 @@ function CategoryListingsPage(props) {
               ...categoryOptions,
             ]}
             value={selectedCategory}
-            onChange={(value) => setSelectedCategory(value)}
+            onChange={handleCategoryChange}
             placeholder="Category"
           />
           <Select
@@ -203,9 +206,12 @@ function CategoryListingsPage(props) {
         </div>
       </div>
       <div>
-        <h1
-          style={{ marginBottom: "10px", marginTop: "-25px" }}
-        >{`${searchResults.length} listings for ${category}`}</h1>
+        <h1 style={{ marginBottom: "10px", marginTop: "-25px" }}>{`${
+          searchResults.length
+        } listings for ${
+          selectedCategory ? selectedCategory : "All Categories"
+        }`}</h1>
+
         <h2 style={{ fontWeight: "normal", fontSize: "18px" }}>
           Looking for New or Used {category}s in Singapore? Browse great deals
           on Top Care Fashion and find your new {category}!
