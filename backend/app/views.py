@@ -7,7 +7,7 @@ import uuid
 
 import numpy as np
 import stripe
-import tensorflow as tf
+#import tensorflow as tf
 import torch
 from config.firebase import firebase
 from django.core.files.base import ContentFile
