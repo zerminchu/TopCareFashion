@@ -19,12 +19,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-DATABASES = {} # Prevent Django from loading an adapter
-
-
-WSGI_APPLICATION = 'vercel_app.wsgi.app'
-
-
 
 # Application definition
 
@@ -38,7 +32,6 @@ INSTALLED_APPS = [
     'app',
     'rest_framework',
     'corsheaders',
-    'backend',
 
 ]
 
