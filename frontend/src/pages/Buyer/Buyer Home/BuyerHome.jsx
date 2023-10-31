@@ -140,8 +140,13 @@ function BuyerHome(props) {
   };
 
   useEffect(() => {
-    const filteredProducts = productList.filter((product) =>
-      product.title.toLowerCase().includes(searchText.toLowerCase())
+    const searchTextLower = searchText.toLowerCase();
+    const filteredProducts = productList.filter(
+      (product) =>
+        product.title.toLowerCase().includes(searchTextLower) ||
+        product.category.toLowerCase().includes(searchTextLower) ||
+        (product.sub_category &&
+          product.sub_category.toLowerCase().includes(searchTextLower))
     );
 
     setSearchResults(filteredProducts);
@@ -246,9 +251,9 @@ function BuyerHome(props) {
         algoliaProduct
       );
 
-      console.log("All product: ", productsWithAvailability);
+      /*      console.log("All product: ", productsWithAvailability);
       console.log("buyer preferences: ", buyerPreferencesProduct);
-      console.log("Algolia product: ", algoliaProduct);
+      console.log("Algolia product: ", algoliaProduct); */
 
       const combinedProducts = Array.from(new Set(concatenatedArray));
       setCombinedProductList(combinedProducts);
@@ -279,6 +284,7 @@ function BuyerHome(props) {
             category={product.category}
             condition={product.condition}
             seller_id={product.user_id}
+            sub_category={product.sub_category}
           />
         ));
     }
@@ -310,6 +316,7 @@ function BuyerHome(props) {
         category={product.category}
         condition={product.condition}
         seller_id={product.user_id}
+        sub_category={product.sub_category}
       />
     ));
   };
