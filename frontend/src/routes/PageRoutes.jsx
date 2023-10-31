@@ -25,7 +25,7 @@ import EditListing from "../pages/Seller/Transactions/EditListing";
 import ImageUpload from "../pages/Seller/Transactions/ImageUpload";
 import ListItem from "../pages/Seller/Transactions/ListItem";
 import UserProfile from "../pages/Seller/UserProfile";
-import SellerSummary from "../pages/Seller/SellerSummary";
+import SellerSummary from "../pages/Seller/sellerSummary";
 import CategorySelection from "../pages/Seller/Transactions/CategorySelection";
 import SpecificSellerListings from "../pages/Buyer/SpecificSellerListings";
 function PageRoutes() {
