@@ -323,7 +323,7 @@ export function Transactions() {
   };
 
   const handleProceedCheckoutClick = () => {
-    if (sortedData) {
+    if (fullData) {
       const date = new Date();
 
       const year = date.getFullYear();
@@ -335,7 +335,7 @@ export function Transactions() {
 
       const today = `${year}-${month}-${day}`;
 
-      const filteredData = sortedData.map((item) => {
+      const filteredData = fullData.map((item) => {
         const subTotal = item.cart_quantity * item.price;
 
         item.created_at = today;
@@ -343,8 +343,6 @@ export function Transactions() {
 
         return item;
       });
-
-      console.log("ALL DATA: ", filteredData);
 
       navigate("/buyer/checkout", {
         state: { data: filteredData },
