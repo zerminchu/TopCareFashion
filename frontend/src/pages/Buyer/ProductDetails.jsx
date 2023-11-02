@@ -304,15 +304,15 @@ function ProductDetails() {
       return;
     }
 
-    if (parseInt(quantity) > parseInt(productDetails.quantity_available)) {
-      showNotifications({
-        status: "error",
-        title: "Error",
-        message: "Your quantity exceeds the product stock",
-      });
+    // if (parseInt(quantity) > parseInt(productDetails.quantity_available)) {
+    //   showNotifications({
+    //     status: "error",
+    //     title: "Error",
+    //     message: "Your quantity exceeds the product stock",
+    //   });
 
-      return;
-    }
+    //   return;
+    // }
 
     const date = new Date();
     const year = date.getFullYear();
@@ -433,15 +433,6 @@ function ProductDetails() {
                       <Group mt="xs">{renderAvailableSize()}</Group>
                     </Radio.Group>
                   </div>
-                </div>
-
-                <div className={classes.productItemAtribute}>
-                  <Text size="md" fw={500}>
-                    Stock
-                  </Text>
-                  <Text size="lg" fw={700} align="right" color="blue">
-                    {productDetails.quantity_available} stocks left
-                  </Text>
                 </div>
 
                 <div className={classes.productItemAtribute}>
