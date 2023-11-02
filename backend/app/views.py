@@ -949,9 +949,6 @@ def edit_item(request, user_id, item_id):
 
                     })
 
-              
-
-
                 collection_address = request.data.get("collection_address")
                 quantity_available = request.data.get("quantity_available")
                 avail_status = request.data.get("avail_status")
@@ -1406,8 +1403,8 @@ def webhookStripe(request):
                             paidOrderRef = db.collection("PaidOrder").document(paidOrderId)
                             paidOrderRef.set(paidOrderData)
 
-                            updatedQuantityAvailable = int((listingData.to_dict())["quantity_available"]) - int(checkoutItem["q"])
-                            listingRef.update({"quantity_available": updatedQuantityAvailable})
+                            # updatedQuantityAvailable = int((listingData.to_dict())["quantity_available"]) - int(checkoutItem["q"])
+                            # listingRef.update({"quantity_available": updatedQuantityAvailable})
                             
                             responseData.append(paidOrderData)
                         else:

@@ -63,6 +63,7 @@ function Checkout() {
       return (
         <CheckoutItem
           key={index}
+          seller_id={item.seller_id}
           title={item.title}
           collection_address={item.collection_address}
           price={item.price}
@@ -103,21 +104,21 @@ function Checkout() {
 
         let checkoutData = [];
         let checkoutMetaData = [];
-        let isExceed = false;
+        //let isExceed = false;
 
         checkoutItems.map((item) => {
-          if (
-            parseInt(item.cart_quantity) > parseInt(item.quantity_available)
-          ) {
-            showNotifications({
-              status: "error",
-              title: "Error",
-              message: `Your ${item.title} quantity exceeds the product stock`,
-            });
+          // if (
+          //   parseInt(item.cart_quantity) > parseInt(item.quantity_available)
+          // ) {
+          //   showNotifications({
+          //     status: "error",
+          //     title: "Error",
+          //     message: `Your ${item.title} quantity exceeds the product stock`,
+          //   });
 
-            isExceed = true;
-            return;
-          }
+          //   isExceed = true;
+          //   return;
+          // }
 
           const data = {
             title: item.title,
@@ -135,10 +136,10 @@ function Checkout() {
           checkoutData.push(data);
         });
 
-        if (isExceed) {
-          dispatch({ type: "SET_LOADING", value: false });
-          return;
-        }
+        // if (isExceed) {
+        //   dispatch({ type: "SET_LOADING", value: false });
+        //   return;
+        // }
 
         const date = new Date();
 

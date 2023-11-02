@@ -158,6 +158,7 @@ export function Transactions() {
   const [currentUser, setCurrentUser] = useState();
   const [search, setSearch] = useState("");
   const [sortedData, setSortedData] = useState<RowData[]>();
+  const [fullData, setFullData] = useState<RowData[]>();
   const [sortBy, setSortBy] = useState<keyof RowData | null>(null);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
   const [filteredOutItems, setFilteredOutItems] = useState<RowData[]>([]);
@@ -173,7 +174,8 @@ export function Transactions() {
         const response = await axios.get(
           `${url}/buyer/cart-details/${currentUser.user_id}/`
         );
-
+        
+        setFullData(response.data.data);
         setSortedData(response.data.data);
       } catch (error) {
         console.log(error);
@@ -231,20 +233,29 @@ export function Transactions() {
     );
   };
 
+  useEffect(() => {
+    const generateSearchResults = () => {
+      const searchResults = fullData.filter(item => {
+        const titleMatch = item.title.toLowerCase().includes(search.toLowerCase());
+        const categoryMatch = item.category.toLowerCase().includes(search.toLowerCase());
+        const quantityMatch = item.cart_quantity.toString().includes(search); 
+        const priceMatch = item.price.toString().includes(search); 
+
+        return titleMatch || categoryMatch || quantityMatch || priceMatch;
+      })
+
+      setSortedData(searchResults);
+    }
+
+    if(search && fullData){
+      generateSearchResults();
+    }
+  }, [search])
+  
+
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    //handle searches
     const { value } = event.currentTarget;
     setSearch(value);
-    console.log(value); //can use this, set as the title (filter out the title)
-    setSortedData(
-      sortData(
-        sampleData.map((item) => ({
-          ...item,
-          quantity: editedQuantity[item.title] || item.quantity,
-        })),
-        { sortBy, reversed: reverseSortDirection, search: value }
-      )
-    );
   };
 
   const handleQuantityChange = (cart_item_id: string, quantity: Number) => {
@@ -258,7 +269,6 @@ export function Transactions() {
   };
 
   const handleBuyButtonClick = (cartItemId: string) => {
-    console.log("click on: ", cartItemId);
     if (sortedData) {
       let filteredData = sortedData.filter(
         (item) => item.cart_item_id === cartItemId
@@ -349,7 +359,6 @@ export function Transactions() {
       }
 
       return sortedData.map((item) => {
-        console.log("EACH ITEM: ", item);
         return (
           <CartItem
             cartId={item.cart_id}
