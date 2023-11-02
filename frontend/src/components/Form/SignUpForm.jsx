@@ -3,15 +3,21 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useForm } from "@mantine/form";
 import classes from "./SignUpForm.module.css";
-import { Select, TextInput, PasswordInput, Button } from "@mantine/core";
+import {
+  Select,
+  TextInput,
+  PasswordInput,
+  Button,
+  Stepper,
+} from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { useDispatch } from "react-redux";
 import { showNotifications } from "../../utils/ShowNotification";
 import ILLogo from "../../assets/illustrations/il_logo.png";
-import Cookies from "js-cookie";
 
 function SignUpForm(props) {
   const dispatch = useDispatch();
+  const [activeStep, setActiveStep] = useState(1);
 
   useEffect(() => {
     // Function to enable scrolling
@@ -74,13 +80,17 @@ function SignUpForm(props) {
   });
 
   const backOnClick = () => {
-    dispatch({ type: "SET_SIGN_IN", value: true });
-    dispatch({ type: "SET_SIGN_UP", value: false });
+    if (activeStep === 1) {
+      dispatch({ type: "SET_SIGN_UP", value: false });
+      dispatch({ type: "SET_BUYER_PREFERENCES", value: true });
+    } else {
+      setActiveStep(activeStep - 1);
+    }
   };
 
   const handleSignUpClick = async () => {
     try {
-      if (!form.validate().hasErrors) {
+      if (activeStep === 1 && !form.validate().hasErrors) {
         dispatch({ type: "SET_LOADING", value: true });
 
         // Convert date object to YYYY-MM-DD
@@ -139,6 +149,15 @@ function SignUpForm(props) {
       <div className={classes.popupContainer}>
         <div className={classes.popupcontent}>
           <img src={ILLogo} width={70} height={70} />
+
+          <Stepper active={activeStep}>
+            <Stepper.Step
+              label="Indicate Preference"
+              description="Select your preferences"
+            />
+            <Stepper.Step label="Sign Up" description="Create an account" />
+          </Stepper>
+
           <Select
             className={classes.element}
             label="Role"
@@ -192,13 +211,16 @@ function SignUpForm(props) {
             {...form.getInputProps("confirmPassword")}
             withAsterisk
           />
+
           <div className={classes.bottom}>
-            <p
-              onClick={backOnClick}
-              style={{ textDecoration: "underline", cursor: "pointer" }}
-            >
-              Back
-            </p>
+            {activeStep === 1 ? (
+              <p
+                onClick={backOnClick}
+                style={{ textDecoration: "underline", cursor: "pointer" }}
+              >
+                Back
+              </p>
+            ) : null}
             <Button onClick={handleSignUpClick}>Sign Up</Button>
           </div>
         </div>

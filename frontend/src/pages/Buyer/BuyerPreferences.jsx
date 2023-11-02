@@ -1,62 +1,70 @@
-import { Button, Select } from "@mantine/core";
 import React, { useState } from "react";
-import ILLogo from "../../assets/illustrations/il_logo.png";
-
 import { useDispatch } from "react-redux";
 import { showNotifications } from "../../utils/ShowNotification";
+import { Stepper, Button, Select, Group } from "@mantine/core";
+import ILLogo from "../../assets/illustrations/il_logo.png";
 import classes from "./BuyerPreferences.module.css";
 
 function BuyerPreferences() {
   const dispatch = useDispatch();
-
+  const [activeStep, setActiveStep] = useState(0);
   const [selectedCondition, setSelectedCondition] = useState();
   const [selectedSize, setSelectedSize] = useState();
   const [selectedGender, setSelectedGender] = useState();
   const [selectedPriceRange, setSelectedPriceRange] = useState();
-  const [isPopupOpen, setPopupOpen] = useState(true);
 
   const handleBackButtonClick = () => {
-    if (isPopupOpen) {
+    if (activeStep === 0) {
       dispatch({ type: "SET_BUYER_PREFERENCES", value: false });
       dispatch({ type: "SET_SIGN_IN", value: false });
-      setPopupOpen(false);
+    } else {
+      setActiveStep(activeStep - 1);
     }
   };
 
-  const nextOnClick = () => {
-    if (
-      !selectedSize ||
-      !selectedCondition ||
-      !selectedGender ||
-      !selectedPriceRange
-    ) {
-      showNotifications({
-        status: "error",
-        title: "Error",
-        message: "Please fill out all the required information",
-      });
+  const handleNextClick = () => {
+    if (activeStep === 0) {
+      if (
+        !selectedSize ||
+        !selectedCondition ||
+        !selectedGender ||
+        !selectedPriceRange
+      ) {
+        showNotifications({
+          status: "error",
+          title: "Error",
+          message: "Please fill out all the required information",
+        });
+        return;
+      }
 
-      return;
+      const preferencesValue = {
+        gender: selectedGender,
+        size: selectedSize,
+        condition: selectedCondition,
+        price: JSON.parse(selectedPriceRange),
+      };
+      localStorage.setItem(
+        "buyerPreferences",
+        JSON.stringify(preferencesValue)
+      );
+
+      dispatch({ type: "SET_BUYER_PREFERENCES", value: false });
     }
 
-    console.log("json parse: ", JSON.parse(selectedPriceRange));
+    dispatch({ type: "SET_SIGN_UP", value: true });
 
-    const preferencesValue = {
-      gender: selectedGender,
-      size: selectedSize,
-      condition: selectedCondition,
-      price: JSON.parse(selectedPriceRange),
-    };
-
-    localStorage.setItem("buyerPreferences", JSON.stringify(preferencesValue));
-
-    dispatch({ type: "SET_BUYER_PREFERENCES", value: false });
-    dispatch({ type: "SET_SIGN_IN", value: true });
+    setActiveStep(activeStep + 1);
   };
 
   window.addEventListener("beforeunload", () => {
     localStorage.removeItem("buyerPreferences");
   });
+
+  const handleLoginLinkClick = () => {
+    dispatch({ type: "SET_SIGN_IN", value: true });
+    dispatch({ type: "SET_BUYER_PREFERENCES", value: false });
+  };
 
   return (
     <div className={classes.popupoverlay}>
@@ -64,70 +72,83 @@ function BuyerPreferences() {
         <div className={classes.popupcontent}>
           <img src={ILLogo} width={70} height={70} />
           <h2>Let us get to know more about you...</h2>
+          <Stepper active={activeStep}>
+            <Stepper.Step
+              label="Indicate Preference"
+              description="Select your preferences"
+            >
+              <Select
+                withAsterisk
+                className={classes.element}
+                label="Select Your Preferred Category"
+                data={[
+                  { value: "men", label: "Men's" },
+                  { value: "women", label: "Women's" },
+                ]}
+                onChange={(value) => setSelectedGender(value)}
+              />
+              <Select
+                withAsterisk
+                className={classes.element}
+                label="Select Preferred Condition"
+                data={[
+                  { value: "Brand New", label: "Brand New" },
+                  { value: "Lightly Used", label: "Lightly Used" },
+                  { value: "Well Used", label: "Well Used" },
+                ]}
+                onChange={(value) => setSelectedCondition(value)}
+              />
+              <Select
+                withAsterisk
+                className={classes.element}
+                label="Select Your Clothing Size"
+                data={[
+                  { value: "XS", label: "XS" },
+                  { value: "S", label: "S" },
+                  { value: "M", label: "M" },
+                  { value: "L", label: "L" },
+                  { value: "XL", label: "XL" },
+                  { value: "XXL", label: "XXL" },
+                  { value: "Free Size", label: "Free Size" },
+                ]}
+                onChange={(value) => setSelectedSize(value)}
+              />
+              <Select
+                withAsterisk
+                className={classes.element}
+                label="Select Preferred Price Range"
+                data={[
+                  { value: '["all price"]', label: "All Price" },
+                  { value: "[10]", label: "Below $10" },
+                  { value: "[10, 50]", label: "$10 - $50" },
+                  { value: "[50, 100]", label: "$50 - $100" },
+                  { value: "[100, 200]", label: "$100 - $200" },
+                  { value: "[200]", label: "Above  $200" },
+                ]}
+                onChange={(value) => setSelectedPriceRange(value)}
+              />
+            </Stepper.Step>
+            <Stepper.Step
+              label="Sign Up"
+              description="Create an account"
+            ></Stepper.Step>
+          </Stepper>
 
-          <Select
-            withAsterisk
-            className={classes.element}
-            label="Select Your Preferred Category"
-            data={[
-              { value: "men", label: "Men's" },
-              { value: "women", label: "Women's" },
-            ]}
-            onChange={(value) => setSelectedGender(value)}
-          />
-          <Select
-            withAsterisk
-            className={classes.element}
-            label="Select Preferred Condition"
-            data={[
-              { value: "Brand New", label: "Brand New" },
-              { value: "Lightly Used", label: "Lightly Used" },
-              { value: "Well Used", label: "Well Used" },
-            ]}
-            onChange={(value) => setSelectedCondition(value)}
-          />
-          <Select
-            withAsterisk
-            className={classes.element}
-            label="Select Your Clothing Size"
-            data={[
-              { value: "XS", label: "XS" },
-              { value: "S", label: "S" },
-              { value: "M", label: "M" },
-              { value: "L", label: "L" },
-              { value: "XL", label: "XL" },
-              { value: "XXL", label: "XXL" },
-              { value: "Free Size", label: "Free Size" },
-            ]}
-            onChange={(value) => setSelectedSize(value)}
-          />
-          <Select
-            withAsterisk
-            className={classes.element}
-            label="Select Preferred Price Range"
-            data={[
-              { value: '["all price"]', label: "All Price" },
-              { value: "[10]", label: "Below $10" },
-              { value: "[10, 50]", label: "$10 - $50" },
-              { value: "[50, 100]", label: "$50 - $100" },
-              { value: "[100, 200]", label: "$100 - $200" },
-              { value: "[200]", label: "Above  $200" },
-            ]}
-            onChange={(value) => {
-              setSelectedPriceRange(value);
-            }}
-          />
-          <Button className={classes.element} onClick={nextOnClick}>
-            Next
-          </Button>
-          <Button
-            variant="filled"
-            color="red"
-            className={classes.element}
-            onClick={handleBackButtonClick}
-          >
-            Skip for Now
-          </Button>
+          <Group justify="center" mt="xl">
+            {activeStep === 0 ? (
+              <Button variant="default" onClick={handleBackButtonClick}>
+                Back
+              </Button>
+            ) : null}
+            <Button onClick={handleNextClick}>
+              {activeStep === 0 ? "Next" : "Submit"}{" "}
+            </Button>
+          </Group>
+          {activeStep === 0 ? (
+            <a onClick={handleLoginLinkClick} className={classes.loginLink}>
+              Already have an account with us?
+            </a>
+          ) : null}
         </div>
       </div>
     </div>

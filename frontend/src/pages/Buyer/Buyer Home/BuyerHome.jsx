@@ -46,13 +46,18 @@ function BuyerHome(props) {
   );
 
   useEffect(() => {
-    if (!localStorage.getItem("buyerPreferences")) {
-      if (Cookies.get("userRole") && Cookies.get("userRole") !== "buyer") {
-        return;
+    const storedBuyerPreferences = localStorage.getItem("buyerPreferences");
+
+    if (Cookies.get("userRole") === "buyer" && !currentUser) {
+      if (!storedBuyerPreferences) {
+        dispatch({ type: "SET_BUYER_PREFERENCES", value: true });
+      } else {
+        dispatch({ type: "SET_BUYER_PREFERENCES", value: false });
       }
-      dispatch({ type: "SET_BUYER_PREFERENCES", value: true });
+    } else {
+      dispatch({ type: "SET_BUYER_PREFERENCES", value: false });
     }
-  }, [currentUser]);
+  }, [currentUser, dispatch]);
 
   useEffect(() => {
     const setUserSessionData = async () => {
