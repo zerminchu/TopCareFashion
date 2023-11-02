@@ -160,6 +160,7 @@ function ProductDetails() {
   const addToCartOnClick = async () => {
     // Check if user sign in before
     if (!Cookies.get("firebaseIdToken")) {
+      dispatch({ type: "SET_BUYER_PREFERENCES", value: true });
       dispatch({ type: "SET_SIGN_IN", value: true });
       return;
     }
@@ -226,6 +227,7 @@ function ProductDetails() {
   const wishlistOnClick = async () => {
     // Check if user sign in before
     if (!Cookies.get("firebaseIdToken")) {
+      dispatch({ type: "SET_BUYER_PREFERENCES", value: true });
       dispatch({ type: "SET_SIGN_IN", value: true });
       return;
     }
@@ -290,6 +292,7 @@ function ProductDetails() {
   const buyNowOnClick = () => {
     // Check if user sign in before
     if (!Cookies.get("firebaseIdToken")) {
+      dispatch({ type: "SET_BUYER_PREFERENCES", value: true });
       dispatch({ type: "SET_SIGN_IN", value: true });
       return;
     }

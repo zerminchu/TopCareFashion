@@ -98,9 +98,17 @@ function SignInForm(props) {
   const [isPopupOpen, setPopupOpen] = useState(true);
 
   const handleBackButtonClick = () => {
-    dispatch({ type: "SET_SIGN_IN", value: false });
+    if (!isPopupOpen) {
+      dispatch({ type: "SET_SIGN_IN", value: false });
+      setPopupOpen(false);
+    } else {
+      showNotifications({
+        status: "info",
+        title: "Important Information",
+        message: "Please complete the sign-up or sign-in process to proceed.",
+      });
+    }
   };
-
   return (
     <div className={classes.popupoverlay}>
       {isPopupOpen && (

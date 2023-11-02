@@ -1,11 +1,10 @@
-import { Button, CloseButton, Select } from "@mantine/core";
+import { Button, Select } from "@mantine/core";
 import React, { useState } from "react";
 import ILLogo from "../../assets/illustrations/il_logo.png";
 
-import classes from "./BuyerPreferences.module.css";
 import { useDispatch } from "react-redux";
 import { showNotifications } from "../../utils/ShowNotification";
-import Cookies from "js-cookie";
+import classes from "./BuyerPreferences.module.css";
 
 function BuyerPreferences() {
   const dispatch = useDispatch();
@@ -14,9 +13,14 @@ function BuyerPreferences() {
   const [selectedSize, setSelectedSize] = useState();
   const [selectedGender, setSelectedGender] = useState();
   const [selectedPriceRange, setSelectedPriceRange] = useState();
+  const [isPopupOpen, setPopupOpen] = useState(true);
 
   const handleBackButtonClick = () => {
-    dispatch({ type: "SET_BUYER_PREFERENCES", value: false });
+    if (isPopupOpen) {
+      dispatch({ type: "SET_BUYER_PREFERENCES", value: false });
+      dispatch({ type: "SET_SIGN_IN", value: false });
+      setPopupOpen(false);
+    }
   };
 
   const nextOnClick = () => {
@@ -47,35 +51,34 @@ function BuyerPreferences() {
     localStorage.setItem("buyerPreferences", JSON.stringify(preferencesValue));
 
     dispatch({ type: "SET_BUYER_PREFERENCES", value: false });
+    dispatch({ type: "SET_SIGN_IN", value: true });
   };
+
+  window.addEventListener("beforeunload", () => {
+    localStorage.removeItem("buyerPreferences");
+  });
 
   return (
     <div className={classes.popupoverlay}>
       <div className={classes.popupContainer}>
         <div className={classes.popupcontent}>
-          <CloseButton
-            className={classes.backButton}
-            size={30}
-            onClick={handleBackButtonClick}
-          />
-
           <img src={ILLogo} width={70} height={70} />
+          <h2>Let us get to know more about you...</h2>
 
           <Select
             withAsterisk
             className={classes.element}
-            label="Which of the following category do you prefer?"
+            label="Select Your Preferred Category"
             data={[
-              { value: "men", label: "men" },
-              { value: "women", label: "women" },
+              { value: "men", label: "Men's" },
+              { value: "women", label: "Women's" },
             ]}
             onChange={(value) => setSelectedGender(value)}
           />
-
           <Select
             withAsterisk
             className={classes.element}
-            label="Which of the following condition do you prefer?"
+            label="Select Preferred Condition"
             data={[
               { value: "Brand New", label: "Brand New" },
               { value: "Lightly Used", label: "Lightly Used" },
@@ -83,11 +86,10 @@ function BuyerPreferences() {
             ]}
             onChange={(value) => setSelectedCondition(value)}
           />
-
           <Select
             withAsterisk
             className={classes.element}
-            label="What is your clothing size?"
+            label="Select Your Clothing Size"
             data={[
               { value: "XS", label: "XS" },
               { value: "S", label: "S" },
@@ -99,11 +101,10 @@ function BuyerPreferences() {
             ]}
             onChange={(value) => setSelectedSize(value)}
           />
-
           <Select
             withAsterisk
             className={classes.element}
-            label="Which of the following price range do you prefer?"
+            label="Select Preferred Price Range"
             data={[
               { value: '["all price"]', label: "All Price" },
               { value: "[10]", label: "Below $10" },
@@ -116,9 +117,16 @@ function BuyerPreferences() {
               setSelectedPriceRange(value);
             }}
           />
-
           <Button className={classes.element} onClick={nextOnClick}>
             Next
+          </Button>
+          <Button
+            variant="filled"
+            color="red"
+            className={classes.element}
+            onClick={handleBackButtonClick}
+          >
+            Skip for Now
           </Button>
         </div>
       </div>
