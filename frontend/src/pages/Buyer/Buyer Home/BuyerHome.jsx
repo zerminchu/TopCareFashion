@@ -84,15 +84,12 @@ function BuyerHome(props) {
     if (currentUser && currentUser.preferences) {
       buyerPreferences = currentUser.preferences;
     }
-
-    if(buyerPreferences && buyerPreferences.gender === "men"){
+    if (buyerPreferences && buyerPreferences.gender === "men") {
       navigate("/men");
-    }
-    else if(buyerPreferences && buyerPreferences.gender === "women"){
+    } else if (buyerPreferences && buyerPreferences.gender === "women") {
       navigate("women");
     }
   }, [currentUser]);
-  
 
   useEffect(() => {
     const retrieveAllItems = async () => {

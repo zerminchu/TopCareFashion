@@ -62,6 +62,7 @@ function DropDownMenu(props) {
   };
 
   const logoutOnClick = () => {
+    navigate("/");
     Cookies.remove("firebaseIdToken");
     Cookies.remove("userRole");
     window.location.reload();

@@ -135,8 +135,13 @@ function BuyerHomeWomen(props) {
   };
 
   useEffect(() => {
-    const filteredProducts = productList.filter((product) =>
-      product.title.toLowerCase().includes(searchText.toLowerCase())
+    const searchTextLower = searchText.toLowerCase();
+    const filteredProducts = productList.filter(
+      (product) =>
+        product.title.toLowerCase().includes(searchTextLower) ||
+        product.category.toLowerCase().includes(searchTextLower) ||
+        (product.sub_category &&
+          product.sub_category.toLowerCase().includes(searchTextLower))
     );
 
     setSearchResults(filteredProducts);

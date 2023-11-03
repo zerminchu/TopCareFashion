@@ -45,6 +45,20 @@ function BuyerHomeMen(props) {
   );
 
   useEffect(() => {
+    const storedBuyerPreferences = localStorage.getItem("buyerPreferences");
+
+    if (Cookies.get("userRole") === "buyer" && !currentUser) {
+      if (!storedBuyerPreferences) {
+        dispatch({ type: "SET_BUYER_PREFERENCES", value: true });
+      } else {
+        dispatch({ type: "SET_BUYER_PREFERENCES", value: false });
+      }
+    } else {
+      dispatch({ type: "SET_BUYER_PREFERENCES", value: false });
+    }
+  }, [currentUser, dispatch]);
+
+  useEffect(() => {
     const setUserSessionData = async () => {
       try {
         const user = await retrieveUserInfo();
@@ -130,8 +144,13 @@ function BuyerHomeMen(props) {
   };
 
   useEffect(() => {
-    const filteredProducts = productList.filter((product) =>
-      product.title.toLowerCase().includes(searchText.toLowerCase())
+    const searchTextLower = searchText.toLowerCase();
+    const filteredProducts = productList.filter(
+      (product) =>
+        product.title.toLowerCase().includes(searchTextLower) ||
+        product.category.toLowerCase().includes(searchTextLower) ||
+        (product.sub_category &&
+          product.sub_category.toLowerCase().includes(searchTextLower))
     );
 
     setSearchResults(filteredProducts);
