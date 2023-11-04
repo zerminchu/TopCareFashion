@@ -46,11 +46,6 @@ const useStyles = createStyles((theme) => ({
   confirmation: {
     display: "flex",
     flexDirection: "column",
-    /* padding: rem(10),
-    gap: rem(5),
-    width: rem(200),
-    borderRadius: rem(5),
-    backgroundColor: theme.colors.blue[0], */
   },
 
   buttonConfirmation: {
@@ -132,10 +127,14 @@ function EditListing() {
       condition: (value) => validateField("Condition", value),
       colour: (value) => validateField("Colour", value),
       title: (value) => validateField("Title", value),
-      description: (value) => validateField("Description", value),
+      description: (value) => {
+        if (/[^a-zA-Z0-9\s]/.test(value)) {
+        }
+        return null;
+      },
       price: (value) => {
         if (!/^[0-9.]+$/.test(value)) {
-          return "Price should only contain decimal values.";
+          return "Price should not contain special characters (except decimal point)";
         }
         return null;
       },

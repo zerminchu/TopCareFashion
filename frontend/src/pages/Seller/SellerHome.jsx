@@ -137,8 +137,23 @@ function SellerCards() {
 
         const response = await axios.get(`${url}/view-item/${id}/`);
         const fetchedItems = response.data;
-        setItems(fetchedItems);
-        setFilteredItems(fetchedItems);
+
+        const itemsWithPrice = fetchedItems.map((item) => ({
+          ...item,
+          price: parseFloat(item.price),
+        }));
+
+        itemsWithPrice.sort((a, b) => {
+          const titleComparison = a.title.localeCompare(b.title);
+
+          if (titleComparison !== 0) {
+            return titleComparison;
+          }
+
+          return a.price - b.price;
+        });
+        setItems(itemsWithPrice);
+        setFilteredItems(itemsWithPrice);
       } catch (error) {
         console.error("Error fetching Items:", error);
       }
@@ -184,6 +199,9 @@ function SellerCards() {
 
         const categoryArray = Array.from(categorySet);
         const subCategoryArray = Array.from(subCategorySet);
+
+        categoryArray.sort();
+        subCategoryArray.sort();
 
         setClothingCategories(categoryArray);
         setSubCategory(subCategoryArray);
