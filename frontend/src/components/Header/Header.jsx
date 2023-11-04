@@ -62,6 +62,7 @@ function Header() {
             <div className={classes.middleside}>
               <a href="/men">Men</a>
               <a href="/women">Women</a>
+              {/* <a href="/recommend">recommend</a> */}
               <a href="https://zermin551.wixsite.com/topcarefashion/about-us">
                 About Us
               </a>

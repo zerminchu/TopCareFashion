@@ -39,6 +39,7 @@ function BuyerHeader(props) {
         </Text>
         <a href="/men">Men</a>
         <a href="/women">Women</a>
+        <a href="/recommend">recommend</a>
         <a href="#">About us</a>
       </div>
       <div className={classes.rightside}>

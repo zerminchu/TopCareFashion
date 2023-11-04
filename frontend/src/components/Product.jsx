@@ -1,43 +1,39 @@
-/* eslint-disable react/prop-types */
-import React, { useState, useEffect } from "react";
-import classes from "./Product.module.css";
-import { Button, Text } from "@mantine/core";
-import { showNotifications } from "../utils/ShowNotification";
-import { retrieveUserInfo } from "../utils/RetrieveUserInfoFromToken";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import Cookies from "js-cookie";
+import React, { useState, useEffect } from 'react';
+import classes from './Product.module.css';
+import { Button, Text } from '@mantine/core';
+import { retrieveUserInfo } from '../utils/RetrieveUserInfoFromToken';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import Cookies from 'js-cookie';
 import aa from 'search-insights';
-import { saveAs } from 'file-saver';  
 
 // Initialize Algolia insights client
 aa('init', {
   appId: 'BWO4H6S1WK',
-  apiKey: '7a3a143223fb1c672795a76c755ef375'
+  apiKey: '7a3a143223fb1c672795a76c755ef375',
 });
+
 
 function Product(props) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [user, setUser] = useState([]);
-  const [currentUser, setCurrentUser] = useState();
-
-  const [isAddToCart, setisAddToCart] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
     const setUserSessionData = async () => {
       try {
         const user = await retrieveUserInfo();
-        setCurrentUser(user);  // Updated this line from setCurrentUser(user)
+        setCurrentUser(user); // Updated this line from setCurrentUser(user)
       } catch (error) {
         console.log(error);
       }
     };
 
-    if (Cookies.get("firebaseIdToken")) {
+    if (Cookies.get('firebaseIdToken')) {
       setUserSessionData();
     }
   }, []);
+
 
   const onClick = () => {
     console.log(currentUser.user_id) //check id
@@ -48,22 +44,7 @@ function Product(props) {
       objectIDs: [props.item_id],
     });
 
-    // Store the event in localStorage
-    const event = {
-      userToken: currentUser.user_id,
-      timestamp: new Date().toISOString(),
-      eventType: "conversion", // Or whatever event type it is
-      eventName: 'Clicked Product',
-      objectID: props.item_id
-    };
 
-    const storedEvents = JSON.parse(localStorage.getItem("events") || "[]");
-    storedEvents.push(event);
-    localStorage.setItem("events", JSON.stringify(storedEvents));
-
-    exportEventsToCSV(); //trigger
-
-    
     if (props.item_id) {
       
       navigate("/buyer/product-detail", {
@@ -74,31 +55,6 @@ function Product(props) {
         state: { data: props },
       });
     }
-  };
-
-  const exportEventsToCSV = () => {
-    const storedEvents = JSON.parse(localStorage.getItem("events") || "[]");
-  
-    if (storedEvents.length === 0) {
-      alert("No events to export.");
-      return;
-    }
-  
-    const csvHeader = "userToken,timestamp,eventType,eventName,objectID\n";
-    const csvRows = storedEvents.map(event => 
-      `${event.userToken},${event.timestamp},${event.eventType},${event.eventName},${event.objectID}`
-    );
-  
-    const csvData = csvHeader + csvRows.join("\n");
-    const blob = new Blob([csvData], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.style.display = 'none';
-    a.href = url;
-    a.download = 'events.csv';
-    document.body.appendChild(a);
-    a.click();
-    window.URL.revokeObjectURL(url);
   };
 
   const addToCartOnClick = async (e) => {
@@ -138,6 +94,8 @@ function Product(props) {
           Add to cart
         </Button>
       </div>
+      
+      
     </div>
   );
 }

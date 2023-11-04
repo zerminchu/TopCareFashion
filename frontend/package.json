@@ -10,6 +10,8 @@
         "preview": "vite preview"
     },
     "dependencies": {
+        "@algolia/recommend": "^4.20.0",
+        "@algolia/recommend-react": "^1.10.0",
         "@emotion/react": "^11.11.1",
         "@firebase/firestore": "^4.1.0",
         "@mantine/carousel": "^6.0.19",

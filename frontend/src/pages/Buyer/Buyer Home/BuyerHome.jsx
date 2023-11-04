@@ -4,7 +4,6 @@
 import { Button, TextInput } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 import ProductCategory from "../../../components/ProductCategory";
 import CategoryListing from "../../../components/CategoryListing";
 import { retrieveUserInfo } from "../../../utils/RetrieveUserInfoFromToken";
@@ -13,17 +12,14 @@ import classes from "./BuyerHome.module.css";
 import CarouselAds from "./CarouselAds";
 import axios from "axios";
 import Cookies from "js-cookie";
-import algoliasearch from "algoliasearch/lite";
-import {
-  InstantSearch,
-  SearchBox,
-  Highlight,
-  Configure,
-  PoweredBy,
-  Hits,
-} from "react-instantsearch";
-import aa from "search-insights";
 import { useDispatch } from "react-redux";
+import recommend from '@algolia/recommend';
+
+const recommendClient = recommend({
+  appId: 'BWO4H6S1WK',
+  apiKey: '7a3a143223fb1c672795a76c755ef375',
+});
+const indexName = 'Item_Index';
 
 function BuyerHome(props) {
   const dispatch = useDispatch();
@@ -41,16 +37,6 @@ function BuyerHome(props) {
   const [productsWithAvailability, setProductsWithAvailability] = useState([]);
 
   //const searchResultCount = searchResults.length;
-  const searchClient = algoliasearch(
-    "C27B4SWDRQ",
-    "1cb33681bc07eef867dd5e384c1d0bf5"
-  );
-
-  useEffect(() => {
-    if (!Cookies.get("buyerPreferences")) {
-      dispatch({ type: "SET_BUYER_PREFERENCES", value: true });
-    }
-  }, []);
 
   useEffect(() => {
     const setUserSessionData = async () => {

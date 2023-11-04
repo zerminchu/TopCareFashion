@@ -14,7 +14,6 @@ import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
 import { useDispatch } from "react-redux";
 import { showNotifications } from "../../utils/ShowNotification";
 import classes from "./ProductDetails.module.css";
-import { saveAs } from 'file-saver';  
 
 import copy from "copy-to-clipboard";
 import aa from 'search-insights';
@@ -91,31 +90,6 @@ function ProductDetails() {
 
     retrieveProductDetailByItemId();
   }, []);
-
-  const exportEventsToCSV = () => {
-    const storedEvents = JSON.parse(localStorage.getItem("events") || "[]");
-  
-    if (storedEvents.length === 0) {
-      alert("No events to export.");
-      return;
-    }
-  
-    const csvHeader = "userToken,timestamp,eventType,eventName,objectID\n";
-    const csvRows = storedEvents.map(event => 
-      `${event.userToken},${event.timestamp},${event.eventType},${event.eventName},${event.objectID}`
-    );
-  
-    const csvData = csvHeader + csvRows.join("\n");
-    const blob = new Blob([csvData], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.style.display = 'none';
-    a.href = url;
-    a.download = 'events.csv';
-    document.body.appendChild(a);
-    a.click();
-    window.URL.revokeObjectURL(url);
-  };
 
   const renderAvailableSize = () => {
     if (productDetails) {
@@ -233,7 +207,7 @@ function ProductDetails() {
         buyer_id: currentUser.user_id,
         size: selectedSize,
       };
-      console.log(selectedSize);
+      
 
       aa('convertedObjectIDs', { //for trending 
         userToken: currentUser.user_id,
@@ -255,19 +229,7 @@ function ProductDetails() {
         currency: 'SGD'
       });
 
-      const event = {
-        userToken: currentUser.user_id,
-        timestamp: new Date().toISOString(),
-        eventType: "conversion", // Or whatever event type it is
-        eventName: 'Add To Cart',
-        objectID: itemId
-      };
   
-      const storedEvents = JSON.parse(localStorage.getItem("events") || "[]");
-      storedEvents.push(event);
-      localStorage.setItem("events", JSON.stringify(storedEvents));
-  
-      exportEventsToCSV(); //trigger
 
       const url =
         import.meta.env.VITE_NODE_ENV == "DEV"
