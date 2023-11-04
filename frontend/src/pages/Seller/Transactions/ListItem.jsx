@@ -385,10 +385,6 @@ function ListItem() {
   const validateSize = (value) => {
     if (formSubmitted) {
       if (value.length === 0) return "Size should not be empty";
-      if (/^\s$|^\s+.|.\s+$/.test(value))
-        return "Size should not contain trailing/leading whitespaces";
-      if (!/^[a-zA-Z0-9\s,]+$/.test(value))
-        return "Size should not contain special characters (except comma)";
     }
     return null;
   };

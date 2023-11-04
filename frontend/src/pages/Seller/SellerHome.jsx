@@ -296,6 +296,10 @@ function SellerCards() {
 
   return (
     <div className={classes.container}>
+      <h1 className={classes.heading}>
+        Manage and browse your listings at a glance
+      </h1>
+
       <div>
         <div className={classes.searchContainer}>
           <Select
