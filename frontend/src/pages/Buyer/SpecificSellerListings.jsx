@@ -3,6 +3,7 @@ import { useLocation, useParams } from "react-router-dom";
 import { Text } from "@mantine/core";
 import axios from "axios";
 import Product from "../../components/Product";
+import { AiOutlineShop } from "react-icons/ai";
 
 import classes from "./SpecificSellerListings.module.css";
 
@@ -38,7 +39,7 @@ function SpecificSellerListings() {
   const renderProductList = () => {
     if (itemList) {
       if (itemList.length <= 0) {
-        return <Text>This seller does not upload any listing yet</Text>;
+        return <Text>This seller did not upload any listing yet</Text>;
       }
       return itemList.map((item, index) => {
         return (
@@ -58,8 +59,15 @@ function SpecificSellerListings() {
 
   return (
     <div className={classes.container}>
-      <Text fw={700} size="xl">
-        {storeName} Shop
+      <Text
+        weight={700}
+        size={30}
+        align="center"
+        style={{ marginBottom: "1rem", color: "#6b6b6b" }}
+      >
+        View the full collection at {""}
+        <span style={{ color: "#333" }}>{storeName}'s</span>{" "}
+        <AiOutlineShop size={70} style={{ marginBottom: "-10" }} />
       </Text>
       <div className={classes.listProduct}>{renderProductList()}</div>
     </div>

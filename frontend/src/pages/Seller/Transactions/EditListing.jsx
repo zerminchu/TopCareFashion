@@ -95,11 +95,11 @@ function EditListing() {
     if (value.length === 0) return `${fieldName} is empty`;
 
     if (!ignoreSpecialChars && /[^a-zA-Z0-9\s]/.test(value)) {
-      return `${fieldName} contains special characters`;
+      return `${fieldName} should not contain special characters`;
     }
 
     if (/^\s*$|^\s+.*|.*\s+$/.test(value)) {
-      return `${fieldName} contains trailing/leading whitespaces`;
+      return `${fieldName} should not contain trailing/leading whitespaces`;
     }
 
     return null;
@@ -128,11 +128,19 @@ function EditListing() {
       colour: (value) => validateField("Colour", value),
       title: (value) => validateField("Title", value),
       description: (value) => {
+        if (value.length === 0) return `Description is empty`;
+        if (/^\s*$|^\s+.*|.*\s+$/.test(value)) {
+          return `Description contains trailing/leading whitespaces`;
+        }
         if (/[^a-zA-Z0-9\s]/.test(value)) {
         }
         return null;
       },
       price: (value) => {
+        if (value.length === 0) return `Price is empty`;
+        if (/^\s*$|^\s+.*|.*\s+$/.test(value)) {
+          return `Price contains trailing/leading whitespaces`;
+        }
         if (!/^[0-9.]+$/.test(value)) {
           return "Price should not contain special characters (except decimal point)";
         }
@@ -153,7 +161,7 @@ function EditListing() {
       },
 
       quantity_available: (value) =>
-        validateField("Quantity Available", value, true),
+        validateField("Quantity Available", value, false),
       avail_status: (value) => validateField("Available Status", value),
       size: (value) => validateField("Size", value, true),
     },

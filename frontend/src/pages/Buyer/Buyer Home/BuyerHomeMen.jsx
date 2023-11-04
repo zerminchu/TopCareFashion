@@ -398,10 +398,14 @@ function BuyerHomeMen(props) {
           <h2>
             {searchText
               ? `${searchResultCount} search results for '${searchText}'`
-              : "Top picks in men's fashion"}
+              : "Top picks by sellers in men's fashion"}
           </h2>
 
-          <div className={classes.listProduct}>{renderCombinedProducts()}</div>
+          <div className={classes.listProductContainer}>
+            <div className={classes.listProduct}>
+              {renderCombinedProducts()}
+            </div>
+          </div>
           {renderViewMoreButton()}
         </div>
       </div>

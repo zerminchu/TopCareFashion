@@ -392,7 +392,11 @@ function BuyerHomeWomen(props) {
               : "Top picks by sellers in women's fashion"}
           </h2>
 
-          <div className={classes.listProduct}>{renderCombinedProducts()}</div>
+          <div className={classes.listProductContainer}>
+            <div className={classes.listProduct}>
+              {renderCombinedProducts()}
+            </div>
+          </div>
           {renderViewMoreButton()}
         </div>
       </div>

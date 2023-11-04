@@ -394,9 +394,7 @@ function BuyerHome(props) {
         </div>
 
         <CarouselAds />
-        <div className={classes.categoryTitle}>
-          <h2>Shop by category</h2>
-        </div>
+        <h2>Shop by category</h2>
         <div className={classes.categoryContainer}>
           <div className={classes.listProductCategory}>
             {subCategories ? (
@@ -421,7 +419,11 @@ function BuyerHome(props) {
               : "Top picks in men's fashion"}
           </h2>
 
-          <div className={classes.listProduct}>{renderCombinedProducts()}</div>
+          <div className={classes.listProductContainer}>
+            <div className={classes.listProduct}>
+              {renderCombinedProducts()}
+            </div>
+          </div>
           {renderViewMoreButton()}
         </div>
       </div>
