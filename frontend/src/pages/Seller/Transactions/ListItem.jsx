@@ -23,6 +23,7 @@ import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { retrieveUserInfo } from "../../../utils/RetrieveUserInfoFromToken";
 import { showNotifications } from "../../../utils/ShowNotification";
+import { useForm } from "@mantine/form";
 
 const useStyles = createStyles((theme) => ({
   root: {
@@ -79,6 +80,23 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
+function useFormInput(initialValue, validateFunction) {
+  const [value, setValue] = useState(initialValue);
+  const [error, setError] = useState("");
+
+  const handleChange = (event) => {
+    const newValue = event.target.value;
+    setValue(newValue);
+    setError(validateFunction(newValue));
+  };
+
+  return {
+    value,
+    onChange: handleChange,
+    error,
+  };
+}
+
 function ListItem() {
   const theme = useMantineTheme();
   const location = useLocation();
@@ -113,6 +131,8 @@ function ListItem() {
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
   const sizeOptions = ["XS", "S", "M", "L", "X-Large", "XXL", "Free Size"];
   const [selectedSizes, setSelectedSizes] = useState([]);
+  const [formErrors, setFormErrors] = useState({});
+  const [isFormValid, setIsFormValid] = useState(true);
 
   const handleSizeChange = (value) => {
     setSelectedSizes([value]);
@@ -165,39 +185,43 @@ function ListItem() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setFormSubmitted(true);
 
-    const categoryError = validateCategory(category);
-    const conditionError = validateCondition(condition);
-    const colourError = validateColour(colour);
-    const titleError = validateTitle(title);
-    const descriptionError = validateDescription(description);
-    const priceError = validatePrice(price);
-    const quantityAvailableError =
-      validateQuantityAvailable(quantity_available);
-    const sizeError = validateSize(selectedSizes.join(","));
-    const collectionAddressError =
-      validateCollectionAddress(collection_address);
-    const availStatusError = validateAvailStatus(avail_status);
+    const categoryToSave = correctCategory !== "" ? correctCategory : category;
 
-    if (
-      categoryError ||
-      conditionError ||
-      colourError ||
-      titleError ||
-      descriptionError ||
-      priceError ||
-      quantityAvailableError ||
-      sizeError ||
-      collectionAddressError ||
-      availStatusError
-    ) {
-      showNotifications({
-        status: "error",
-        title: "Form Validation Error",
-        message: "Please fix the form validation errors before saving.",
-      });
-      return;
+    if (isFormValid) {
+      setFormSubmitted(true);
+
+      const categoryError = validateCategory(categoryToSave);
+      const conditionError = validateCondition(condition);
+      const colourError = validateColour(colour);
+      const titleError = validateTitle(title);
+      const descriptionError = validateDescription(description);
+      const priceError = validatePrice(price);
+      const quantityAvailableError =
+        validateQuantityAvailable(quantity_available);
+      const sizeError = validateSize(selectedSizes.join(","));
+      const collectionAddressError =
+        validateCollectionAddress(collection_address);
+      const availStatusError = validateAvailStatus(avail_status);
+
+      if (
+        categoryError ||
+        conditionError ||
+        colourError ||
+        titleError ||
+        descriptionError ||
+        priceError ||
+        quantityAvailableError ||
+        sizeError ||
+        collectionAddressError ||
+        availStatusError
+      ) {
+        showNotifications({
+          status: "error",
+          title: "Form Validation Error",
+          message: "Please fix the form validation errors before saving.",
+        });
+      }
     }
 
     try {
@@ -231,7 +255,7 @@ function ListItem() {
       });
 
       formData.append("gender", gender);
-      formData.append("category", category);
+      formData.append("category", categoryToSave);
       formData.append("sub_category", sub_category);
       formData.append("condition", condition);
       formData.append("colour", colour);
@@ -265,6 +289,7 @@ function ListItem() {
 
       navigate("/");
     } catch (error) {
+      console.log(error);
       dispatch({ type: "SET_LOADING", value: false });
 
       showNotifications({
@@ -331,8 +356,6 @@ function ListItem() {
       if (value.length === 0) return "Description should not be blank";
       if (/^\s$|^\s+.|.\s+$/.test(value))
         return "Description should not contain trailing/leading whitespaces";
-      if (!/^[a-zA-Z0-9\s]+$/.test(value))
-        return "Description should not contain special characters";
     }
     return null;
   };
@@ -362,10 +385,6 @@ function ListItem() {
   const validateSize = (value) => {
     if (formSubmitted) {
       if (value.length === 0) return "Size should not be empty";
-      if (/^\s$|^\s+.|.\s+$/.test(value))
-        return "Size should not contain trailing/leading whitespaces";
-      if (!/^[a-zA-Z0-9\s,]+$/.test(value))
-        return "Size should not contain special characters (except comma)";
     }
     return null;
   };
@@ -467,6 +486,14 @@ function ListItem() {
       fetchSubCategory(correctCategory);
     }
   }, [correctCategory]);
+
+  const [errors, setErrors] = useState({});
+
+  const handleInputChange = (event, fieldName, validationFunction) => {
+    const value = event.target.value;
+    const error = validationFunction(value);
+    setFormErrors({ ...formErrors, [fieldName]: error });
+  };
 
   return (
     <form onSubmit={handleSubmit}>
@@ -673,7 +700,9 @@ function ListItem() {
         <TextInput
           label="Colour"
           value={colour}
-          onChange={(event) => setColour(event.target.value)}
+          onChange={(event) => {
+            setColour(event.target.value);
+          }}
           placeholder="Enter Colour (e.g., Red)"
           classNames={classes}
           style={{ width: "50%" }}
@@ -733,7 +762,7 @@ function ListItem() {
           data={sizeOptions}
           value={handleSizeChange}
           onChange={setSelectedSizes}
-          hidePickedOptions
+          hidepickedoptions
           classNames={classes}
           style={{ width: "50%" }}
           error={validateSize(selectedSizes)}

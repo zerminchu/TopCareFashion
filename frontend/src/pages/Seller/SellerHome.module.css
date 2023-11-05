@@ -63,3 +63,24 @@ display: flex;
   flex: 5;
   max-width: 90%;
 }
+
+.heading {
+  font-size: 30px;
+  font-weight: 700;
+  margin: 0.5% 0;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white; 
+  color: black; 
+  padding: 10px; 
+  border-radius: 10px; 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); 
+  transition: background-color 0.3s, transform 0.2s; 
+  margin-top: -30px;
+
+}
+
+
+

@@ -305,6 +305,8 @@ function ImageUpload() {
       const response = await axios.get(`${url}/get-all-category/`);
       const categoryFetch =
         response.data?.categories?.map((item) => item.category) || [];
+
+      categoryFetch.sort();
       setClothingCategories(categoryFetch);
     } catch (error) {
       console.error("Error fetching clothing categories:", error);

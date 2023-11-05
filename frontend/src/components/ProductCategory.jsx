@@ -55,8 +55,8 @@ function ProductCategory(props) {
     } else if (props.category === "Footwear") {
       return (
         <Text>
-          Step into a world of exceptional footwear choices and elevate your
-          style with our diverse range.
+          Discover exceptional footwear choices to elevate your style with our
+          diverse range.
         </Text>
       );
     } else if (props.category === "Accessories") {

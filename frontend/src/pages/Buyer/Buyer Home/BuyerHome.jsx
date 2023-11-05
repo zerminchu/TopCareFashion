@@ -84,15 +84,12 @@ function BuyerHome(props) {
     if (currentUser && currentUser.preferences) {
       buyerPreferences = currentUser.preferences;
     }
-
-    if(buyerPreferences && buyerPreferences.gender === "men"){
+    if (buyerPreferences && buyerPreferences.gender === "men") {
       navigate("/men");
-    }
-    else if(buyerPreferences && buyerPreferences.gender === "women"){
+    } else if (buyerPreferences && buyerPreferences.gender === "women") {
       navigate("women");
     }
   }, [currentUser]);
-  
 
   useEffect(() => {
     const retrieveAllItems = async () => {
@@ -397,9 +394,7 @@ function BuyerHome(props) {
         </div>
 
         <CarouselAds />
-        <div className={classes.categoryTitle}>
-          <h2>Shop by category</h2>
-        </div>
+        <h2>Shop by category</h2>
         <div className={classes.categoryContainer}>
           <div className={classes.listProductCategory}>
             {subCategories ? (
@@ -424,7 +419,11 @@ function BuyerHome(props) {
               : "Top picks in men's fashion"}
           </h2>
 
-          <div className={classes.listProduct}>{renderCombinedProducts()}</div>
+          <div className={classes.listProductContainer}>
+            <div className={classes.listProduct}>
+              {renderCombinedProducts()}
+            </div>
+          </div>
           {renderViewMoreButton()}
         </div>
       </div>
