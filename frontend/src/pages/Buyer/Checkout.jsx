@@ -4,6 +4,14 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
+import aa from "search-insights";
+
+
+// Initialize Algolia insights client
+aa("init", {
+  appId: "BWO4H6S1WK",
+  apiKey: "7a3a143223fb1c672795a76c755ef375",
+});
 import { useLocation, useNavigate } from "react-router";
 import CheckoutItem from "../../components/CheckoutItem";
 import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
@@ -97,6 +105,8 @@ function Checkout() {
     );
   };
 
+  
+
   const orderOnClick = async () => {
     if (currentUser) {
       try {
@@ -167,6 +177,27 @@ function Checkout() {
           },
         };
 
+        //add event capturer
+        aa("purchasedObjectIDs", {
+          userToken: currentUser.user_id,
+          eventName: "buy_product",
+          index: "Item_Index",
+          objectIDs: checkoutItems.map((item) => item.item_id),
+          objectData: checkoutItems.map((item) => ({
+            price: parseFloat(item.price),
+          })),
+          currency: "SGD",
+        });
+
+        aa('convertedObjectIDs', { //for trending 
+          userToken: currentUser.user_id,
+          eventName: 'Buy Product',
+          index: 'Item_Index',
+          objectIDs: checkoutItems.map((item) => item.item_id),
+          
+        });
+
+        
         const response = await axios.post(`${url}/buyer/checkout/`, data);
 
         dispatch({ type: "SET_LOADING", value: false });

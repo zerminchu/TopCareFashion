@@ -37,9 +37,15 @@ function BuyerHeader(props) {
         <Text fw={700} fz="xl">
           Top Care Fashion
         </Text>
-        <a className={classes.navBarMenu} onClick={() => navigate("/men")}>Men</a>
-        <a className={classes.navBarMenu} onClick={() => navigate("/women")}>Women</a>
-        <a href="https://zermin551.wixsite.com/topcarefashion/about-us">About us</a>
+        <a className={classes.navBarMenu} onClick={() => navigate("/men")}>
+          Men
+        </a>
+        <a className={classes.navBarMenu} onClick={() => navigate("/women")}>
+          Women
+        </a>
+        <a href="https://zermin551.wixsite.com/topcarefashion/about-us">
+          About us
+        </a>
       </div>
       <div className={classes.rightside}>
         <DropDownMenu currentUser={currentUser} />

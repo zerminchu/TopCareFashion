@@ -1,33 +1,52 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
-import { Button, Text } from "@mantine/core";
-import algoliasearch from "algoliasearch/lite";
-import React from "react";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import classes from "./Product.module.css";
+import React, { useState, useEffect } from 'react';
+import classes from './Product.module.css';
+import { Button, Text } from '@mantine/core';
+import { retrieveUserInfo } from '../utils/RetrieveUserInfoFromToken';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import Cookies from 'js-cookie';
+import aa from 'search-insights';
+
+// Initialize Algolia insights client
+aa('init', {
+  appId: 'BWO4H6S1WK',
+  apiKey: '7a3a143223fb1c672795a76c755ef375',
+});
+
 
 function Product(props) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const search = algoliasearch(
-    "C27B4SWDRQ",
-    "1cb33681bc07eef867dd5e384c1d0bf5"
-  );
+  const [currentUser, setCurrentUser] = useState(null);
 
-  /*   search.use(
-    instantsearch.middlewares.createInsightsMiddleware({
-      insightsClient: aa,
-    })
-  ); 
-  
+  useEffect(() => {
+    const setUserSessionData = async () => {
+      try {
+        const user = await retrieveUserInfo();
+        setCurrentUser(user); // Updated this line from setCurrentUser(user)
+      } catch (error) {
+        console.log(error);
+      }
+    };
 
-  aa("setUserToken", "user-1"); */
+    if (Cookies.get('firebaseIdToken')) {
+      setUserSessionData();
+    }
+  }, []);
 
-  //const [isAddToCart, setisAddToCart] = useState(false);
 
   const onClick = () => {
+    console.log(currentUser.user_id) //check id
+    aa('convertedObjectIDs', {
+      userToken: currentUser.user_id,
+      eventName: 'Clicked Product',
+      index: 'Item_Index',
+      objectIDs: [props.item_id],
+    });
+
+
     if (props.item_id) {
+      
       navigate("/buyer/product-detail", {
         state: { itemId: props.item_id },
       });
@@ -37,23 +56,15 @@ function Product(props) {
       });
     }
   };
-  /* 
+
   const addToCartOnClick = async (e) => {
     e.stopPropagation();
 
     if (!Cookies.get("firebaseIdToken")) {
       dispatch({ type: "SET_SIGN_IN", value: true });
-
       return;
     }
 
-    sendEvent("conversion", props, "Add to cart");
-
-    showNotifications({
-      status: "success",
-      title: "Success",
-      message: "Product has been added to cart",
-    });
     setisAddToCart(!isAddToCart);
 
     if (props.size) {
@@ -65,7 +76,7 @@ function Product(props) {
       }
     }
   };
- */
+
   return (
     <div className={classes.card} onClick={onClick}>
       <div className={classes.cardHeader}>
@@ -79,10 +90,12 @@ function Product(props) {
         <Text className={classes.greyCategory}>{props.condition}</Text>
       </div>
       <div className={classes.cardFooter}>
-        <Button variant="outline" onClick={onClick}>
-          View
+        <Button variant="outline" onClick={addToCartOnClick}>
+          Add to cart
         </Button>
       </div>
+      
+      
     </div>
   );
 }

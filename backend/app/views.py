@@ -591,11 +591,6 @@ def getListingDetailByItemId(request, item_id):
             if (len(reviewData) > 0):
                 averageRating = totalRating // len(reviewData)
 
-            paidOrderRef = db.collection("PaidOrder").where("checkout_data.listing_id", "==", (listingData.to_dict())["listing_id"])
-            paidOrderData= paidOrderRef.get()
-            
-            numberOfSold = len(paidOrderData)
-
             responseData = {
                 "listing_id": (listingData.to_dict())["listing_id"],
                 "avail_status": (listingData.to_dict())["avail_status"],
@@ -608,7 +603,7 @@ def getListingDetailByItemId(request, item_id):
                 "price": (itemData.to_dict())["price"],
                 "quantity_available": (listingData.to_dict())["quantity_available"],
                 "total_ratings": len(reviewList),
-                "sold": numberOfSold,
+                "sold": 100,
                 "store_name": (sellerData.to_dict())["business_profile"]["business_name"],
                 "description": (itemData.to_dict())["description"],
                 "average_rating": averageRating,
