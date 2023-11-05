@@ -13,6 +13,13 @@ function CheckoutItem(props) {
   const navigate = useNavigate();
 
   const chatOnClick = () => {
+    if (props && props.seller_id) {
+      navigate("/chatting", {
+        state: { targetChatId: props.seller_id },
+      });
+      return;
+    }
+  
     navigate("/chatting");
   };
 

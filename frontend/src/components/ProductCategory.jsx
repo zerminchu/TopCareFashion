@@ -45,14 +45,29 @@ function ProductCategory(props) {
 
   const renderDescription = () => {
     if (props.category === "Bottom") {
-      return <Text>Find the perfect pair of pants or short </Text>;
+      return (
+        <Text>Discover the perfect selection of stylish pants and shorts.</Text>
+      );
     } else if (props.category === "Top") {
-      return <Text>Find the perfect pair of tops and sets </Text>;
+      return (
+        <Text>Explore an exquisite range of fashionable tops and sets.</Text>
+      );
     } else if (props.category === "Footwear") {
-      return <Text>Find the perfect pair of footwear</Text>;
+      return (
+        <Text>
+          Discover exceptional footwear choices to elevate your style with our
+          diverse range.
+        </Text>
+      );
+    } else if (props.category === "Accessories") {
+      return (
+        <Text>
+          Elevate your style with our captivating collection of accessories.
+        </Text>
+      );
     }
 
-    return <Text>Shop for the lastest clothes</Text>;
+    return <Text>Indulge in the latest fashion trends and shop with us.</Text>;
   };
 
   return (

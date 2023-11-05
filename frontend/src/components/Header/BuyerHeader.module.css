@@ -24,3 +24,8 @@
   align-items: center;
   gap: 30px;
 }
+
+.navBarMenu {
+  cursor: pointer;
+  text-decoration: underline;
+}

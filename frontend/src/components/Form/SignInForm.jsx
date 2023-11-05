@@ -92,15 +92,16 @@ function SignInForm(props) {
   };
 
   const handleSignUpClick = () => {
-    dispatch({ type: "SET_SIGN_UP", value: true });
-    dispatch({ type: "SET_SIGN_IN", value: false });
+    dispatch({ type: "SET_BUYER_PREFERENCES", value: true });
   };
   const [isPopupOpen, setPopupOpen] = useState(true);
 
   const handleBackButtonClick = () => {
-    dispatch({ type: "SET_SIGN_IN", value: false });
+    if (isPopupOpen) {
+      dispatch({ type: "SET_SIGN_IN", value: false });
+      setPopupOpen(false);
+    }
   };
-
   return (
     <div className={classes.popupoverlay}>
       {isPopupOpen && (

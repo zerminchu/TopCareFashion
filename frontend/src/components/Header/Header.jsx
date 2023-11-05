@@ -60,8 +60,18 @@ function Header() {
               <span className={classes.businessname}>Top Care Fashion</span>
             </div>
             <div className={classes.middleside}>
-              <a href="/men">Men</a>
-              <a href="/women">Women</a>
+              <a
+                className={classes.navBarMenu}
+                onClick={() => navigate("/men")}
+              >
+                Men
+              </a>
+              <a
+                className={classes.navBarMenu}
+                onClick={() => navigate("/women")}
+              >
+                Women
+              </a>
               <a href="https://zermin551.wixsite.com/topcarefashion/about-us">
                 About Us
               </a>

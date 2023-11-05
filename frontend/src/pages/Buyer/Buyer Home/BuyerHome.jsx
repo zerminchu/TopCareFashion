@@ -46,13 +46,18 @@ function BuyerHome(props) {
   );
 
   useEffect(() => {
-    if (!localStorage.getItem("buyerPreferences")) {
-      if (Cookies.get("userRole") && Cookies.get("userRole") !== "buyer") {
-        return;
+    const storedBuyerPreferences = localStorage.getItem("buyerPreferences");
+
+    if (Cookies.get("userRole") === "buyer" && !currentUser) {
+      if (!storedBuyerPreferences) {
+        dispatch({ type: "SET_BUYER_PREFERENCES", value: true });
+      } else {
+        dispatch({ type: "SET_BUYER_PREFERENCES", value: false });
       }
-      dispatch({ type: "SET_BUYER_PREFERENCES", value: true });
+    } else {
+      dispatch({ type: "SET_BUYER_PREFERENCES", value: false });
     }
-  }, [currentUser]);
+  }, [currentUser, dispatch]);
 
   useEffect(() => {
     const setUserSessionData = async () => {
@@ -68,6 +73,23 @@ function BuyerHome(props) {
       setUserSessionData();
     }
   }, []);
+
+  useEffect(() => {
+    let buyerPreferences = {};
+
+    if (localStorage.getItem("buyerPreferences")) {
+      buyerPreferences = JSON.parse(localStorage.getItem("buyerPreferences"));
+    }
+
+    if (currentUser && currentUser.preferences) {
+      buyerPreferences = currentUser.preferences;
+    }
+    if (buyerPreferences && buyerPreferences.gender === "men") {
+      navigate("/men");
+    } else if (buyerPreferences && buyerPreferences.gender === "women") {
+      navigate("women");
+    }
+  }, [currentUser]);
 
   useEffect(() => {
     const retrieveAllItems = async () => {
@@ -140,8 +162,13 @@ function BuyerHome(props) {
   };
 
   useEffect(() => {
-    const filteredProducts = productList.filter((product) =>
-      product.title.toLowerCase().includes(searchText.toLowerCase())
+    const searchTextLower = searchText.toLowerCase();
+    const filteredProducts = productList.filter(
+      (product) =>
+        product.title.toLowerCase().includes(searchTextLower) ||
+        product.category.toLowerCase().includes(searchTextLower) ||
+        (product.sub_category &&
+          product.sub_category.toLowerCase().includes(searchTextLower))
     );
 
     setSearchResults(filteredProducts);
@@ -246,9 +273,9 @@ function BuyerHome(props) {
         algoliaProduct
       );
 
-      console.log("All product: ", productsWithAvailability);
+      /*      console.log("All product: ", productsWithAvailability);
       console.log("buyer preferences: ", buyerPreferencesProduct);
-      console.log("Algolia product: ", algoliaProduct);
+      console.log("Algolia product: ", algoliaProduct); */
 
       const combinedProducts = Array.from(new Set(concatenatedArray));
       setCombinedProductList(combinedProducts);
@@ -279,6 +306,7 @@ function BuyerHome(props) {
             category={product.category}
             condition={product.condition}
             seller_id={product.user_id}
+            sub_category={product.sub_category}
           />
         ));
     }
@@ -310,6 +338,7 @@ function BuyerHome(props) {
         category={product.category}
         condition={product.condition}
         seller_id={product.user_id}
+        sub_category={product.sub_category}
       />
     ));
   };
@@ -365,9 +394,7 @@ function BuyerHome(props) {
         </div>
 
         <CarouselAds />
-        <div className={classes.categoryTitle}>
-          <h2>Shop by category</h2>
-        </div>
+        <h2>Shop by category</h2>
         <div className={classes.categoryContainer}>
           <div className={classes.listProductCategory}>
             {subCategories ? (
@@ -392,7 +419,11 @@ function BuyerHome(props) {
               : "Top picks in men's fashion"}
           </h2>
 
-          <div className={classes.listProduct}>{renderCombinedProducts()}</div>
+          <div className={classes.listProductContainer}>
+            <div className={classes.listProduct}>
+              {renderCombinedProducts()}
+            </div>
+          </div>
           {renderViewMoreButton()}
         </div>
       </div>

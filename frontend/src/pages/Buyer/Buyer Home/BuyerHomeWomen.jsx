@@ -62,6 +62,13 @@ function BuyerHomeWomen(props) {
     }
   }, []);
 
+  // Route restriction only for buyer
+  useEffect(() => {
+    if (currentUser && currentUser.role !== "buyer") {
+      navigate("/", { replace: true });
+    }
+  }, [currentUser]);
+
   useEffect(() => {
     const retrieveAllItems = async () => {
       try {
@@ -135,8 +142,13 @@ function BuyerHomeWomen(props) {
   };
 
   useEffect(() => {
-    const filteredProducts = productList.filter((product) =>
-      product.title.toLowerCase().includes(searchText.toLowerCase())
+    const searchTextLower = searchText.toLowerCase();
+    const filteredProducts = productList.filter(
+      (product) =>
+        product.title.toLowerCase().includes(searchTextLower) ||
+        product.category.toLowerCase().includes(searchTextLower) ||
+        (product.sub_category &&
+          product.sub_category.toLowerCase().includes(searchTextLower))
     );
 
     setSearchResults(filteredProducts);
@@ -387,7 +399,11 @@ function BuyerHomeWomen(props) {
               : "Top picks by sellers in women's fashion"}
           </h2>
 
-          <div className={classes.listProduct}>{renderCombinedProducts()}</div>
+          <div className={classes.listProductContainer}>
+            <div className={classes.listProduct}>
+              {renderCombinedProducts()}
+            </div>
+          </div>
           {renderViewMoreButton()}
         </div>
       </div>

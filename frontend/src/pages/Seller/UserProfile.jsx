@@ -349,8 +349,12 @@ function UserProfile() {
           </Group>
         </Radio.Group>
         <br />
-        <h2>Modify based on your personal's buying preferences. </h2>
-        {renderBuyerPreferences()}
+        {renderBuyerPreferences() && (
+          <div>
+            <h2>Modify based on your personal buying preferences. </h2>
+            {renderBuyerPreferences()}
+          </div>
+        )}
         <br />
         <Button type="submit">Save</Button>
       </form>

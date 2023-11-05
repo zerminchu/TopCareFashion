@@ -46,11 +46,6 @@ const useStyles = createStyles((theme) => ({
   confirmation: {
     display: "flex",
     flexDirection: "column",
-    /* padding: rem(10),
-    gap: rem(5),
-    width: rem(200),
-    borderRadius: rem(5),
-    backgroundColor: theme.colors.blue[0], */
   },
 
   buttonConfirmation: {
@@ -100,11 +95,11 @@ function EditListing() {
     if (value.length === 0) return `${fieldName} is empty`;
 
     if (!ignoreSpecialChars && /[^a-zA-Z0-9\s]/.test(value)) {
-      return `${fieldName} contains special characters`;
+      return `${fieldName} should not contain special characters`;
     }
 
     if (/^\s*$|^\s+.*|.*\s+$/.test(value)) {
-      return `${fieldName} contains trailing/leading whitespaces`;
+      return `${fieldName} should not contain trailing/leading whitespaces`;
     }
 
     return null;
@@ -132,10 +127,22 @@ function EditListing() {
       condition: (value) => validateField("Condition", value),
       colour: (value) => validateField("Colour", value),
       title: (value) => validateField("Title", value),
-      description: (value) => validateField("Description", value),
+      description: (value) => {
+        if (value.length === 0) return `Description is empty`;
+        if (/^\s*$|^\s+.*|.*\s+$/.test(value)) {
+          return `Description contains trailing/leading whitespaces`;
+        }
+        if (/[^a-zA-Z0-9\s]/.test(value)) {
+        }
+        return null;
+      },
       price: (value) => {
+        if (value.length === 0) return `Price is empty`;
+        if (/^\s*$|^\s+.*|.*\s+$/.test(value)) {
+          return `Price contains trailing/leading whitespaces`;
+        }
         if (!/^[0-9.]+$/.test(value)) {
-          return "Price should only contain decimal values.";
+          return "Price should not contain special characters (except decimal point)";
         }
         return null;
       },
@@ -154,7 +161,7 @@ function EditListing() {
       },
 
       quantity_available: (value) =>
-        validateField("Quantity Available", value, true),
+        validateField("Quantity Available", value, false),
       avail_status: (value) => validateField("Available Status", value),
       size: (value) => validateField("Size", value, true),
     },
