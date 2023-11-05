@@ -17,14 +17,6 @@ import classes from "./BuyerHome.module.css";
 import CarouselAds from "./CarouselAds";
 import ProductCategory from "../../../components/ProductCategory";
 
-import recommend from "@algolia/recommend";
-
-const recommendClient = recommend({
-  appId: "BWO4H6S1WK",
-  apiKey: "7a3a143223fb1c672795a76c755ef375",
-});
-const indexName = "Item_Index";
-
 function BuyerHome(props) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
