@@ -34,9 +34,15 @@ function CarouselAds() {
 
   const renderListingAdvertisement = () => {
     return productAdvertisementList.map((ads, index) => {
+      console.log(ads);
       return (
         <Carousel.Slide key={index}>
-          <CarouselItem itemId={ads.item_id} image={ads.image_urls[0]} />
+          <CarouselItem
+            category={ads.sub_category}
+            title={ads.title}
+            itemId={ads.item_id}
+            image={ads.image_urls[0]}
+          />
         </Carousel.Slide>
       );
     });
@@ -45,12 +51,13 @@ function CarouselAds() {
   return (
     <Carousel
       withIndicators
-      height={250}
-      slideSize="33.333333%"
+      draggable
+      height={400}
+      slideSize="25%"
       slideGap="md"
       loop
       align="start"
-      slidesToScroll={3}
+      slidesToScroll={1}
     >
       {renderListingAdvertisement()}
     </Carousel>
