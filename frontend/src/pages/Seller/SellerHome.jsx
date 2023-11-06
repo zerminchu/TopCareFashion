@@ -279,10 +279,19 @@ function SellerCards() {
   };
 
   const handleShareClick = (item) => {
-    const itemURL = `https://topcarefashion/listing/${item.item_id}`;
+    const url =
+      import.meta.env.VITE_NODE_ENV == "DEV"
+        ? import.meta.env.VITE_CLIENT_DEV
+        : import.meta.env.VITE_CLIENT_PROD;
+
+    let itemUrl = "";
+
+    if (item && item.item_id) {
+      itemUrl = `${url}/buyer/product-detail/${item.item_id}`;
+    }
 
     // Copy the URL to clipboard
-    copy(itemURL);
+    copy(itemUrl);
 
     toast.success("URL copied to clipboard!", {
       position: "top-right",
