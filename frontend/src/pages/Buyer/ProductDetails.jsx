@@ -132,6 +132,11 @@ function ProductDetails() {
 
   const chatOnClick = () => {
     if (productDetails) {
+      if (!Cookies.get("firebaseIdToken")) {
+        dispatch({ type: "SET_BUYER_PREFERENCES", value: true });
+        return;
+      }
+
       navigate("/chatting", {
         state: { targetChatId: productDetails.user_id },
       });
@@ -293,7 +298,6 @@ function ProductDetails() {
     // Check if user sign in before
     if (!Cookies.get("firebaseIdToken")) {
       dispatch({ type: "SET_BUYER_PREFERENCES", value: true });
-      dispatch({ type: "SET_SIGN_IN", value: true });
       return;
     }
 
