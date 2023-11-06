@@ -4,7 +4,7 @@ import { Button, Group, NumberInput, Radio, Text } from "@mantine/core";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import IconChat from "../../assets/icons/ic_chat.svg";
 import IconRating from "../../assets/icons/ic_rating.svg";
 import IconWishlist from "../../assets/icons/ic_wishlist.svg";
@@ -18,6 +18,7 @@ import { showNotifications } from "../../utils/ShowNotification";
 import classes from "./ProductDetails.module.css";
 
 function ProductDetails() {
+  const { itemId } = useParams();
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
@@ -52,9 +53,6 @@ function ProductDetails() {
       navigate("/", { replace: true });
     }
   }, [currentUser]);
-
-  // Real data
-  const itemId = location.state?.itemId;
 
   const [productDetails, setProductDetails] = useState();
 
@@ -147,10 +145,15 @@ function ProductDetails() {
   };
 
   const shareOnClick = () => {
-    let itemUrl = "https://topcarefashion.com/listing/";
+    const url =
+      import.meta.env.VITE_NODE_ENV == "DEV"
+        ? import.meta.env.VITE_CLIENT_DEV
+        : import.meta.env.VITE_CLIENT_PROD;
+
+    let itemUrl = "";
 
     if (itemId) {
-      itemUrl = `https://topcarefashion.com/listing/${itemId}`;
+      itemUrl = `${url}/buyer/product-detail/${itemId}`;
     }
 
     copy(itemUrl);
