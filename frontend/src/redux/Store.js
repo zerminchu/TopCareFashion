@@ -7,6 +7,7 @@ const initialstate = {
   premiumFeatureBool: false,
   signInBool: false,
   signUpBool: false,
+  signUpPreferencesBool: false,
   loadingBool: false,
 
   // Buyer preferences
@@ -72,10 +73,16 @@ const reducer = (state = initialstate, action) => {
       signInBool: action.value
     }
   }
-  else if (action.type === "SET_SIGN_UP") {
+  else if (action.type === "SET_SIGN_UP_SELLER") {
     return {
       ...state,
       signUpBool: action.value
+    }
+  }
+  else if (action.type === "SET_SIGN_UP_BUYER") {
+    return {
+      ...state,
+      signUpPreferencesBool: action.value
     }
   }
 

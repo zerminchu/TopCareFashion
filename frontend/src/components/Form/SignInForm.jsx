@@ -91,9 +91,14 @@ function SignInForm(props) {
     }
   };
 
-  const handleSignUpClick = () => {
+  const handleSignUpAsBuyerClick = () => {
     dispatch({ type: "SET_BUYER_PREFERENCES", value: true });
   };
+
+  const handleSignUpAsSellerClick = () => {
+    dispatch({ type: "SET_SIGN_UP_SELLER", value: true });
+  };
+
   const [isPopupOpen, setPopupOpen] = useState(true);
 
   const handleBackButtonClick = () => {
@@ -140,8 +145,17 @@ function SignInForm(props) {
             <Button className={classes.element} onClick={handleSignInClick}>
               Sign In
             </Button>
-            <Button className={classes.element} onClick={handleSignUpClick}>
-              Sign Up
+            <Button
+              className={classes.element}
+              onClick={handleSignUpAsBuyerClick}
+            >
+              Sign Up As Buyer
+            </Button>
+            <Button
+              className={classes.element}
+              onClick={handleSignUpAsSellerClick}
+            >
+              Sign Up As Seller
             </Button>
           </div>
         </div>
