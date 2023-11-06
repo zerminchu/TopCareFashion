@@ -380,20 +380,29 @@ function ProductDetails() {
         <div className={classes.container}>
           <div className={classes.topContainer}>
             <div className={classes.imageContainer}>
-              <img
-                src={productDetails.images[0] || ILLNullImageListing}
-                className={classes.mainImage}
-              />
+              <div className={classes.mainImageContainer}>
+                <div className={classes.imageWrapper}>
+                  <img
+                    src={productDetails.images[0] || ILLNullImageListing}
+                    className={classes.mainImage}
+                  />
+                </div>
+              </div>
 
               <div className={classes.secondaryImageContainer}>
-                <img
-                  src={productDetails.images[1] || ILLNullImageListing}
-                  className={classes.secondaryImage}
-                />
-                <img
-                  src={productDetails.images[2] || ILLNullImageListing}
-                  className={classes.secondaryImage}
-                />
+                <div className={classes.secondaryImageWrapper}>
+                  <img
+                    src={productDetails.images[1] || ILLNullImageListing}
+                    className={classes.secondaryImage}
+                  />
+                </div>
+
+                <div className={classes.secondaryImageWrapper}>
+                  <img
+                    src={productDetails.images[2] || ILLNullImageListing}
+                    className={classes.secondaryImage}
+                  />
+                </div>
               </div>
             </div>
 
