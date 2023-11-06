@@ -34,7 +34,6 @@ function CarouselAds() {
 
   const renderListingAdvertisement = () => {
     return productAdvertisementList.map((ads, index) => {
-      console.log(ads);
       return (
         <Carousel.Slide key={index}>
           <CarouselItem

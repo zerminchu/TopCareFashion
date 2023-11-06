@@ -64,11 +64,12 @@ function ProductDetails() {
             ? import.meta.env.VITE_API_DEV
             : import.meta.env.VITE_API_PROD;
 
-        if (itemId) {
-          const response = await axios.get(`${url}/listing-detail/${itemId}`);
-          setProductDetails(response.data.data);
-          console.log(response.data);
+        if (!itemId) {
+          console.log("Item id params is not defined: ", itemId);
         }
+
+        const response = await axios.get(`${url}/listing-detail/${itemId}`);
+        setProductDetails(response.data.data);
       } catch (error) {
         showNotifications({
           status: "error",

@@ -6,10 +6,11 @@ import { useNavigate } from "react-router-dom";
 
 function CarouselItem(props) {
   const navigate = useNavigate();
+
   const onClick = () => {
-    navigate("/buyer/product-detail", {
-      state: { itemId: props.itemId },
-    });
+    if (props && props.itemId) {
+      navigate(`/buyer/product-detail/${props.itemId}`);
+    }
   };
 
   const backgroundStyle = {
