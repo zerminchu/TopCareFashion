@@ -42,20 +42,6 @@ function BuyerHomeMen(props) {
   const [itemIdForAlgolia, setItemIdForAlgolia] = useState([]);
   const [fetchFromBuyerReco, setFetchFromBuyerReco] = useState([]);
 
-  const recommendClient = recommend('WYBALSMF67', '7f90eaa16b371b16dd03a500e6181427');
-  // const recommendClient = recommend('Bed', 'des');
-  const indexName = "Item_Index";
-
-  // const RelatedItem = ({ item }) => {
-  //   /*  useEffect(() => {
-  //     setRecommendedItemId((prevIds) => [...prevIds, item.item_id]);
-  //     return () => {};
-  //   }, []); */
-  //   console.log(item.item_id);
-
-  //   //return null;
-  // };
-
   useEffect(() => {
     const storedBuyerPreferences = localStorage.getItem("buyerPreferences");
 
@@ -88,16 +74,11 @@ function BuyerHomeMen(props) {
   // Route restriction only for buyer
   useEffect(() => {
     if (currentUser && currentUser.role !== "buyer") {
-      
       navigate("/", { replace: true });
     }
   }, [currentUser]);
 
-<<<<<<< Updated upstream
-  console.log("buyer")
-=======
   console.log("buyer");
->>>>>>> Stashed changes
 
   // Fetch ID for Algolia
   useEffect(() => {
@@ -125,13 +106,8 @@ function BuyerHomeMen(props) {
         console.log(latestItemIds);
 
         setItemIdForAlgolia(latestItemIds);
-<<<<<<< Updated upstream
-        console.log("latestItemIds")
-        console.log(latestItemIds)
-=======
         console.log("latestItemIds");
         console.log(latestItemIds);
->>>>>>> Stashed changes
       } catch (error) {
         console.error("Error fetching orders:", error);
       }
