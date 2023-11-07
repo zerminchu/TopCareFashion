@@ -42,6 +42,10 @@ function BuyerHomeMen(props) {
   const [itemIdForAlgolia, setItemIdForAlgolia] = useState([]);
   const [fetchFromBuyerReco, setFetchFromBuyerReco] = useState([]);
 
+  const fetchPredictedIds = (item) => {
+    setFetchFromBuyerReco([...fetchFromBuyerReco, item]);
+  };
+
   useEffect(() => {
     const storedBuyerPreferences = localStorage.getItem("buyerPreferences");
 
@@ -78,8 +82,6 @@ function BuyerHomeMen(props) {
     }
   }, [currentUser]);
 
-  console.log("buyer");
-
   // Fetch ID for Algolia
   useEffect(() => {
     const fetchAlgolia = async () => {
@@ -103,11 +105,7 @@ function BuyerHomeMen(props) {
           .slice(0, 3)
           .map((data) => data.item_id);
 
-        console.log(latestItemIds);
-
         setItemIdForAlgolia(latestItemIds);
-        console.log("latestItemIds");
-        console.log(latestItemIds);
       } catch (error) {
         console.error("Error fetching orders:", error);
       }
@@ -474,12 +472,11 @@ function BuyerHomeMen(props) {
           {renderViewMoreButton()}
         </div>
       </div>
-      {/* <FrequentlyBoughtTogether
-        recommendClient={recommendClient}
-        indexName={indexName}
-        objectIDs={itemIdForAlgolia}
-        itemComponent={RelatedItem}
-      /> */}
+
+      <BuyerRecommend
+        itemIdForAlgolia={itemIdForAlgolia}
+        fetchPredictedIds={fetchPredictedIds}
+      />
     </div>
   );
 }
