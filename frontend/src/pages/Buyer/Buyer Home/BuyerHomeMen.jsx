@@ -42,21 +42,19 @@ function BuyerHomeMen(props) {
   const [recommendedItemId, setRecommendedItemId] = useState([]);
   const [filteredItems, setFilteredItems] = useState([]);
 
-  const recommendClient = recommend(
-    "BWO4H6S1WK",
-    "7a3a143223fb1c672795a76c755ef375"
-  );
+  const recommendClient = recommend('WYBALSMF67', '7f90eaa16b371b16dd03a500e6181427');
+  // const recommendClient = recommend('Bed', 'des');
   const indexName = "Item_Index";
 
-  const RelatedItem = ({ item }) => {
-    /*  useEffect(() => {
-      setRecommendedItemId((prevIds) => [...prevIds, item.item_id]);
-      return () => {};
-    }, []); */
-    console.log(item.item_id);
+  // const RelatedItem = ({ item }) => {
+  //   /*  useEffect(() => {
+  //     setRecommendedItemId((prevIds) => [...prevIds, item.item_id]);
+  //     return () => {};
+  //   }, []); */
+  //   console.log(item.item_id);
 
-    //return null;
-  };
+  //   //return null;
+  // };
 
   useEffect(() => {
     const storedBuyerPreferences = localStorage.getItem("buyerPreferences");
@@ -90,9 +88,12 @@ function BuyerHomeMen(props) {
   // Route restriction only for buyer
   useEffect(() => {
     if (currentUser && currentUser.role !== "buyer") {
+      
       navigate("/", { replace: true });
     }
   }, [currentUser]);
+
+  console.log("buyer")
 
   // Fetch ID for Algolia
   useEffect(() => {
@@ -118,6 +119,8 @@ function BuyerHomeMen(props) {
           .map((data) => data.item_id);
 
         setItemIdForAlgolia(latestItemIds);
+        console.log("latestItemIds")
+        console.log(latestItemIds)
       } catch (error) {
         console.error("Error fetching orders:", error);
       }
@@ -478,12 +481,12 @@ function BuyerHomeMen(props) {
           {renderViewMoreButton()}
         </div>
       </div>
-      <FrequentlyBoughtTogether
+      {/* <FrequentlyBoughtTogether
         recommendClient={recommendClient}
         indexName={indexName}
         objectIDs={itemIdForAlgolia}
         itemComponent={RelatedItem}
-      />
+      /> */}
     </div>
   );
 }
