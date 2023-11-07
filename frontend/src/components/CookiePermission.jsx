@@ -150,7 +150,6 @@ function CookiePermission() {
         onClose={() => setShowExpiredPopup(false)}
         size="sm"
         title="Session Expired"
-        hideclosebutton
         footer={
           <Button onClick={reloginOnClick} color="blue">
             Relogin

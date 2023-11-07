@@ -1,65 +1,54 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { Button, Text } from "@mantine/core";
-import algoliasearch from "algoliasearch/lite";
-import React from "react";
+import { retrieveUserInfo } from "../utils/RetrieveUserInfoFromToken";
+import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import classes from "./Product.module.css";
+import aa from "search-insights";
+import Cookies from "js-cookie";
+
+aa("init", {
+  appId: "BWO4H6S1WK",
+  apiKey: "7a3a143223fb1c672795a76c755ef375",
+});
 
 function Product(props) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const search = algoliasearch(
-    "C27B4SWDRQ",
-    "1cb33681bc07eef867dd5e384c1d0bf5"
-  );
+  const [currentUser, setCurrentUser] = useState(null);
 
-  /*   search.use(
-    instantsearch.middlewares.createInsightsMiddleware({
-      insightsClient: aa,
-    })
-  ); 
-  
+  useEffect(() => {
+    const setUserSessionData = async () => {
+      try {
+        const user = await retrieveUserInfo();
+        setCurrentUser(user);
+      } catch (error) {
+        console.log(error);
+      }
+    };
 
-  aa("setUserToken", "user-1"); */
-
-  //const [isAddToCart, setisAddToCart] = useState(false);
+    if (Cookies.get("firebaseIdToken")) {
+      setUserSessionData();
+    }
+  }, []);
 
   const onClick = () => {
+    if (currentUser && currentUser.user_id) {
+      console.log(currentUser.user_id);
+      aa("convertedObjectIDs", {
+        userToken: currentUser.user_id,
+        eventName: "Clicked Product",
+        index: "Item_Index",
+        objectIDs: [props.item_id],
+      });
+    }
     if (props.item_id) {
       navigate(`/buyer/product-detail/${props.item_id}`);
     }
   };
-  /* 
-  const addToCartOnClick = async (e) => {
-    e.stopPropagation();
 
-    if (!Cookies.get("firebaseIdToken")) {
-      dispatch({ type: "SET_SIGN_IN", value: true });
-
-      return;
-    }
-
-    sendEvent("conversion", props, "Add to cart");
-
-    showNotifications({
-      status: "success",
-      title: "Success",
-      message: "Product has been added to cart",
-    });
-    setisAddToCart(!isAddToCart);
-
-    if (props.size) {
-      const cartData = props;
-
-      if (props) {
-        dispatch({ type: "SET_CART", value: true });
-        dispatch({ type: "SET_CART_DATA", value: cartData });
-      }
-    }
-  };
- */
   return (
     <div className={classes.card} onClick={onClick}>
       <div className={classes.cardHeader}>
