@@ -6,8 +6,8 @@ import Cookies from "js-cookie";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { retrieveUserInfo } from "../utils/RetrieveUserInfoFromToken";
-import { showNotifications } from "../utils/ShowNotification";
+import { retrieveUserInfo } from "../../../utils/RetrieveUserInfoFromToken";
+import { showNotifications } from "../../../utils/ShowNotification";
 import classes from "./FeedbackForm.module.css";
 
 function FeedbackForm() {
@@ -30,17 +30,8 @@ function FeedbackForm() {
     // Check if user has signed in before
     if (Cookies.get("firebaseIdToken")) {
       setUserSessionData();
-    } else {
-      navigate("/", { replace: true });
     }
   }, []);
-
-  // Route restriction only for seller
-  // useEffect(() => {
-  //   if (currentUser && currentUser.role !== "seller") {
-  //     navigate("/", { replace: true });
-  //   }
-  // }, [currentUser]);
 
   const form = useForm({
     initialValues: {

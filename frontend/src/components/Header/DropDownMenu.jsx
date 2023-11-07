@@ -50,11 +50,11 @@ function DropDownMenu(props) {
   };
 
   const manageFeedbackForm = () => {
-    navigate("/seller/feedback-form");
+    navigate("/feedback-form");
   };
 
   const manageFrequentlyAskQuestion = () => {
-    navigate("/seller/frequently-ask-question");
+    navigate("/frequently-ask-question");
   };
 
   const manageTransactionsOnClick = () => {

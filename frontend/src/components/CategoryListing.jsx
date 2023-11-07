@@ -208,9 +208,9 @@ function CategoryListingsPage(props) {
       <div>
         <h1 style={{ marginBottom: "10px", marginTop: "-25px" }}>{`${
           searchResults.length
-        } listings for ${
-          selectedCategory ? selectedCategory : "All Categories"
-        }`}</h1>
+        } Listings for ${
+          selectedCategory ? selectedCategory : "All Available"
+        } ${selectedCategory ? "" : `${category}s`}`}</h1>
 
         <h2 style={{ fontWeight: "normal", fontSize: "18px" }}>
           Looking for New or Used {category}s in Singapore? Browse great deals

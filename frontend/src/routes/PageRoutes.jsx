@@ -11,8 +11,8 @@ import ProductDetails from "../pages/Buyer/ProductDetails";
 import MixAndMatch from "../pages/Buyer/Recommender/MixAndMatch";
 import Transactions from "../pages/Buyer/Transactions";
 import Wishlist from "../pages/Buyer/Wishlist";
-import FeedbackForm from "../pages/FeedbackForm";
-import FrequentlyAskQuestion from "../pages/FrequentlyAskQuestion";
+import FeedbackForm from "../pages/Seller/Feedback/FeedbackForm";
+import FaqFormal from "../pages/Seller/Faq/FrequentlyAskQuestion";
 import Home from "../pages/Home";
 import RecoverPassword from "../pages/RecoverPassword";
 import BusinessProfile from "../pages/Seller/Business Profile/BusinessProfile";
@@ -38,16 +38,11 @@ function PageRoutes() {
       <Route path="/edit-listing/:id/:item_id/" element={<EditListing />} />
       <Route path="/seller-home/:id" element={<SellerHome />} />;
       <Route path="/seller/business-profile" element={<BusinessProfile />} />
-      <Route
-        path="/seller/frequently-ask-question"
-        element={<FrequentlyAskQuestion />}
-      />
       <Route path="/seller/upload-image" element={<ImageUpload />} />;
       <Route
         path="/seller/edit-business-profile"
         element={<BusinessProfileForm />}
       />
-      <Route path="/seller/feedback-form" element={<FeedbackForm />} />
       <Route path="/seller/ratings" element={<Ratings />} />
       <Route path="/seller/order-status" element={<OrderStatus />} />;
       <Route path="/seller/summary" element={<SellerSummary />} />;
@@ -78,7 +73,6 @@ function PageRoutes() {
         path="/buyer/specific-seller-listings/"
         element={<SpecificSellerListings />}
       />
-      <Route path="/reco" element={<BuyerRecommend />} />
       {/* Private route */}
       <Route path="/user-profile" element={<UserProfile />} />;
       <Route path="/chatting" element={<Chatting />} />
@@ -86,6 +80,8 @@ function PageRoutes() {
       <Route path="/recover-password" element={<RecoverPassword />} />;
       <Route path="/" element={<Home />} />
       <Route path="*" element={<h1>Page not found</h1>} />
+      <Route path="/feedback-form" element={<FeedbackForm />} />
+      <Route path="/frequently-ask-question" element={<FaqFormal />} />
     </Routes>
   );
 }

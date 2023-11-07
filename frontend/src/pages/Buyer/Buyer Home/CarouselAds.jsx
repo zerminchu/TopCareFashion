@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Carousel } from "@mantine/carousel";
 import axios from "axios";
 
@@ -7,6 +7,7 @@ import CarouselItem from "../../../components/CarouselItem";
 
 function CarouselAds() {
   const [productAdvertisementList, setproductAdvertisementList] = useState([]);
+  const [activeSlide, setActiveSlide] = useState(0);
 
   const itemOnClick = () => {
     navigate("/buyer/product-detail", {
@@ -57,6 +58,9 @@ function CarouselAds() {
       loop
       align="start"
       slidesToScroll={1}
+      inViewThreshold={0.5}
+      speed={500}
+      withControls
     >
       {renderListingAdvertisement()}
     </Carousel>
