@@ -16,6 +16,7 @@ import classes from "./BuyerHome.module.css";
 import CarouselAds from "./CarouselAds";
 import recommend from "@algolia/recommend";
 import { FrequentlyBoughtTogether } from "@algolia/recommend-react";
+import BuyerRecommend from "./BuyerRecommend";
 
 function BuyerHomeMen(props) {
   const navigate = useNavigate();
@@ -39,8 +40,7 @@ function BuyerHomeMen(props) {
   const [combinedProductList, setCombinedProductList] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
   const [itemIdForAlgolia, setItemIdForAlgolia] = useState([]);
-  const [recommendedItemId, setRecommendedItemId] = useState([]);
-  const [filteredItems, setFilteredItems] = useState([]);
+  const [fetchFromBuyerReco, setFetchFromBuyerReco] = useState([]);
 
   const recommendClient = recommend('WYBALSMF67', '7f90eaa16b371b16dd03a500e6181427');
   // const recommendClient = recommend('Bed', 'des');
@@ -93,7 +93,11 @@ function BuyerHomeMen(props) {
     }
   }, [currentUser]);
 
+<<<<<<< Updated upstream
   console.log("buyer")
+=======
+  console.log("buyer");
+>>>>>>> Stashed changes
 
   // Fetch ID for Algolia
   useEffect(() => {
@@ -118,9 +122,16 @@ function BuyerHomeMen(props) {
           .slice(0, 3)
           .map((data) => data.item_id);
 
+        console.log(latestItemIds);
+
         setItemIdForAlgolia(latestItemIds);
+<<<<<<< Updated upstream
         console.log("latestItemIds")
         console.log(latestItemIds)
+=======
+        console.log("latestItemIds");
+        console.log(latestItemIds);
+>>>>>>> Stashed changes
       } catch (error) {
         console.error("Error fetching orders:", error);
       }
@@ -128,7 +139,7 @@ function BuyerHomeMen(props) {
     if (currentUser) {
       fetchAlgolia();
     }
-  }, []);
+  }, [currentUser]);
 
   useEffect(() => {
     // Fetch items based on recommendedItemId
@@ -141,15 +152,21 @@ function BuyerHomeMen(props) {
 
         const response = await axios.get(`${url}/item/`);
         const allItems = response.data.data;
+
+        const filteredItems = allItems.filter((item) =>
+          itemIdForAlgolia.includes(fetchFromBuyerReco)
+        );
+
+        console.log("Filtered items:", filteredItems);
       } catch (error) {
         console.error("Error fetching and filtering items:", error);
       }
     };
 
-    if (recommendedItemId.length > 0) {
+    if (itemIdForAlgolia.length > 0) {
       fetchItems();
     }
-  }, [recommendedItemId]);
+  }, [itemIdForAlgolia, fetchFromBuyerReco]);
 
   useEffect(() => {
     const retrieveAllItems = async () => {
