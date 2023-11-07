@@ -45,13 +45,7 @@ function Product(props) {
       });
     }
     if (props.item_id) {
-      navigate("/buyer/product-detail", {
-        state: { itemId: props.item_id },
-      });
-    } else {
-      navigate("/buyer/product-detail", {
-        state: { data: props },
-      });
+      navigate(`/buyer/product-detail/${props.item_id}`);
     }
   };
 

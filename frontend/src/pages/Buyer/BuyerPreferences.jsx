@@ -52,7 +52,7 @@ function BuyerPreferences() {
       dispatch({ type: "SET_BUYER_PREFERENCES", value: false });
     }
 
-    dispatch({ type: "SET_SIGN_UP", value: true });
+    dispatch({ type: "SET_SIGN_UP_BUYER", value: true });
 
     setActiveStep(activeStep + 1);
   };

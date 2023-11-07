@@ -58,7 +58,10 @@ function PageRoutes() {
       ;{/* Private route for buyer */}
       <Route path="/men" element={<BuyerHomeMen />} />
       <Route path="/women" element={<BuyerHomeWomen />} />
-      <Route path="/buyer/product-detail" element={<ProductDetails />} />
+      <Route
+        path="/buyer/product-detail/:itemId"
+        element={<ProductDetails />}
+      />
       <Route path="/buyer/wishlist" element={<Wishlist />} />
       <Route path="/buyer/checkout" element={<Checkout />} />
       <Route path="/buyer/product-rate" element={<ProductRate />} />
