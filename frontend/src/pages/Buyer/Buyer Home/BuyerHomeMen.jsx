@@ -39,7 +39,7 @@ function BuyerHomeMen(props) {
 
   const [combinedProductList, setCombinedProductList] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
-  const [itemIdForAlgolia, setItemIdForAlgolia] = useState([]);
+  const [itemIdForAlgolia, setItemIdForAlgolia] = useState();
   const [fetchFromBuyerReco, setFetchFromBuyerReco] = useState([]);
 
   const fetchPredictedIds = (item) => {
@@ -82,65 +82,36 @@ function BuyerHomeMen(props) {
     }
   }, [currentUser]);
 
-  // Fetch ID for Algolia
-  useEffect(() => {
-    const fetchAlgolia = async () => {
-      try {
-        const url =
-          import.meta.env.VITE_NODE_ENV == "DEV"
-            ? import.meta.env.VITE_API_DEV
-            : import.meta.env.VITE_API_PROD;
+  // useEffect(() => {
+  //   // Fetch items based on recommendedItemId
+  //   const fetchItems = async () => {
+  //     try {
+  //       const url =
+  //         import.meta.env.VITE_NODE_ENV === "DEV"
+  //           ? import.meta.env.VITE_API_DEV
+  //           : import.meta.env.VITE_API_PROD;
 
-        const response = await axios.get(
-          `${url}/buyer/${currentUser.user_id}/orders/`
-        );
-        const orders = response.data.data;
+  //       const response = await axios.get(`${url}/item/`);
+  //       const allItems = response.data.data;
 
-        const checkoutData = orders.map((order) => order.checkout_data);
-        const flattenedCheckoutData = [].concat(...checkoutData);
-        flattenedCheckoutData.sort(
-          (a, b) => new Date(b.created_at) - new Date(a.created_at)
-        );
-        const latestItemIds = flattenedCheckoutData
-          .slice(0, 3)
-          .map((data) => data.item_id);
+  //       const filteredItems = allItems.filter((item) =>
+  //         itemIdForAlgolia.includes(fetchFromBuyerReco)
+  //       );
 
-        setItemIdForAlgolia(latestItemIds);
-      } catch (error) {
-        console.error("Error fetching orders:", error);
-      }
-    };
-    if (currentUser) {
-      fetchAlgolia();
-    }
-  }, [currentUser]);
+  //       console.log("Filtered items:", filteredItems);
+  //     } catch (error) {
+  //       console.error("Error fetching and filtering items:", error);
+  //     }
+  //   };
+
+  //   if (itemIdForAlgolia) {
+  //     fetchItems();
+  //   }
+  // }, [itemIdForAlgolia]);
 
   useEffect(() => {
-    // Fetch items based on recommendedItemId
-    const fetchItems = async () => {
-      try {
-        const url =
-          import.meta.env.VITE_NODE_ENV === "DEV"
-            ? import.meta.env.VITE_API_DEV
-            : import.meta.env.VITE_API_PROD;
-
-        const response = await axios.get(`${url}/item/`);
-        const allItems = response.data.data;
-
-        const filteredItems = allItems.filter((item) =>
-          itemIdForAlgolia.includes(fetchFromBuyerReco)
-        );
-
-        console.log("Filtered items:", filteredItems);
-      } catch (error) {
-        console.error("Error fetching and filtering items:", error);
-      }
-    };
-
-    if (itemIdForAlgolia.length > 0) {
-      fetchItems();
-    }
-  }, [itemIdForAlgolia, fetchFromBuyerReco]);
+    // Handle algolia items
+  }, [productsWithAvailability]);
 
   useEffect(() => {
     const retrieveAllItems = async () => {
@@ -310,12 +281,16 @@ function BuyerHomeMen(props) {
 
   useEffect(() => {
     if (buyerPreferencesProduct && productsWithAvailability && algoliaProduct) {
+      console.log("BUYER PREFERENCES: ", buyerPreferencesProduct);
+      console.log("ALGOLIA: ", algoliaProduct);
+      console.log("THE REST: ", productsWithAvailability);
       const concatenatedArray = buyerPreferencesProduct.concat(
         productsWithAvailability,
         algoliaProduct
       );
 
       const combinedProducts = Array.from(new Set(concatenatedArray));
+      console.log("COMBINED PRODUCT: ", combinedProducts);
       setCombinedProductList(combinedProducts);
     }
   }, [buyerPreferencesProduct, productsWithAvailability, algoliaProduct]);
@@ -401,6 +376,96 @@ function BuyerHomeMen(props) {
     return null;
   };
 
+  //Fetch ID for Algolia
+  useEffect(() => {
+    const fetchAlgolia = async () => {
+      try {
+        const url =
+          import.meta.env.VITE_NODE_ENV == "DEV"
+            ? import.meta.env.VITE_API_DEV
+            : import.meta.env.VITE_API_PROD;
+
+        const response = await axios.get(
+          `${url}/buyer/${currentUser.user_id}/orders/`
+        );
+
+        const orders = response.data.data;
+
+        const checkoutData = orders.map((order) => order.checkout_data);
+        const flattenedCheckoutData = [].concat(...checkoutData);
+        flattenedCheckoutData.sort(
+          (a, b) => new Date(b.created_at) - new Date(a.created_at)
+        );
+
+        const latestItemIds = flattenedCheckoutData
+          .slice(0, 3)
+          .map((data) => data.item_id);
+
+        console.log("setting itemidforalgolia: ", latestItemIds);
+
+        setItemIdForAlgolia(latestItemIds);
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+      }
+    };
+    if (currentUser) {
+      fetchAlgolia();
+    }
+  }, [currentUser]);
+
+  useEffect(() => {
+    const getFrequentlyBoughtTogether = async () => {
+      try {
+        console.log("Using algo API ....");
+
+        const recommendClient = recommend(
+          "WYBALSMF67",
+          "7f90eaa16b371b16dd03a500e6181427"
+        );
+
+        const indexName = "Item_Index";
+        let itemData = [];
+
+        itemIdForAlgolia.forEach((itemId) => {
+          const data = {
+            indexName: indexName,
+            objectID: itemId,
+            maxRecommendations: 2,
+          };
+
+          itemData.push(data);
+        });
+
+        if (itemData.length > 0) {
+          const response = await recommendClient.getFrequentlyBoughtTogether(
+            itemData
+          );
+
+          if (response && response.results) {
+            const responseResults = response.results;
+            let updatedAlgoliaProducts = [];
+
+            responseResults.map((item) => {
+              item.hits.map((hit) => {
+                updatedAlgoliaProducts.push(hit);
+              });
+            });
+
+            setAlgoliaProduct(updatedAlgoliaProducts);
+            console.log("Success algo API: ", response);
+            console.log("updated algo product: ", updatedAlgoliaProducts);
+          }
+        }
+      } catch (error) {
+        console.log("Error fetching frequrn: ", error);
+      }
+    };
+
+    if (itemIdForAlgolia) {
+      getFrequentlyBoughtTogether();
+    }
+  }, [itemIdForAlgolia]);
+
   return (
     <div>
       <div className={classes.container}>
@@ -472,11 +537,7 @@ function BuyerHomeMen(props) {
           {renderViewMoreButton()}
         </div>
       </div>
-
-      <BuyerRecommend
-        itemIdForAlgolia={itemIdForAlgolia}
-        fetchPredictedIds={fetchPredictedIds}
-      />
+      <h1>here</h1>
     </div>
   );
 }
