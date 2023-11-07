@@ -447,9 +447,21 @@ function BuyerHomeMen(props) {
 
             responseResults.map((item) => {
               item.hits.map((hit) => {
-                updatedAlgoliaProducts.push(hit);
+                const {
+                  lastmodified,
+                  _highlightResult,
+                  _score,
+                  objectID,
+                  path,
+                  ...rest
+                } = hit;
+                updatedAlgoliaProducts.push(rest);
               });
             });
+
+            updatedAlgoliaProducts = updatedAlgoliaProducts.filter(
+              (item) => item.gender === "men"
+            );
 
             setAlgoliaProduct(updatedAlgoliaProducts);
             console.log("Success algo API: ", response);
