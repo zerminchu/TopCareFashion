@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Button, Text, Modal } from "@mantine/core";
-import IconTrashBin from "../assets/icons/ic_trash.svg";
+import IconTrashBin from "../../assets/icons/ic_trash.svg";
 
 import classes from "./CartItem.module.css";
 import axios from "axios";
-import { showNotifications } from "../utils/ShowNotification";
+import { showNotifications } from "../../utils/ShowNotification";
 
 function CartItem(props) {
   const [confirmation, setConfirmation] = useState(false);

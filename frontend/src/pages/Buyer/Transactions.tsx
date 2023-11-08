@@ -4,7 +4,7 @@ import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
 import { showNotifications } from "../../utils/ShowNotification";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
-import TransactionItem from "../../components/TransactionItem";
+import TransactionItem from "../../components/Cart & Checkout Managment/TransactionItem";
 import axios from "axios";
 
 import classes from "./Transactions.module.css";

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import IconDelete from "../assets/icons/ic_delete.svg";
-import ILLNullImageListing from "../assets/illustrations/il_null_image_clothes.svg";
+import IconDelete from "../../assets/icons/ic_delete.svg";
+import ILLNullImageListing from "../../assets/illustrations/il_null_image_clothes.svg";
 
 import classes from "./WishlistItem.module.css";
 import { Button, Text, Modal, Skeleton } from "@mantine/core";
 import axios from "axios";
-import { showNotifications } from "../utils/ShowNotification";
+import { showNotifications } from "../../utils/ShowNotification";
 
 function WishlistItem(props) {
   const [confirmation, setConfirmation] = useState(false);

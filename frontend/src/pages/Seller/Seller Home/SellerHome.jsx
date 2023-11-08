@@ -21,7 +21,7 @@ import { useDispatch } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
+import { retrieveUserInfo } from "../../../utils/RetrieveUserInfoFromToken";
 import classes from "./SellerHome.module.css";
 
 const useStyles = createStyles((theme) => ({

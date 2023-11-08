@@ -4,7 +4,7 @@ import { retrieveUserInfo } from "../utils/RetrieveUserInfoFromToken";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import BuyerHome from "./Buyer/Buyer Home/BuyerHome";
-import SellerHome from "./Seller/SellerHome";
+import SellerHome from "./Seller/Seller Home/SellerHome";
 
 function Home() {
   const navigate = useNavigate();

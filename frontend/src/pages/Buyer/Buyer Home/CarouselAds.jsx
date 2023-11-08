@@ -3,7 +3,7 @@ import { Carousel } from "@mantine/carousel";
 import axios from "axios";
 
 import classes from "./CarouselAds.module.css";
-import CarouselItem from "../../../components/CarouselItem";
+import CarouselItem from "../../../components/Home Page/CarouselItem";
 
 function CarouselAds() {
   const [productAdvertisementList, setproductAdvertisementList] = useState([]);

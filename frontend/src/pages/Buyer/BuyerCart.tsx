@@ -27,7 +27,7 @@ import { useNavigate } from "react-router";
 import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
 import Cookies from "js-cookie";
 import { showNotifications } from "../../utils/ShowNotification";
-import CartItem from "../../components/CartItem";
+import CartItem from "../../components/Cart & Checkout Managment/CartItem";
 import style from "./BuyerCart.module.css";
 import axios from "axios";
 

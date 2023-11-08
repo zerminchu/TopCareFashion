@@ -1,8 +1,8 @@
 import React from "react";
 import classes from "./Footer.module.css";
-import IconFacebook from "../assets/icons/ic_facebook.svg";
-import IconInstagram from "../assets/icons/ic_instagram.svg";
-import IconTwitter from "../assets/icons/ic_twitter.svg";
+import IconFacebook from "../../assets/icons/ic_facebook.svg";
+import IconInstagram from "../../assets/icons/ic_instagram.svg";
+import IconTwitter from "../../assets/icons/ic_twitter.svg";
 import { Text } from "@mantine/core";
 
 function Footer() {
@@ -27,19 +27,20 @@ function Footer() {
         </Text>
         <div className={classes.socialMediaContainer}>
           <a
-            href="https://www.instagram.com"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <img src={IconInstagram} alt="Instagram" width={32} height={32} />
-          </a>
-          <a
             href="https://www.facebook.com"
             target="_blank"
             rel="noopener noreferrer"
           >
             <img src={IconFacebook} alt="Facebook" width={32} height={32} />
           </a>
+          <a
+            href="https://www.instagram.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img src={IconInstagram} alt="Instagram" width={32} height={32} />
+          </a>
+
           <a
             href="https://www.twitter.com"
             target="_blank"

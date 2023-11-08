@@ -4,8 +4,8 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import classes from "./AddToCart.module.css";
 
-import { showNotifications } from "../utils/ShowNotification";
-import { retrieveUserInfo } from "../utils/RetrieveUserInfoFromToken";
+import { showNotifications } from "../../utils/ShowNotification";
+import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
 import { useDispatch } from "react-redux";
 
 function AddToCart(props) {

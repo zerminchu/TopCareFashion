@@ -6,10 +6,10 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { retrieveUserInfo } from "../utils/RetrieveUserInfoFromToken";
-import { showNotifications } from "../utils/ShowNotification";
+import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
+import { showNotifications } from "../../utils/ShowNotification";
 import classes from "./CategoryListing.module.css";
-import NotFoundImage from "./NotFound";
+import NotFoundImage from "../Not Found/NotFound";
 import Product from "./Product";
 
 function CategoryListingsPage(props) {

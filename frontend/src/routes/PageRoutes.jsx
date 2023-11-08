@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
-import CategoryListingsPage from "../components/CategoryListing";
-import NotFoundImage from "../components/NotFound";
+import CategoryListingsPage from "../components/Home Page/CategoryListing";
+import NotFoundImage from "../components/Not Found/NotFound";
 import BuyerHomeMen from "../pages/Buyer/Buyer Home/BuyerHomeMen";
 import BuyerHomeWomen from "../pages/Buyer/Buyer Home/BuyerHomeWomen";
 import BuyerCart from "../pages/Buyer/BuyerCart";
@@ -8,7 +8,7 @@ import ProductRate from "../pages/Buyer/BuyerRateProduct";
 import ProductStatus from "../pages/Buyer/BuyerViewOrderStatus";
 import Checkout from "../pages/Buyer/Checkout";
 import ProductDetails from "../pages/Buyer/ProductDetails";
-import MixAndMatch from "../pages/Buyer/Recommender/MixAndMatch";
+
 import Transactions from "../pages/Buyer/Transactions";
 import Wishlist from "../pages/Buyer/Wishlist";
 import FeedbackForm from "../pages/Seller/Feedback/FeedbackForm";
@@ -19,7 +19,7 @@ import BusinessProfile from "../pages/Seller/Business Profile/BusinessProfile";
 import BusinessProfileForm from "../pages/Seller/Business Profile/BusinessProfileForm";
 import OrderStatus from "../pages/Seller/OrderStatus";
 import Ratings from "../pages/Seller/Ratings";
-import SellerHome from "../pages/Seller/SellerHome";
+import SellerHome from "../pages/Seller/Seller Home/SellerHome";
 import Chatting from "../pages/Seller/Transactions/Chatting";
 import EditListing from "../pages/Seller/Transactions/EditListing";
 import ImageUpload from "../pages/Seller/Transactions/ImageUpload";
@@ -28,7 +28,6 @@ import UserProfile from "../pages/Seller/UserProfile";
 import SellerSummary from "../pages/Seller/SellerSummary";
 import CategorySelection from "../pages/Seller/Transactions/CategorySelection";
 import SpecificSellerListings from "../pages/Buyer/SpecificSellerListings";
-import BuyerRecommend from "../pages/Buyer/Buyer Home/BuyerRecommend";
 
 function PageRoutes() {
   return (
@@ -67,7 +66,6 @@ function PageRoutes() {
         element={<CategoryListingsPage />}
       />
       <Route path="/buyer/product-order-status" element={<ProductStatus />} />
-      <Route path="/buyer/premium-feature" element={<MixAndMatch />} />
       <Route path="/not-found" element={<NotFoundImage />} />
       <Route
         path="/buyer/specific-seller-listings/"

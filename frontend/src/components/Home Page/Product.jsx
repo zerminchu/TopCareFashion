@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { Button, Text } from "@mantine/core";
-import { retrieveUserInfo } from "../utils/RetrieveUserInfoFromToken";
+import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";

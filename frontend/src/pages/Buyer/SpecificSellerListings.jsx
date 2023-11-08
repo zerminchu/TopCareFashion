@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { Text } from "@mantine/core";
 import axios from "axios";
-import Product from "../../components/Product";
+import Product from "../../components/Home Page/Product";
 import { AiOutlineShop } from "react-icons/ai";
 
 import classes from "./SpecificSellerListings.module.css";

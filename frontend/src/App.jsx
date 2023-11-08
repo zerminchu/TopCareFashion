@@ -9,13 +9,13 @@ import SignUpSellerForm from "./components/Form/SignUpSellerForm";
 import SellerOnBoard from "./pages/Seller/Onboarding/SellerOnBoard";
 import ExistingSellerOnBoard from "./pages/Seller/Onboarding/ExistingSellerOnBoard";
 import PremiumPopup from "./pages/Buyer/Recommender/PremiumPage";
-import Footer from "./components/Footer";
+import Footer from "./components/Footer/Footer";
 import Loading from "./components/Loading";
 import CookiePermission from "./components/CookiePermission";
 import ReactGA from "react-ga4";
 
 import "./App.css";
-import AddToCart from "./components/AddToCart";
+import AddToCart from "./components/Cart & Checkout Managment/AddToCart";
 import BuyerPreferences from "./pages/Buyer/BuyerPreferences";
 import SignUpBuyerForm from "./components/Form/SignUpBuyerForm";
 

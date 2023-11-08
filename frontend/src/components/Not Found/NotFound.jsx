@@ -8,7 +8,6 @@ import {
   SimpleGrid,
   rem,
 } from "@mantine/core";
-import image from "./image.png";
 
 const useStyles = createStyles((theme) => ({
   root: {
@@ -56,14 +55,12 @@ function NotFoundImage() {
         cols={2}
         breakpoints={[{ maxWidth: "sm", cols: 1, spacing: 40 }]}
       >
-        <Image src={image} className={classes.mobileImage} />
         <div>
           <Title className={classes.title}>Something is not right...</Title>
           <Text color="dimmed" size="lg">
             Your search did not match any listings.
           </Text>
         </div>
-        <Image src={image} className={classes.desktopImage} />
       </SimpleGrid>
     </Container>
   );

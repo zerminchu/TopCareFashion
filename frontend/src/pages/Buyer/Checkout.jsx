@@ -5,7 +5,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router";
-import CheckoutItem from "../../components/CheckoutItem";
+import CheckoutItem from "../../components/Cart & Checkout Managment/CheckoutItem";
 import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
 import { showNotifications } from "../../utils/ShowNotification";
 import classes from "./Checkout.module.css";

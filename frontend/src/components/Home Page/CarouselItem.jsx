@@ -1,5 +1,5 @@
 import React from "react";
-import ILLNullImageListing from "../assets/illustrations/il_null_image_clothes.svg";
+import ILLNullImageListing from "../../assets/illustrations/il_null_image_clothes.svg";
 import classes from "./CarouselItem.module.css";
 import { Button, Text } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
