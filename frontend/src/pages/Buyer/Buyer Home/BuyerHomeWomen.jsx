@@ -45,33 +45,30 @@ function BuyerHomeWomen(props) {
     const fetchAlgolia = async () => {
       try {
         const url =
-          import.meta.env.VITE_NODE_ENV == "DEV"
+          import.meta.env.VITE_NODE_ENV === "DEV"
             ? import.meta.env.VITE_API_DEV
             : import.meta.env.VITE_API_PROD;
 
         const response = await axios.get(
           `${url}/buyer/${currentUser.user_id}/orders/`
         );
-
         const orders = response.data.data;
-        const checkoutData = orders.map((order) => order.checkout_data);
 
-        const flattenedCheckoutData = [].concat(...checkoutData);
-
-        console.log("before" + flattenedCheckoutData);
-
-        flattenedCheckoutData.sort(
+        const sortedOrders = orders.sort(
           (a, b) => new Date(b.created_at) - new Date(a.created_at)
         );
 
-        console.log(flattenedCheckoutData);
+        const latestItemIds = sortedOrders.reduce((acc, order) => {
+          const itemId = order.checkout_data?.item_id;
+          if (itemId && !acc.includes(itemId) && acc.length < 3) {
+            acc.push(itemId);
+          }
+          return acc;
+        }, []);
 
-        const latestItemIds = flattenedCheckoutData
-          .slice(-3)
-          .map((data) => data.item_id);
+        console.log(latestItemIds);
 
         setItemIdForAlgolia(latestItemIds);
-        console.log(latestItemIds);
       } catch (error) {
         console.error("Error fetching orders:", error);
       }
