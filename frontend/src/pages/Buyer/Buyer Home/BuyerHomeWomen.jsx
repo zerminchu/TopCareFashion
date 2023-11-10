@@ -5,6 +5,7 @@ import { Button, TextInput } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import algoliasearch from "algoliasearch/lite";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
@@ -14,7 +15,6 @@ import ProductCategory from "../../../components/Home Page/ProductCategory";
 import { retrieveUserInfo } from "../../../utils/RetrieveUserInfoFromToken";
 import classes from "./BuyerHome.module.css";
 import CarouselAds from "./CarouselAds";
-import recommend from "@algolia/recommend";
 
 function BuyerHomeWomen(props) {
   const navigate = useNavigate();
@@ -24,10 +24,13 @@ function BuyerHomeWomen(props) {
   const [visibleProductCount, setVisibleProductCount] = useState(4);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [searchResultCount, setSearchResultCount] = useState(0);
-  const [subCategories, setSubCategories] = useState();
+
+  const [categories, setCategories] = useState([]);
 
   const [user, setUser] = useState([]);
   const [currentUser, setCurrentUser] = useState();
+
+  const [subCategories, setSubCategories] = useState();
 
   const [productList, setproductList] = useState([]);
   const [productsWithAvailability, setProductsWithAvailability] = useState([]);
@@ -37,56 +40,12 @@ function BuyerHomeWomen(props) {
 
   const [combinedProductList, setCombinedProductList] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
-  const [itemIdForAlgolia, setItemIdForAlgolia] = useState();
 
-  // Fetch ID for Algolia
-  useEffect(() => {
-    const fetchAlgolia = async () => {
-      try {
-        const url =
-          import.meta.env.VITE_NODE_ENV == "DEV"
-            ? import.meta.env.VITE_API_DEV
-            : import.meta.env.VITE_API_PROD;
-
-        const response = await axios.get(
-          `${url}/buyer/${currentUser.user_id}/orders/`
-        );
-
-        const orders = response.data.data;
-
-        const checkoutData = orders.map((order) => order.checkout_data);
-        const flattenedCheckoutData = [].concat(...checkoutData);
-        flattenedCheckoutData.sort(
-          (a, b) => new Date(b.created_at) - new Date(a.created_at)
-        );
-
-        const latestItemIds = flattenedCheckoutData
-          .slice(0, 3)
-          .map((data) => data.item_id);
-
-        setItemIdForAlgolia(latestItemIds);
-      } catch (error) {
-        console.error("Error fetching orders:", error);
-      }
-    };
-    if (currentUser) {
-      fetchAlgolia();
-    }
-  }, [currentUser]);
-
-  useEffect(() => {
-    const storedBuyerPreferences = localStorage.getItem("buyerPreferences");
-
-    if (Cookies.get("userRole") === "buyer" && !currentUser) {
-      if (!storedBuyerPreferences) {
-        dispatch({ type: "SET_BUYER_PREFERENCES", value: true });
-      } else {
-        dispatch({ type: "SET_BUYER_PREFERENCES", value: false });
-      }
-    } else {
-      dispatch({ type: "SET_BUYER_PREFERENCES", value: false });
-    }
-  }, [currentUser, dispatch]);
+  //const searchResultCount = searchResults.length;
+  const searchClient = algoliasearch(
+    "C27B4SWDRQ",
+    "1cb33681bc07eef867dd5e384c1d0bf5"
+  );
 
   useEffect(() => {
     const setUserSessionData = async () => {
@@ -133,6 +92,10 @@ function BuyerHomeWomen(props) {
     retrieveAllItems();
   }, []);
 
+  /*   useEffect(() => {
+    index.search(productID).then(({ hits }) => setproductList(hits[0]));
+  }, []); */
+
   useEffect(() => {
     const retrieveCategoryData = async () => {
       try {
@@ -159,8 +122,24 @@ function BuyerHomeWomen(props) {
         console.log(error);
       }
     };
+
     retrieveCategoryData();
   }, []);
+
+  const fetchAvailStatus = async (itemId) => {
+    try {
+      const url =
+        import.meta.env.VITE_NODE_ENV == "DEV"
+          ? import.meta.env.VITE_API_DEV
+          : import.meta.env.VITE_API_PROD;
+
+      const response = await axios.get(`${url}/listing-detail/${itemId}`);
+      return response.data.data.avail_status;
+    } catch (error) {
+      console.log(error);
+      return "Available";
+    }
+  };
 
   useEffect(() => {
     const searchTextLower = searchText.toLowerCase();
@@ -176,44 +155,11 @@ function BuyerHomeWomen(props) {
     setSearchResultCount(filteredProducts.length);
   }, [searchText, productList]);
 
-  useEffect(() => {
-    if (productsWithAvailability) {
-      setBuyerPreferences();
-    }
-  }, [productsWithAvailability]);
-
-  useEffect(() => {
-    if (itemIdForAlgolia) {
-      setAlgoliaProducts();
-    }
-  }, [itemIdForAlgolia]);
-
-  useEffect(() => {
-    if (buyerPreferencesProduct && productsWithAvailability && algoliaProduct) {
-      console.log("BUYER PREFERENCES: ", buyerPreferencesProduct);
-      console.log("ALGOLIA: ", algoliaProduct);
-      console.log("THE REST: ", productsWithAvailability);
-      const allProducts = [
-        ...buyerPreferencesProduct,
-        ...algoliaProduct,
-        ...productsWithAvailability,
-      ];
-
-      // A Map to store unique products based on a unique identifier (e.g., product ID)
-      const uniqueProductsMap = new Map();
-
-      allProducts.forEach((product) => {
-        // Assuming product.id is the unique identifier; adjust this based on your data
-        uniqueProductsMap.set(product.item_id, product);
-      });
-
-      // Extract the values from the Map to get an array of unique products
-      const combinedProducts = Array.from(uniqueProductsMap.values());
-      console.log("COMBINED PRODUCT: ", combinedProducts);
-
-      setCombinedProductList(combinedProducts);
-    }
-  }, [buyerPreferencesProduct, productsWithAvailability, algoliaProduct]);
+  const renderUser = () => {
+    return user.map((user, index) => {
+      return <CategoryListing key={index} name={user.name} />;
+    });
+  };
 
   useEffect(() => {
     async function fetchData() {
@@ -235,21 +181,6 @@ function BuyerHomeWomen(props) {
       fetchData();
     }
   }, [searchResults]);
-
-  const fetchAvailStatus = async (itemId) => {
-    try {
-      const url =
-        import.meta.env.VITE_NODE_ENV == "DEV"
-          ? import.meta.env.VITE_API_DEV
-          : import.meta.env.VITE_API_PROD;
-
-      const response = await axios.get(`${url}/listing-detail/${itemId}`);
-      return response.data.data.avail_status;
-    } catch (error) {
-      console.log(error);
-      return "Available";
-    }
-  };
 
   const setBuyerPreferences = () => {
     const visibleProducts = productsWithAvailability;
@@ -304,64 +235,32 @@ function BuyerHomeWomen(props) {
     setBuyerPreferencesProduct(filteredProducts);
   };
 
-  const setAlgoliaProducts = async () => {
-    try {
-      const recommendClient = recommend(
-        "WYBALSMF67",
-        "7f90eaa16b371b16dd03a500e6181427"
+  const setAlgoliaPreferences = () => {
+    // setAlgoliaProduct(....something ......)
+  };
+
+  useEffect(() => {
+    if (productsWithAvailability) {
+      setBuyerPreferences();
+      setAlgoliaPreferences();
+    }
+  }, [productsWithAvailability]);
+
+  useEffect(() => {
+    if (buyerPreferencesProduct && productsWithAvailability && algoliaProduct) {
+      const concatenatedArray = buyerPreferencesProduct.concat(
+        productsWithAvailability,
+        algoliaProduct
       );
 
-      const indexName = "Item_Index";
-      let itemData = [];
+      /*   console.log("All product: ", productsWithAvailability);
+      console.log("buyer preferences: ", buyerPreferencesProduct);
+      console.log("Algolia product: ", algoliaProduct); */
 
-      itemIdForAlgolia.forEach((itemId) => {
-        const data = {
-          indexName: indexName,
-          objectID: itemId,
-          maxRecommendations: 2,
-        };
-
-        itemData.push(data);
-      });
-
-      if (itemData.length > 0) {
-        const response = await recommendClient.getFrequentlyBoughtTogether(
-          itemData
-        );
-
-        if (response && response.results) {
-          const responseResults = response.results;
-          let updatedAlgoliaProducts = [];
-
-          responseResults.map((item) => {
-            item.hits.map((hit) => {
-              const resultObject = productsWithAvailability.find(
-                (obj) => obj.item_id === hit.item_id
-              );
-
-              if (resultObject) {
-                updatedAlgoliaProducts.push(resultObject);
-              }
-            });
-          });
-
-          updatedAlgoliaProducts = updatedAlgoliaProducts.filter(
-            (item) => item.gender === "women"
-          );
-
-          setAlgoliaProduct(updatedAlgoliaProducts);
-        }
-      }
-    } catch (error) {
-      console.log("Error fetching frequently bought items: ", error);
+      const combinedProducts = Array.from(new Set(concatenatedArray));
+      setCombinedProductList(combinedProducts);
     }
-  };
-
-  const renderUser = () => {
-    return user.map((user, index) => {
-      return <CategoryListing key={index} name={user.name} />;
-    });
-  };
+  }, [buyerPreferencesProduct, productsWithAvailability, algoliaProduct]);
 
   const renderCombinedProducts = () => {
     if (combinedProductList) {
@@ -462,7 +361,7 @@ function BuyerHomeWomen(props) {
             {
               <TextInput
                 className={classes.searchBar}
-                placeholder="Search women's Fashion"
+                placeholder="Search Women's Fashion"
                 value={searchText}
                 onChange={(e) => {
                   setSearchText(e.target.value);
@@ -494,16 +393,10 @@ function BuyerHomeWomen(props) {
         </div>
 
         <div>
-          <div className={classes.listProductContainer}>
-            <div className={classes.listProduct}></div>
-          </div>
-        </div>
-
-        <div>
           <h2>
             {searchText
               ? `${searchResultCount} search results for '${searchText}'`
-              : "Explore the rest of our collections"}
+              : "Top picks by sellers in women's fashion"}
           </h2>
 
           <div className={classes.listProductContainer}>
