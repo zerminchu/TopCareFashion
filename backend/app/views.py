@@ -198,6 +198,15 @@ def signIn(request):
 
             if (not authUser.email_verified):
                 raise Exception("Please verify your email")
+            
+            # user = auth.create_user(
+            #     email='admin@admin.com',
+            #     email_verified=True,
+            #     password='adminadmin',
+            #     disabled=False
+            # )
+
+            # print("create user")
 
             user = firebaseAuth.sign_in_with_email_and_password(
                 data["email"], data["password"])

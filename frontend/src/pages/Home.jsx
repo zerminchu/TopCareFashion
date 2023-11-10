@@ -5,6 +5,7 @@ import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import BuyerHome from "./Buyer/Buyer Home/BuyerHome";
 import SellerHome from "./Seller/Seller Home/SellerHome";
+import AdminHome from "./Admin/AdminHome";
 
 function Home() {
   const navigate = useNavigate();
@@ -44,7 +45,7 @@ function Home() {
     } else if (currentRole === "seller") {
       return <SellerHome />;
     } else if (currentRole === "admin") {
-      return <h1>Admin home page</h1>;
+      return <AdminHome />;
     } else {
       return <BuyerHome />;
     }
