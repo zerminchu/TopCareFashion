@@ -80,7 +80,7 @@ function BuyerPreferences() {
               <Select
                 withAsterisk
                 className={classes.element}
-                label="Select Your Preferred Category"
+                label="Select Your Preferred Shopping Category"
                 data={[
                   { value: "men", label: "Men's" },
                   { value: "women", label: "Women's" },
@@ -90,7 +90,7 @@ function BuyerPreferences() {
               <Select
                 withAsterisk
                 className={classes.element}
-                label="Select Preferred Condition"
+                label="Select Preferred Condition Type"
                 data={[
                   { value: "Brand New", label: "Brand New" },
                   { value: "Lightly Used", label: "Lightly Used" },
@@ -101,7 +101,7 @@ function BuyerPreferences() {
               <Select
                 withAsterisk
                 className={classes.element}
-                label="Select Your Clothing Size"
+                label="Select Your Preferred Clothing Size"
                 data={[
                   { value: "XS", label: "XS" },
                   { value: "S", label: "S" },

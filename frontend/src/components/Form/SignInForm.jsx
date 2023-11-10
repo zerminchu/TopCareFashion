@@ -9,7 +9,6 @@ import { useDispatch } from "react-redux";
 import { showNotifications } from "../../utils/ShowNotification";
 import { Button, CloseButton, PasswordInput, TextInput } from "@mantine/core";
 import ILLogo from "../../assets/illustrations/il_logo.png";
-import { AiOutlineClose } from "react-icons/ai";
 
 function SignInForm(props) {
   const dispatch = useDispatch();
@@ -146,16 +145,16 @@ function SignInForm(props) {
               Sign In
             </Button>
             <Button
-              className={classes.element}
+              className={`${classes.element} ${classes.signupButton}`}
               onClick={handleSignUpAsBuyerClick}
             >
-              Sign Up As Buyer
+              I'm a Buyer{" "}
             </Button>
             <Button
-              className={classes.element}
+              className={`${classes.element} ${classes.signupButton}`}
               onClick={handleSignUpAsSellerClick}
             >
-              Sign Up As Seller
+              I'm a Seller{" "}
             </Button>
           </div>
         </div>
