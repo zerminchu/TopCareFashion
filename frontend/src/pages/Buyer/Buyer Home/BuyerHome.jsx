@@ -106,10 +106,6 @@ function BuyerHome(props) {
     retrieveAllItems();
   }, []);
 
-  /*   useEffect(() => {
-    index.search(productID).then(({ hits }) => setproductList(hits[0]));
-  }, []); */
-
   useEffect(() => {
     const retrieveCategoryData = async () => {
       try {
@@ -248,14 +244,9 @@ function BuyerHome(props) {
     setBuyerPreferencesProduct(filteredProducts);
   };
 
-  const setAlgoliaPreferences = () => {
-    // setAlgoliaProduct(....something ......)
-  };
-
   useEffect(() => {
     if (productsWithAvailability) {
       setBuyerPreferences();
-      setAlgoliaPreferences();
     }
   }, [productsWithAvailability]);
 
@@ -265,10 +256,6 @@ function BuyerHome(props) {
         productsWithAvailability,
         algoliaProduct
       );
-
-      /*      console.log("All product: ", productsWithAvailability);
-      console.log("buyer preferences: ", buyerPreferencesProduct);
-      console.log("Algolia product: ", algoliaProduct); */
 
       const combinedProducts = Array.from(new Set(concatenatedArray));
       setCombinedProductList(combinedProducts);

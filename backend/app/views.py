@@ -7,7 +7,7 @@ import uuid
 
 import numpy as np
 import stripe
-#import tensorflow as tf
+# import tensorflow as tf
 import torch
 from config.firebase import firebase
 from django.core.files.base import ContentFile
@@ -53,7 +53,7 @@ def signUp(request):
             if (data["role"] == "buyer"):
                 # Add additional data to buyer
                 data["profile_image_url"] = ""
-                if(not "preferences" in data):
+                if (not "preferences" in data):
                     data["preferences"] = {
                         "condition": "",
                         "gender": "",
@@ -201,7 +201,7 @@ def signIn(request):
 
             user = firebaseAuth.sign_in_with_email_and_password(
                 data["email"], data["password"])
-            
+
             db = firestore.client()
             userRef = db.collection("Users").document(user["localId"])
             userData = userRef.get()
@@ -379,7 +379,6 @@ def updateProfile(request):
             if (serializer.is_valid()):
                 updatedData = {}
 
-
                 # User want to update profile image
                 if (profile_image):
                     # Validate file format
@@ -421,9 +420,9 @@ def updateProfile(request):
                     updatedData["phone_number"] = phone_number
                     updatedData["preferences.condition"] = preferences_condition
                     updatedData["preferences.gender"] = preferences_gender
-                    updatedData["preferences.price"]= json.loads(preferences_price_range)
+                    updatedData["preferences.price"] = json.loads(
+                        preferences_price_range)
                     updatedData["preferences.size"] = preferences_size
-
 
                 # Update data into firestore
                 collectionRef = db.collection('Users').document(user_id)
@@ -452,21 +451,21 @@ def updateProfile(request):
 
 
 @api_view(["GET"])
-def getAdvertisementListing(request):
+def getAdvertisementListing(request, gender):
     if request.method == "GET":
         try:
             db = firestore.client()
             itemRef = db.collection('Item')
 
-            # Retrieving all item documents
+            if gender:
+                itemRef = itemRef.where('gender', '==', gender)
+
             totalDocs = len(list(itemRef.stream()))
 
-            # Generate 5 unique random offsets
-            randomOffsets = random.sample(range(totalDocs), 5)
+            randomOffsets = random.sample(range(totalDocs), min(5, totalDocs))
 
             randomDocuments = []
             for offset in randomOffsets:
-                # Using offset and limit to paginate and fetch the specific document
                 document = next(iter(itemRef.offset(offset).limit(1).stream()))
                 randomDocuments.append(document.to_dict())
 
@@ -591,9 +590,10 @@ def getListingDetailByItemId(request, item_id):
             if (len(reviewData) > 0):
                 averageRating = totalRating // len(reviewData)
 
-            paidOrderRef = db.collection("PaidOrder").where("checkout_data.listing_id", "==", (listingData.to_dict())["listing_id"])
-            paidOrderData= paidOrderRef.get()
-            
+            paidOrderRef = db.collection("PaidOrder").where(
+                "checkout_data.listing_id", "==", (listingData.to_dict())["listing_id"])
+            paidOrderData = paidOrderRef.get()
+
             numberOfSold = len(paidOrderData)
 
             responseData = {
@@ -884,7 +884,7 @@ def get_seller_and_item(request, user_id, item_id):
             return Response(item)
         except Exception as e:
             return Response({"error": str(e)}, status=500)
-        
+
 
 @api_view(["PUT"])
 def update_seller_preferences(request, user_id):
@@ -909,7 +909,6 @@ def update_seller_preferences(request, user_id):
             return Response({"error": str(e)}, status=500)
 
 
-
 @api_view(["PUT"])
 def edit_item(request, user_id, item_id):
     if request.method == "PUT":
@@ -928,7 +927,6 @@ def edit_item(request, user_id, item_id):
             product_doc = matching_products[0].reference
 
             serializer = EditItemSerializer(data=request.data, partial=True)
-                    
 
             if serializer.is_valid():
                 validated_data = serializer.validated_data
@@ -936,18 +934,18 @@ def edit_item(request, user_id, item_id):
                 size = validated_data.get("size", [])
                 if size:
                     size = [s.strip() for s in size]
-                
-                product_doc.update({
-                        "category": validated_data["category"],
-                        "condition": validated_data["condition"],
-                        "colour": validated_data["colour"],
-                        "title": validated_data["title"],
-                        "gender": validated_data["gender"],
-                        "description": validated_data["description"],
-                        "price": validated_data["price"],
-                        "size": size,
 
-                    })
+                product_doc.update({
+                    "category": validated_data["category"],
+                    "condition": validated_data["condition"],
+                    "colour": validated_data["colour"],
+                    "title": validated_data["title"],
+                    "gender": validated_data["gender"],
+                    "description": validated_data["description"],
+                    "price": validated_data["price"],
+                    "size": size,
+
+                })
 
                 collection_address = request.data.get("collection_address")
                 quantity_available = request.data.get("quantity_available")
@@ -963,7 +961,7 @@ def edit_item(request, user_id, item_id):
                         "quantity_available": quantity_available,
                         "avail_status": avail_status,
                     })
-               
+
                 uploaded_files = request.FILES.getlist('files')
 
                 image_urls = []
@@ -993,8 +991,6 @@ def edit_item(request, user_id, item_id):
                 return Response({"errors": serializer.errors}, status=400)
         except Exception as e:
             return Response({"error": str(e)}, status=500)
-
-
 
 
 @api_view(["PUT"])
@@ -1048,10 +1044,6 @@ def replace_image(request, id, item_id, index):
             return Response({"error": str(e)}, status=500)
 
 
-
-
-
-
 @api_view(["DELETE"])
 def delete_item(request, user_id, item_id):
     if request.method == "DELETE":
@@ -1081,7 +1073,7 @@ def delete_item(request, user_id, item_id):
 
 
 model_path = './ML/stage-1_resnet34.pkl'
-#update pkl file live
+# update pkl file live
 class_labels_path = './ML/class.txt'
 
 with open(class_labels_path, 'r') as f:
@@ -1116,10 +1108,11 @@ def classify_image(request):
         predicted_class = class_labels[predicted_idx]
 
         fashion_category_ref = db.collection("FashionCategory")
-        query = fashion_category_ref.where("category", "==", predicted_class).limit(1)
+        query = fashion_category_ref.where(
+            "category", "==", predicted_class).limit(1)
         results = query.stream()
 
-        predicted_subcategory = "Unknown" 
+        predicted_subcategory = "Unknown"
 
         for result in results:
             data = result.to_dict()
@@ -1131,7 +1124,6 @@ def classify_image(request):
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=400)
-
 
 
 @api_view(["GET"])
@@ -1152,7 +1144,7 @@ def get_subcategories(request):
             data = doc.to_dict()
             sub_category.append(data.get("sub_category"))
 
-        return Response({"subcategory": sub_category})  
+        return Response({"subcategory": sub_category})
 
     except Exception as e:
         return Response({"error": str(e)}, status=500)
@@ -1216,15 +1208,15 @@ def addReview(request):
         try:
             data = request.data
 
-            if(len(data["paid_order_id"]) <= 0):
+            if (len(data["paid_order_id"]) <= 0):
                 raise Exception("Paid order id cannot be empty")
 
-            if(data["rating"] == 0):
+            if (data["rating"] == 0):
                 raise Exception("Rating cannot be empty")
 
             serializer = ReviewSerializer(data=data)
 
-            if(serializer.is_valid()):
+            if (serializer.is_valid()):
                 db = firestore.client()
                 reviewId = (db.collection("Review").document()).id
                 reviewRef = db.collection("Review").document(reviewId)
@@ -1262,10 +1254,10 @@ def updatePaidOrderStatus(request, paid_order_id):
             paidOrderRef = db.collection("PaidOrder").document(paid_order_id)
             paidOrderData = paidOrderRef.get()
 
-            if(not paidOrderData.exists):
+            if (not paidOrderData.exists):
                 raise Exception("Paid order does not exists")
 
-            if(data["status"] == "waiting for collection"):
+            if (data["status"] == "waiting for collection"):
                 paidOrderRef.update({"status": data["status"]})
 
                 return JsonResponse({
@@ -1276,19 +1268,19 @@ def updatePaidOrderStatus(request, paid_order_id):
                     }
                 }, status=200)
 
-            elif(data["status"] == "completed"):
+            elif (data["status"] == "completed"):
                 userRef = db.collection("Users").document(
                     (paidOrderData.to_dict())["seller_id"])
                 userData = userRef.get()
 
-                if(not userData.exists):
+                if (not userData.exists):
                     raise Exception("Seller order does not exists")
 
                 itemRef = db.collection("Item").document(
                     (paidOrderData.to_dict())["checkout_data"]["item_id"])
                 itemData = itemRef.get()
 
-                if(not itemData.exists):
+                if (not itemData.exists):
                     raise Exception("Item order does not exists")
 
                 stripe.api_key = "sk_test_51LmU0QEDeJsL7mvQWznZX85lQ8T28onhbUw2otE3hnte3MeDZjNyYxjwbwIZhq2Cdp1vj4XfebLExzdxpQ64UHiV000sGoCmKR"
@@ -1328,7 +1320,8 @@ def updatePaidOrderStatus(request, paid_order_id):
                 "status": "error",
                 "message": str(e)
             }, status=400)
-        
+
+
 @api_view(["POST"])
 def webhookStripe(request):
     if request.method == "POST":
@@ -1340,7 +1333,7 @@ def webhookStripe(request):
             endpointSecret = "whsec_55LxoMXRzZ1YahRk9hw4titHnVLl6B64"
 
             sig_header = request.META['HTTP_STRIPE_SIGNATURE']
-            
+
             event = stripe.Webhook.construct_event(
                 payload, sig_header, endpointSecret
             )
@@ -1352,30 +1345,34 @@ def webhookStripe(request):
                 buyerId = data["metadata"]["buyer_id"]
                 createdAt = data["metadata"]["created_at"]
                 checkoutData = json.loads(data["metadata"]["checkout_data"])
-                #chargeId = (stripe.PaymentIntent.retrieve(paymentIntent)).charges.data[0].id
+                # chargeId = (stripe.PaymentIntent.retrieve(paymentIntent)).charges.data[0].id
 
-                chargeId = stripe.PaymentIntent.retrieve(paymentIntent)["charges"]["data"][0]["id"]
-                receiptUrl = stripe.PaymentIntent.retrieve(paymentIntent)["charges"]["data"][0]["receipt_url"]
+                chargeId = stripe.PaymentIntent.retrieve(
+                    paymentIntent)["charges"]["data"][0]["id"]
+                receiptUrl = stripe.PaymentIntent.retrieve(
+                    paymentIntent)["charges"]["data"][0]["receipt_url"]
 
                 responseData = []
 
                 for checkoutItem in checkoutData:
                     db = firestore.client()
-                    
+
                     listingId = checkoutItem["id"]
-                    listingRef = db.collection("Listing").document(checkoutItem["id"])
+                    listingRef = db.collection(
+                        "Listing").document(checkoutItem["id"])
                     listingData = listingRef.get()
 
-                    if(not listingData.exists):
-                        raise Exception(f"Listing ID {listingId} does not exists")
-                    
+                    if (not listingData.exists):
+                        raise Exception(
+                            f"Listing ID {listingId} does not exists")
+
                     itemId = (listingData.to_dict())["item_id"]
                     itemRef = db.collection("Item").document(itemId)
                     itemData = itemRef.get()
 
-                    if(not itemData.exists):
-                        raise Exception(f"Item ID {itemId} does not exists" )
-                    
+                    if (not itemData.exists):
+                        raise Exception(f"Item ID {itemId} does not exists")
+
                     paidOrderId = (db.collection("PaidOrder").document()).id
 
                     paidOrderData = {
@@ -1395,21 +1392,24 @@ def webhookStripe(request):
                         }
                     }
 
-                    paidOrderSerializer = PaidOrderSerializer(data=paidOrderData)
-                    checkoutDataSerializer = CheckoutDataSerializer(data=paidOrderData["checkout_data"])
+                    paidOrderSerializer = PaidOrderSerializer(
+                        data=paidOrderData)
+                    checkoutDataSerializer = CheckoutDataSerializer(
+                        data=paidOrderData["checkout_data"])
 
-                    if(paidOrderSerializer.is_valid()):
-                        if(checkoutDataSerializer.is_valid()):
-                            paidOrderRef = db.collection("PaidOrder").document(paidOrderId)
+                    if (paidOrderSerializer.is_valid()):
+                        if (checkoutDataSerializer.is_valid()):
+                            paidOrderRef = db.collection(
+                                "PaidOrder").document(paidOrderId)
                             paidOrderRef.set(paidOrderData)
 
                             # updatedQuantityAvailable = int((listingData.to_dict())["quantity_available"]) - int(checkoutItem["q"])
                             # listingRef.update({"quantity_available": updatedQuantityAvailable})
-                            
+
                             responseData.append(paidOrderData)
                         else:
                             raise Exception(checkoutDataSerializer.errors)
-                    
+
                     else:
                         raise Exception(paidOrderSerializer.errors)
 
@@ -1418,7 +1418,7 @@ def webhookStripe(request):
                     'message': "Paid order data saved successfully",
                     'data': responseData
                 }, status=200)
-                
+
         except Exception as e:
             print("ERROR WEBHOOK: ", str(e))
             return JsonResponse({

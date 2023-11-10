@@ -58,7 +58,7 @@ function Product(props) {
         <Text fw={500} size="lg">
           {props.title}
         </Text>
-        <Text className={classes.boldPrice}>${props.price}</Text>
+        <Text className={classes.boldPrice}>SGD {props.price}</Text>
         <Text className={classes.greyCategory}>{props.condition}</Text>
       </div>
       <div className={classes.cardFooter}>

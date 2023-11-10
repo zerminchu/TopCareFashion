@@ -33,7 +33,7 @@ urlpatterns = [
     path("retrieve-user-info-from-token/", views.retrieveUserInfoFromToken,
          name="retrieve-user-info-from-token"),
     path("update-profile/", views.updateProfile, name="update-profile"),
-    path("listing/advertisement", views.getAdvertisementListing,
+    path("listing/advertisement/<str:gender>/", views.getAdvertisementListing,
          name="get-listing-advertisement"),
     path("listing-detail/<str:item_id>", views.getListingDetailByItemId,
          name="get-listing-detail-by-item-id"),

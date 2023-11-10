@@ -28,7 +28,7 @@ function CarouselItem(props) {
       <div className={classes.headerContainer}>
         <div>
           <div className={classes.categoryContainer}>
-            <Text className={classes.categoryText}>{props.category}</Text>
+            <Text className={classes.categoryText}>SGD {props.price}</Text>
           </div>
         </div>
 

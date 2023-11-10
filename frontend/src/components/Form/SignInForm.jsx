@@ -57,7 +57,7 @@ function SignInForm(props) {
 
         if (response.data.status == "success") {
           const expirationDate = new Date();
-          expirationDate.setTime(expirationDate.getTime() + 60 * 60 * 1000);
+          expirationDate.setTime(expirationDate.getTime() + 60 * 60 * 1000 * 2);
 
           Cookies.set("firebaseIdToken", response.data.data.idToken, {
             expires: expirationDate,

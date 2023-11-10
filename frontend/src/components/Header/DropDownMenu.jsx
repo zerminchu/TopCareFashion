@@ -18,9 +18,7 @@ import classes from "./DropDownMenu.module.css";
 
 import { Text, Menu, Avatar } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
-import PremiumPopup from "../../pages/Buyer/Recommender/PremiumPage";
 import { useDispatch } from "react-redux";
-import { showNotifications } from "../../utils/ShowNotification";
 
 function DropDownMenu(props) {
   const navigate = useNavigate();
@@ -192,7 +190,7 @@ function DropDownMenu(props) {
               }}
             >
               <span style={{ marginRight: "10px" }}>Fashion Blog</span>
-              <Badge>Premium</Badge>
+              <Badge>Exclusive</Badge>
             </Menu.Item>
             <Menu.Item
               icon={<img src={IconQuestionMark} />}

@@ -1,11 +1,9 @@
 import {
-  createStyles,
-  Image,
   Container,
-  Title,
-  Text,
-  Button,
   SimpleGrid,
+  Text,
+  Title,
+  createStyles,
   rem,
 } from "@mantine/core";
 
@@ -13,17 +11,24 @@ const useStyles = createStyles((theme) => ({
   root: {
     paddingTop: rem(80),
     paddingBottom: rem(80),
+    marginLeft: "auto",
+    marginRight: "auto",
   },
 
   title: {
     fontWeight: 900,
     fontSize: rem(34),
-    marginBottom: theme.spacing.md,
+    marginBottom: theme.spacing.xl,
     fontFamily: `Greycliff CF, ${theme.fontFamily}`,
+    whiteSpace: "nowrap",
 
     [theme.fn.smallerThan("sm")]: {
       fontSize: rem(32),
     },
+  },
+
+  text: {
+    whiteSpace: "nowrap",
   },
 
   control: {
@@ -57,7 +62,7 @@ function NotFoundImage() {
       >
         <div>
           <Title className={classes.title}>Something is not right...</Title>
-          <Text color="dimmed" size="lg">
+          <Text className={classes.text} color="dimmed" size="lg">
             Your search did not match any listings.
           </Text>
         </div>

@@ -430,7 +430,7 @@ function ProductDetails() {
                     Price
                   </Text>
                   <Text size="lg" fw={700} align="right" color="blue">
-                    ${productDetails.price}
+                    SGD {productDetails.price}
                   </Text>
                 </div>
 
@@ -445,7 +445,7 @@ function ProductDetails() {
 
                 <div className={classes.productItemAtribute}>
                   <Text size="md" fw={500}>
-                    Size
+                    Sizes Available
                   </Text>
 
                   <div className={classes.sizeContainer}>

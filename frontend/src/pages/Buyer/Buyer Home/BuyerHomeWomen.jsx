@@ -38,6 +38,7 @@ function BuyerHomeWomen(props) {
   const [combinedProductList, setCombinedProductList] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
   const [itemIdForAlgolia, setItemIdForAlgolia] = useState();
+  const [fetchedAlgoliaList, setFetchedAlgoliaList] = useState([]);
 
   // Fetch ID for Algolia
   useEffect(() => {
@@ -198,20 +199,14 @@ function BuyerHomeWomen(props) {
         ...algoliaProduct,
         ...productsWithAvailability,
       ];
-
-      // A Map to store unique products based on a unique identifier (e.g., product ID)
       const uniqueProductsMap = new Map();
 
       allProducts.forEach((product) => {
-        // Assuming product.id is the unique identifier; adjust this based on your data
         uniqueProductsMap.set(product.item_id, product);
       });
 
-      // Extract the values from the Map to get an array of unique products
-      const combinedProducts = Array.from(uniqueProductsMap.values());
-      console.log("COMBINED PRODUCT: ", combinedProducts);
-
-      setCombinedProductList(combinedProducts);
+      setCombinedProductList(productsWithAvailability);
+      setFetchedAlgoliaList(algoliaProduct);
     }
   }, [buyerPreferencesProduct, productsWithAvailability, algoliaProduct]);
 
@@ -325,6 +320,7 @@ function BuyerHomeWomen(props) {
       });
 
       if (itemData.length > 0) {
+        dispatch({ type: "SET_LOADING", value: true });
         const response = await recommendClient.getFrequentlyBoughtTogether(
           itemData
         );
@@ -350,10 +346,12 @@ function BuyerHomeWomen(props) {
           );
 
           setAlgoliaProduct(updatedAlgoliaProducts);
+          dispatch({ type: "SET_LOADING", value: false });
         }
       }
     } catch (error) {
       console.log("Error fetching frequently bought items: ", error);
+      dispatch({ type: "SET_LOADING", value: false });
     }
   };
 
@@ -361,6 +359,35 @@ function BuyerHomeWomen(props) {
     return user.map((user, index) => {
       return <CategoryListing key={index} name={user.name} />;
     });
+  };
+
+  const renderAlgoliaList = () => {
+    if (fetchedAlgoliaList) {
+      return fetchedAlgoliaList
+        .slice(0, visibleProductCount)
+        .map((product, index) => (
+          <Product
+            key={index}
+            item_id={product.item_id}
+            title={product.title}
+            price={product.price}
+            size={product.size}
+            quantity_available={product.quantity_available}
+            avail_status={product.avail_status}
+            images={product.image_urls}
+            description={product.description}
+            average_rating={product.average_rating}
+            reviews={product.reviews}
+            total_ratings={product.total_ratings}
+            store_name={product.store_name}
+            collection_address={product.collection_address}
+            sold={product.sold}
+            category={product.category}
+            condition={product.condition}
+            seller_id={product.user_id}
+          />
+        ));
+    }
   };
 
   const renderCombinedProducts = () => {
@@ -494,12 +521,24 @@ function BuyerHomeWomen(props) {
         </div>
 
         <div>
-          <div className={classes.listProductContainer}>
-            <div className={classes.listProduct}></div>
+          <div>
+            {searchText
+              ? null
+              : algoliaProduct.length > 0 && (
+                  <>
+                    <h2>
+                      We've curated some more products we think you'll love
+                    </h2>
+                    <div className={classes.listProductContainer}>
+                      <div className={classes.listProduct}>
+                        {renderAlgoliaList()}
+                      </div>
+                    </div>
+                  </>
+                )}
           </div>
-        </div>
 
-        <div>
+          <br />
           <h2>
             {searchText
               ? `${searchResultCount} search results for '${searchText}'`
