@@ -28,7 +28,6 @@ import UserProfile from "../pages/Seller/UserProfile";
 import SellerSummary from "../pages/Seller/SellerSummary";
 import CategorySelection from "../pages/Seller/Transactions/CategorySelection";
 import SpecificSellerListings from "../pages/Buyer/SpecificSellerListings";
-import BuyerRecommend from "../pages/Buyer/Buyer Home/BuyerRecommend";
 
 function PageRoutes() {
   return (
@@ -78,7 +77,6 @@ function PageRoutes() {
         path="/buyer/specific-seller-listings/"
         element={<SpecificSellerListings />}
       />
-      <Route path="/reco" element={<BuyerRecommend />} />
       {/* Private route */}
       <Route path="/user-profile" element={<UserProfile />} />;
       <Route path="/chatting" element={<Chatting />} />
