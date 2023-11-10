@@ -6,16 +6,15 @@ import { Button, TextInput } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import algoliasearch from "algoliasearch/lite";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
 import CategoryListing from "../../../components/CategoryListing";
 import Product from "../../../components/Product";
+import ProductCategory from "../../../components/ProductCategory";
 import { retrieveUserInfo } from "../../../utils/RetrieveUserInfoFromToken";
 import classes from "./BuyerHome.module.css";
 import CarouselAds from "./CarouselAds";
-import ProductCategory from "../../../components/ProductCategory";
 
 function BuyerHome(props) {
   const navigate = useNavigate();
@@ -38,12 +37,6 @@ function BuyerHome(props) {
   const [combinedProductList, setCombinedProductList] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
   const [subCategories, setSubCategories] = useState();
-
-  //const searchResultCount = searchResults.length;
-  const searchClient = algoliasearch(
-    "C27B4SWDRQ",
-    "1cb33681bc07eef867dd5e384c1d0bf5"
-  );
 
   useEffect(() => {
     const storedBuyerPreferences = localStorage.getItem("buyerPreferences");

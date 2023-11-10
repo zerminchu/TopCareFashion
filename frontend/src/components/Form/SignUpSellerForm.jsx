@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useForm } from "@mantine/form";
-import classes from "./SignUpForm.module.css";
+import classes from "./SignUpSellerForm.module.css";
 import {
   Select,
   TextInput,
@@ -15,9 +15,8 @@ import { useDispatch } from "react-redux";
 import { showNotifications } from "../../utils/ShowNotification";
 import ILLogo from "../../assets/illustrations/il_logo.png";
 
-function SignUpForm(props) {
+function SignUpSellerForm(props) {
   const dispatch = useDispatch();
-  const [activeStep, setActiveStep] = useState(1);
 
   useEffect(() => {
     // Function to enable scrolling
@@ -41,7 +40,7 @@ function SignUpForm(props) {
 
   const form = useForm({
     initialValues: {
-      userType: "buyer",
+      userType: "seller",
       firstName: "",
       lastName: "",
       dateOfBirth: "",
@@ -80,12 +79,7 @@ function SignUpForm(props) {
   });
 
   const backOnClick = () => {
-    if (activeStep === 1) {
-      dispatch({ type: "SET_SIGN_UP", value: false });
-      dispatch({ type: "SET_BUYER_PREFERENCES", value: true });
-    } else {
-      setActiveStep(activeStep - 1);
-    }
+    dispatch({ type: "SET_SIGN_UP_SELLER", value: false });
   };
 
   const handleSignUpClick = async () => {
@@ -126,7 +120,7 @@ function SignUpForm(props) {
         const response = await axios.post(`${url}/sign-up/`, data);
 
         dispatch({ type: "SET_LOADING", value: false });
-        dispatch({ type: "SET_SIGN_UP", value: false });
+        dispatch({ type: "SET_SIGN_UP_SELLER", value: false });
 
         showNotifications({
           status: "success",
@@ -150,16 +144,9 @@ function SignUpForm(props) {
         <div className={classes.popupcontent}>
           <img src={ILLogo} width={70} height={70} />
 
-          <Stepper active={activeStep}>
-            <Stepper.Step
-              label="Indicate Preference"
-              description="Select your preferences"
-            />
-            <Stepper.Step label="Sign Up" description="Create an account" />
-          </Stepper>
-
           <Select
             className={classes.element}
+            disabled
             label="Role"
             value={form.values.userType}
             onChange={(value) => form.setValues({ userType: value })}
@@ -213,14 +200,12 @@ function SignUpForm(props) {
           />
 
           <div className={classes.bottom}>
-            {activeStep === 1 ? (
-              <p
-                onClick={backOnClick}
-                style={{ textDecoration: "underline", cursor: "pointer" }}
-              >
-                Back
-              </p>
-            ) : null}
+            <p
+              onClick={backOnClick}
+              style={{ textDecoration: "underline", cursor: "pointer" }}
+            >
+              Back
+            </p>
             <Button onClick={handleSignUpClick}>Sign Up</Button>
           </div>
         </div>
@@ -229,4 +214,4 @@ function SignUpForm(props) {
   );
 }
 
-export default SignUpForm;
+export default SignUpSellerForm;

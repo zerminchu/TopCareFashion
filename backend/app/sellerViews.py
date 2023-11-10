@@ -35,8 +35,8 @@ def onBoarding(request):
                 # Generate link for user to fill up information
                 linkAccount = stripe.AccountLink.create(
                     account=createConnectedAccount.stripe_id,
-                    refresh_url="http://localhost:5173/",
-                    return_url="http://localhost:5173/",
+                    refresh_url="https://top-care-fashion.vercel.app/",
+                    return_url="https://top-care-fashion.vercel.app/",
                     type="account_onboarding",
                 )
 

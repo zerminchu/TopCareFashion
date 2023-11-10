@@ -5,7 +5,7 @@ import { Notifications } from "@mantine/notifications";
 import Store from "./redux/Store";
 import Header from "./components/Header/Header";
 import SignInForm from "./components/Form/SignInForm";
-import SignUpForm from "./components/Form/SignUpForm";
+import SignUpSellerForm from "./components/Form/SignUpSellerForm";
 import SellerOnBoard from "./pages/Seller/Onboarding/SellerOnBoard";
 import ExistingSellerOnBoard from "./pages/Seller/Onboarding/ExistingSellerOnBoard";
 import PremiumPopup from "./pages/Buyer/Recommender/PremiumPage";
@@ -17,16 +17,18 @@ import ReactGA from "react-ga4";
 import "./App.css";
 import AddToCart from "./components/AddToCart";
 import BuyerPreferences from "./pages/Buyer/BuyerPreferences";
+import SignUpBuyerForm from "./components/Form/SignUpBuyerForm";
 
 const MainApp = () => {
   const stateGlobal = useSelector((state) => state);
   return (
     <div className="App">
       {stateGlobal.signInBool && <SignInForm />}
-      {stateGlobal.signUpBool && <SignUpForm />}
+      {stateGlobal.signUpBool && <SignUpSellerForm />}
 
       {stateGlobal.loadingBool && <Loading />}
       {stateGlobal.buyerPreferencesBool && <BuyerPreferences />}
+      {stateGlobal.signUpPreferencesBool && <SignUpBuyerForm />}
 
       <Header />
       <PageRoutes />

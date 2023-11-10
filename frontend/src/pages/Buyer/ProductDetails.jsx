@@ -4,7 +4,7 @@ import { Button, Group, NumberInput, Radio, Text } from "@mantine/core";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import IconChat from "../../assets/icons/ic_chat.svg";
 import IconRating from "../../assets/icons/ic_rating.svg";
 import IconWishlist from "../../assets/icons/ic_wishlist.svg";
@@ -18,6 +18,7 @@ import { showNotifications } from "../../utils/ShowNotification";
 import classes from "./ProductDetails.module.css";
 
 function ProductDetails() {
+  const { itemId } = useParams();
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
@@ -53,9 +54,6 @@ function ProductDetails() {
     }
   }, [currentUser]);
 
-  // Real data
-  const itemId = location.state?.itemId;
-
   const [productDetails, setProductDetails] = useState();
 
   useEffect(() => {
@@ -66,11 +64,12 @@ function ProductDetails() {
             ? import.meta.env.VITE_API_DEV
             : import.meta.env.VITE_API_PROD;
 
-        if (itemId) {
-          const response = await axios.get(`${url}/listing-detail/${itemId}`);
-          setProductDetails(response.data.data);
-          console.log(response.data);
+        if (!itemId) {
+          console.log("Item id params is not defined: ", itemId);
         }
+
+        const response = await axios.get(`${url}/listing-detail/${itemId}`);
+        setProductDetails(response.data.data);
       } catch (error) {
         showNotifications({
           status: "error",
@@ -132,6 +131,11 @@ function ProductDetails() {
 
   const chatOnClick = () => {
     if (productDetails) {
+      if (!Cookies.get("firebaseIdToken")) {
+        dispatch({ type: "SET_BUYER_PREFERENCES", value: true });
+        return;
+      }
+
       navigate("/chatting", {
         state: { targetChatId: productDetails.user_id },
       });
@@ -142,10 +146,15 @@ function ProductDetails() {
   };
 
   const shareOnClick = () => {
-    let itemUrl = "https://topcarefashion.com/listing/";
+    const url =
+      import.meta.env.VITE_NODE_ENV == "DEV"
+        ? import.meta.env.VITE_CLIENT_DEV
+        : import.meta.env.VITE_CLIENT_PROD;
+
+    let itemUrl = "";
 
     if (itemId) {
-      itemUrl = `https://topcarefashion.com/listing/${itemId}`;
+      itemUrl = `${url}/buyer/product-detail/${itemId}`;
     }
 
     copy(itemUrl);
@@ -293,7 +302,6 @@ function ProductDetails() {
     // Check if user sign in before
     if (!Cookies.get("firebaseIdToken")) {
       dispatch({ type: "SET_BUYER_PREFERENCES", value: true });
-      dispatch({ type: "SET_SIGN_IN", value: true });
       return;
     }
 
@@ -380,20 +388,29 @@ function ProductDetails() {
         <div className={classes.container}>
           <div className={classes.topContainer}>
             <div className={classes.imageContainer}>
-              <img
-                src={productDetails.images[0] || ILLNullImageListing}
-                className={classes.mainImage}
-              />
+              <div className={classes.mainImageContainer}>
+                <div className={classes.imageWrapper}>
+                  <img
+                    src={productDetails.images[0] || ILLNullImageListing}
+                    className={classes.mainImage}
+                  />
+                </div>
+              </div>
 
               <div className={classes.secondaryImageContainer}>
-                <img
-                  src={productDetails.images[1] || ILLNullImageListing}
-                  className={classes.secondaryImage}
-                />
-                <img
-                  src={productDetails.images[2] || ILLNullImageListing}
-                  className={classes.secondaryImage}
-                />
+                <div className={classes.secondaryImageWrapper}>
+                  <img
+                    src={productDetails.images[1] || ILLNullImageListing}
+                    className={classes.secondaryImage}
+                  />
+                </div>
+
+                <div className={classes.secondaryImageWrapper}>
+                  <img
+                    src={productDetails.images[2] || ILLNullImageListing}
+                    className={classes.secondaryImage}
+                  />
+                </div>
               </div>
             </div>
 

@@ -28,6 +28,7 @@ import UserProfile from "../pages/Seller/UserProfile";
 import SellerSummary from "../pages/Seller/SellerSummary";
 import CategorySelection from "../pages/Seller/Transactions/CategorySelection";
 import SpecificSellerListings from "../pages/Buyer/SpecificSellerListings";
+
 function PageRoutes() {
   return (
     <Routes>
@@ -56,7 +57,10 @@ function PageRoutes() {
       ;{/* Private route for buyer */}
       <Route path="/men" element={<BuyerHomeMen />} />
       <Route path="/women" element={<BuyerHomeWomen />} />
-      <Route path="/buyer/product-detail" element={<ProductDetails />} />
+      <Route
+        path="/buyer/product-detail/:itemId"
+        element={<ProductDetails />}
+      />
       <Route path="/buyer/wishlist" element={<Wishlist />} />
       <Route path="/buyer/checkout" element={<Checkout />} />
       <Route path="/buyer/product-rate" element={<ProductRate />} />
@@ -73,7 +77,6 @@ function PageRoutes() {
         path="/buyer/specific-seller-listings/"
         element={<SpecificSellerListings />}
       />
-      {/* <Route path="/outfit-recommender" element={<OutfitRecommender />} />; */}
       {/* Private route */}
       <Route path="/user-profile" element={<UserProfile />} />;
       <Route path="/chatting" element={<Chatting />} />
