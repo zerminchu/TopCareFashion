@@ -76,8 +76,8 @@ def getCheckoutLink(request):
 
         checkoutSession = stripe.checkout.Session.create(
             mode="payment",
-            success_url='http://localhost:5173/',
-            cancel_url='http://localhost:5173/',
+            success_url='https://top-care-fashion.vercel.app/',
+            cancel_url='https://top-care-fashion.vercel.app/',
             payment_method_types=['card'],
             line_items=items,
             metadata=metaData,
