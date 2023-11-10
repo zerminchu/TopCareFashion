@@ -54,18 +54,24 @@ function BuyerHomeWomen(props) {
         );
 
         const orders = response.data.data;
-
         const checkoutData = orders.map((order) => order.checkout_data);
+
         const flattenedCheckoutData = [].concat(...checkoutData);
+
+        console.log("before" + flattenedCheckoutData);
+
         flattenedCheckoutData.sort(
           (a, b) => new Date(b.created_at) - new Date(a.created_at)
         );
 
+        console.log(flattenedCheckoutData);
+
         const latestItemIds = flattenedCheckoutData
-          .slice(0, 3)
+          .slice(-3)
           .map((data) => data.item_id);
 
         setItemIdForAlgolia(latestItemIds);
+        console.log(latestItemIds);
       } catch (error) {
         console.error("Error fetching orders:", error);
       }
