@@ -27,11 +27,27 @@ function AdminBuyer() {
     retrieveAllBuyers();
   }, []);
 
+  const deleteBuyerData = (buyerId) => {
+    if (buyerData && buyerId) {
+      const updatedBuyerData = buyerData.filter(
+        (item) => item.user_id !== buyerId
+      );
+
+      setbuyerData(updatedBuyerData);
+    }
+  };
+
   const renderBuyerItem = () => {
     if (buyerData) {
       if (buyerData.length > 0) {
         return buyerData.map((data, index) => {
-          return <AdminBuyerItem key={index} data={data} />;
+          return (
+            <AdminBuyerItem
+              key={index}
+              data={data}
+              deleteBuyerData={deleteBuyerData}
+            />
+          );
         });
       }
 
