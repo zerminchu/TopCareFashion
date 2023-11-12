@@ -16,6 +16,13 @@ import copy from "copy-to-clipboard";
 import { useDispatch } from "react-redux";
 import { showNotifications } from "../../utils/ShowNotification";
 import classes from "./ProductDetails.module.css";
+import aa from 'search-insights';
+
+// Initialize Algolia insights client
+aa('init', {
+  appId: 'WYBALSMF67',
+  apiKey: '45ceb4d9bc1d1b82dc5592d49624faec',
+});
 
 function ProductDetails() {
   const { itemId } = useParams();
@@ -207,6 +214,27 @@ function ProductDetails() {
         size: selectedSize,
       };
       console.log(selectedSize);
+
+      aa('convertedObjectIDs', { //for trending 
+        userToken: currentUser.user_id,
+        eventName: 'Add To Cart',
+        index: 'Item_Index',
+        objectIDs: [itemId],
+        
+      });
+
+      aa('addedToCartObjectIDs', { //for related
+        userToken: currentUser.user_id,
+        eventName: 'Add_To_Cart',
+        index: 'Item_Index',
+        objectIDs: [itemId],
+        objectData: [{
+          price: productDetails.price,
+          color: productDetails.color
+        }],
+        currency: 'SGD'
+      });
+      
 
       const url =
         import.meta.env.VITE_NODE_ENV == "DEV"
