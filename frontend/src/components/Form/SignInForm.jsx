@@ -144,17 +144,20 @@ function SignInForm(props) {
             <Button className={classes.element} onClick={handleSignInClick}>
               Sign In
             </Button>
+
+            <h2 className={classes.signupHeading}>Create an account as a...</h2>
+
             <Button
               className={`${classes.element} ${classes.signupButton}`}
               onClick={handleSignUpAsBuyerClick}
             >
-              I'm a Buyer{" "}
+              Buyer{" "}
             </Button>
             <Button
               className={`${classes.element} ${classes.signupButton}`}
               onClick={handleSignUpAsSellerClick}
             >
-              I'm a Seller{" "}
+              Seller{" "}
             </Button>
           </div>
         </div>

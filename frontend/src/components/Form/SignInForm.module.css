@@ -59,18 +59,29 @@
 }
 
 .signupButton {
-  background-color: #3498db; 
-  color: white;
+  background-color: #333;
+  color: #fff;
   border: none;
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 18px; 
+  font-size: 18px;
   border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  margin-bottom: -1px;
+  width: 100%;
 
   &:hover {
-    background-color: #2980b9; 
+    background-color: #3498db;
   }
+}
+
+.signupHeading {
+  font-size: 22px;
+  margin-bottom: 1px;
+  color: #333; 
+  margin-right: 47%;
+  white-space: nowrap; 
+
 }
