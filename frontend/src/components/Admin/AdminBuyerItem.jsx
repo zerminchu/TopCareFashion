@@ -30,6 +30,41 @@ function AdminBuyerItem(props) {
     },
   });
 
+  const suspendOnClick = async () => {
+    try {
+      if (form.values && form.values.userId) {
+        dispatch({ type: "SET_LOADING", value: true });
+
+        const url =
+          import.meta.env.VITE_NODE_ENV == "DEV"
+            ? import.meta.env.VITE_API_DEV
+            : import.meta.env.VITE_API_PROD;
+
+        const response = await axios.delete(
+          `${url}/admin/users/${form.values.userId}/`
+        );
+
+        //props.deleteBuyerData(form.values.userId);
+
+        dispatch({ type: "SET_LOADING", value: false });
+
+        showNotifications({
+          status: "success",
+          title: "Success",
+          message: response.data.message,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      dispatch({ type: "SET_LOADING", value: false });
+      showNotifications({
+        status: "success",
+        title: "Success",
+        message: response.data.message,
+      });
+    }
+  };
+
   const updateOnClick = async () => {
     console.log("data ot pass server: ", form.values);
 
@@ -217,7 +252,9 @@ function AdminBuyerItem(props) {
         <Button onClick={updateOnClick} color="blue">
           Update
         </Button>
-        <Button color="red">Suspend</Button>
+        <Button onClick={suspendOnClick} color="red">
+          Suspend
+        </Button>
       </td>
     </tr>
   );

@@ -120,7 +120,7 @@ urlpatterns = [
          name="admin-all-users"),
 
      path("admin/users/<str:user_id>/", adminViews.oneUser,
-         name="get-one-user"),
+         name="admin-one-user"),
 ]
 
 

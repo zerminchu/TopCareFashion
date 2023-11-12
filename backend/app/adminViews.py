@@ -157,16 +157,21 @@ def allUsers(request):
               "message": str(e)
           }, status=400)
 
-@api_view(["GET"])
+@api_view(["DELETE"])
 def oneUser(request, user_id):
-    if request.method == "GET":
+    if request.method == "DELETE":
         try:
             data = request.data
-            print("params: ", user_id)
+
+            db = firestore.client()
+            userRef = db.collection("Users").document(user_id)
+            userData = userRef.delete()
+
+            userAuth = auth.delete_user(user_id)
 
             return JsonResponse({
                 'status': "success",
-                'message': "User session data is retrieved successfully",
+                'message': f"User {user_id} deleted successfully",
             }, status=200)
 
         except Exception as e:
