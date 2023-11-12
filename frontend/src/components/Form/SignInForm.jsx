@@ -92,10 +92,12 @@ function SignInForm(props) {
 
   const handleSignUpAsBuyerClick = () => {
     dispatch({ type: "SET_BUYER_PREFERENCES", value: true });
+    dispatch({ type: "SET_SIGN_IN", value: false });
   };
 
   const handleSignUpAsSellerClick = () => {
     dispatch({ type: "SET_SIGN_UP_SELLER", value: true });
+    dispatch({ type: "SET_SIGN_IN", value: false });
   };
 
   const [isPopupOpen, setPopupOpen] = useState(true);
