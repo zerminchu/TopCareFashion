@@ -359,7 +359,6 @@ export function Transactions() {
       }
 
       return sortedData.map((item) => {
-        console.log(item, "hehe")
         return (
           <CartItem
             cartId={item.cart_id}

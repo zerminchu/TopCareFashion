@@ -9,8 +9,6 @@ import { showNotifications } from "../../utils/ShowNotification";
 function CartItem(props) {
   const [confirmation, setConfirmation] = useState(false);
 
-  console.log(props, "abcde");
-
   const deleteItem = async () => {
     if (props.cartId && props.cartItemId) {
       const url =
