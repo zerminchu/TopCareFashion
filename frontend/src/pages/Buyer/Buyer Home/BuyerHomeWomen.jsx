@@ -399,9 +399,9 @@ function BuyerHomeWomen(props) {
     if (combinedProductList) {
       return combinedProductList
         .slice(0, visibleProductCount)
-        .map((product, index) => (
+        .map((product) => (
           <Product
-            key={index}
+            key={product.item_id}
             item_id={product.item_id}
             title={product.title}
             price={product.price}
@@ -430,9 +430,9 @@ function BuyerHomeWomen(props) {
       visibleProductCount
     );
 
-    return visibleProducts.map((product, index) => (
+    return visibleProducts.map((product) => (
       <Product
-        key={index}
+        key={product.item_id}
         item_id={product.item_id}
         title={product.title}
         price={product.price}
@@ -488,6 +488,8 @@ function BuyerHomeWomen(props) {
       }
     };
 
+    dispatch({ type: "SET_LOADING", value: true });
+
     renderCombinedProducts();
   }, [combinedProductList, dispatch]);
 
@@ -535,7 +537,7 @@ function BuyerHomeWomen(props) {
                 />
               ))
             ) : (
-              <p>Loading categories...</p>
+              <p>Fetching categories...</p>
             )}
           </div>
         </div>
@@ -564,7 +566,9 @@ function BuyerHomeWomen(props) {
               ? `${searchResultCount} search results for '${searchText}'`
               : "Explore the rest of our collections"}
           </h2>
-          {isRenderCombinedProductsLoading ? null : (
+          {isRenderCombinedProductsLoading ? (
+            <div> Fetching Items...</div>
+          ) : (
             <div className={classes.listProductContainer}>
               <div className={classes.listProduct}>
                 {renderCombinedProducts()}

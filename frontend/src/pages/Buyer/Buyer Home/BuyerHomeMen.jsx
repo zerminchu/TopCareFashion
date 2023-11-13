@@ -416,9 +416,9 @@ function BuyerHomeMen(props) {
     if (combinedProductList) {
       return combinedProductList
         .slice(0, visibleProductCount)
-        .map((product, index) => (
+        .map((product) => (
           <Product
-            key={index}
+            key={product.item_id}
             item_id={product.item_id}
             title={product.title}
             price={product.price}
@@ -447,9 +447,9 @@ function BuyerHomeMen(props) {
       visibleProductCount
     );
 
-    return visibleProducts.map((product, index) => (
+    return visibleProducts.map((product) => (
       <Product
-        key={index}
+        key={product.item_id}
         item_id={product.item_id}
         title={product.title}
         price={product.price}
@@ -496,12 +496,15 @@ function BuyerHomeMen(props) {
   useEffect(() => {
     const renderCombinedProducts = async () => {
       if (combinedProductList) {
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        dispatch({ type: "SET_LOADING", value: false });
+        dispatch({ type: "SET_LOADING", value: true });
 
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+
+        dispatch({ type: "SET_LOADING", value: false });
         setIsRenderCombinedProductsLoading(false);
       }
     };
+
     dispatch({ type: "SET_LOADING", value: true });
 
     renderCombinedProducts();
@@ -583,7 +586,9 @@ function BuyerHomeMen(props) {
               ? `${searchResultCount} search results for '${searchText}'`
               : "Explore the rest of our collections"}
           </h2>
-          {isRenderCombinedProductsLoading ? null : (
+          {isRenderCombinedProductsLoading ? (
+            <div> Fetching Items...</div>
+          ) : (
             <div className={classes.listProductContainer}>
               <div className={classes.listProduct}>
                 {renderCombinedProducts()}
