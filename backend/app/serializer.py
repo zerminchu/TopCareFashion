@@ -35,11 +35,11 @@ class SellerSerializer (serializers.ModelSerializer):
     class Meta:
         model = User
         exclude = (
-            'user_id',
-            'gender',
-            'category',
-            'size',
-            'type'
+            'premium_feature',
+            'phone_number',
+            'preferences_condition',
+            'preferences_gender',
+            'preferences_size'
         )
 
 

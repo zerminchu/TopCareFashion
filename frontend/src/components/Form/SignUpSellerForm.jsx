@@ -84,7 +84,7 @@ function SignUpSellerForm(props) {
 
   const handleSignUpClick = async () => {
     try {
-      if (activeStep === 1 && !form.validate().hasErrors) {
+      if (!form.validate().hasErrors) {
         dispatch({ type: "SET_LOADING", value: true });
 
         // Convert date object to YYYY-MM-DD
@@ -129,6 +129,7 @@ function SignUpSellerForm(props) {
         });
       }
     } catch (error) {
+      console.log(error);
       dispatch({ type: "SET_LOADING", value: false });
       showNotifications({
         status: "error",
