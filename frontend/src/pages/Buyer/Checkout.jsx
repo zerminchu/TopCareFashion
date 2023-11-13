@@ -5,10 +5,17 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router";
-import CheckoutItem from "../../components/CheckoutItem";
+import CheckoutItem from "../../components/Cart & Checkout Managment/CheckoutItem";
 import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
 import { showNotifications } from "../../utils/ShowNotification";
 import classes from "./Checkout.module.css";
+import aa from "search-insights";
+
+// Initialize Algolia insights client
+aa("init", {
+  appId: "WYBALSMF67",
+  apiKey: "45ceb4d9bc1d1b82dc5592d49624faec",
+});
 
 function Checkout() {
   const location = useLocation();
@@ -72,8 +79,9 @@ function Checkout() {
           cart_quantity={item.cart_quantity}
           quantity_available={item.quantity_available}
           store_name={item.store_name}
-          variation={item.color}
+          colour={item.colour}
           images={item.images}
+          category={item.category}
         />
       );
     });
@@ -81,19 +89,36 @@ function Checkout() {
 
   const renderTotalPrice = () => {
     let totalPrice = 0;
+    let additionalFee = 0;
 
     if (checkoutItems) {
       checkoutItems.map((item) => {
         totalPrice += parseFloat(item.sub_total);
       });
 
-      totalPrice = totalPrice.toFixed(2);
+      const additionalFee = (totalPrice * 0.08).toFixed(2);
+
+      totalPrice = (totalPrice + parseFloat(additionalFee)).toFixed(2);
     }
 
+    const gstAmount = (totalPrice * 0.08).toFixed(2);
+
     return (
-      <Text fw={700} size="xl">
-        ${totalPrice}
-      </Text>
+      <div>
+        <Text fw={700} size="xl">
+          Total Nett Payable: SGD {totalPrice}
+        </Text>
+        <ul>
+          <li>
+            <Text fw={500}>Sub-total:</Text> SGD {totalPrice}
+          </li>
+          <li>
+            <Text fw={500} color="red">
+              Including GST (8%): SGD {gstAmount}
+            </Text>
+          </li>
+        </ul>
+      </div>
     );
   };
 
@@ -104,26 +129,22 @@ function Checkout() {
 
         let checkoutData = [];
         let checkoutMetaData = [];
-        //let isExceed = false;
 
-        checkoutItems.map((item) => {
-          // if (
-          //   parseInt(item.cart_quantity) > parseInt(item.quantity_available)
-          // ) {
-          //   showNotifications({
-          //     status: "error",
-          //     title: "Error",
-          //     message: `Your ${item.title} quantity exceeds the product stock`,
-          //   });
+        let totalPrice = 0;
 
-          //   isExceed = true;
-          //   return;
-          // }
+        checkoutItems.forEach((item) => {
+          totalPrice += parseFloat(item.sub_total);
+        });
 
+        const additionalFee = (totalPrice * 0.08).toFixed(2);
+
+        totalPrice = (totalPrice + parseFloat(additionalFee)).toFixed(2);
+
+        checkoutItems.forEach((item) => {
           const data = {
             title: item.title,
             quantity: item.cart_quantity,
-            price: parseFloat(item.price),
+            price: parseFloat(totalPrice),
           };
 
           const additionalData = {
@@ -135,11 +156,6 @@ function Checkout() {
           checkoutMetaData.push(additionalData);
           checkoutData.push(data);
         });
-
-        // if (isExceed) {
-        //   dispatch({ type: "SET_LOADING", value: false });
-        //   return;
-        // }
 
         const date = new Date();
 
@@ -167,6 +183,25 @@ function Checkout() {
           },
         };
 
+        aa("purchasedObjectIDs", {
+          userToken: currentUser.user_id,
+          eventName: "buy_product",
+          index: "Item_Index",
+          objectIDs: checkoutItems.map((item) => item.item_id),
+          objectData: checkoutItems.map((item) => ({
+            price: parseFloat(item.price),
+          })),
+          currency: "SGD",
+        });
+
+        aa("convertedObjectIDs", {
+          //for trending
+          userToken: currentUser.user_id,
+          eventName: "Buy Product",
+          index: "Item_Index",
+          objectIDs: checkoutItems.map((item) => item.item_id),
+        });
+
         const response = await axios.post(`${url}/buyer/checkout/`, data);
 
         dispatch({ type: "SET_LOADING", value: false });
@@ -188,15 +223,15 @@ function Checkout() {
     <div className={classes.container}>
       <Stepper active={active} onStepClick={setActive} breakpoint="sm">
         <Stepper.Step
-          label="Shopping cart"
+          label="Shopping Cart"
           allowStepSelect={active < 0}
         ></Stepper.Step>
         <Stepper.Step
           label="Purchased"
           allowStepSelect={active < 0}
         ></Stepper.Step>
-        <Stepper.Step label="Available for pickup" allowStepSelect={active < 0}>
-          Available for pickup
+        <Stepper.Step label="Available For Pickup" allowStepSelect={active < 0}>
+          Available For Pickup
         </Stepper.Step>
         <Stepper.Step
           label="Completed"
@@ -208,12 +243,11 @@ function Checkout() {
 
       <div className={classes.summaryContainer}>
         <Text fw={700} size="xl">
-          Summary
+          Purchase Summary
         </Text>
         <div className={classes.priceContainer}>
-          <Text fw={500}>Total Price</Text>
           {renderTotalPrice()}
-          <Button onClick={orderOnClick}>Place an order</Button>
+          <Button onClick={orderOnClick}>Place An Order</Button>
         </div>
       </div>
     </div>

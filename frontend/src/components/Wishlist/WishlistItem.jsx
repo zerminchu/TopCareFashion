@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import IconDelete from "../assets/icons/ic_delete.svg";
-import ILLNullImageListing from "../assets/illustrations/il_null_image_clothes.svg";
+import IconDelete from "../../assets/icons/ic_delete.svg";
+import ILLNullImageListing from "../../assets/illustrations/il_null_image_clothes.svg";
 
 import classes from "./WishlistItem.module.css";
 import { Button, Text, Modal, Skeleton } from "@mantine/core";
 import axios from "axios";
-import { showNotifications } from "../utils/ShowNotification";
+import { showNotifications } from "../../utils/ShowNotification";
 
 function WishlistItem(props) {
   const [confirmation, setConfirmation] = useState(false);
@@ -59,6 +59,7 @@ function WishlistItem(props) {
         );
 
         setWishlistData(response.data.data);
+        console.log(response.data.data);
       } catch (error) {
         console.log(error);
       }
@@ -85,7 +86,10 @@ function WishlistItem(props) {
           </td>
           <td>{wishlistData.title}</td>
           <td>{wishlistData.category}</td>
-          <td>${wishlistData.price}</td>
+          <td>{wishlistData.size}</td>
+          <td>{wishlistData.colour}</td>
+
+          <td>SGD {wishlistData.price}</td>
           <td>
             <div className={classes.deleteContainer}>
               <img

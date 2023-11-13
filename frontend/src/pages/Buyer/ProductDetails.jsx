@@ -9,6 +9,7 @@ import IconChat from "../../assets/icons/ic_chat.svg";
 import IconRating from "../../assets/icons/ic_rating.svg";
 import IconWishlist from "../../assets/icons/ic_wishlist.svg";
 import ILLNullImageListing from "../../assets/illustrations/il_null_image_clothes.svg";
+import IconShare from "../../assets/icons/ic_share_link.svg";
 import ProductRating from "../../components/Rating/ProductRating";
 import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
 
@@ -16,6 +17,13 @@ import copy from "copy-to-clipboard";
 import { useDispatch } from "react-redux";
 import { showNotifications } from "../../utils/ShowNotification";
 import classes from "./ProductDetails.module.css";
+import aa from "search-insights";
+
+// Initialize Algolia insights client
+aa("init", {
+  appId: "WYBALSMF67",
+  apiKey: "45ceb4d9bc1d1b82dc5592d49624faec",
+});
 
 function ProductDetails() {
   const { itemId } = useParams();
@@ -59,6 +67,8 @@ function ProductDetails() {
   useEffect(() => {
     const retrieveProductDetailByItemId = async () => {
       try {
+        dispatch({ type: "SET_LOADING", value: true });
+
         const url =
           import.meta.env.VITE_NODE_ENV == "DEV"
             ? import.meta.env.VITE_API_DEV
@@ -76,6 +86,8 @@ function ProductDetails() {
           title: "Error",
           message: error.response.data.message,
         });
+      } finally {
+        dispatch({ type: "SET_LOADING", value: false });
       }
     };
 
@@ -205,8 +217,34 @@ function ProductDetails() {
         seller_id: productDetails.user_id,
         buyer_id: currentUser.user_id,
         size: selectedSize,
+        colour: productDetails.colour,
+        category: productDetails.category,
       };
-      console.log(selectedSize);
+
+      console.log(data, "cart");
+
+      aa("convertedObjectIDs", {
+        //for trending
+        userToken: currentUser.user_id,
+        eventName: "Add To Cart",
+        index: "Item_Index",
+        objectIDs: [itemId],
+      });
+
+      aa("addedToCartObjectIDs", {
+        //for related
+        userToken: currentUser.user_id,
+        eventName: "Add_To_Cart",
+        index: "Item_Index",
+        objectIDs: [itemId],
+        objectData: [
+          {
+            price: productDetails.price,
+            colour: productDetails.colour,
+          },
+        ],
+        currency: "SGD",
+      });
 
       const url =
         import.meta.env.VITE_NODE_ENV == "DEV"
@@ -237,7 +275,7 @@ function ProductDetails() {
     // Check if user sign in before
     if (!Cookies.get("firebaseIdToken")) {
       dispatch({ type: "SET_BUYER_PREFERENCES", value: true });
-      dispatch({ type: "SET_SIGN_IN", value: true });
+      dispatch({ type: "SET_SIGN_IN", value: false });
       return;
     }
 
@@ -271,6 +309,7 @@ function ProductDetails() {
         seller_id: productDetails.user_id,
         buyer_id: currentUser.user_id,
         size: selectedSize,
+        category: productDetails.category,
       };
 
       const url =
@@ -314,17 +353,6 @@ function ProductDetails() {
 
       return;
     }
-
-    // if (parseInt(quantity) > parseInt(productDetails.quantity_available)) {
-    //   showNotifications({
-    //     status: "error",
-    //     title: "Error",
-    //     message: "Your quantity exceeds the product stock",
-    //   });
-
-    //   return;
-    // }
-
     const date = new Date();
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, "0");
@@ -348,6 +376,8 @@ function ProductDetails() {
         images: productDetails.images,
         seller_id: productDetails.user_id,
         sub_total: parseFloat(subTotal).toFixed(2),
+        colour: productDetails.colour,
+        category: productDetails.category,
       },
     ];
 
@@ -430,7 +460,7 @@ function ProductDetails() {
                     Price
                   </Text>
                   <Text size="lg" fw={700} align="right" color="blue">
-                    ${productDetails.price}
+                    SGD {productDetails.price}
                   </Text>
                 </div>
 
@@ -445,7 +475,16 @@ function ProductDetails() {
 
                 <div className={classes.productItemAtribute}>
                   <Text size="md" fw={500}>
-                    Size
+                    Colour
+                  </Text>
+                  <Text size="lg" fw={700} align="right" color="blue">
+                    {productDetails.colour}
+                  </Text>
+                </div>
+
+                <div className={classes.productItemAtribute}>
+                  <Text size="md" fw={500}>
+                    Sizes Available
                   </Text>
 
                   <div className={classes.sizeContainer}>
@@ -487,9 +526,29 @@ function ProductDetails() {
               </div>
 
               <div className={classes.topButtonContainer}>
-                <Button onClick={addToCartOnClick}>Add to cart</Button>
-                <Button onClick={buyNowOnClick}>Buy now</Button>
-                <Button onClick={shareOnClick}>Share</Button>
+                <Button
+                  onClick={addToCartOnClick}
+                  variant="light"
+                  color="blue"
+                  className={classes.actionButton}
+                >
+                  Add To Cart
+                </Button>
+                <Button
+                  onClick={buyNowOnClick}
+                  color="blue"
+                  className={classes.actionButton}
+                >
+                  Buy Now
+                </Button>
+                <img
+                  className={classes.wishlist}
+                  onClick={shareOnClick}
+                  src={IconShare}
+                  width={30}
+                  height={30}
+                />
+
                 <div>
                   <img
                     className={classes.wishlist}
@@ -535,8 +594,6 @@ function ProductDetails() {
         </div>
       );
     }
-
-    return <h1>Loading ..</h1>;
   };
 
   return <div>{renderReal()}</div>;

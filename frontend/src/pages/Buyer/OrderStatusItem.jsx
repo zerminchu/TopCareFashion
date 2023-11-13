@@ -36,12 +36,12 @@ function OrderStatusItem(props) {
         <Table>
           <thead>
             <tr>
-              <th>Product ordered</th>
-              <th>Title</th>
+              <th>Product Ordered</th>
+              <th>Item Name</th>
               <th>Size</th>
-              <th>Unit price</th>
+              <th>Unit Price</th>
               <th>Quantity</th>
-              <th>Item subtotal</th>
+              <th>Item Subtotal</th>
             </tr>
           </thead>
           <tbody>
@@ -55,9 +55,9 @@ function OrderStatusItem(props) {
               </td>
               <td>{props.title}</td>
               <td>{props.size}</td>
-              <td>${props.price}</td>
+              <td>SGD {props.price}</td>
               <td>{props.quantity}</td>
-              <td>${props.subTotal}</td>
+              <td>SGD {props.subTotal}</td>
             </tr>
           </tbody>
         </Table>

@@ -76,7 +76,7 @@ function Header() {
                 About Us
               </a>
             </div>
-            <Button onClick={signIn}>Sign in</Button>
+            <Button onClick={signIn}>Sign In</Button>
           </div>
         </div>
       );

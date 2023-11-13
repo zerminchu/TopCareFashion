@@ -9,7 +9,6 @@ import { useDispatch } from "react-redux";
 import { showNotifications } from "../../utils/ShowNotification";
 import { Button, CloseButton, PasswordInput, TextInput } from "@mantine/core";
 import ILLogo from "../../assets/illustrations/il_logo.png";
-import { AiOutlineClose } from "react-icons/ai";
 
 function SignInForm(props) {
   const dispatch = useDispatch();
@@ -57,7 +56,7 @@ function SignInForm(props) {
 
         if (response.data.status == "success") {
           const expirationDate = new Date();
-          expirationDate.setTime(expirationDate.getTime() + 60 * 60 * 1000);
+          expirationDate.setTime(expirationDate.getTime() + 60 * 60 * 1000 * 2);
 
           Cookies.set("firebaseIdToken", response.data.data.idToken, {
             expires: expirationDate,
@@ -93,10 +92,12 @@ function SignInForm(props) {
 
   const handleSignUpAsBuyerClick = () => {
     dispatch({ type: "SET_BUYER_PREFERENCES", value: true });
+    dispatch({ type: "SET_SIGN_IN", value: false });
   };
 
   const handleSignUpAsSellerClick = () => {
     dispatch({ type: "SET_SIGN_UP_SELLER", value: true });
+    dispatch({ type: "SET_SIGN_IN", value: false });
   };
 
   const [isPopupOpen, setPopupOpen] = useState(true);
@@ -145,17 +146,20 @@ function SignInForm(props) {
             <Button className={classes.element} onClick={handleSignInClick}>
               Sign In
             </Button>
+
+            <h2 className={classes.signupHeading}>Create an account as a...</h2>
+
             <Button
-              className={classes.element}
+              className={`${classes.element} ${classes.signupButton}`}
               onClick={handleSignUpAsBuyerClick}
             >
-              Sign Up As Buyer
+              Buyer{" "}
             </Button>
             <Button
-              className={classes.element}
+              className={`${classes.element} ${classes.signupButton}`}
               onClick={handleSignUpAsSellerClick}
             >
-              Sign Up As Seller
+              Seller{" "}
             </Button>
           </div>
         </div>

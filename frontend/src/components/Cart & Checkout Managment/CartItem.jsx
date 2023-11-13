@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Button, Text, Modal } from "@mantine/core";
-import IconTrashBin from "../assets/icons/ic_trash.svg";
+import IconTrashBin from "../../assets/icons/ic_trash.svg";
 
 import classes from "./CartItem.module.css";
 import axios from "axios";
-import { showNotifications } from "../utils/ShowNotification";
+import { showNotifications } from "../../utils/ShowNotification";
 
 function CartItem(props) {
   const [confirmation, setConfirmation] = useState(false);
@@ -92,7 +92,8 @@ function CartItem(props) {
       <td>{props.title}</td>
       <td>{props.category}</td>
       <td>{props.size}</td>
-      <td>{props.price}</td>
+      <td>{props.colour}</td>
+      <td>SGD {props.price}</td>
       <td>
         <div className={classes.quantityContainer}>
           <Button size="xs" variant="outline" onClick={decreaseQuantity}>

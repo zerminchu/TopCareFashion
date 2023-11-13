@@ -10,6 +10,7 @@ import {
   TextInput,
   createStyles,
   rem,
+  Pagination,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconCopy, IconSearch, IconSettings } from "@tabler/icons-react";
@@ -21,7 +22,7 @@ import { useDispatch } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
+import { retrieveUserInfo } from "../../../utils/RetrieveUserInfoFromToken";
 import classes from "./SellerHome.module.css";
 
 const useStyles = createStyles((theme) => ({
@@ -89,6 +90,26 @@ function SellerCards() {
   const [selectedSubCategory, setSelectedSubCategory] = useState("");
 
   const [currentUser, setCurrentUser] = useState();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(12);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const renderPagination = () => {
+    const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+
+    return (
+      <div className={classes.paginationContainer}>
+        <Pagination
+          value={currentPage}
+          onChange={handlePageChange}
+          total={totalPages}
+        />
+      </div>
+    );
+  };
 
   const filterItems = (
     selectedCategory,
@@ -346,124 +367,99 @@ function SellerCards() {
       </div>
 
       <div style={{ display: "flex", flexWrap: "wrap" }}>
-        {filteredItems.map((item, index) => (
-          <Card
-            withBorder
-            radius="md"
-            className={classes.card}
-            key={index}
-            style={{
-              flex: "0 0 calc(25% - 1rem)",
-              margin: "0.5rem",
-              padding: "0.5rem",
-            }}
-          >
-            <Card.Section className={classes.imageSection}>
-              <Image
-                src={item.image_urls[0]}
-                alt={item.category}
-                width={150}
-                height={180}
-              />
-            </Card.Section>
+        {filteredItems
+          .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+          .map((item, index) => (
+            <Card
+              withBorder
+              radius="md"
+              className={classes.card}
+              key={index}
+              style={{
+                flex: "0 0 calc(25% - 1rem)",
+                margin: "0.5rem",
+                padding: "0.5rem",
+              }}
+            >
+              <Card.Section className={classes.imageSection}>
+                <Image
+                  src={item.image_urls[0]}
+                  alt={item.category}
+                  width={150}
+                  height={180}
+                />
+              </Card.Section>
 
-            <Group position="apart" mt="md">
-              <div>
-                <Text>{item.condition}</Text>
-              </div>
-            </Group>
-
-            <Card.Section className={classes.section} mt="md">
-              <Text fz="sm" c="dimmed" className={classes.label}>
-                {item.title}
-              </Text>
-
-              <Group spacing={8} mb={-8}>
-                {/* Add your features here */}
-              </Group>
-            </Card.Section>
-
-            <Card.Section className={classes.section}>
-              <Group spacing={30}>
+              <Group position="apart" mt="md">
                 <div>
-                  <Text fz="xl" fw={700} sx={{ lineHeight: 1 }}></Text>S$
-                  {item.price}
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    marginLeft: "auto",
-                  }}
-                >
-                  <Burger
-                    opened={openedMenus[index]}
-                    onClick={() => handleBurgerClick(index)}
-                    aria-label={label}
-                  />
-                </div>
-                <div className={classes.optionsContainer}>
-                  {openedMenus[index] && (
-                    <Menu position="bottom" shadow="xs">
-                      <Menu.Item icon={<IconSettings size={14} />}>
-                        <Link
-                          to={`/edit-listing/${item.user_id}/${item.item_id}`}
-                          style={{
-                            textDecoration: "none",
-                            color: "inherit",
-                          }}
-                        >
-                          Edit
-                        </Link>
-                      </Menu.Item>
-                      <Menu.Item
-                        icon={<IconCopy size={14} />}
-                        onClick={() => handleShareClick(item)}
-                      >
-                        Copy
-                        <ToastContainer
-                          position="top-right"
-                          autoClose={3000}
-                          hideProgressBar
-                        />
-                      </Menu.Item>
-                    </Menu>
-                  )}
+                  <Text>{item.condition}</Text>
                 </div>
               </Group>
-            </Card.Section>
-          </Card>
-        ))}
+
+              <Card.Section className={classes.section} mt="md">
+                <Text fz="sm" c="dimmed" className={classes.label}>
+                  {item.title}
+                </Text>
+
+                <Group spacing={8} mb={-8}>
+                  {/* Add your features here */}
+                </Group>
+              </Card.Section>
+
+              <Card.Section className={classes.section}>
+                <Group spacing={30}>
+                  <div>
+                    <Text fz="xl" fw={700} sx={{ lineHeight: 1 }}></Text>SGD{" "}
+                    {""}
+                    {item.price}
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      marginLeft: "auto",
+                    }}
+                  >
+                    <Burger
+                      opened={openedMenus[index]}
+                      onClick={() => handleBurgerClick(index)}
+                      aria-label={label}
+                    />
+                  </div>
+                  <div className={classes.optionsContainer}>
+                    {openedMenus[index] && (
+                      <Menu position="bottom" shadow="xs">
+                        <Menu.Item icon={<IconSettings size={14} />}>
+                          <Link
+                            to={`/edit-listing/${item.user_id}/${item.item_id}`}
+                            style={{
+                              textDecoration: "none",
+                              color: "inherit",
+                            }}
+                          >
+                            Edit
+                          </Link>
+                        </Menu.Item>
+                        <Menu.Item
+                          icon={<IconCopy size={14} />}
+                          onClick={() => handleShareClick(item)}
+                        >
+                          Copy
+                          <ToastContainer
+                            position="top-right"
+                            autoClose={3000}
+                            hideProgressBar
+                          />
+                        </Menu.Item>
+                      </Menu>
+                    )}
+                  </div>
+                </Group>
+              </Card.Section>
+            </Card>
+          ))}
       </div>
-      {/*  {selectedItemForShare && (
-        <Modal
-          isOpen={isShareModalOpen}
-          onRequestClose={closeShareModal}
-          contentLabel="Share Modal"
-          className="share-modal"
-          overlayClassName="share-modal-overlay"
-        >
-          <div className="modal-header">
-            <button className="close-button" onClick={closeShareModal}>
-              <AiOutlineClose size={24} />
-            </button>
-          </div>
-          <div className="modal-content">
-            <h2>Share this item</h2>
-            <div className="social-icons">
-              <FacebookShareButton url={itemURL} quote={itemTitle}>
-                <FacebookIcon size={32} round />
-              </FacebookShareButton>
-              <TwitterShareButton url={itemURL} title={itemTitle}>
-                <TwitterIcon size={32} round />
-              </TwitterShareButton>
-              <WhatsappShareButton url={itemURL} title={itemTitle}>
-                <WhatsappIcon size={32} round />
-              </WhatsappShareButton>
-            </div>
-          </div>
-        </Modal> 
-      )} */}
+      {filteredItems.length > itemsPerPage && renderPagination()}
     </div>
   );
 }

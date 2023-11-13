@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { Button, Text } from "@mantine/core";
-import { retrieveUserInfo } from "../utils/RetrieveUserInfoFromToken";
+import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -58,7 +58,7 @@ function Product(props) {
         <Text fw={500} size="lg">
           {props.title}
         </Text>
-        <Text className={classes.boldPrice}>${props.price}</Text>
+        <Text className={classes.boldPrice}>SGD {props.price}</Text>
         <Text className={classes.greyCategory}>{props.condition}</Text>
       </div>
       <div className={classes.cardFooter}>

@@ -6,8 +6,8 @@ import axios from "axios";
 
 import { useNavigate } from "react-router-dom";
 import { retrieveUserInfo } from "../../../utils/RetrieveUserInfoFromToken";
-import InboxUser from "../../../components/InboxUser";
-import Chat from "../../../components/Chat";
+import InboxUser from "../../../components/Chat/InboxUser";
+import Chat from "../../../components/Chat/Chat";
 import IconSend from "../../../assets/icons/ic_send.svg";
 import Cookies from "js-cookie";
 import Fire from "../../../firebase";

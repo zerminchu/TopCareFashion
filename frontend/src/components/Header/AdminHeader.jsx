@@ -32,7 +32,7 @@ function AdminHeader(props) {
           Top Care Fashion
         </Text>
       </div>
-      <Button onClick={logoutOnClick}>Log out</Button>
+      <Button onClick={logoutOnClick}>Sign Out</Button>
     </div>
   );
 }

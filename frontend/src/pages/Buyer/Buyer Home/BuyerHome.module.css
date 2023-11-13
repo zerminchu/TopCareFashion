@@ -8,7 +8,7 @@
 
 @media screen and (min-width: 1440px) {
   .listProduct {
-    grid-gap: 200px;
+    grid-gap: 100px;
     counter-reset: grid;
     justify-content: center;
     align-items: center;

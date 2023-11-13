@@ -1,11 +1,11 @@
 /* eslint-disable react/prop-types */
 import classes from "./ProductCategory.module.css";
-import ILCategoryBottom from "../assets/illustrations/il_category_bottom.jpg";
-import ILCategoryTop from "../assets/illustrations/il_category_top.jpg";
-import ILCategoryFootwear from "../assets/illustrations/il_category_footwear.jpg";
-import womentop from "../assets/illustrations/womentop.jpg";
-import womenbottom from "../assets/illustrations/womenbottom.jpg";
-import womenfootwear from "../assets/illustrations/womenfootwear.jpg";
+import ILCategoryBottom from "../../assets/illustrations/il_category_bottom.jpg";
+import ILCategoryTop from "../../assets/illustrations/il_category_top.jpg";
+import ILCategoryFootwear from "../../assets/illustrations/il_category_footwear.jpg";
+import womentop from "../../assets/illustrations/womentop.jpg";
+import womenbottom from "../../assets/illustrations/womenbottom.jpg";
+import womenfootwear from "../../assets/illustrations/womenfootwear.jpg";
 
 import { Text } from "@mantine/core";
 import { useState } from "react";

@@ -535,7 +535,7 @@ function EditListing() {
         <br />
         <TextInput
           label="Price"
-          value={"S$" + (isEditing ? form.values.price : item.price)}
+          value={"SGD" + (isEditing ? form.values.price : item.price)}
           style={{ width: "50%" }}
           classNames={classes}
           disabled={!isEditing}

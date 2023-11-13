@@ -9,9 +9,9 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
-import CategoryListing from "../../../components/CategoryListing";
-import Product from "../../../components/Product";
-import ProductCategory from "../../../components/ProductCategory";
+import CategoryListing from "../../../components/Home Page/CategoryListing";
+import Product from "../../../components/Home Page/Product";
+import ProductCategory from "../../../components/Home Page/ProductCategory";
 import { retrieveUserInfo } from "../../../utils/RetrieveUserInfoFromToken";
 import classes from "./BuyerHome.module.css";
 import CarouselAds from "./CarouselAds";
@@ -105,10 +105,6 @@ function BuyerHome(props) {
 
     retrieveAllItems();
   }, []);
-
-  /*   useEffect(() => {
-    index.search(productID).then(({ hits }) => setproductList(hits[0]));
-  }, []); */
 
   useEffect(() => {
     const retrieveCategoryData = async () => {
@@ -248,14 +244,9 @@ function BuyerHome(props) {
     setBuyerPreferencesProduct(filteredProducts);
   };
 
-  const setAlgoliaPreferences = () => {
-    // setAlgoliaProduct(....something ......)
-  };
-
   useEffect(() => {
     if (productsWithAvailability) {
       setBuyerPreferences();
-      setAlgoliaPreferences();
     }
   }, [productsWithAvailability]);
 
@@ -265,10 +256,6 @@ function BuyerHome(props) {
         productsWithAvailability,
         algoliaProduct
       );
-
-      /*      console.log("All product: ", productsWithAvailability);
-      console.log("buyer preferences: ", buyerPreferencesProduct);
-      console.log("Algolia product: ", algoliaProduct); */
 
       const combinedProducts = Array.from(new Set(concatenatedArray));
       setCombinedProductList(combinedProducts);

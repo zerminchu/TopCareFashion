@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Table, Text } from "@mantine/core";
 import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
 import { useNavigate } from "react-router-dom";
-import WishlistItem from "../../components/WishlistItem";
+import WishlistItem from "../../components/Wishlist/WishlistItem";
 import Cookies from "js-cookie";
 import axios from "axios";
 
@@ -97,10 +97,12 @@ function Wishlist() {
         <Table verticalSpacing="md">
           <thead>
             <tr>
-              <th>Title</th>
+              <th></th>
+              <th>Item Name</th>
               <th>Category</th>
               <th>Size</th>
-              <th>Price</th>
+              <th>Colour</th>
+              <th>Unit Price</th>
               <th>Action</th>
             </tr>
           </thead>

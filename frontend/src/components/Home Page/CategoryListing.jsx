@@ -1,21 +1,24 @@
 /* eslint-disable no-prototype-builtins */
 /* eslint-disable no-unused-vars */
-import { Select, TextInput } from "@mantine/core";
+import { Select, TextInput, Pagination } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { retrieveUserInfo } from "../utils/RetrieveUserInfoFromToken";
-import { showNotifications } from "../utils/ShowNotification";
+import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
+import { showNotifications } from "../../utils/ShowNotification";
 import classes from "./CategoryListing.module.css";
-import NotFoundImage from "./NotFound";
+import NotFoundImage from "../Not Found/NotFound";
 import Product from "./Product";
+import { createStyles } from "@mantine/core";
+import { useDispatch } from "react-redux";
 
 function CategoryListingsPage(props) {
   const navigate = useNavigate();
   const location = useLocation();
   const { category } = useParams();
+  const dispatch = useDispatch();
 
   const [currentUser, setCurrentUser] = useState();
   const [productList, setProductList] = useState([]);
@@ -25,12 +28,25 @@ function CategoryListingsPage(props) {
   const [selectedSort, setSelectedSort] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [categoryOptions, setCategoryOptions] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   const gender = location.state?.gender;
+
+  const useStyles = createStyles(() => ({
+    categoryListing: {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      height: "100vh",
+    },
+  }));
 
   useEffect(() => {
     const retrieveAllItems = async () => {
       try {
+        dispatch({ type: "SET_LOADING", value: true });
+
         const url =
           import.meta.env.VITE_NODE_ENV === "DEV"
             ? import.meta.env.VITE_API_DEV
@@ -49,11 +65,13 @@ function CategoryListingsPage(props) {
         setProductList(items);
       } catch (error) {
         console.error("Error fetching products:", error);
+      } finally {
+        dispatch({ type: "SET_LOADING", value: false });
       }
     };
 
     retrieveAllItems();
-  }, [gender, category]);
+  }, [gender, category, dispatch]);
 
   // Check current user
   useEffect(() => {
@@ -83,6 +101,8 @@ function CategoryListingsPage(props) {
   }, [currentUser]);
 
   useEffect(() => {
+    setCurrentPage(1);
+
     const filteredAndSortedProducts = [...productList];
 
     const filteredProducts = filteredAndSortedProducts.filter((product) => {
@@ -113,15 +133,18 @@ function CategoryListingsPage(props) {
     const itemsToDisplay =
       searchResults.length > 0 ? searchResults : productList;
 
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = itemsToDisplay.slice(
+      indexOfFirstItem,
+      indexOfLastItem
+    );
+
     if (searchResults.length === 0) {
-      return (
-        <div className={classes.centeredContainer}>
-          <NotFoundImage />
-        </div>
-      );
+      return <NotFoundImage />;
     }
 
-    return itemsToDisplay.map((product, index) => (
+    return currentItems.map((product, index) => (
       <Product
         key={index}
         item_id={product.item_id}
@@ -160,13 +183,19 @@ function CategoryListingsPage(props) {
     setSelectedCategory(value);
   };
 
+  const totalPages = Math.ceil(searchResults.length / itemsPerPage);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
   return (
     <div className={classes.container}>
       <div>
         <div className={classes.searchContainer}>
           <Select
             data={[
-              { label: "All Available Items", value: "" },
+              { label: "All Available Categories", value: "" },
               ...categoryOptions,
             ]}
             value={selectedCategory}
@@ -206,11 +235,11 @@ function CategoryListingsPage(props) {
         </div>
       </div>
       <div>
-        <h1 style={{ marginBottom: "10px", marginTop: "-25px" }}>{`${
+        <h1 style={{ marginBottom: "10px", marginTop: "20px" }}>{`${
           searchResults.length
-        } listings for ${
-          selectedCategory ? selectedCategory : "All Categories"
-        }`}</h1>
+        } Listings for ${
+          selectedCategory ? selectedCategory : "All Available"
+        } ${selectedCategory ? "" : `${category}s`}`}</h1>
 
         <h2 style={{ fontWeight: "normal", fontSize: "18px" }}>
           Looking for New or Used {category}s in Singapore? Browse great deals
@@ -218,6 +247,15 @@ function CategoryListingsPage(props) {
         </h2>
       </div>
       <div className={classes.listProduct}>{renderProductListings()}</div>
+      {totalPages > 1 && (
+        <div className={classes.paginationContainer}>
+          <Pagination
+            value={currentPage}
+            onChange={handlePageChange}
+            total={totalPages}
+          />
+        </div>
+      )}
     </div>
   );
 }

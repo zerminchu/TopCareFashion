@@ -1,12 +1,12 @@
-from app import buyerViews, sellerViews, views
+from app import buyerViews, sellerViews, views, adminViews
 from app.buyerViews import *
 from app.sellerViews import *
+from app.adminViews import *
 from app.views import *
 from django.contrib import admin
 from django.urls import include, path, re_path
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path("add-product/", views.add_product, name="add-product"),
     path("view-item/all/", views.get_all_item, name="view-item/all"),
     path("view-item/<str:user_id>/",
@@ -33,7 +33,7 @@ urlpatterns = [
     path("retrieve-user-info-from-token/", views.retrieveUserInfoFromToken,
          name="retrieve-user-info-from-token"),
     path("update-profile/", views.updateProfile, name="update-profile"),
-    path("listing/advertisement", views.getAdvertisementListing,
+    path("listing/advertisement/<str:gender>/", views.getAdvertisementListing,
          name="get-listing-advertisement"),
     path("listing-detail/<str:item_id>", views.getListingDetailByItemId,
          name="get-listing-detail-by-item-id"),
@@ -114,6 +114,13 @@ urlpatterns = [
     path("buyer/premium-feature-checkout/", buyerViews.getPremiumFeatureCheckoutLink,
          name="get-premium-feature-checkout-link"),
 
+
+     # Admin
+     path("admin/users/", adminViews.allUsers,
+         name="admin-all-users"),
+
+     path("admin/users/<str:user_id>/", adminViews.oneUser,
+         name="admin-one-user"),
 ]
 
 

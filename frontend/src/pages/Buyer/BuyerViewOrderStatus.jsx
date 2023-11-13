@@ -107,7 +107,7 @@ function productOrderStatus() {
         showNotifications({
           status: response.data.status,
           title: "Success",
-          message: "Thank you for using TopCare! enjoy the product!",
+          message: "Thank you for using Top Care Fashion! Enjoy the product!",
         });
       } catch (error) {
         console.log(error);
@@ -153,7 +153,7 @@ function productOrderStatus() {
               <Stepper.Step label="Shopping cart" disabled></Stepper.Step>
               <Stepper.Step label="Purchased" disabled></Stepper.Step>
               <Stepper.Step
-                label="Available for pickup"
+                label="Available For Pickup"
                 disabled
               ></Stepper.Step>
               <Stepper.Step label="Completed" disabled>

@@ -10,7 +10,7 @@ import classes from "./AdminHome.module.css";
 function AdminHome() {
   return (
     <div className={classes.container}>
-      <h1>System Administrator</h1>
+      <h1>System Administrator Dashboard</h1>
       <Tabs defaultValue="buyer">
         <Tabs.List>
           <Tabs.Tab value="buyer">Buyer</Tabs.Tab>
