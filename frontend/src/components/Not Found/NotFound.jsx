@@ -63,7 +63,7 @@ function NotFoundImage() {
         <div>
           <Title className={classes.title}>Something is not right...</Title>
           <Text className={classes.text} color="dimmed" size="lg">
-            Your search did not match any listings.
+            No Listings were found.
           </Text>
         </div>
       </SimpleGrid>
