@@ -52,7 +52,6 @@ function AdminSellerItem(props) {
         window.location.reload();
       }
     } catch (error) {
-      console.log("error", error);
       dispatch({ type: "SET_LOADING", value: false });
       showNotifications({
         status: "success",
@@ -121,6 +120,17 @@ function AdminSellerItem(props) {
     }
   };
 
+  const businessProfileOnClick = () => {
+    if (props && props.business_profile) {
+      navigate("/admin/edit-business-profile", {
+        state: {
+          businessProfile: props.business_profile,
+          userId: props.user_id,
+        },
+      });
+    }
+  };
+
   return (
     <tr>
       <td>
@@ -172,7 +182,9 @@ function AdminSellerItem(props) {
         />
       </td>
       <td>
-        <Button variant="outline">Business profile</Button>
+        <Button onClick={businessProfileOnClick} variant="outline">
+          Business profile
+        </Button>
       </td>
       <td>
         <Button onClick={updateOnClick} color="blue">

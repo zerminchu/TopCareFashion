@@ -28,11 +28,17 @@ import UserProfile from "../pages/Seller/UserProfile";
 import SellerSummary from "../pages/Seller/SellerSummary";
 import CategorySelection from "../pages/Seller/Transactions/CategorySelection";
 import SpecificSellerListings from "../pages/Buyer/SpecificSellerListings";
+import AdminEditBusinessProfile from "../pages/Admin/AdminEditBusinessProfile";
 
 function PageRoutes() {
   return (
     <Routes>
-      {/* Private route for seller */}
+      {/* private route for admin */}
+      <Route
+        path="admin/edit-business-profile"
+        element={<AdminEditBusinessProfile />}
+      />
+      ;{/* Private route for seller */}
       <Route path="seller/create-listing" element={<ListItem />} />;
       <Route path="/edit-listing/:id/:item_id/" element={<EditListing />} />
       <Route path="/seller-home/:id" element={<SellerHome />} />;

@@ -18,7 +18,7 @@ function AdminSeller() {
 
         setSellerData(response.data.data);
       } catch (error) {
-        console.log("error retrieve all user dara", error);
+        console.log(error);
       }
     };
 
@@ -27,11 +27,9 @@ function AdminSeller() {
 
   const deleteSellerData = (sellerId) => {
     if (sellerData && sellerId) {
-      console.log("delete seller id: ", sellerId);
       const updatedSellerData = sellerData.filter(
         (item) => item.user_id !== sellerId
       );
-      console.log("set new data: ", updatedSellerData);
 
       setSellerData(updatedSellerData);
     }
@@ -40,7 +38,6 @@ function AdminSeller() {
   const renderSellerItem = () => {
     if (sellerData) {
       if (sellerData.length > 0) {
-        console.log("rendering seller data: ", sellerData);
         return sellerData.map((data, index) => {
           return (
             <AdminSellerItem
@@ -53,6 +50,7 @@ function AdminSeller() {
               date_of_birth={data.date_of_birth}
               profile_image_url={data.profile_image_url}
               deleteSellerData={deleteSellerData}
+              business_profile={data.business_profile}
             />
           );
         });
