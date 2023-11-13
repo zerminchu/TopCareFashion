@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Table, Text } from "@mantine/core";
 import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
 import { useNavigate } from "react-router-dom";
-import WishlistItem from "../../components/WishlistItem";
+import WishlistItem from "../../components/Wishlist/WishlistItem";
 import Cookies from "js-cookie";
 import axios from "axios";
 

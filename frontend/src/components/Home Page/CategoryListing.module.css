@@ -1,0 +1,100 @@
+
+:root {
+  --primary-color: #3498db;
+  --secondary-color: #e74c3c;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f7f7f7;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  flex-direction: column;
+  justify-content: center; 
+  align-items: center; 
+  padding: 2% 7%;
+  gap: 2rem; 
+  background-color: #fff; 
+  border-radius: 10px; 
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);  
+  margin-top: -50px;
+}
+
+.listProduct {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-gap: 1.5rem; 
+  counter-reset: grid;
+  gap: 2em; 
+}
+
+.listProductCategory {
+  display: flex;
+  justify-content: space-between;
+  background-color: var(--primary-color); 
+  padding: 1.5rem; 
+  border-radius: 5px;
+  color: #fff; 
+}
+
+.searchContainer {
+  display: flex;
+  width: 100%;
+  gap: 2rem;
+  flex-direction: row;
+  margin-top: -20px;
+}
+
+.categoryContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.seeAllCategoryContainer {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  width: fit-content;
+  align-self: flex-end;
+  color: var(--secondary-color); 
+  
+}
+
+.searchBar {
+  flex: 15;
+  border-radius: 5px;
+  
+}
+
+.searchButton {
+  flex: 1;
+  background-color: var(--primary-color); 
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-weight: bold; 
+  font-size: 1.2rem; 
+}
+
+.searchButton:hover {
+  background-color: var(--secondary-color);
+}
+
+.viewMoreButtonContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2rem;
+}
+
+.centered-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; 
+}

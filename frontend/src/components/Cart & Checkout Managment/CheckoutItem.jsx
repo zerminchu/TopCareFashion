@@ -2,9 +2,9 @@
 /* eslint-disable no-unused-vars */
 import React from "react";
 import { Stepper, Button, Group, Text, Table, TextInput } from "@mantine/core";
-import ILProductImage from "../assets/illustrations/il_category_top.jpg";
-import ILLNullImageListing from "../assets/illustrations/il_null_image_clothes.svg";
-import IconLocation from "../assets/icons/ic_location.svg";
+import ILProductImage from "../../assets/illustrations/il_category_top.jpg";
+import ILLNullImageListing from "../../assets/illustrations/il_null_image_clothes.svg";
+import IconLocation from "../../assets/icons/ic_location.svg";
 
 import classes from "./CheckoutItem.module.css";
 import { useNavigate } from "react-router-dom";
@@ -19,7 +19,7 @@ function CheckoutItem(props) {
       });
       return;
     }
-  
+
     navigate("/chatting");
   };
 

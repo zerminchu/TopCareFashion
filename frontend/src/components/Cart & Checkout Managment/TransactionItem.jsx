@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
 import { Badge, Button, Skeleton } from "@mantine/core";
-import ILLNullImageListing from "../assets/illustrations/il_null_image_clothes.svg";
+import ILLNullImageListing from "../../assets/illustrations/il_null_image_clothes.svg";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 

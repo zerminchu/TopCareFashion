@@ -6,11 +6,12 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { retrieveUserInfo } from "../utils/RetrieveUserInfoFromToken";
-import { showNotifications } from "../utils/ShowNotification";
+import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
+import { showNotifications } from "../../utils/ShowNotification";
 import classes from "./CategoryListing.module.css";
-import NotFoundImage from "./NotFound";
+import NotFoundImage from "../Not Found/NotFound";
 import Product from "./Product";
+import { createStyles } from "@mantine/core";
 
 function CategoryListingsPage(props) {
   const navigate = useNavigate();
@@ -27,6 +28,15 @@ function CategoryListingsPage(props) {
   const [categoryOptions, setCategoryOptions] = useState([]);
 
   const gender = location.state?.gender;
+
+  const useStyles = createStyles(() => ({
+    categoryListing: {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      height: "100vh",
+    },
+  }));
 
   useEffect(() => {
     const retrieveAllItems = async () => {
@@ -114,11 +124,7 @@ function CategoryListingsPage(props) {
       searchResults.length > 0 ? searchResults : productList;
 
     if (searchResults.length === 0) {
-      return (
-        <div className={classes.centeredContainer}>
-          <NotFoundImage />
-        </div>
-      );
+      return <NotFoundImage />;
     }
 
     return itemsToDisplay.map((product, index) => (
@@ -206,11 +212,11 @@ function CategoryListingsPage(props) {
         </div>
       </div>
       <div>
-        <h1 style={{ marginBottom: "10px", marginTop: "-25px" }}>{`${
+        <h1 style={{ marginBottom: "10px", marginTop: "20px" }}>{`${
           searchResults.length
-        } listings for ${
-          selectedCategory ? selectedCategory : "All Categories"
-        }`}</h1>
+        } Listings for ${
+          selectedCategory ? selectedCategory : "All Available"
+        } ${selectedCategory ? "" : `${category}s`}`}</h1>
 
         <h2 style={{ fontWeight: "normal", fontSize: "18px" }}>
           Looking for New or Used {category}s in Singapore? Browse great deals

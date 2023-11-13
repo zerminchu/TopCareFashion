@@ -8,9 +8,9 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
-import CategoryListing from "../../../components/CategoryListing";
-import Product from "../../../components/Product";
-import ProductCategory from "../../../components/ProductCategory";
+import CategoryListing from "../../../components/Home Page/CategoryListing";
+import Product from "../../../components/Home Page/Product";
+import ProductCategory from "../../../components/Home Page/ProductCategory";
 import { retrieveUserInfo } from "../../../utils/RetrieveUserInfoFromToken";
 import classes from "./BuyerHome.module.css";
 import CarouselAds from "./CarouselAds";
@@ -38,37 +38,42 @@ function BuyerHomeMen(props) {
   const [combinedProductList, setCombinedProductList] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
   const [itemIdForAlgolia, setItemIdForAlgolia] = useState();
+  const [fetchedAlgoliaList, setFetchedAlgoliaList] = useState([]);
 
   // Fetch ID for Algolia
   useEffect(() => {
     const fetchAlgolia = async () => {
       try {
         const url =
-          import.meta.env.VITE_NODE_ENV == "DEV"
+          import.meta.env.VITE_NODE_ENV === "DEV"
             ? import.meta.env.VITE_API_DEV
             : import.meta.env.VITE_API_PROD;
 
         const response = await axios.get(
           `${url}/buyer/${currentUser.user_id}/orders/`
         );
-
         const orders = response.data.data;
 
-        const checkoutData = orders.map((order) => order.checkout_data);
-        const flattenedCheckoutData = [].concat(...checkoutData);
-        flattenedCheckoutData.sort(
+        const sortedOrders = orders.sort(
           (a, b) => new Date(b.created_at) - new Date(a.created_at)
         );
 
-        const latestItemIds = flattenedCheckoutData
-          .slice(0, 3)
-          .map((data) => data.item_id);
+        const latestItemIds = sortedOrders.reduce((acc, order) => {
+          const itemId = order.checkout_data?.item_id;
+          if (itemId && !acc.includes(itemId) && acc.length < 3) {
+            acc.push(itemId);
+          }
+          return acc;
+        }, []);
+
+        console.log(latestItemIds);
 
         setItemIdForAlgolia(latestItemIds);
       } catch (error) {
         console.error("Error fetching orders:", error);
       }
     };
+
     if (currentUser) {
       fetchAlgolia();
     }
@@ -204,10 +209,8 @@ function BuyerHomeMen(props) {
         uniqueProductsMap.set(product.item_id, product);
       });
 
-      const combinedProducts = Array.from(uniqueProductsMap.values());
-      console.log("COMBINED PRODUCT: ", combinedProducts);
-
-      setCombinedProductList(combinedProducts);
+      setCombinedProductList(productsWithAvailability);
+      setFetchedAlgoliaList(algoliaProduct);
     }
   }, [buyerPreferencesProduct, productsWithAvailability, algoliaProduct]);
 
@@ -321,6 +324,7 @@ function BuyerHomeMen(props) {
       });
 
       if (itemData.length > 0) {
+        dispatch({ type: "SET_LOADING", value: true });
         const response = await recommendClient.getFrequentlyBoughtTogether(
           itemData
         );
@@ -346,10 +350,12 @@ function BuyerHomeMen(props) {
           );
 
           setAlgoliaProduct(updatedAlgoliaProducts);
+          dispatch({ type: "SET_LOADING", value: false });
         }
       }
     } catch (error) {
       console.log("Error fetching frequently bought items: ", error);
+      dispatch({ type: "SET_LOADING", value: false });
     }
   };
 
@@ -357,6 +363,35 @@ function BuyerHomeMen(props) {
     return user.map((user, index) => {
       return <CategoryListing key={index} name={user.name} />;
     });
+  };
+
+  const renderAlgoliaList = () => {
+    if (fetchedAlgoliaList) {
+      return fetchedAlgoliaList
+        .slice(0, visibleProductCount)
+        .map((product, index) => (
+          <Product
+            key={index}
+            item_id={product.item_id}
+            title={product.title}
+            price={product.price}
+            size={product.size}
+            quantity_available={product.quantity_available}
+            avail_status={product.avail_status}
+            images={product.image_urls}
+            description={product.description}
+            average_rating={product.average_rating}
+            reviews={product.reviews}
+            total_ratings={product.total_ratings}
+            store_name={product.store_name}
+            collection_address={product.collection_address}
+            sold={product.sold}
+            category={product.category}
+            condition={product.condition}
+            seller_id={product.user_id}
+          />
+        ));
+    }
   };
 
   const renderCombinedProducts = () => {
@@ -496,6 +531,24 @@ function BuyerHomeMen(props) {
         </div>
 
         <div>
+          <div>
+            {searchText
+              ? null
+              : algoliaProduct.length > 0 && (
+                  <>
+                    <h2>
+                      We've curated some more products we think you'll love
+                    </h2>
+                    <div className={classes.listProductContainer}>
+                      <div className={classes.listProduct}>
+                        {renderAlgoliaList()}
+                      </div>
+                    </div>
+                  </>
+                )}
+          </div>
+
+          <br />
           <h2>
             {searchText
               ? `${searchResultCount} search results for '${searchText}'`
