@@ -85,6 +85,7 @@ interface RowData {
   size: string;
   price: string;
   quantity: Number;
+  colour: string;
   //rate: string; // New property for the rate value
 }
 
@@ -237,11 +238,12 @@ export function Transactions() {
     const generateSearchResults = () => {
       const searchResults = fullData.filter(item => {
         const titleMatch = item.title.toLowerCase().includes(search.toLowerCase());
+        const colourMatch = item.colour.toLowerCase().includes(search.toLowerCase());
         const categoryMatch = item.category.toLowerCase().includes(search.toLowerCase());
         const quantityMatch = item.cart_quantity.toString().includes(search); 
         const priceMatch = item.price.toString().includes(search); 
 
-        return titleMatch || categoryMatch || quantityMatch || priceMatch;
+        return titleMatch || categoryMatch || quantityMatch || priceMatch || colourMatch;
       })
 
       setSortedData(searchResults);
@@ -357,6 +359,7 @@ export function Transactions() {
       }
 
       return sortedData.map((item) => {
+        console.log(item, "hehe")
         return (
           <CartItem
             cartId={item.cart_id}
@@ -367,6 +370,7 @@ export function Transactions() {
             size={item.size}
             price={item.price}
             quantity={item.cart_quantity}
+            colour={item.colour}
             handleQuantityChange={handleQuantityChange}
             handleTrashClick={handleTrashClick}
             handleBuyButtonClick={handleBuyButtonClick}
@@ -381,8 +385,8 @@ export function Transactions() {
   const renderCheckoutButton = () => {
     if (sortedData && sortedData.length > 0) {
       return (
-        <Button onClick={handleProceedCheckoutClick}>
-          Proceed to checkout
+        <Button onClick={handleProceedCheckoutClick} style={{marginTop: "20px"}}>
+          Proceed To Checkout
         </Button>
       );
     }
@@ -424,14 +428,13 @@ export function Transactions() {
                   reversed={reverseSortDirection}
                   onSort={() => console.log("sort title")}
                 >
-                  Title
-                </Th>
+Item Name                </Th>
                 <Th
                   sorted={sortBy === "type"}
                   reversed={reverseSortDirection}
                   onSort={() => console.log("sort type")}
                 >
-                  Category
+                  Type
                 </Th>
                 <Th
                   sorted={sortBy === "size"}
@@ -441,11 +444,16 @@ export function Transactions() {
                   Size
                 </Th>
                 <Th
+                
+                >
+                  Colour
+                </Th>
+                <Th
                   sorted={sortBy === "price"}
                   reversed={reverseSortDirection}
                   onSort={() => console.log("sort price")}
                 >
-                  Price
+                  Unit Price
                 </Th>
                 <Th
                   sorted={sortBy === "quantity"}

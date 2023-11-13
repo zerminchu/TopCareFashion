@@ -198,7 +198,7 @@ def signIn(request):
 
             if (not authUser.email_verified):
                 raise Exception("Please verify your email")
-            
+
             # user = auth.create_user(
             #     email='admin@admin.com',
             #     email_verified=True,
@@ -608,12 +608,14 @@ def getListingDetailByItemId(request, item_id):
             responseData = {
                 "listing_id": (listingData.to_dict())["listing_id"],
                 "avail_status": (listingData.to_dict())["avail_status"],
+                "category": (itemData.to_dict())["category"],
                 "title": (itemData.to_dict())["title"],
                 "user_id": (itemData.to_dict())["user_id"],
                 "item_id": (itemData.to_dict())["item_id"],
                 "collection_address": (listingData.to_dict())["collection_address"],
                 "size": (itemData.to_dict())["size"],
                 "images": (itemData.to_dict())["image_urls"],
+                "colour": (itemData.to_dict())["colour"],
                 "price": (itemData.to_dict())["price"],
                 "quantity_available": (listingData.to_dict())["quantity_available"],
                 "total_ratings": len(reviewList),

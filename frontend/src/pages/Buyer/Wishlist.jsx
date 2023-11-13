@@ -97,10 +97,12 @@ function Wishlist() {
         <Table verticalSpacing="md">
           <thead>
             <tr>
-              <th>Title</th>
+              <th></th>
+              <th>Item Name</th>
               <th>Category</th>
               <th>Size</th>
-              <th>Price</th>
+              <th>Colour</th>
+              <th>Unit Price</th>
               <th>Action</th>
             </tr>
           </thead>

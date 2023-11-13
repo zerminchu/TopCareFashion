@@ -207,7 +207,7 @@ function SellerSummary() {
                 <tr>
                   <th>Image</th>
                   <th>Buyer</th>
-                  <th>Title</th>
+                  <th>Item Name</th>
                   <th>Type</th>
                   <th>Size</th>
                   <th>Price</th>

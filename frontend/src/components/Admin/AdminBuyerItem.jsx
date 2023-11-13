@@ -249,10 +249,14 @@ function AdminBuyerItem(props) {
         />
       </td>
       <td>
-        <Button onClick={updateOnClick} color="blue">
+        <Button
+          onClick={updateOnClick}
+          style={{ marginBottom: "10px", width: "91px" }}
+          color="blue"
+        >
           Update
         </Button>
-        <Button onClick={suspendOnClick} color="red">
+        <Button onClick={suspendOnClick} style={{ width: "91px" }} color="red">
           Suspend
         </Button>
       </td>

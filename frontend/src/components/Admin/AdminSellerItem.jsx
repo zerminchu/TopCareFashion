@@ -187,10 +187,14 @@ function AdminSellerItem(props) {
         </Button>
       </td>
       <td>
-        <Button onClick={updateOnClick} color="blue">
+        <Button
+          onClick={updateOnClick}
+          style={{ marginRight: "20px", width: "91px" }}
+          color="blue"
+        >
           Update
         </Button>
-        <Button onClick={suspendOnClick} color="red">
+        <Button onClick={suspendOnClick} style={{ width: "91px" }} color="red">
           Suspend
         </Button>
       </td>

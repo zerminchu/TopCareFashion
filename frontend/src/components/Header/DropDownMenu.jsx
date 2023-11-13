@@ -142,7 +142,7 @@ function DropDownMenu(props) {
               FAQ
             </Menu.Item>
             <Menu.Item icon={<img src={IconLogout} />} onClick={logoutOnClick}>
-              Logout
+              Sign Out
             </Menu.Item>
           </Menu.Dropdown>
         </Menu>
@@ -206,7 +206,7 @@ function DropDownMenu(props) {
               FAQ
             </Menu.Item>
             <Menu.Item icon={<img src={IconLogout} />} onClick={logoutOnClick}>
-              Logout
+              Sign Out
             </Menu.Item>
           </Menu.Dropdown>
         </Menu>

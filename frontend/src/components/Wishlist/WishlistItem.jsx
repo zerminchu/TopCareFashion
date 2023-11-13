@@ -59,6 +59,7 @@ function WishlistItem(props) {
         );
 
         setWishlistData(response.data.data);
+        console.log(response.data.data);
       } catch (error) {
         console.log(error);
       }
@@ -85,7 +86,10 @@ function WishlistItem(props) {
           </td>
           <td>{wishlistData.title}</td>
           <td>{wishlistData.category}</td>
-          <td>${wishlistData.price}</td>
+          <td>{wishlistData.size}</td>
+          <td>{wishlistData.colour}</td>
+
+          <td>SGD {wishlistData.price}</td>
           <td>
             <div className={classes.deleteContainer}>
               <img

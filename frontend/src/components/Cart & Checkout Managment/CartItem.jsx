@@ -9,6 +9,8 @@ import { showNotifications } from "../../utils/ShowNotification";
 function CartItem(props) {
   const [confirmation, setConfirmation] = useState(false);
 
+  console.log(props, "abcde");
+
   const deleteItem = async () => {
     if (props.cartId && props.cartItemId) {
       const url =
@@ -92,7 +94,8 @@ function CartItem(props) {
       <td>{props.title}</td>
       <td>{props.category}</td>
       <td>{props.size}</td>
-      <td>{props.price}</td>
+      <td>{props.colour}</td>
+      <td>SGD {props.price}</td>
       <td>
         <div className={classes.quantityContainer}>
           <Button size="xs" variant="outline" onClick={decreaseQuantity}>

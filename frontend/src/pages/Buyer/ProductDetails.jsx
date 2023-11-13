@@ -217,8 +217,11 @@ function ProductDetails() {
         seller_id: productDetails.user_id,
         buyer_id: currentUser.user_id,
         size: selectedSize,
+        colour: productDetails.colour,
+        category: productDetails.category,
       };
-      console.log(selectedSize);
+
+      console.log(data, "cart");
 
       aa("convertedObjectIDs", {
         //for trending
@@ -237,7 +240,7 @@ function ProductDetails() {
         objectData: [
           {
             price: productDetails.price,
-            color: productDetails.color,
+            colour: productDetails.colour,
           },
         ],
         currency: "SGD",
@@ -306,6 +309,7 @@ function ProductDetails() {
         seller_id: productDetails.user_id,
         buyer_id: currentUser.user_id,
         size: selectedSize,
+        category: productDetails.category,
       };
 
       const url =
@@ -372,6 +376,8 @@ function ProductDetails() {
         images: productDetails.images,
         seller_id: productDetails.user_id,
         sub_total: parseFloat(subTotal).toFixed(2),
+        colour: productDetails.colour,
+        category: productDetails.category,
       },
     ];
 
@@ -464,6 +470,15 @@ function ProductDetails() {
                   </Text>
                   <Text size="lg" fw={700} align="right" color="blue">
                     {productDetails.collection_address}
+                  </Text>
+                </div>
+
+                <div className={classes.productItemAtribute}>
+                  <Text size="md" fw={500}>
+                    Colour
+                  </Text>
+                  <Text size="lg" fw={700} align="right" color="blue">
+                    {productDetails.colour}
                   </Text>
                 </div>
 

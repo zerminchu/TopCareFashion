@@ -99,7 +99,7 @@ function productRate() {
           cart_quantity={item.cart_quantity}
           quantity_available={item.quantity_available}
           store_name={item.store_name}
-          variation={item.color}
+          colour={item.colour}
           images={item.images}
         />
       );

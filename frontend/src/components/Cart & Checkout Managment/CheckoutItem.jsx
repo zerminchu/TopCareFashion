@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 
 function CheckoutItem(props) {
   const navigate = useNavigate();
+  console.log(props, "aaa");
 
   const chatOnClick = () => {
     if (props && props.seller_id) {
@@ -46,12 +47,13 @@ function CheckoutItem(props) {
         <Table>
           <thead>
             <tr>
-              <th>Product ordered</th>
-              <th>Title</th>
+              <th>Order Placed</th>
+              <th>Item Name</th>
               <th>Size</th>
-              <th>Unit price</th>
+              <th>Type</th>
+              <th>Colour</th>
               <th>Quantity</th>
-              <th>Item subtotal</th>
+              <th>Unit Price</th>
             </tr>
           </thead>
           <tbody>
@@ -65,9 +67,12 @@ function CheckoutItem(props) {
               </td>
               <td>{props.title}</td>
               <td>{props.size}</td>
-              <td>${props.price}</td>
+              <td> {props.category}</td>
+
+              <td> {props.colour}</td>
+
               <td>{props.cart_quantity}</td>
-              <td>${props.sub_total}</td>
+              <td>SGD {props.sub_total}</td>
             </tr>
           </tbody>
         </Table>
