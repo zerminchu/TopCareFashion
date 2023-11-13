@@ -28,7 +28,11 @@ body {
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   grid-gap: 1.5rem; 
   counter-reset: grid;
-  gap: 2em; 
+  gap: 5em; 
+
+  @media (min-width: 2560px) {
+    gap: 12em;
+  }
 }
 
 .listProductCategory {
@@ -97,4 +101,13 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh; 
+}
+
+.paginationContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 40px;
+  margin-bottom: -30px; 
+ 
 }

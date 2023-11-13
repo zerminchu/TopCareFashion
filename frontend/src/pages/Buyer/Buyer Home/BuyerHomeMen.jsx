@@ -1,7 +1,7 @@
 /* eslint-disable no-prototype-builtins */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import { Button, TextInput } from "@mantine/core";
+import { Button, TextInput, Pagination } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -39,11 +39,17 @@ function BuyerHomeMen(props) {
   const [searchResults, setSearchResults] = useState([]);
   const [itemIdForAlgolia, setItemIdForAlgolia] = useState();
   const [fetchedAlgoliaList, setFetchedAlgoliaList] = useState([]);
+  const [isRenderCombinedProductsLoading, setIsRenderCombinedProductsLoading] =
+    useState(true);
+
+  const itemsPerPage = 4;
 
   // Fetch ID for Algolia
   useEffect(() => {
     const fetchAlgolia = async () => {
       try {
+        dispatch({ type: "SET_LOADING", value: true });
+
         const url =
           import.meta.env.VITE_NODE_ENV === "DEV"
             ? import.meta.env.VITE_API_DEV
@@ -71,6 +77,8 @@ function BuyerHomeMen(props) {
         setItemIdForAlgolia(latestItemIds);
       } catch (error) {
         console.error("Error fetching orders:", error);
+      } finally {
+        dispatch({ type: "SET_LOADING", value: false });
       }
     };
 
@@ -118,6 +126,8 @@ function BuyerHomeMen(props) {
   useEffect(() => {
     const retrieveAllItems = async () => {
       try {
+        dispatch({ type: "SET_LOADING", value: true });
+
         const url =
           import.meta.env.VITE_NODE_ENV == "DEV"
             ? import.meta.env.VITE_API_DEV
@@ -131,6 +141,8 @@ function BuyerHomeMen(props) {
         setproductList(menProductList);
       } catch (error) {
         console.log(error);
+      } finally {
+        dispatch({ type: "SET_LOADING", value: false });
       }
     };
 
@@ -140,6 +152,8 @@ function BuyerHomeMen(props) {
   useEffect(() => {
     const retrieveCategoryData = async () => {
       try {
+        dispatch({ type: "SET_LOADING", value: true });
+
         const url =
           import.meta.env.VITE_NODE_ENV == "DEV"
             ? import.meta.env.VITE_API_DEV
@@ -161,6 +175,8 @@ function BuyerHomeMen(props) {
         setSubCategories(uniqueSubCategories);
       } catch (error) {
         console.log(error);
+      } finally {
+        dispatch({ type: "SET_LOADING", value: false });
       }
     };
     retrieveCategoryData();
@@ -237,6 +253,8 @@ function BuyerHomeMen(props) {
 
   const fetchAvailStatus = async (itemId) => {
     try {
+      dispatch({ type: "SET_LOADING", value: true });
+
       const url =
         import.meta.env.VITE_NODE_ENV == "DEV"
           ? import.meta.env.VITE_API_DEV
@@ -247,6 +265,8 @@ function BuyerHomeMen(props) {
     } catch (error) {
       console.log(error);
       return "Available";
+    } finally {
+      dispatch({ type: "SET_LOADING", value: false });
     }
   };
 
@@ -324,7 +344,7 @@ function BuyerHomeMen(props) {
       });
 
       if (itemData.length > 0) {
-        dispatch({ type: "SET_LOADING", value: true });
+        dispatch({ type: "d", value: true });
         const response = await recommendClient.getFrequentlyBoughtTogether(
           itemData
         );
@@ -350,12 +370,10 @@ function BuyerHomeMen(props) {
           );
 
           setAlgoliaProduct(updatedAlgoliaProducts);
-          dispatch({ type: "SET_LOADING", value: false });
         }
       }
     } catch (error) {
       console.log("Error fetching frequently bought items: ", error);
-      dispatch({ type: "SET_LOADING", value: false });
     }
   };
 
@@ -464,7 +482,7 @@ function BuyerHomeMen(props) {
             variant="outline"
             className={classes.viewMoreButton}
             onClick={() => {
-              setVisibleProductCount(visibleProductCount + 4);
+              setVisibleProductCount(visibleProductCount * itemsPerPage);
             }}
           >
             View More
@@ -474,6 +492,20 @@ function BuyerHomeMen(props) {
     }
     return null;
   };
+
+  useEffect(() => {
+    const renderCombinedProducts = async () => {
+      if (combinedProductList) {
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        dispatch({ type: "SET_LOADING", value: false });
+
+        setIsRenderCombinedProductsLoading(false);
+      }
+    };
+    dispatch({ type: "SET_LOADING", value: true });
+
+    renderCombinedProducts();
+  }, [combinedProductList, dispatch]);
 
   return (
     <div>
@@ -509,7 +541,7 @@ function BuyerHomeMen(props) {
         </div>
         <div className={classes.categoryContainer}>
           <div className={classes.listProductCategory}>
-            {subCategories ? (
+            {subCategories &&
               subCategories.map((subCategory, index) => (
                 <ProductCategory
                   key={index}
@@ -517,10 +549,7 @@ function BuyerHomeMen(props) {
                   gender="men"
                   setSelectedCategory={setSelectedCategory}
                 />
-              ))
-            ) : (
-              <p>Loading categories...</p>
-            )}
+              ))}
           </div>
         </div>
 
@@ -554,12 +583,14 @@ function BuyerHomeMen(props) {
               ? `${searchResultCount} search results for '${searchText}'`
               : "Explore the rest of our collections"}
           </h2>
-
-          <div className={classes.listProductContainer}>
-            <div className={classes.listProduct}>
-              {renderCombinedProducts()}
+          {isRenderCombinedProductsLoading ? null : (
+            <div className={classes.listProductContainer}>
+              <div className={classes.listProduct}>
+                {renderCombinedProducts()}
+              </div>
             </div>
-          </div>
+          )}
+
           {renderViewMoreButton()}
         </div>
       </div>

@@ -13,6 +13,11 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   grid-gap: 1.5rem;
+  gap: 5em; 
+
+  @media (min-width: 2560px) {
+    gap: 12em;
+  }
 }
 
 .listProduct .Product {
@@ -56,4 +61,13 @@
   .listProduct .Product {
     padding: 1rem;
   }
+}
+
+.paginationContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 50px;
+  margin-bottom: -20px; 
+ 
 }

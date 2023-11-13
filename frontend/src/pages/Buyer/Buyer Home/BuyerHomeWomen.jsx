@@ -39,6 +39,8 @@ function BuyerHomeWomen(props) {
   const [searchResults, setSearchResults] = useState([]);
   const [itemIdForAlgolia, setItemIdForAlgolia] = useState();
   const [fetchedAlgoliaList, setFetchedAlgoliaList] = useState([]);
+  const [isRenderCombinedProductsLoading, setIsRenderCombinedProductsLoading] =
+    useState(true);
 
   // Fetch ID for Algolia
   useEffect(() => {
@@ -474,6 +476,21 @@ function BuyerHomeWomen(props) {
     return null;
   };
 
+  useEffect(() => {
+    const renderCombinedProducts = async () => {
+      if (combinedProductList) {
+        dispatch({ type: "SET_LOADING", value: true });
+
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+
+        dispatch({ type: "SET_LOADING", value: false });
+        setIsRenderCombinedProductsLoading(false);
+      }
+    };
+
+    renderCombinedProducts();
+  }, [combinedProductList, dispatch]);
+
   return (
     <div>
       <div className={classes.container}>
@@ -547,12 +564,14 @@ function BuyerHomeWomen(props) {
               ? `${searchResultCount} search results for '${searchText}'`
               : "Explore the rest of our collections"}
           </h2>
-
-          <div className={classes.listProductContainer}>
-            <div className={classes.listProduct}>
-              {renderCombinedProducts()}
+          {isRenderCombinedProductsLoading ? null : (
+            <div className={classes.listProductContainer}>
+              <div className={classes.listProduct}>
+                {renderCombinedProducts()}
+              </div>
             </div>
-          </div>
+          )}
+
           {renderViewMoreButton()}
         </div>
       </div>
