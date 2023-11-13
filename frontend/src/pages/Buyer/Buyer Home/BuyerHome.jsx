@@ -387,7 +387,7 @@ function BuyerHome(props) {
                 />
               ))
             ) : (
-              <p>Loading categories...</p>
+              <p>Fetching categories...</p>
             )}
           </div>
         </div>
