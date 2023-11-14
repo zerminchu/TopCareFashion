@@ -212,7 +212,7 @@ function ProductDetails() {
       const data = {
         listing_id: productDetails.listing_id,
         item_id: itemId,
-        cart_quantity: 1,
+        cart_quantity: quantity,
         created_at: today,
         seller_id: productDetails.user_id,
         buyer_id: currentUser.user_id,
