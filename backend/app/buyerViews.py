@@ -243,7 +243,7 @@ def addToCart(request):
                     for cartItem in allCartItems:
                         if (((cartItem.to_dict())["listing_id"] == data["listing_id"]) and ((cartItem.to_dict())["size"] == data["size"])):
                             updatedCartQuantity = int(
-                                (cartItem.to_dict())["cart_quantity"]) + 1
+                                (cartItem.to_dict())["cart_quantity"]) + int(data["cart_quantity"])
 
                             cartItemRef = cartRef.collection('CartItem').document(
                                 (cartItem.to_dict())["cart_item_id"])
