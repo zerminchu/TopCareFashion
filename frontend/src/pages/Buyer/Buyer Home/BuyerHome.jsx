@@ -396,7 +396,7 @@ function BuyerHome(props) {
           <h2>
             {searchText
               ? `${searchResultCount} search results for '${searchText}'`
-              : "Top picks in men's fashion"}
+              : "Explore all of our collections"}
           </h2>
 
           <div className={classes.listProductContainer}>

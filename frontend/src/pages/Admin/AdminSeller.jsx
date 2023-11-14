@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import AdminSellerItem from "../../components/Admin/AdminSellerItem";
 import { Table, Text } from "@mantine/core";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import AdminSellerItem from "../../components/Admin/AdminSellerItem";
 
 function AdminSeller() {
   const [sellerData, setSellerData] = useState();
@@ -66,12 +66,12 @@ function AdminSeller() {
       <thead>
         <tr>
           <th>Profile</th>
-          <th>User id</th>
+          <th>User ID</th>
           <th>Email</th>
-          <th>First name</th>
-          <th>Last name</th>
+          <th>First Name</th>
+          <th>Last Name</th>
           <th>Gender</th>
-          <th>Business profile</th>
+          <th>Business Profile</th>
           <th>Action</th>
         </tr>
       </thead>

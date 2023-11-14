@@ -1,9 +1,9 @@
-import React, { useState } from "react";
 import { Tabs } from "@mantine/core";
+import React from "react";
 import AdminBuyer from "./AdminBuyer";
-import AdminSeller from "./AdminSeller";
 import AdminCategory from "./AdminCategory";
 import AdminFeedback from "./AdminFeedback";
+import AdminSeller from "./AdminSeller";
 
 import classes from "./AdminHome.module.css";
 
@@ -15,7 +15,7 @@ function AdminHome() {
         <Tabs.List>
           <Tabs.Tab value="buyer">Buyer</Tabs.Tab>
           <Tabs.Tab value="seller">Seller</Tabs.Tab>
-          <Tabs.Tab value="category">Category</Tabs.Tab>
+          <Tabs.Tab value="category">Fashion Categories</Tabs.Tab>
           <Tabs.Tab value="feedback">Feedback</Tabs.Tab>
         </Tabs.List>
 

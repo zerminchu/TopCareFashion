@@ -1,10 +1,10 @@
-import React, { useRef } from "react";
+import { Button, Image, Select, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { Button, Group, Image, Radio, Select, TextInput } from "@mantine/core";
-import IlDefaultAvatar from "../../assets/illustrations/il_avatar.png";
+import axios from "axios";
+import React, { useRef } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import IlDefaultAvatar from "../../assets/illustrations/il_avatar.png";
 import { showNotifications } from "../../utils/ShowNotification";
 
 function AdminBuyerItem(props) {
@@ -158,13 +158,8 @@ function AdminBuyerItem(props) {
         />
       </td>
       <td>{props.data.user_id}</td>
-      <td>
-        <TextInput
-          disabled
-          placeholder="Email"
-          {...form.getInputProps("email")}
-        />
-      </td>
+      <td>{form.values.email}</td>
+
       <td>
         <TextInput
           placeholder="First Name"

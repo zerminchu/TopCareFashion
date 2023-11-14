@@ -17,145 +17,146 @@ from .exceptions import *
 from .models import *
 from .serializer import *
 
+
 @api_view(["GET", "POST"])
 def allUsers(request):
-  if request.method == "GET":
-    try:
-        db = firestore.client()
+    if request.method == "GET":
+        try:
+            db = firestore.client()
 
-        role = request.GET.get('role', None)
-        print("role: ", role)
+            role = request.GET.get('role', None)
+            print("role: ", role)
 
-        if(role is not None):
-           userRef = db.collection("Users").where("role", "==", role)
-           userData = userRef.get()
-           response = [user.to_dict() for user in userData]
-           
-           return JsonResponse({
-              'status': "success",
-              'message': "All user data retrieved successfully",
-              'data': response
+            if (role is not None):
+                userRef = db.collection("Users").where("role", "==", role)
+                userData = userRef.get()
+                response = [user.to_dict() for user in userData]
+
+                return JsonResponse({
+                    'status': "success",
+                    'message': "All user data retrieved successfully",
+                    'data': response
+                }, status=200)
+
+            userRef = db.collection("Users")
+            userData = userRef.get()
+
+            response = [user.to_dict() for user in userData]
+
+            return JsonResponse({
+                'status': "success",
+                'message': "All user data retrieved successfully",
+                'data': response
             }, status=200)
 
-        userRef = db.collection("Users")
-        userData = userRef.get()
+        except Exception as e:
+            return JsonResponse({
+                "status": "error",
+                "message": str(e)
+            }, status=400)
 
-        response = [user.to_dict() for user in userData]
-        
-        return JsonResponse({
-          'status': "success",
-          'message': "All user data retrieved successfully",
-          'data': response
-        }, status=200)
-    
-    except Exception as e:
-      return JsonResponse({
-          "status": "error",
-          "message": str(e)
-      }, status=400)
+    elif request.method == "POST":
+        try:
+            # Initialize firebase variable
+            firebaseStorage = firebase.storage()
+            db = firestore.client()
 
-  elif request.method == "POST":
-      try:
-        # Initialize firebase variable
-        firebaseStorage = firebase.storage()
-        db = firestore.client()
+            data = request.data
 
-        data = request.data
+            user_id = data.get('user_id')
+            first_name = data.get('first_name')
+            last_name = data.get('last_name')
+            profile_image = data.get('profile_image')
+            gender = data.get('gender')
 
-        user_id = data.get('user_id')
-        first_name = data.get('first_name')
-        last_name = data.get('last_name')
-        profile_image = data.get('profile_image')
-        gender = data.get('gender')
+            # Buyer
+            phone_number = data.get('phone_number')
+            preferences_condition = data.get('preferences_condition')
+            preferences_gender = data.get('preferences_gender')
+            preferences_price_range = data.get('preferences_price_range')
+            preferences_size = data.get('preferences_size')
 
-        # Buyer
-        phone_number = data.get('phone_number')
-        preferences_condition = data.get('preferences_condition')
-        preferences_gender = data.get('preferences_gender')
-        preferences_price_range = data.get('preferences_price_range')
-        preferences_size = data.get('preferences_size')
+            userRef = db.collection("Users").document(user_id)
+            userData = (userRef.get()).to_dict()
 
-        userRef = db.collection("Users").document(user_id)
-        userData = (userRef.get()).to_dict()
+            if (userData and userData["role"] == "buyer"):
+                serializer = BuyerUpdateProfileSerializer(data=data)
+            elif (userData and userData["role"] == "seller"):
+                serializer = SellerUpdateProfileSerializer(data=data)
 
-        if (userData and userData["role"] == "buyer"):
-            serializer = BuyerUpdateProfileSerializer(data=data)
-        elif (userData and userData["role"] == "seller"):
-            serializer = SellerUpdateProfileSerializer(data=data)
+            if (serializer.is_valid()):
+                updatedData = {}
 
-        if (serializer.is_valid()):
-            updatedData = {}
+                # User want to update profile image
+                if (profile_image):
+                    # Validate file format
+                    allowed_formats = ['image/jpeg', 'image/jpg', 'image/png']
+                    if profile_image.content_type not in allowed_formats:
+                        raise Exception(
+                            "Invalid file format. Only PNG, JPEG, and JPG formats are allowed.")
 
+                    # Upload the file to Firebase Storage
+                    firebaseStorage.child(
+                        f"UserProfile/{user_id}").put(profile_image)
 
-            # User want to update profile image
-            if (profile_image):
-                # Validate file format
-                allowed_formats = ['image/jpeg', 'image/jpg', 'image/png']
-                if profile_image.content_type not in allowed_formats:
-                    raise Exception(
-                        "Invalid file format. Only PNG, JPEG, and JPG formats are allowed.")
+                    # Generate public image url
+                    profile_image = firebaseStorage.child(
+                        f"UserProfile/{user_id}").get_url(None)
 
-                # Upload the file to Firebase Storage
-                firebaseStorage.child(
-                    f"UserProfile/{user_id}").put(profile_image)
+                    # Data to be updated for user
+                    updatedData = {
+                        "name.first_name": first_name,
+                        "name.last_name": last_name,
+                        "profile_image_url": profile_image,
+                        "gender": gender
+                    }
 
-                # Generate public image url
-                profile_image = firebaseStorage.child(
-                    f"UserProfile/{user_id}").get_url(None)
+                # User does not want to update profile image
+                else:
+                    # Update data into firestore
+                    collectionRef = db.collection('Users').document(user_id)
 
-                # Data to be updated for user
-                updatedData = {
-                    "name.first_name": first_name,
-                    "name.last_name": last_name,
-                    "profile_image_url": profile_image,
-                    "gender": gender
-                }
+                    # Data to be updated for user
+                    updatedData = {
+                        "name.first_name": first_name,
+                        "name.last_name": last_name,
+                        "gender": gender
+                    }
 
-            # User does not want to update profile image
-            else:
+                # Check whether it has phone number data or not
+                if (phone_number and preferences_condition and preferences_gender and preferences_price_range and preferences_size):
+                    updatedData["phone_number"] = phone_number
+                    updatedData["preferences.condition"] = preferences_condition
+                    updatedData["preferences.gender"] = preferences_gender
+                    updatedData["preferences.price"] = json.loads(
+                        preferences_price_range)
+                    updatedData["preferences.size"] = preferences_size
+
                 # Update data into firestore
                 collectionRef = db.collection('Users').document(user_id)
+                collectionRef.update(updatedData)
 
-                # Data to be updated for user
-                updatedData = {
-                    "name.first_name": first_name,
-                    "name.last_name": last_name,
-                    "gender": gender
+            else:
+                raise Exception(serializer.errors)
+
+            return JsonResponse({
+                'status': "success",
+                'message': "User profile updated successfully",
+                'data': {
+                    "updatedFirstName": first_name,
+                    "updatedLastName": last_name,
+                    "updatedProfileImage": profile_image,
+                    "updatedGender": gender,
+                    "updatedPhoneNumber": phone_number
                 }
+            }, status=200)
 
-            # Check whether it has phone number data or not
-            if (phone_number and preferences_condition and preferences_gender and preferences_price_range and preferences_size):
-                updatedData["phone_number"] = phone_number
-                updatedData["preferences.condition"] = preferences_condition
-                updatedData["preferences.gender"] = preferences_gender
-                updatedData["preferences.price"]= json.loads(preferences_price_range)
-                updatedData["preferences.size"] = preferences_size
+        except Exception as e:
+            return JsonResponse({
+                "status": "error",
+                "message": str(e)
+            }, status=400)
 
-
-            # Update data into firestore
-            collectionRef = db.collection('Users').document(user_id)
-            collectionRef.update(updatedData)
-
-        else:
-            raise Exception(serializer.errors)
-
-        return JsonResponse({
-            'status': "success",
-            'message': "User profile updated successfully",
-            'data': {
-                "updatedFirstName": first_name,
-                "updatedLastName": last_name,
-                "updatedProfileImage": profile_image,
-                "updatedGender": gender,
-                "updatedPhoneNumber": phone_number
-            }
-        }, status=200)
-
-      except Exception as e:
-          return JsonResponse({
-              "status": "error",
-              "message": str(e)
-          }, status=400)
 
 @api_view(["DELETE"])
 def oneUser(request, user_id):
@@ -174,6 +175,132 @@ def oneUser(request, user_id):
                 'message': f"User {user_id} deleted successfully",
             }, status=200)
 
+        except Exception as e:
+            return JsonResponse({
+                "status": "error",
+                "message": str(e)
+            }, status=400)
+
+
+# fashion category
+@api_view(["GET", "POST", "PUT", "DELETE"])
+def fashionCategory(request, category_id=None):
+    db = firestore.client()
+    categoryRef = db.collection("FashionCategory")
+
+    if request.method == "GET":
+        try:
+            itemData = categoryRef.get()
+            responseData = [{"id": item.id, **item.to_dict()}
+                            for item in itemData]
+            return JsonResponse({
+                'status': "success",
+                'message': "All fashion categories retrieved successfully",
+                'data': responseData
+            }, status=200)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
+    elif request.method == "POST":
+        try:
+            data = request.data
+
+            # Add new fashion category
+            categoryRef.add(data)
+
+            return JsonResponse({
+                'status': "success",
+                'message': "Fashion category added successfully",
+                'data': data
+            }, status=200)
+        except Exception as e:
+            return JsonResponse({
+                "status": "error",
+                "message": str(e)
+            }, status=400)
+
+    elif request.method == "PUT":
+        try:
+            data = request.data
+
+            # Update fashion category
+            category_doc = categoryRef.document(category_id)
+            category_doc.update(data)
+
+            return JsonResponse({
+                'status': "success",
+                'message': f"Fashion category {category_id} updated successfully",
+                'data': data
+            }, status=200)
+        except Exception as e:
+            return JsonResponse({
+                "status": "error",
+                "message": str(e)
+            }, status=400)
+    elif request.method == "DELETE":
+        try:
+
+            # Delete fashion category
+            category_doc = categoryRef.document(category_id)
+            category_doc.delete()
+
+            return JsonResponse({
+                'status': "success",
+                'message': f"Fashion category {category_id} deleted successfully",
+            }, status=200)
+        except Exception as e:
+            return JsonResponse({
+                "status": "error",
+                "message": str(e)
+            }, status=400)
+
+
+@api_view(["GET", "PUT", "DELETE"])
+def feedBack(request, feedback_id=None):
+    db = firestore.client()
+    categoryRef = db.collection("Feedback")
+
+    if request.method == "GET":
+        try:
+            itemData = categoryRef.get()
+            responseData = [{"id": item.id, **item.to_dict()}
+                            for item in itemData]
+            return JsonResponse({
+                'status': "success",
+                'message': "All feedbacks retrieved successfully",
+                'data': responseData
+            }, status=200)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
+    elif request.method == "PUT":
+        try:
+            data = request.data
+
+            category_doc = categoryRef.document(feedback_id)
+            category_doc.update(data)
+
+            return JsonResponse({
+                'status': "success",
+                'message': f"Feedback {feedback_id} updated successfully",
+                'data': data
+            }, status=200)
+        except Exception as e:
+            return JsonResponse({
+                "status": "error",
+                "message": str(e)
+            }, status=400)
+    elif request.method == "DELETE":
+        try:
+
+            # Delete fashion category
+            category_doc = categoryRef.document(feedback_id)
+            category_doc.delete()
+
+            return JsonResponse({
+                'status': "success",
+                'message': f"Feedback {feedback_id} deleted successfully",
+            }, status=200)
         except Exception as e:
             return JsonResponse({
                 "status": "error",

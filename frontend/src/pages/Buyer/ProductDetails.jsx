@@ -182,7 +182,7 @@ function ProductDetails() {
     // Check if user sign in before
     if (!Cookies.get("firebaseIdToken")) {
       dispatch({ type: "SET_BUYER_PREFERENCES", value: true });
-      dispatch({ type: "SET_SIGN_IN", value: true });
+      dispatch({ type: "SET_SIGN_IN", value: false });
       return;
     }
 

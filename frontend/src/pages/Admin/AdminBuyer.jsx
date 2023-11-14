@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
 import { Table, Text } from "@mantine/core";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
 import AdminBuyerItem from "../../components/Admin/AdminBuyerItem";
 
 function AdminBuyer() {
@@ -18,7 +18,6 @@ function AdminBuyer() {
         const response = await axios.get(`${url}/admin/users/`, { params });
 
         setbuyerData(response.data.data);
-        console.log("reerere: ", response.data);
       } catch (error) {
         console.log("error retrieve all user dara", error);
       }
@@ -61,16 +60,16 @@ function AdminBuyer() {
       <thead>
         <tr>
           <th>Profile</th>
-          <th>User id</th>
+          <th>User ID</th>
           <th>Email</th>
-          <th>First name</th>
-          <th>Last name</th>
-          <th>Phone number</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Phone Number</th>
           <th>Gender</th>
-          <th>Preference category</th>
-          <th>Preference condition</th>
-          <th>Preference size</th>
-          <th>Preference price</th>
+          <th>Preference Category</th>
+          <th>Preference Condition</th>
+          <th>Preference Size</th>
+          <th>Preference Price</th>
           <th>Action</th>
         </tr>
       </thead>

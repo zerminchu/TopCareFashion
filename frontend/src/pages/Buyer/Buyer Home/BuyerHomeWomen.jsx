@@ -564,7 +564,7 @@ function BuyerHomeWomen(props) {
           <h2>
             {searchText
               ? `${searchResultCount} search results for '${searchText}'`
-              : "Explore the rest of our collections"}
+              : "Tailored Treasures: Explore Your Unique Collections"}
           </h2>
           {isRenderCombinedProductsLoading ? (
             <div> Fetching Items...</div>
