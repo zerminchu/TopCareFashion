@@ -206,7 +206,7 @@ function Checkout() {
 
         dispatch({ type: "SET_LOADING", value: false });
 
-        window.open(response.data.data.url);
+        window.location.href = response.data.data.url;
       } catch (error) {
         console.log(error);
         dispatch({ type: "SET_LOADING", value: false });
