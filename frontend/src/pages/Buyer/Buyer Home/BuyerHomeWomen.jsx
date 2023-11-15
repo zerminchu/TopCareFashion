@@ -526,6 +526,8 @@ function BuyerHomeMen(props) {
                     <h2>
                       We've curated some more products we think you'll love
                     </h2>
+                    <br />
+                    <br />
                     <div className={classes.listProductContainer}>
                       <div className={classes.listProduct}>
                         {renderAlgoliaList()}
@@ -540,6 +542,8 @@ function BuyerHomeMen(props) {
               ? `${searchResultCount} search results for '${searchText}'`
               : "Tailored Treasures: Explore Your Unique Collection"}
           </h2>
+          <br />
+          <br />
           <div>
             <div className={classes.listProductContainer}>
               <div className={classes.listProduct}>
