@@ -110,7 +110,17 @@ function TransactionItem(props) {
           <td>{renderStatus()}</td>
           <td>{renderRatingButton()}</td>
           <td>
-            <Button onClick={viewDetailsOnClick}>View Details</Button>
+            {transactionDetails.status === "waiting for collection" ? (
+              <Button
+                variant="gradient"
+                gradient={{ from: "yellow", to: "orange", deg: 153 }}
+                onClick={viewDetailsOnClick}
+              >
+                Confirm Your Order Now
+              </Button>
+            ) : (
+              <Button onClick={viewDetailsOnClick}>View Details</Button>
+            )}
           </td>
           <td>
             <Button onClick={viewInvoiceOnClick} variant="outline">

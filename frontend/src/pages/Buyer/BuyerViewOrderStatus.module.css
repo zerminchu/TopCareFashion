@@ -30,3 +30,69 @@
   gap: 20px;
   align-items: end;
 }
+
+.collectedButton {
+ align-items: center;
+ width: 50%;
+ margin: auto
+}
+
+
+.modalWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Modal Body */
+.modalBody {
+  background-color: #f8f8f8; /* Set a light background color */
+  padding: 30px;
+  border-radius: 12px; /* Increase border-radius for a softer look */
+  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.15); /* A bit more prominent box shadow */
+  width: 80%; /* Make the modal a bit wider */
+  margin: auto;
+  text-align: center; /* Center-align text */
+}
+
+/* Bold Disclaimer Text */
+.modalTitle {
+  font-size: 24px; /* Increase font size for the title */
+  font-weight: bold; /* Make the title bold */
+  margin-bottom: 20px; /* Add some space below the title */
+}
+
+/* Modal Text */
+.modalText {
+  margin-bottom: 20px;
+  color: #444; /* Slightly darker text color */
+  font-size: 18px; /* Slightly larger font size */
+}
+
+/* Modal Buttons */
+.modalButtons {
+  display: flex;
+  justify-content: center; /* Center-align buttons */
+  gap: 10px; /* Add some space between buttons */
+}
+
+/* Button Styles */
+.mantine-button {
+  padding: 12px 24px; /* Increase padding for a larger button */
+  border-radius: 8px;
+  font-size: 16px; /* Slightly larger font size */
+  font-weight: 600;
+}
+
+/* Gradient Button */
+.mantine-button.gradient {
+  background: linear-gradient(to right, #2ecc71, #3498db); /* Updated gradient colors */
+  color: #fff;
+}
+
+/* Outline Button */
+.mantine-button.outline {
+  background: transparent;
+  color: #3498db; /* Match the outline button color with the gradient */
+  border: 2px solid #3498db;
+}
