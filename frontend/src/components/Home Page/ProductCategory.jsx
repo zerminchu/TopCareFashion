@@ -6,6 +6,7 @@ import ILCategoryFootwear from "../../assets/illustrations/il_category_footwear.
 import womentop from "../../assets/illustrations/womentop.jpg";
 import womenbottom from "../../assets/illustrations/womenbottom.jpg";
 import womenfootwear from "../../assets/illustrations/womenfootwear.jpg";
+import ILDefault from "../../assets/illustrations/il_null_image_clothes.svg";
 
 import { Text } from "@mantine/core";
 import { useState } from "react";
@@ -40,7 +41,7 @@ function ProductCategory(props) {
       return womenfootwear;
     }
 
-    return ILCategoryTop;
+    return ILDefault;
   };
 
   const renderDescription = () => {
@@ -57,12 +58,6 @@ function ProductCategory(props) {
         <Text>
           Discover exceptional footwear choices to elevate your style with our
           diverse range.
-        </Text>
-      );
-    } else if (props.category === "Accessories") {
-      return (
-        <Text>
-          Elevate your style with our captivating collection of accessories.
         </Text>
       );
     }
