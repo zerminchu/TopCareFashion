@@ -1,7 +1,7 @@
 /* eslint-disable no-prototype-builtins */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import { Button, TextInput, Pagination } from "@mantine/core";
+import { Button, TextInput, Pagination, Text } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -412,33 +412,33 @@ function BuyerHomeMen(props) {
 
   const renderCombinedProducts = () => {
     if (combinedProductList) {
-      return combinedProductList
-        .slice(0, visibleProductCount)
-        .map((product) => (
-          <Product
-            key={product.item_id}
-            item_id={product.item_id}
-            title={product.title}
-            price={product.price}
-            size={product.size}
-            quantity_available={product.quantity_available}
-            avail_status={product.avail_status}
-            images={product.image_urls}
-            description={product.description}
-            average_rating={product.average_rating}
-            reviews={product.reviews}
-            total_ratings={product.total_ratings}
-            store_name={product.store_name}
-            collection_address={product.collection_address}
-            sold={product.sold}
-            category={product.category}
-            condition={product.condition}
-            seller_id={product.user_id}
-          />
-        ));
+      if (combinedProductList.length > 0) {
+        return combinedProductList
+          .slice(0, visibleProductCount)
+          .map((product) => (
+            <Product
+              key={product.item_id}
+              item_id={product.item_id}
+              title={product.title}
+              price={product.price}
+              size={product.size}
+              quantity_available={product.quantity_available}
+              avail_status={product.avail_status}
+              images={product.image_urls}
+              description={product.description}
+              average_rating={product.average_rating}
+              reviews={product.reviews}
+              total_ratings={product.total_ratings}
+              store_name={product.store_name}
+              collection_address={product.collection_address}
+              sold={product.sold}
+              category={product.category}
+              condition={product.condition}
+              seller_id={product.user_id}
+            />
+          ));
+      }
     }
-
-    setIsRetrievingProducts(true);
   };
 
   const renderViewMoreButton = () => {
