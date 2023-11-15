@@ -838,3 +838,34 @@ def getOrderStatus(request, paid_order_id):
                 "status": "error",
                 "message": str(e)
             }, status=400)
+        
+@api_view(["GET"])
+def getAllOrderFast(request, user_id):
+    if request.method == "GET":
+        try:
+            # Initialize Firestore client
+            db = firestore.Client()
+
+            if(not user_id):
+                raise Exception("Buyer id cannot be empty")
+
+            # Reference to the "PaidOrder" collection
+            paid_order_ref = db.collection("PaidOrder")
+
+            # Query to retrieve the top 3 documents in descending order based on 'created_at'
+            query = paid_order_ref.where('buyer_id', '==', user_id).order_by('created_at', direction=firestore.Query.DESCENDING).limit(3)
+
+            # Execute the query and get the documents as dictionaries
+            orders = [{field: value for field, value in doc.to_dict().items()} for doc in query.stream()]
+
+            return JsonResponse({
+                'status': "success",
+                'message': "Top 3 Paid Order data retrieved successfully",
+                'data': orders  # Include the retrieved data in the response
+            }, status=200)
+
+        except Exception as e:
+            return JsonResponse({
+                "status": "error",
+                "message": str(e)
+            }, status=400)
