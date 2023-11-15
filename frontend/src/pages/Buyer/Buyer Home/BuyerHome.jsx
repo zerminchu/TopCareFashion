@@ -5,6 +5,7 @@
 import { Button, TextInput } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Loader } from "@mantine/core";
 
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -23,6 +24,7 @@ function BuyerHome(props) {
   const [searchText, setSearchText] = useState("");
   const [visibleProductCount, setVisibleProductCount] = useState(4);
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [isRetrievingProducts, setisRetrievingProducts] = useState(false);
   const [searchResultCount, setSearchResultCount] = useState(0);
 
   const [user, setUser] = useState([]);
@@ -34,7 +36,7 @@ function BuyerHome(props) {
   const [buyerPreferencesProduct, setBuyerPreferencesProduct] = useState([]);
   const [algoliaProduct, setAlgoliaProduct] = useState([]);
 
-  const [combinedProductList, setCombinedProductList] = useState([]);
+  const [combinedProductList, setCombinedProductList] = useState();
   const [searchResults, setSearchResults] = useState([]);
   const [subCategories, setSubCategories] = useState();
 
@@ -87,6 +89,8 @@ function BuyerHome(props) {
   useEffect(() => {
     const retrieveAllItems = async () => {
       try {
+        setisRetrievingProducts(true);
+
         const url =
           import.meta.env.VITE_NODE_ENV == "DEV"
             ? import.meta.env.VITE_API_DEV
@@ -97,8 +101,11 @@ function BuyerHome(props) {
           (item) =>
             item.hasOwnProperty("gender") && item.gender.toLowerCase() === "men"
         );
+
+        setisRetrievingProducts(false);
         setproductList(menProductList);
       } catch (error) {
+        setisRetrievingProducts(false);
         console.log(error);
       }
     };
@@ -399,6 +406,7 @@ function BuyerHome(props) {
         <div className={classes.listProductContainer}>
           <div className={classes.listProduct}>{renderCombinedProducts()}</div>
         </div>
+        {isRetrievingProducts ? <Loader color="blue" /> : null}
         {renderViewMoreButton()}
       </div>
     </div>
