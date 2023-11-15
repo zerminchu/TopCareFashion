@@ -3,9 +3,10 @@ import { Carousel } from "@mantine/carousel";
 import axios from "axios";
 import CarouselItem from "../../../components/Home Page/CarouselItem";
 import { useDispatch } from "react-redux";
+import { Loader } from "@mantine/core";
 
 function CarouselAds() {
-  const [productAdvertisementList, setproductAdvertisementList] = useState([]);
+  const [productAdvertisementList, setproductAdvertisementList] = useState();
   const dispatch = useDispatch();
 
   const itemOnClick = () => {
@@ -15,8 +16,6 @@ function CarouselAds() {
   };
 
   useEffect(() => {
-    dispatch({ type: "SET_LOADING", value: true });
-
     const retrieveAdvertisementListing = async () => {
       try {
         const gender = window.location.pathname.includes("/women")
@@ -32,7 +31,6 @@ function CarouselAds() {
           `${url}/listing/advertisement/${gender}/`
         );
         setproductAdvertisementList(response.data.data);
-        dispatch({ type: "SET_LOADING", value: false });
       } catch (error) {
         console.log(error);
       }
@@ -42,43 +40,45 @@ function CarouselAds() {
   }, []);
 
   const renderListingAdvertisement = () => {
-    return productAdvertisementList.map((ads, index) => {
-      return (
-        <Carousel.Slide key={index}>
-          <CarouselItem
-            category={ads.sub_category}
-            title={ads.title}
-            itemId={ads.item_id}
-            image={ads.image_urls[0]}
-            price={ads.price}
-          />
-        </Carousel.Slide>
-      );
-    });
+    if (productAdvertisementList) {
+      if (productAdvertisementList.length > 0) {
+        return productAdvertisementList.map((ads, index) => {
+          return (
+            <Carousel.Slide key={index}>
+              <CarouselItem
+                category={ads.sub_category}
+                title={ads.title}
+                itemId={ads.item_id}
+                image={ads.image_urls[0]}
+                price={ads.price}
+              />
+            </Carousel.Slide>
+          );
+        });
+      }
+
+      return <Text>There is no advertisement products</Text>;
+    }
+
+    return <Loader color="blue" />;
   };
 
   return (
-    <>
-      {productAdvertisementList.length === 0 ? (
-        <p>Loading...</p>
-      ) : (
-        <Carousel
-          withIndicators
-          draggable
-          height={400}
-          slideSize="25%"
-          slideGap="md"
-          loop
-          align="start"
-          slidesToScroll={1}
-          inViewThreshold={0.5}
-          speed={500}
-          withControls
-        >
-          {renderListingAdvertisement()}
-        </Carousel>
-      )}
-    </>
+    <Carousel
+      withIndicators
+      draggable
+      height={400}
+      slideSize="25%"
+      slideGap="md"
+      loop
+      align="start"
+      slidesToScroll={1}
+      inViewThreshold={0.5}
+      speed={500}
+      withControls
+    >
+      {renderListingAdvertisement()}
+    </Carousel>
   );
 }
 

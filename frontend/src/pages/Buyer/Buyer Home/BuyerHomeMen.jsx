@@ -1,7 +1,7 @@
 /* eslint-disable no-prototype-builtins */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import { Button, TextInput, Pagination } from "@mantine/core";
+import { Button, TextInput, Pagination, Text } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -15,6 +15,7 @@ import { retrieveUserInfo } from "../../../utils/RetrieveUserInfoFromToken";
 import classes from "./BuyerHome.module.css";
 import CarouselAds from "./CarouselAds";
 import recommend from "@algolia/recommend";
+import { Loader } from "@mantine/core";
 
 function BuyerHomeMen(props) {
   const navigate = useNavigate();
@@ -25,6 +26,8 @@ function BuyerHomeMen(props) {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [searchResultCount, setSearchResultCount] = useState(0);
   const [subCategories, setSubCategories] = useState();
+  const [isRetrievingProducts, setIsRetrievingProducts] = useState(false);
+  const [isRetrievingCategory, setIsRetrievingCategory] = useState(false);
 
   const [user, setUser] = useState([]);
   const [currentUser, setCurrentUser] = useState();
@@ -39,8 +42,6 @@ function BuyerHomeMen(props) {
   const [searchResults, setSearchResults] = useState([]);
   const [itemIdForAlgolia, setItemIdForAlgolia] = useState();
   const [fetchedAlgoliaList, setFetchedAlgoliaList] = useState([]);
-  const [isRenderCombinedProductsLoading, setIsRenderCombinedProductsLoading] =
-    useState(true);
 
   const itemsPerPage = 4;
 
@@ -48,7 +49,7 @@ function BuyerHomeMen(props) {
   useEffect(() => {
     const fetchAlgolia = async () => {
       try {
-        dispatch({ type: "SET_LOADING", value: true });
+        setIsRetrievingProducts(true);
 
         const url =
           import.meta.env.VITE_NODE_ENV === "DEV"
@@ -56,13 +57,10 @@ function BuyerHomeMen(props) {
             : import.meta.env.VITE_API_PROD;
 
         const response = await axios.get(
-          `${url}/buyer/${currentUser.user_id}/orders/`
+          `${url}/buyer/${currentUser.user_id}/fast-orders/`
         );
-        const orders = response.data.data;
 
-        const sortedOrders = orders.sort(
-          (a, b) => new Date(b.created_at) - new Date(a.created_at)
-        );
+        const sortedOrders = response.data.data;
 
         const latestItemIds = sortedOrders.reduce((acc, order) => {
           const itemId = order.checkout_data?.item_id;
@@ -75,10 +73,11 @@ function BuyerHomeMen(props) {
         console.log(latestItemIds);
 
         setItemIdForAlgolia(latestItemIds);
+        setIsRetrievingProducts(false);
       } catch (error) {
         console.error("Error fetching orders:", error);
       } finally {
-        dispatch({ type: "SET_LOADING", value: false });
+        setIsRetrievingProducts(false);
       }
     };
 
@@ -126,7 +125,7 @@ function BuyerHomeMen(props) {
   useEffect(() => {
     const retrieveAllItems = async () => {
       try {
-        dispatch({ type: "SET_LOADING", value: true });
+        setIsRetrievingProducts(true);
 
         const url =
           import.meta.env.VITE_NODE_ENV == "DEV"
@@ -138,11 +137,12 @@ function BuyerHomeMen(props) {
           (item) =>
             item.hasOwnProperty("gender") && item.gender.toLowerCase() === "men"
         );
+
         setproductList(menProductList);
+        setIsRetrievingProducts(false);
       } catch (error) {
         console.log(error);
-      } finally {
-        dispatch({ type: "SET_LOADING", value: false });
+        setIsRetrievingProducts(false);
       }
     };
 
@@ -152,7 +152,7 @@ function BuyerHomeMen(props) {
   useEffect(() => {
     const retrieveCategoryData = async () => {
       try {
-        dispatch({ type: "SET_LOADING", value: true });
+        setIsRetrievingCategory(true);
 
         const url =
           import.meta.env.VITE_NODE_ENV == "DEV"
@@ -172,11 +172,12 @@ function BuyerHomeMen(props) {
               .map((category) => category.sub_category)
           )
         );
+
+        setIsRetrievingCategory(false);
         setSubCategories(uniqueSubCategories);
       } catch (error) {
         console.log(error);
-      } finally {
-        dispatch({ type: "SET_LOADING", value: false });
+        setIsRetrievingCategory(false);
       }
     };
     retrieveCategoryData();
@@ -253,20 +254,17 @@ function BuyerHomeMen(props) {
 
   const fetchAvailStatus = async (itemId) => {
     try {
-      dispatch({ type: "SET_LOADING", value: true });
-
       const url =
         import.meta.env.VITE_NODE_ENV == "DEV"
           ? import.meta.env.VITE_API_DEV
           : import.meta.env.VITE_API_PROD;
 
       const response = await axios.get(`${url}/listing-detail/${itemId}`);
+
       return response.data.data.avail_status;
     } catch (error) {
       console.log(error);
       return "Available";
-    } finally {
-      dispatch({ type: "SET_LOADING", value: false });
     }
   };
 
@@ -414,61 +412,33 @@ function BuyerHomeMen(props) {
 
   const renderCombinedProducts = () => {
     if (combinedProductList) {
-      return combinedProductList
-        .slice(0, visibleProductCount)
-        .map((product) => (
-          <Product
-            key={product.item_id}
-            item_id={product.item_id}
-            title={product.title}
-            price={product.price}
-            size={product.size}
-            quantity_available={product.quantity_available}
-            avail_status={product.avail_status}
-            images={product.image_urls}
-            description={product.description}
-            average_rating={product.average_rating}
-            reviews={product.reviews}
-            total_ratings={product.total_ratings}
-            store_name={product.store_name}
-            collection_address={product.collection_address}
-            sold={product.sold}
-            category={product.category}
-            condition={product.condition}
-            seller_id={product.user_id}
-          />
-        ));
+      if (combinedProductList.length > 0) {
+        return combinedProductList
+          .slice(0, visibleProductCount)
+          .map((product) => (
+            <Product
+              key={product.item_id}
+              item_id={product.item_id}
+              title={product.title}
+              price={product.price}
+              size={product.size}
+              quantity_available={product.quantity_available}
+              avail_status={product.avail_status}
+              images={product.image_urls}
+              description={product.description}
+              average_rating={product.average_rating}
+              reviews={product.reviews}
+              total_ratings={product.total_ratings}
+              store_name={product.store_name}
+              collection_address={product.collection_address}
+              sold={product.sold}
+              category={product.category}
+              condition={product.condition}
+              seller_id={product.user_id}
+            />
+          ));
+      }
     }
-  };
-
-  const renderRealProducts = () => {
-    const visibleProducts = productsWithAvailability.slice(
-      0,
-      visibleProductCount
-    );
-
-    return visibleProducts.map((product) => (
-      <Product
-        key={product.item_id}
-        item_id={product.item_id}
-        title={product.title}
-        price={product.price}
-        size={product.size}
-        quantity_available={product.quantity_available}
-        avail_status={product.avail_status}
-        images={product.image_urls}
-        description={product.description}
-        average_rating={product.average_rating}
-        reviews={product.reviews}
-        total_ratings={product.total_ratings}
-        store_name={product.store_name}
-        collection_address={product.collection_address}
-        sold={product.sold}
-        category={product.category}
-        condition={product.condition}
-        seller_id={product.user_id}
-      />
-    ));
   };
 
   const renderViewMoreButton = () => {
@@ -492,23 +462,6 @@ function BuyerHomeMen(props) {
     }
     return null;
   };
-
-  useEffect(() => {
-    const renderCombinedProducts = async () => {
-      if (combinedProductList) {
-        dispatch({ type: "SET_LOADING", value: true });
-
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-
-        dispatch({ type: "SET_LOADING", value: false });
-        setIsRenderCombinedProductsLoading(false);
-      }
-    };
-
-    dispatch({ type: "SET_LOADING", value: true });
-
-    renderCombinedProducts();
-  }, [combinedProductList, dispatch]);
 
   return (
     <div>
@@ -554,6 +507,7 @@ function BuyerHomeMen(props) {
                 />
               ))}
           </div>
+          {isRetrievingCategory ? <Loader color="blue" /> : null}
         </div>
 
         <div>
@@ -571,6 +525,8 @@ function BuyerHomeMen(props) {
                     <h2>
                       We've curated some more products we think you'll love
                     </h2>
+                    <br />
+                    <br />
                     <div className={classes.listProductContainer}>
                       <div className={classes.listProduct}>
                         {renderAlgoliaList()}
@@ -585,16 +541,16 @@ function BuyerHomeMen(props) {
               ? `${searchResultCount} search results for '${searchText}'`
               : "Tailored Treasures: Explore Your Unique Collection"}
           </h2>
-          <br />{" "}
-          {isRenderCombinedProductsLoading ? (
-            <div> Fetching Items...</div>
-          ) : (
+          <br />
+          <br />
+          <div>
             <div className={classes.listProductContainer}>
               <div className={classes.listProduct}>
                 {renderCombinedProducts()}
               </div>
             </div>
-          )}
+            {isRetrievingProducts ? <Loader color="blue" /> : null}
+          </div>
           {renderViewMoreButton()}
         </div>
       </div>

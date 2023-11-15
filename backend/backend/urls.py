@@ -89,6 +89,7 @@ urlpatterns = [
          name="get-all-item-by-seller-id"),
 
     # Buyer
+    path("buyer/<str:user_id>/fast-orders/", buyerViews.getAllOrderFast, name="get-all-order-fast"),
     path("buyer/edit-review/", buyerViews.editReview, name="edit-review"),
     path("buyer/checkout/", buyerViews.getCheckoutLink, name="get-checkout-link"),
 
