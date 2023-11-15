@@ -1,7 +1,7 @@
-from app import buyerViews, sellerViews, views, adminViews
+from app import adminViews, buyerViews, sellerViews, views
+from app.adminViews import *
 from app.buyerViews import *
 from app.sellerViews import *
-from app.adminViews import *
 from app.views import *
 from django.contrib import admin
 from django.urls import include, path, re_path
@@ -115,24 +115,20 @@ urlpatterns = [
          name="get-premium-feature-checkout-link"),
 
 
-     # Admin
-     path("admin/users/", adminViews.allUsers,
+    # Admin
+    path("admin/users/", adminViews.allUsers,
          name="admin-all-users"),
 
-     path("admin/users/<str:user_id>/", adminViews.oneUser,
+    path("admin/users/<str:user_id>/", adminViews.oneUser,
          name="admin-one-user"),
+
+    path("fashion-category/", adminViews.fashionCategory, name="get-all-item"),
+    path("fashion-category/<str:category_id>/",
+         adminViews.fashionCategory, name="update-category"),
+
+    path("feedback-admin/", adminViews.feedBack, name="get-all-feedback"),
+    path("feedback-admin/<str:feedback_id>/",
+         adminViews.feedBack, name="update-feedback"),
+
+
 ]
-
-
-"""     path("seller/<str:user_id>/", sellerViews.getSellerProfile,
-         name="get-seller-profile"),
-    path("seller/<str:user_id>/update-business-profile/",
-         sellerViews.updateBusinessProfile, name="update-business-profile"),
-    path("feedback/<str:user_id>/feedback-form/",
-         views.feedbackForm, name="feedback-form"),
-    path("seller/<str:user_id>/ratings/",
-         sellerViews.getReviews, name="get-seller-reviews"), 
-          path("buyer/submit-review/<str:user_id>",
-         buyerViews.submit_review, name="submit-review"),
-    path("buyer/<str:user_id>/get-reviews-buyer/",
-         buyerViews.getReviews_buyer, name="get-reviews-buyer"),"""

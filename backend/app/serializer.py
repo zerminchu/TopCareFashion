@@ -1,6 +1,7 @@
-from rest_framework import serializers
-from .models import *
 from django.db import IntegrityError
+from rest_framework import serializers
+
+from .models import *
 
 
 class BuyerSerializer(serializers.ModelSerializer):
@@ -73,13 +74,14 @@ class ItemSerializer(serializers.ModelSerializer):
         model = Item
         fields = '__all__'
 
+
 class EditItemSerializer(serializers.ModelSerializer):
-    size = serializers.ListField(child=serializers.CharField(), allow_empty=True, required=False)
+    size = serializers.ListField(
+        child=serializers.CharField(), allow_empty=True, required=False)
 
     class Meta:
         model = Item
         fields = '__all__'
-       
 
 
 class ListingSerializer(serializers.ModelSerializer):
@@ -100,8 +102,9 @@ class CategorySelectionSerializer(serializers.ModelSerializer):
         model = User
         fields = '__all__'
 
-        #exclude = ['date_of_birth','role']
-        
+        # exclude = ['date_of_birth','role']
+
+
 class PaidOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaidOrder

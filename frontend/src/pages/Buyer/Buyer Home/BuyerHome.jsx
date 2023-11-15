@@ -391,21 +391,15 @@ function BuyerHome(props) {
             )}
           </div>
         </div>
-
-        <div>
-          <h2>
-            {searchText
-              ? `${searchResultCount} search results for '${searchText}'`
-              : "Top picks in men's fashion"}
-          </h2>
-
-          <div className={classes.listProductContainer}>
-            <div className={classes.listProduct}>
-              {renderCombinedProducts()}
-            </div>
-          </div>
-          {renderViewMoreButton()}
+        <h2>
+          {searchText
+            ? `${searchResultCount} search results for '${searchText}'`
+            : "Explore all of our collections"}
+        </h2>
+        <div className={classes.listProductContainer}>
+          <div className={classes.listProduct}>{renderCombinedProducts()}</div>
         </div>
+        {renderViewMoreButton()}
       </div>
     </div>
   );

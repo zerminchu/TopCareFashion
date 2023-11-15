@@ -559,13 +559,13 @@ function BuyerHomeWomen(props) {
                   </>
                 )}
           </div>
-
           <br />
           <h2>
             {searchText
               ? `${searchResultCount} search results for '${searchText}'`
-              : "Explore the rest of our collections"}
+              : "Tailored Treasures: Explore Your Unique Collections"}
           </h2>
+          <br />{" "}
           {isRenderCombinedProductsLoading ? (
             <div> Fetching Items...</div>
           ) : (
@@ -575,7 +575,6 @@ function BuyerHomeWomen(props) {
               </div>
             </div>
           )}
-
           {renderViewMoreButton()}
         </div>
       </div>
