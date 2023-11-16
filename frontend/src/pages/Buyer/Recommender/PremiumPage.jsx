@@ -4,9 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import React, { useState, useEffect } from "react";
 import { retrieveUserInfo } from "../../../utils/RetrieveUserInfoFromToken";
-import { showNotifications } from "../../../utils/ShowNotification";
 import { useDispatch } from "react-redux";
-import axios from "axios";
 import classes from "./PremiumPage.module.css";
 import { CloseButton } from "@mantine/core";
 
@@ -38,36 +36,7 @@ function PremiumPopup() {
     dispatch({ type: "SET_PREMIUM_FEATURE", value: false });
   };
 
-  const getStartedOnClick = async () => {
-    try {
-      if (currentUser) {
-        dispatch({ type: "SET_LOADING", value: true });
-        const url =
-          import.meta.env.VITE_NODE_ENV == "DEV"
-            ? import.meta.env.VITE_API_DEV
-            : import.meta.env.VITE_API_PROD;
-
-        const response = await axios.post(
-          `${url}/buyer/premium-feature-checkout/`,
-          {
-            user_id: currentUser.user_id,
-          }
-        );
-
-        dispatch({ type: "SET_LOADING", value: false });
-        dispatch({ type: "SET_PREMIUM_FEATURE", value: false });
-
-        window.open(response.data.data.url);
-      }
-    } catch (error) {
-      dispatch({ type: "SET_LOADING", value: false });
-      showNotifications({
-        status: "error",
-        title: "Error",
-        message: error.response.data.message,
-      });
-    }
-  };
+  const getStartedOnClick = async () => {};
 
   return (
     <div className={classes.popupoverlay}>
@@ -106,27 +75,17 @@ function PremiumPopup() {
               marginBottom: "20px",
             }}
           >
-            Fashion Recommender
+            Welcome to Top Care Fashion Blog!
           </Text>
           <Text size="lg" weight={700} style={{ marginBottom: "20px" }}>
-            Elevate Your Style with Premium Access!
+            Explore Exclusive Content
           </Text>
-          <Text size="sm" style={{ marginBottom: "20px" }}>
-            Unlock the full potential of our Conversational Fashion Recommender
-            – a premium feature designed just for you. Discover the latest
-            trends, receive personalised recommendations, and stay ahead in the
-            fashion game.
+          <Text size="md" style={{ marginBottom: "20px" }}>
+            Discover Top Care Fashion's members-only blog for exclusive content,
+            fashion tips, and behind-the-scenes insights. Elevate your style
+            game and stay ahead in the fashion world. Acccess now for exclusive
+            content!
             <br />
-            <br />
-            <Text weight={700} color="#555">
-              UNLIMITED LIFETIME ACCESS
-            </Text>{" "}
-            for an incredible price of only
-            <Text weight={700} color="#555">
-              S$4.99
-            </Text>
-            <br />
-            <i>Limited Time Only</i>
           </Text>
 
           <Button
@@ -146,7 +105,7 @@ function PremiumPopup() {
               backgroundColor: "#0056b3",
             }}
           >
-            Get Started
+            Bring Me Now
           </Button>
         </div>
       </Paper>

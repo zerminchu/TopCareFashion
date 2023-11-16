@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { useState, useEffect } from "react";
-import { Button, Text, Stepper } from "@mantine/core";
+import { Button, Text, Stepper, Modal } from "@mantine/core";
 
 import classes from "./BuyerViewOrderStatus.module.css";
 import { useLocation, useNavigate } from "react-router";
@@ -10,6 +10,7 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import OrderStatusItem from "./OrderStatusItem";
 import { useDispatch } from "react-redux";
+import { BsCheckCircleFill } from "react-icons/bs";
 
 function productOrderStatus() {
   const location = useLocation();
@@ -21,6 +22,7 @@ function productOrderStatus() {
   const [active, setActive] = useState();
   const [orderStatusDetails, setOrderStatusDetails] = useState();
   const [currentUser, setCurrentUser] = useState();
+  const [showModal, setShowModal] = useState(false);
 
   // Check current user
   useEffect(() => {
@@ -124,11 +126,30 @@ function productOrderStatus() {
   const renderCollectedButton = () => {
     if (orderStatusDetails) {
       if (orderStatusDetails.status === "waiting for collection") {
-        return <Button onClick={collectedOnClick}>Collected</Button>;
+        return (
+          <Button
+            rightIcon={<BsCheckCircleFill size={25} />}
+            color="green"
+            variant="outline"
+            onClick={() => setShowModal(true)}
+            className={classes.collectedButton}
+          >
+            I Have Collected
+          </Button>
+        );
       }
 
       return <Button disabled>Collected</Button>;
     }
+  };
+
+  const handleConfirm = () => {
+    collectedOnClick();
+    setShowModal(false);
+  };
+
+  const handleClose = () => {
+    setShowModal(false);
   };
 
   const renderContent = () => {
@@ -157,13 +178,42 @@ function productOrderStatus() {
                 disabled
               ></Stepper.Step>
               <Stepper.Step label="Completed" disabled>
-                Available for Pickup
+                <strong>Available For Pickup</strong>
               </Stepper.Step>
             </Stepper>
           </div>
-          <div className={classes.submitContainer}>
-            {renderCollectedButton()}
-          </div>
+          {renderCollectedButton()}
+
+          <Modal
+            opened={showModal}
+            onClose={handleClose}
+            size="lg"
+            classNames={{
+              body: classes.modalBody,
+              wrapper: classes.modalWrapper,
+            }}
+          >
+            <Text className={classes.modalTitle}>Disclaimer</Text>
+
+            <Text className={classes.modalText}>
+              By clicking "I Understand," you affirm your agreement to the terms
+              and conditions of item collection. You confirm the legitimate
+              receipt of the item, and Top Care Fashion is hereby released from
+              any liability associated with the collection process.
+            </Text>
+            <div className={classes.modalButtons}>
+              <Button
+                onClick={handleConfirm}
+                variant="gradient"
+                gradient={{ from: "green", to: "teal", deg: 45 }}
+              >
+                I Understand
+              </Button>
+              <Button onClick={handleClose} variant="outline">
+                Back
+              </Button>
+            </div>
+          </Modal>
         </div>
       );
     }

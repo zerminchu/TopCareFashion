@@ -18,6 +18,9 @@ import { useDispatch } from "react-redux";
 import { showNotifications } from "../../utils/ShowNotification";
 import classes from "./ProductDetails.module.css";
 import aa from "search-insights";
+import { GiConfirmed } from "react-icons/gi";
+import { MdOutlineShoppingCart } from "react-icons/md";
+import { CiShop } from "react-icons/ci";
 
 // Initialize Algolia insights client
 aa("init", {
@@ -448,7 +451,7 @@ function ProductDetails() {
               <div className={classes.productDetailTopContainer}>
                 <div className={classes.productItemAtribute}>
                   <Text size="md" fw={500}>
-                    Product name
+                    Product Name
                   </Text>
                   <Text size="lg" fw={700} align="right" color="blue">
                     {productDetails.title}
@@ -466,7 +469,7 @@ function ProductDetails() {
 
                 <div className={classes.productItemAtribute}>
                   <Text size="md" fw={500}>
-                    Collection address
+                    Collection Address
                   </Text>
                   <Text size="lg" fw={700} align="right" color="blue">
                     {productDetails.collection_address}
@@ -527,6 +530,7 @@ function ProductDetails() {
 
               <div className={classes.topButtonContainer}>
                 <Button
+                  rightIcon={<MdOutlineShoppingCart size={25} />}
                   onClick={addToCartOnClick}
                   variant="light"
                   color="blue"
@@ -535,6 +539,7 @@ function ProductDetails() {
                   Add To Cart
                 </Button>
                 <Button
+                  rightIcon={<GiConfirmed size={25} />}
                   onClick={buyNowOnClick}
                   color="blue"
                   className={classes.actionButton}
@@ -549,15 +554,13 @@ function ProductDetails() {
                   height={30}
                 />
 
-                <div>
-                  <img
-                    className={classes.wishlist}
-                    onClick={wishlistOnClick}
-                    src={IconWishlist}
-                    width={30}
-                    height={30}
-                  />
-                </div>
+                <img
+                  className={classes.wishlist}
+                  onClick={wishlistOnClick}
+                  src={IconWishlist}
+                  width={30}
+                  height={30}
+                />
               </div>
             </div>
           </div>
@@ -570,7 +573,9 @@ function ProductDetails() {
               <Text size="xl" fw={700}>
                 {productDetails.store_name}
               </Text>
-              <Button variant="outline">View shop</Button>
+              <Button leftIcon={<CiShop size={25} />} variant="outline">
+                View shop
+              </Button>
             </div>
 
             <Button onClick={chatOnClick} variant="outline">

@@ -9,6 +9,9 @@ import { useDispatch } from "react-redux";
 import { showNotifications } from "../../utils/ShowNotification";
 import { Button, CloseButton, PasswordInput, TextInput } from "@mantine/core";
 import ILLogo from "../../assets/illustrations/il_logo.png";
+import { BiSolidShoppingBags } from "react-icons/bi";
+import { FaShop } from "react-icons/fa6";
+import { IoLogIn } from "react-icons/io5";
 
 function SignInForm(props) {
   const dispatch = useDispatch();
@@ -143,19 +146,25 @@ function SignInForm(props) {
               Forgot Password?
             </p>
 
-            <Button className={classes.element} onClick={handleSignInClick}>
+            <Button
+              rightIcon={<IoLogIn size={30} />}
+              className={classes.element}
+              onClick={handleSignInClick}
+            >
               Sign In
             </Button>
 
             <h2 className={classes.signupHeading}>Create an account as a...</h2>
 
             <Button
+              rightIcon={<BiSolidShoppingBags size={30} />}
               className={`${classes.element} ${classes.signupButton}`}
               onClick={handleSignUpAsBuyerClick}
             >
               Buyer{" "}
             </Button>
             <Button
+              rightIcon={<FaShop size={30} />}
               className={`${classes.element} ${classes.signupButton}`}
               onClick={handleSignUpAsSellerClick}
             >

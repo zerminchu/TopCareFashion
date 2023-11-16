@@ -14,6 +14,7 @@ import { DateInput } from "@mantine/dates";
 import { useDispatch } from "react-redux";
 import { showNotifications } from "../../utils/ShowNotification";
 import ILLogo from "../../assets/illustrations/il_logo.png";
+import { FaUserPlus } from "react-icons/fa";
 
 function SignUpBuyerForm(props) {
   const dispatch = useDispatch();
@@ -222,7 +223,12 @@ function SignUpBuyerForm(props) {
                 Back
               </p>
             ) : null}
-            <Button onClick={handleSignUpClick}>Sign Up</Button>
+            <Button
+              rightIcon={<FaUserPlus size={30} />}
+              onClick={handleSignUpClick}
+            >
+              Sign Up
+            </Button>
           </div>
         </div>
       </div>

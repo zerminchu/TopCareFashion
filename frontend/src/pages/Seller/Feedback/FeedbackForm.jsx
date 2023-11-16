@@ -5,10 +5,10 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { retrieveUserInfo } from "../../../utils/RetrieveUserInfoFromToken";
 import { showNotifications } from "../../../utils/ShowNotification";
 import classes from "./FeedbackForm.module.css";
+import { useNavigate } from "react-router-dom";
 
 function FeedbackForm() {
   const navigate = useNavigate();
@@ -87,6 +87,8 @@ function FeedbackForm() {
         );
 
         dispatch({ type: "SET_LOADING", value: false });
+
+        navigate("/");
 
         showNotifications({
           status: "success",

@@ -72,6 +72,8 @@
   justify-content: space-between;
   gap: 20px;
   width: 100%;
+  
+  
 }
 
 .productItemAtribute {
@@ -79,6 +81,8 @@
   width: 100%;
   justify-content: space-between;
   align-items: center;
+
+  
 }
 
 .productDetailContainer {
@@ -90,7 +94,9 @@
   border: 1px solid rgb(201, 201, 201);
   border-radius: 5px;
   padding: 20px;
-  max-width: 55rem;
+  padding-right: 60px;
+
+  max-width: 50rem;
 }
 
 .sizeContainer {
@@ -168,8 +174,7 @@
 }
 
 .actionButton {
-  font-size: 16px;
-  border-radius: 5px;
+  border-radius: 10px;
   cursor: pointer;
   min-width: 280px; 
 }

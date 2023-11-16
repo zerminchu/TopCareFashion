@@ -8,6 +8,7 @@
   align-items: center;
   padding-top: 10px;
   padding-bottom: 10px;
+  
 }
 
 .businessname {
@@ -21,12 +22,6 @@
   gap: 20px;
 }
 
-.signinbutton {
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-  font-size: 16px;
-}
 
 .leftside {
   display: flex;
@@ -46,5 +41,12 @@
 
 .navBarMenu {
   cursor: pointer;
-  text-decoration: underline;
+  text-decoration: none; 
+  color: #333; 
+  font-weight: bold;
+  transition: color 0.3s; 
+}
+
+.navBarMenu:hover {
+  color: #6495ED; 
 }

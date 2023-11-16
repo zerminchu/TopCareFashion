@@ -5,6 +5,7 @@ import IconTrashBin from "../../assets/icons/ic_trash.svg";
 import classes from "./CartItem.module.css";
 import axios from "axios";
 import { showNotifications } from "../../utils/ShowNotification";
+import { GiConfirmed } from "react-icons/gi";
 
 function CartItem(props) {
   const [confirmation, setConfirmation] = useState(false);
@@ -108,7 +109,10 @@ function CartItem(props) {
         </div>
       </td>
       <td>
-        <Button onClick={() => props.handleBuyButtonClick(props.cartItemId)}>
+        <Button
+          rightIcon={<GiConfirmed size={20} />}
+          onClick={() => props.handleBuyButtonClick(props.cartItemId)}
+        >
           Buy Now
         </Button>
       </td>

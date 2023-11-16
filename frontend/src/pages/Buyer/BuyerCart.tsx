@@ -1,35 +1,35 @@
-import React, { useEffect, useState } from "react";
 import {
-  createStyles,
-  Table,
-  ScrollArea,
-  UnstyledButton,
-  Group,
-  Text,
-  Center,
-  TextInput,
-  rem,
   Button,
+  Center,
+  Group,
+  ScrollArea,
+  Table,
+  Text,
+  TextInput,
+  UnstyledButton,
+  createStyles,
+  rem,
 } from "@mantine/core";
 import { keys } from "@mantine/utils";
+import React, { useEffect, useState } from "react";
 
 import {
-  IconSelector,
   IconChevronDown,
   IconChevronUp,
   IconSearch,
+  IconSelector,
 } from "@tabler/icons-react";
-import IconTrashBin from "../../assets/icons/ic_trash.svg";
-import blueShirt from "../../assets/images/blue_shirt.jpg";
 
-import { DUMMY_CART_PRODUCT } from "../../data/Products";
-import { useNavigate } from "react-router";
-import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
-import Cookies from "js-cookie";
-import { showNotifications } from "../../utils/ShowNotification";
-import CartItem from "../../components/Cart & Checkout Managment/CartItem";
-import style from "./BuyerCart.module.css";
 import axios from "axios";
+import Cookies from "js-cookie";
+import { MdShoppingCartCheckout } from "react-icons/md";
+import { useNavigate } from "react-router";
+import CartItem from "../../components/Cart & Checkout Managment/CartItem";
+import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
+import { showNotifications } from "../../utils/ShowNotification";
+import style from "./BuyerCart.module.css";
+
+
 
 const useStyles = createStyles((theme) => ({
   th: {
@@ -384,7 +384,7 @@ export function Transactions() {
   const renderCheckoutButton = () => {
     if (sortedData && sortedData.length > 0) {
       return (
-        <Button onClick={handleProceedCheckoutClick} style={{marginTop: "20px"}}>
+        <Button rightIcon={<MdShoppingCartCheckout  size={25} />} onClick={handleProceedCheckoutClick} style={{marginTop: "20px"}}>
           Proceed To Checkout
         </Button>
       );

@@ -12,12 +12,12 @@ import ILLogo from "../../assets/illustrations/il_logo.png";
 import { useDispatch } from "react-redux";
 import { Button } from "@mantine/core";
 import { Link } from "react-router-dom";
+import { IoLogIn } from "react-icons/io5";
 
 function Header() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const [popUpForm, setPopUpForm] = useState(false);
   const [currentUser, setCurrentUser] = useState();
   const [currentRole, setcurrentRole] = useState("");
 
@@ -72,11 +72,20 @@ function Header() {
               >
                 Women
               </a>
-              <a href="https://zermin551.wixsite.com/topcarefashion/about-us">
+              <a
+                className={classes.navBarMenu}
+                href="https://zermin551.wixsite.com/topcarefashion/about-us"
+              >
                 About Us
               </a>
             </div>
-            <Button onClick={signIn}>Sign In</Button>
+            <Button
+              rightIcon={<IoLogIn size={30} />}
+              size="md"
+              onClick={signIn}
+            >
+              Sign In
+            </Button>
           </div>
         </div>
       );
