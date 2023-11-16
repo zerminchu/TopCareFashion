@@ -40,20 +40,17 @@ function BuyerHome(props) {
   const [searchResults, setSearchResults] = useState([]);
   const [subCategories, setSubCategories] = useState();
 
-  // useEffect(() => {
-  //   const storedBuyerPreferences = localStorage.getItem("buyerPreferences");
+  useEffect(() => {
+    const displayBuyerPreferencesForm = () => {
+      const storedBuyerPreferences = localStorage.getItem("buyerPreferences");
 
-  //   if (Cookies.get("userRole") === "buyer" && !currentUser) {
-  //     if (!storedBuyerPreferences) {
-  //
-  //       dispatch({ type: "SET_BUYER_PREFERENCES", value: true });
-  //     } else {
-  //       dispatch({ type: "SET_BUYER_PREFERENCES", value: false });
-  //     }
-  //   } else {
-  //     dispatch({ type: "SET_BUYER_PREFERENCES", value: false });
-  //   }
-  // }, [currentUser, dispatch]);
+      if (!Cookies.get("userRole") && !storedBuyerPreferences) {
+        dispatch({ type: "SET_BUYER_PREFERENCES", value: true });
+      }
+    };
+
+    displayBuyerPreferencesForm();
+  }, [currentUser]);
 
   useEffect(() => {
     const setUserSessionData = async () => {
