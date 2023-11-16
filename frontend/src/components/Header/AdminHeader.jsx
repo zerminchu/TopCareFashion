@@ -5,6 +5,7 @@ import ILLogo from "../../assets/illustrations/il_logo.png";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
+import { CiLogout } from "react-icons/ci";
 
 import { Button, Text } from "@mantine/core";
 
@@ -32,7 +33,13 @@ function AdminHeader(props) {
           Top Care Fashion
         </Text>
       </div>
-      <Button onClick={logoutOnClick}>Sign Out</Button>
+      <Button
+        rightIcon={<CiLogout size={30} />}
+        size="md"
+        onClick={logoutOnClick}
+      >
+        Sign Out
+      </Button>
     </div>
   );
 }

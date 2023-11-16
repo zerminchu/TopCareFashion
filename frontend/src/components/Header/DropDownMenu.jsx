@@ -10,8 +10,9 @@ import IconSettings from "../../assets/icons/ic_settings.svg";
 import IconAnalytics from "../../assets/icons/ic_analytics.svg";
 import IconLogout from "../../assets/icons/ic_logout.svg";
 import IconBlog from "../../assets/icons/ic_blog.svg";
-
 import IconQuestionMark from "../../assets/icons/ic_questionmark.svg";
+import IconFeedback from "../../assets/icons/ic_feedback.svg";
+
 import { Badge } from "@mantine/core";
 
 import classes from "./DropDownMenu.module.css";
@@ -66,17 +67,13 @@ function DropDownMenu(props) {
     window.location.reload();
   };
 
-  const fashionRecommender = () => {
+  const fashionBlog = () => {
     try {
-      if (currentUser) {
-        if (currentUser.premium_feature) {
-          navigate("/buyer/premium-feature");
-        } else {
-          dispatch({ type: "SET_PREMIUM_FEATURE", value: true });
-        }
+      if (currentUser && currentUser.premium_feature) {
+        dispatch({ type: "SET_PREMIUM_FEATURE", value: true });
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -182,7 +179,7 @@ function DropDownMenu(props) {
 
             <Menu.Item
               icon={<img src={IconBlog} />}
-              onClick={fashionRecommender}
+              onClick={fashionBlog}
               style={{
                 display: "flex",
                 justifyContent: "space-between",
@@ -193,7 +190,7 @@ function DropDownMenu(props) {
               <Badge>Exclusive</Badge>
             </Menu.Item>
             <Menu.Item
-              icon={<img src={IconQuestionMark} />}
+              icon={<img src={IconFeedback} />}
               onClick={manageFeedbackForm}
             >
               Feedback Form

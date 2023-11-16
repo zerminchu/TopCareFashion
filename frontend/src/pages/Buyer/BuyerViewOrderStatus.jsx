@@ -10,6 +10,7 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import OrderStatusItem from "./OrderStatusItem";
 import { useDispatch } from "react-redux";
+import { BsCheckCircleFill } from "react-icons/bs";
 
 function productOrderStatus() {
   const location = useLocation();
@@ -127,6 +128,7 @@ function productOrderStatus() {
       if (orderStatusDetails.status === "waiting for collection") {
         return (
           <Button
+            rightIcon={<BsCheckCircleFill size={25} />}
             color="green"
             variant="outline"
             onClick={() => setShowModal(true)}

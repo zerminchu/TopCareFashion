@@ -4,6 +4,11 @@ import { Badge, Button, Skeleton } from "@mantine/core";
 import ILLNullImageListing from "../../assets/illustrations/il_null_image_clothes.svg";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { IoReceipt } from "react-icons/io5";
+import { GiConfirmed } from "react-icons/gi";
+import { TbListDetails } from "react-icons/tb";
+import { MdStarRate } from "react-icons/md";
+import { AiOutlineFileDone } from "react-icons/ai";
 
 function TransactionItem(props) {
   const navigate = useNavigate();
@@ -81,15 +86,27 @@ function TransactionItem(props) {
         transactionDetails.status === "completed" &&
         !transactionDetails.rated
       ) {
-        return <Button onClick={rateOnClick}>Rate</Button>;
+        return (
+          <Button rightIcon={<MdStarRate size={20} />} onClick={rateOnClick}>
+            Rate
+          </Button>
+        );
       } else if (
         transactionDetails.status === "completed" &&
         transactionDetails.rated
       ) {
-        return <Button disabled>Rated</Button>;
+        return (
+          <Button rightIcon={<AiOutlineFileDone size={20} />} disabled>
+            Rated
+          </Button>
+        );
       }
 
-      return <Button disabled>Rate</Button>;
+      return (
+        <Button rightIcon={<MdStarRate size={20} />} disabled>
+          Rate
+        </Button>
+      );
     }
   };
 
@@ -112,6 +129,7 @@ function TransactionItem(props) {
           <td>
             {transactionDetails.status === "waiting for collection" ? (
               <Button
+                rightIcon={<GiConfirmed size={20} />}
                 variant="gradient"
                 gradient={{ from: "yellow", to: "orange", deg: 153 }}
                 onClick={viewDetailsOnClick}
@@ -119,11 +137,20 @@ function TransactionItem(props) {
                 Confirm Your Order Now
               </Button>
             ) : (
-              <Button onClick={viewDetailsOnClick}>View Details</Button>
+              <Button
+                rightIcon={<TbListDetails size={20} />}
+                onClick={viewDetailsOnClick}
+              >
+                View Details
+              </Button>
             )}
           </td>
           <td>
-            <Button onClick={viewInvoiceOnClick} variant="outline">
+            <Button
+              rightIcon={<IoReceipt size={20} />}
+              onClick={viewInvoiceOnClick}
+              variant="outline"
+            >
               View invoice
             </Button>
           </td>
