@@ -86,19 +86,20 @@ function BuyerHomeMen(props) {
     }
   }, [currentUser]);
 
-  useEffect(() => {
-    const storedBuyerPreferences = localStorage.getItem("buyerPreferences");
+  // useEffect(() => {
+  //   const storedBuyerPreferences = localStorage.getItem("buyerPreferences");
 
-    if (Cookies.get("userRole") === "buyer" && !currentUser) {
-      if (!storedBuyerPreferences) {
-        dispatch({ type: "SET_BUYER_PREFERENCES", value: true });
-      } else {
-        dispatch({ type: "SET_BUYER_PREFERENCES", value: false });
-      }
-    } else {
-      dispatch({ type: "SET_BUYER_PREFERENCES", value: false });
-    }
-  }, [currentUser, dispatch]);
+  //   if (Cookies.get("userRole") === "buyer" && !currentUser) {
+  //     if (!storedBuyerPreferences) {
+  //
+  //       dispatch({ type: "SET_BUYER_PREFERENCES", value: true });
+  //     } else {
+  //       dispatch({ type: "SET_BUYER_PREFERENCES", value: false });
+  //     }
+  //   } else {
+  //     dispatch({ type: "SET_BUYER_PREFERENCES", value: false });
+  //   }
+  // }, [currentUser, dispatch]);
 
   useEffect(() => {
     const setUserSessionData = async () => {
