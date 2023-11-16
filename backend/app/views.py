@@ -194,7 +194,7 @@ def signIn(request):
                 raise Exception("User not found")
 
             if (authUser.disabled):
-                raise Exception("User has been suspended/disabled")
+                raise Exception("User has been deleted")
 
             if (not authUser.email_verified):
                 raise Exception("Please verify your email")
