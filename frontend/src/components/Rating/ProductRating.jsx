@@ -11,12 +11,16 @@ import { showNotifications } from "../../utils/ShowNotification";
 function ProductRating(props) {
   const dispatch = useDispatch();
 
+  const [reviewDescription, setReviewDescription] = useState(
+    props.description || ""
+  );
+
   const [currentUser, setCurrentUser] = useState(props.currentUser || null);
   const [editReply, setEditReply] = useState(false);
   const [comment, setComment] = useState(props.description || "");
 
   const renderReply = () => {
-    if (props.reply.length > 0) {
+    if (props.reply > 0) {
       return (
         <div className={classes.sellerRepliedContainer}>
           <Text>Seller replied</Text>
@@ -43,6 +47,9 @@ function ProductRating(props) {
           : import.meta.env.VITE_API_PROD;
 
       const response = await axios.put(`${url}/buyer/edit-review/`, data);
+
+      setReviewDescription(data.description);
+      setEditReply(false);
 
       dispatch({ type: "SET_LOADING", value: false });
 
@@ -110,7 +117,7 @@ function ProductRating(props) {
         {renderReplyButton()}
       </div>
 
-      {!editReply && <Text>{props.description}</Text>}
+      {!editReply && <Text>{reviewDescription}</Text>}
       {editReply && renderEditReply()}
       {renderReply()}
     </div>
