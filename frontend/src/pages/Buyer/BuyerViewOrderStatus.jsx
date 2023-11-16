@@ -139,7 +139,17 @@ function productOrderStatus() {
         );
       }
 
-      return <Button disabled>Collected</Button>;
+      return (
+        <Button
+          rightIcon={<BsCheckCircleFill size={25} />}
+          color="green"
+          variant="outline"
+          disabled="true"
+          className={classes.collectedButton}
+        >
+          Item(s) Collected
+        </Button>
+      );
     }
   };
 

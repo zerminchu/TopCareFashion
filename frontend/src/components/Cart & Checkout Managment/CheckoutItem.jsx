@@ -1,13 +1,13 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
+import { Button, Table, Text } from "@mantine/core";
 import React from "react";
-import { Stepper, Button, Group, Text, Table, TextInput } from "@mantine/core";
-import ILProductImage from "../../assets/illustrations/il_category_top.jpg";
-import ILLNullImageListing from "../../assets/illustrations/il_null_image_clothes.svg";
+import { MdOutlineChat } from "react-icons/md";
 import IconLocation from "../../assets/icons/ic_location.svg";
+import ILLNullImageListing from "../../assets/illustrations/il_null_image_clothes.svg";
 
-import classes from "./CheckoutItem.module.css";
 import { useNavigate } from "react-router-dom";
+import classes from "./CheckoutItem.module.css";
 
 function CheckoutItem(props) {
   const navigate = useNavigate();
@@ -40,7 +40,9 @@ function CheckoutItem(props) {
         <Text fw={500} size="lg">
           {props.store_name}
         </Text>
-        <Button onClick={chatOnClick}>Chat with seller</Button>
+        <Button leftIcon={<MdOutlineChat size={25} />} onClick={chatOnClick}>
+          Chat with seller
+        </Button>
       </div>
 
       <div>
