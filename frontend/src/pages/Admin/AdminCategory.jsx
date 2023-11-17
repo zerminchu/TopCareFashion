@@ -10,6 +10,7 @@ function AdminCategory() {
   const [fashionCatData, setFashionCatData] = useState();
   const [search, setSearch] = useState("");
   const [searchFashionCatData, setSearchFashionCatData] = useState();
+
   const [isAdding, setAdding] = useState(false);
   const [newCategory, setNewCategory] = useState({
     category: "",
@@ -58,11 +59,11 @@ function AdminCategory() {
             : import.meta.env.VITE_API_PROD;
 
         const response = await axios.get(`${url}/fashion-category/`);
-        console.log("category: ", response.data.data);
         setFashionCatData(response.data.data);
+        console.log(fashionCatData);
         setSearchFashionCatData(response.data.data);
       } catch (error) {
-        console.log("error retrieve all fashion categories", error);
+        console.log("error retrieving all fashion categories", error);
       }
     };
 
@@ -78,13 +79,13 @@ function AdminCategory() {
             value.toLowerCase().includes(search.toLowerCase())
         );
       });
-      console.log("category: ", filteredArray);
-
+      console.log([...filteredArray]);
       setSearchFashionCatData([...filteredArray]);
     }
   };
 
   const renderFashionCatItem = () => {
+    console.log(searchFashionCatData);
     if (searchFashionCatData) {
       if (searchFashionCatData.length > 0) {
         return searchFashionCatData.map((data, index) => {
@@ -157,16 +158,19 @@ function AdminCategory() {
 
   return (
     <>
+      <br />
+
       <div className={classes.searchContainer}>
         <TextInput
           className={classes.searchBar}
-          placeholder="Search buyer"
+          placeholder="Search Fashion Categories"
           onChange={(event) => setSearch(event.currentTarget.value)}
         />
         <Button className={classes.searchButton} onClick={searchOnClick}>
           Search
         </Button>
       </div>
+      <br />
 
       <Table verticalSpacing="md">
         <thead>

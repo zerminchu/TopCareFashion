@@ -40,7 +40,6 @@ function AdminBuyer() {
             value.toLowerCase().includes(search.toLowerCase())
         );
       });
-      console.log("fitere: ", filteredArray);
 
       setBuyerSearchData([...filteredArray]);
     }
@@ -77,10 +76,12 @@ function AdminBuyer() {
 
   return (
     <>
+      <br />
+
       <div className={classes.searchContainer}>
         <TextInput
           className={classes.searchBar}
-          placeholder="Search buyer"
+          placeholder="Search Buyer"
           onChange={(event) => setSearch(event.currentTarget.value)}
         />
 
@@ -88,6 +89,8 @@ function AdminBuyer() {
           Search
         </Button>
       </div>
+      <br />
+
       <Table verticalSpacing="md">
         <thead>
           <tr>
