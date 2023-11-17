@@ -578,8 +578,7 @@ def getListingDetailByItemId(request, item_id):
                 buyerData = buyerRef.get()
 
                 if (not buyerData.exists):
-                    raise Exception(
-                        "Buyer data does not exists in the reviews")
+                    continue
 
                 reviewItem["buyer_name"] = (buyerData.to_dict())[
                     "name"]["first_name"]
