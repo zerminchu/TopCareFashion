@@ -10,6 +10,7 @@ import { retrieveUserInfo } from "../../utils/RetrieveUserInfoFromToken";
 import { showNotifications } from "../../utils/ShowNotification";
 import classes from "./Checkout.module.css";
 import aa from "search-insights";
+import { PiPackageThin } from "react-icons/pi";
 
 // Initialize Algolia insights client
 aa("init", {
@@ -247,7 +248,12 @@ function Checkout() {
         </Text>
         <div className={classes.priceContainer}>
           {renderTotalPrice()}
-          <Button onClick={orderOnClick}>Place An Order</Button>
+          <Button
+            rightIcon={<PiPackageThin size={25} />}
+            onClick={orderOnClick}
+          >
+            Place An Order
+          </Button>
         </div>
       </div>
     </div>

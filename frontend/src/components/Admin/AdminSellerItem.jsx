@@ -190,7 +190,7 @@ function AdminSellerItem(props) {
           Update
         </Button>
         <Button onClick={suspendOnClick} style={{ width: "91px" }} color="red">
-          Suspend
+          Delete
         </Button>
       </td>
     </tr>
