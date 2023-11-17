@@ -505,8 +505,6 @@ def feedbackForm(request, user_id):
                 raise Exception("User not found")
 
             # Validation
-            if (not all(v for v in data.values())):
-                raise Exception("Please fill up all the data")
 
             # Serializer
             serializer = FeedbackSerializer(data=data)

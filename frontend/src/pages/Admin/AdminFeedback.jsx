@@ -21,6 +21,7 @@ function AdminFeedback() {
 
         const response = await axios.get(`${url}/feedback-admin/`);
         setFeedbackData(response.data.data);
+        console.log(response.data.data);
         setSearchFeedbackData(response.data.data);
       } catch (error) {
         console.log("error retrieving all feedbacks", error);
@@ -78,6 +79,8 @@ function AdminFeedback() {
             <th>Title</th>
             <th>Description</th>
             <th>Category</th>
+            <th>Suggested Category (From User)</th>
+            <th>Suggested Sub-Category (From User)</th>
             <th>Action</th>
           </tr>
         </thead>

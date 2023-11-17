@@ -9,12 +9,25 @@ import { retrieveUserInfo } from "../../../utils/RetrieveUserInfoFromToken";
 import { showNotifications } from "../../../utils/ShowNotification";
 import classes from "./FeedbackForm.module.css";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 function FeedbackForm() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
 
   const [currentUser, setCurrentUser] = useState();
+  const [showAdditionalInputs, setShowAdditionalInputs] = useState(false);
+  const [suggested_category, setInputA] = useState("");
+  const [suggested_subCategory, setInputB] = useState("");
+
+  useEffect(() => {
+    if (location.state && location.state.selectedCategory === "Others") {
+      setShowAdditionalInputs(true);
+    } else {
+      setShowAdditionalInputs(false); // Ensure it's explicitly set to false when not visible
+    }
+  }, [location.state]);
 
   useEffect(() => {
     //set user to null
@@ -37,7 +50,12 @@ function FeedbackForm() {
     initialValues: {
       title: "", //title
       description: "", //descripton
-      category: "", //category
+      category:
+        location.state && location.state.selectedCategory === "Others"
+          ? "Others"
+          : "", // Set default value
+      suggested_category: "", // Rename suggested_category
+      suggested_subCategory: "",
     },
     validate: {
       title: (value) => {
@@ -56,6 +74,16 @@ function FeedbackForm() {
         if (/^\s$|^\s+.|.\s+$/.test(value))
           return "Category should not contain trailing/leading whitespaces";
       },
+      suggested_category: (value) => {
+        if (showAdditionalInputs && value.length === 0) {
+          return "Suggested Category should not be blank";
+        }
+      },
+      suggested_subCategory: (value) => {
+        if (showAdditionalInputs && value.length === 0) {
+          return "Suggested Sub-Category should not be blank";
+        }
+      },
     },
   });
 
@@ -71,18 +99,23 @@ function FeedbackForm() {
         const data = {
           title: form.values.title,
           description: form.values.description,
-          category: form.values.category,
+          category: showAdditionalInputs ? form.values.category : "Others",
+          suggested_category: showAdditionalInputs
+            ? form.values.suggested_category
+            : "Null",
+          suggested_subCategory: showAdditionalInputs
+            ? form.values.suggested_subCategory
+            : "Null",
         };
 
+        const userId = currentUser?.user_id || "1vUclhY7gUO5lBIvpOgkNTgFm6E2";
         const url =
           import.meta.env.VITE_API_DEV == "DEV"
             ? import.meta.env.VITE_API_DEV
             : import.meta.env.VITE_API_PROD;
 
         const response = await axios.post(
-          //post request
-
-          `${url}/feedback/${currentUser.user_id}/feedback-form/`, //new feedback one
+          `${url}/feedback/${userId}/feedback-form/`,
           data
         );
 
@@ -114,32 +147,50 @@ function FeedbackForm() {
       </Title>
       <div className={classes.content}>
         <TextInput
-          value={form.values.businessName}
+          value={form.values.title}
           label="Title"
           placeholder="Title"
           {...form.getInputProps("title")} //change
         />
-
         <Textarea
-          value={form.values.businessDescription}
+          value={form.values.description}
           placeholder="Description"
           label="Description"
           {...form.getInputProps("description")}
         />
-        <Select
-          value={form.values.category}
-          label="Category"
-          placeholder="Category"
-          data={[
-            { value: "Purchases", label: "Purchases" },
-            { value: "Transactions", label: "Transactions" },
-            { value: "Bug", label: "Bug" },
-            { value: "Error", label: "Error" },
-            { value: "Others", label: "Others" },
-          ]}
-          onChange={(value) => form.setValues({ category: value })}
-        />
 
+        {showAdditionalInputs ? (
+          <>
+            <Textarea
+              value={form.values.suggested_category}
+              label="Suggested Category"
+              placeholder="Give a Detailed Description e.g. Sneaker"
+              {...form.getInputProps("suggested_category")}
+            />
+            <Textarea
+              value={form.values.suggested_subCategory}
+              label="Suggested Sub-Category"
+              placeholder="Give a Suitable Sub-Category e.g. Top"
+              {...form.getInputProps("suggested_subCategory")}
+            />
+          </>
+        ) : (
+          <Select
+            value={form.values.category}
+            label="Category"
+            placeholder="Category"
+            data={[
+              { value: "Purchases", label: "Purchases" },
+              { value: "Transactions", label: "Transactions" },
+              { value: "Bug", label: "Bug" },
+              { value: "Error", label: "Error" },
+              { value: "Others", label: "Others" },
+            ]}
+            onChange={(value) => {
+              form.setValues({ category: value });
+            }}
+          />
+        )}
         <div className={classes.bottom}>
           <Button onClick={saveOnClick}>Save Changes</Button>
           <Button variant="outline" onClick={cancelOnClick}>

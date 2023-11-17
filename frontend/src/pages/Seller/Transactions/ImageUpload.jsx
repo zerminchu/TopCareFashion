@@ -221,21 +221,25 @@ function ImageUpload() {
   };
 
   const proceedToCreateListing = () => {
-    const imageFiles = uploadedImages.map((blobUrl, index) => {
-      const blob = fetch(blobUrl).then((r) => r.blob());
-      return new File([blob], `image_${index}.png`, {
-        type: "image/png",
+    if (correctCategory === "Others") {
+      navigate("/feedback-form", { state: { selectedCategory: "Others" } });
+    } else {
+      const imageFiles = uploadedImages.map((blobUrl, index) => {
+        const blob = fetch(blobUrl).then((r) => r.blob());
+        return new File([blob], `image_${index}.png`, {
+          type: "image/png",
+        });
       });
-    });
 
-    navigate("/seller/create-listing", {
-      state: {
-        uploadedImages: imageFiles,
-        predictedCategory: predictedCategory,
-        predictedSubCategory: predictedSubCategory,
-        correctCategory: correctCategory,
-      },
-    });
+      navigate("/seller/create-listing", {
+        state: {
+          uploadedImages: imageFiles,
+          predictedCategory: predictedCategory,
+          predictedSubCategory: predictedSubCategory,
+          correctCategory: correctCategory,
+        },
+      });
+    }
   };
 
   const handleDragEnd = (result) => {
@@ -281,10 +285,6 @@ function ImageUpload() {
   const handleSomethingIsWrong = () => {
     setShowCorrectCategoryModal(true);
     setShowModal(false);
-  };
-
-  const handleCategorySelect = (category) => {
-    setCorrectCategory(category);
   };
 
   const handleEditPreferences = (sellerPreferences) => {
@@ -671,15 +671,18 @@ function ImageUpload() {
               borderRadius: "4px",
               outline: "none",
             }}
+            setCorrectCategory
           >
             <option value="" disabled>
               Select the Most Appropriate Category
             </option>
+
             {clothingCategories.map((category) => (
               <option key={category} value={category}>
                 {category}
               </option>
             ))}
+            <option value="Others">Others (Send Us a Feedback)</option>
           </select>
         </div>
         <div>

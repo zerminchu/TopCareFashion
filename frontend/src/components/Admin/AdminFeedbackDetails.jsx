@@ -15,6 +15,8 @@ function AdminFeedbackDetails(props) {
       category: props.data.category || "",
       description: props.data.description || "",
       title: props.data.title || "",
+      suggested_category: props.data.suggested_category || "",
+      suggested_subCategory: props.data.suggested_subCategory || "",
     },
   });
 
@@ -60,6 +62,11 @@ function AdminFeedbackDetails(props) {
       formData.append("category", form.values.category);
       formData.append("description", form.values.description);
       formData.append("title", form.values.title);
+      formData.append("suggested_category", form.values.suggested_category);
+      formData.append(
+        "suggested_subCategory",
+        form.values.suggested_subCategory
+      );
 
       const url = `${
         import.meta.env.VITE_NODE_ENV == "DEV"
@@ -107,6 +114,18 @@ function AdminFeedbackDetails(props) {
           placeholder="Category"
           {...form.getInputProps("category")}
           data={["Purchases", "Transactions", "Bug", "Errors", "Others"]}
+        />
+      </td>
+      <td>
+        <TextInput
+          placeholder="Suggested Category"
+          {...form.getInputProps("suggested_category")}
+        />
+      </td>
+      <td>
+        <TextInput
+          placeholder="Suggested Sub-Category"
+          {...form.getInputProps("suggested_subCategory")}
         />
       </td>
 
