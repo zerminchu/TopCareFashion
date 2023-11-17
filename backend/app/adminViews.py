@@ -272,24 +272,6 @@ def feedBack(request, feedback_id=None):
             }, status=200)
         except Exception as e:
             return Response({"error": str(e)}, status=500)
-
-    elif request.method == "PUT":
-        try:
-            data = request.data
-
-            category_doc = categoryRef.document(feedback_id)
-            category_doc.update(data)
-
-            return JsonResponse({
-                'status': "success",
-                'message': f"Feedback {feedback_id} updated successfully",
-                'data': data
-            }, status=200)
-        except Exception as e:
-            return JsonResponse({
-                "status": "error",
-                "message": str(e)
-            }, status=400)
     elif request.method == "DELETE":
         try:
 

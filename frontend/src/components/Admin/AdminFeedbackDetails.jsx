@@ -53,51 +53,6 @@ function AdminFeedbackDetails(props) {
     }
   };
 
-  const updateOnClick = async () => {
-    try {
-      dispatch({ type: "SET_LOADING", value: true });
-
-      const formData = new FormData();
-
-      formData.append("category", form.values.category);
-      formData.append("description", form.values.description);
-      formData.append("title", form.values.title);
-      formData.append("suggested_category", form.values.suggested_category);
-      formData.append(
-        "suggested_subCategory",
-        form.values.suggested_subCategory
-      );
-
-      const url = `${
-        import.meta.env.VITE_NODE_ENV == "DEV"
-          ? import.meta.env.VITE_API_DEV
-          : import.meta.env.VITE_API_PROD
-      }/feedback-admin/${props.data.id}/`;
-
-      const response = await axios.put(url, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      dispatch({ type: "SET_LOADING", value: false });
-
-      showNotifications({
-        status: response.data.status,
-        title: "Success",
-        message: response.data.message,
-      });
-    } catch (error) {
-      dispatch({ type: "SET_LOADING", value: false });
-
-      showNotifications({
-        status: "error",
-        title: "Error",
-        message: error.response.data.message,
-      });
-    }
-  };
-
   return (
     <tr>
       <td>
@@ -130,13 +85,6 @@ function AdminFeedbackDetails(props) {
       </td>
 
       <td>
-        <Button
-          onClick={updateOnClick}
-          style={{ marginRight: "20px", width: "91px" }}
-          color="blue"
-        >
-          Update
-        </Button>
         <Button style={{ width: "91px" }} color="red" onClick={deleteOnClick}>
           Delete
         </Button>
