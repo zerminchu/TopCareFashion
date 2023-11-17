@@ -18,14 +18,12 @@ function FeedbackForm() {
 
   const [currentUser, setCurrentUser] = useState();
   const [showAdditionalInputs, setShowAdditionalInputs] = useState(false);
-  const [suggested_category, setInputA] = useState("");
-  const [suggested_subCategory, setInputB] = useState("");
 
   useEffect(() => {
     if (location.state && location.state.selectedCategory === "Others") {
       setShowAdditionalInputs(true);
     } else {
-      setShowAdditionalInputs(false); // Ensure it's explicitly set to false when not visible
+      setShowAdditionalInputs(false);
     }
   }, [location.state]);
 
@@ -96,16 +94,22 @@ function FeedbackForm() {
       if (!form.validate().hasErrors) {
         dispatch({ type: "SET_LOADING", value: true });
 
+        let categoryValue = form.values.category;
+
+        if (showAdditionalInputs) {
+          categoryValue = "Others";
+        }
+
         const data = {
           title: form.values.title,
           description: form.values.description,
-          category: showAdditionalInputs ? form.values.category : "Others",
+          category: categoryValue,
           suggested_category: showAdditionalInputs
             ? form.values.suggested_category
-            : "Null",
+            : "N/A",
           suggested_subCategory: showAdditionalInputs
             ? form.values.suggested_subCategory
-            : "Null",
+            : "N/A",
         };
 
         const userId = currentUser?.user_id || "1vUclhY7gUO5lBIvpOgkNTgFm6E2";
