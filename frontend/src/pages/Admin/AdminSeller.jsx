@@ -83,17 +83,7 @@ function AdminSeller() {
 
   return (
     <>
-      <div className={classes.searchContainer}>
-        <TextInput
-          className={classes.searchBar}
-          placeholder="Search seller"
-          onChange={(event) => setSearch(event.currentTarget.value)}
-        />
-        <Button className={classes.searchButton} onClick={searchOnClick}>
-          Search
-        </Button>
-      </div>
-
+      <br />
       <Table verticalSpacing="md">
         <thead>
           <tr>

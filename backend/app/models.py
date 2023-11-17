@@ -32,7 +32,8 @@ class User(models.Model):
     # Buyer
     premium_feature = models.BooleanField(default=False)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
-    preferences_condition = models.CharField(max_length=20, blank=True, null=True)
+    preferences_condition = models.CharField(
+        max_length=20, blank=True, null=True)
     preferences_gender = models.CharField(max_length=20, blank=True, null=True)
     preferences_size = models.CharField(max_length=20, blank=True, null=True)
 
@@ -64,7 +65,6 @@ class Item(models.Model):
     size = models.CharField(max_length=20, blank=True, null=True)
 
 
-
 class Listing(models.Model):
     avail_status = models.CharField(max_length=255)
     quantity_available = models.CharField(max_length=255)
@@ -75,6 +75,8 @@ class Feedback(models.Model):
     title = models.CharField(max_length=255)
     description = models.CharField(max_length=255)
     category = models.CharField(max_length=255)
+    suggested_category = models.CharField(max_length=255)
+    suggested_subCategory = models.CharField(max_length=255)
 
 
 class Cart(models.Model):
@@ -85,6 +87,7 @@ class Cart(models.Model):
     seller_id = models.CharField(max_length=255, null=False, blank=False)
     buyer_id = models.CharField(max_length=255, null=False, blank=False)
     size = models.CharField(max_length=255, null=False, blank=False)
+
 
 class PaidOrder(models.Model):
     paid_order_id = models.CharField(max_length=255, null=False, blank=False)
@@ -99,6 +102,7 @@ class PaidOrder(models.Model):
     quantity = models.PositiveIntegerField(null=False, blank=False)
     size = models.CharField(max_length=255, null=False, blank=False)
     receipt_url = models.CharField(max_length=255, null=False, blank=False)
+
 
 class Wishlist(models.Model):
     listing_id = models.CharField(max_length=255, null=False, blank=False)
