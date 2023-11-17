@@ -4,8 +4,12 @@ import React, { useEffect, useState } from "react";
 import AdminFashionCategory from "../../components/Admin/AdminFashionCategory";
 import { showNotifications } from "../../utils/ShowNotification";
 
+import classes from "./AdminCategory.module.css";
+
 function AdminCategory() {
   const [fashionCatData, setFashionCatData] = useState();
+  const [search, setSearch] = useState("");
+  const [searchFashionCatData, setSearchFashionCatData] = useState();
   const [isAdding, setAdding] = useState(false);
   const [newCategory, setNewCategory] = useState({
     category: "",
@@ -54,7 +58,9 @@ function AdminCategory() {
             : import.meta.env.VITE_API_PROD;
 
         const response = await axios.get(`${url}/fashion-category/`);
+        console.log("category: ", response.data.data);
         setFashionCatData(response.data.data);
+        setSearchFashionCatData(response.data.data);
       } catch (error) {
         console.log("error retrieve all fashion categories", error);
       }
@@ -63,10 +69,25 @@ function AdminCategory() {
     retrieveAllFashionCat();
   }, []);
 
-  const renderFashionCatItem = () => {
+  const searchOnClick = () => {
     if (fashionCatData) {
-      if (fashionCatData.length > 0) {
-        return fashionCatData.map((data, index) => {
+      let filteredArray = fashionCatData.filter((obj) => {
+        return Object.values(obj).some(
+          (value) =>
+            typeof value === "string" &&
+            value.toLowerCase().includes(search.toLowerCase())
+        );
+      });
+      console.log("category: ", filteredArray);
+
+      setSearchFashionCatData([...filteredArray]);
+    }
+  };
+
+  const renderFashionCatItem = () => {
+    if (searchFashionCatData) {
+      if (searchFashionCatData.length > 0) {
+        return searchFashionCatData.map((data, index) => {
           return <AdminFashionCategory key={index} data={data} />;
         });
       }
@@ -135,52 +156,65 @@ function AdminCategory() {
   };
 
   return (
-    <Table verticalSpacing="md">
-      <thead>
-        <tr>
-          <th>Main Category (Detailed)</th>
-          <th>Sub-category</th>
-          <th>Gender Assignment for Category</th>
-          <th>
-            <Button variant="outline" color="cyan" onClick={openAddModal}>
-              Add a New Fashion Category
-            </Button>
-          </th>
-        </tr>
-      </thead>
-      <tbody>{renderFashionCatItem()}</tbody>
-
-      <Modal opened={isAdding} onClose={closeAddModal} style={modalStyle}>
-        <div style={titleStyle}>Add New Category</div>
-
+    <>
+      <div className={classes.searchContainer}>
         <TextInput
-          style={inputStyle}
-          placeholder="Category"
-          name="category"
-          value={newCategory.category}
-          onChange={handleInputChange}
+          className={classes.searchBar}
+          placeholder="Search buyer"
+          onChange={(event) => setSearch(event.currentTarget.value)}
         />
-        <TextInput
-          style={inputStyle}
-          placeholder="Sub Category"
-          name="sub_category"
-          value={newCategory.sub_category}
-          onChange={handleInputChange}
-        />
-        <Select
-          style={inputStyle}
-          placeholder="Category's Gender"
-          data={["men", "women", "unisex"]}
-          value={newCategory.category_gender}
-          onChange={(value) =>
-            handleInputChange({ target: { name: "category_gender", value } })
-          }
-        />
-        <Button style={buttonStyle} onClick={addCategory}>
-          Add Record
+        <Button className={classes.searchButton} onClick={searchOnClick}>
+          Search
         </Button>
-      </Modal>
-    </Table>
+      </div>
+
+      <Table verticalSpacing="md">
+        <thead>
+          <tr>
+            <th>Main Category (Detailed)</th>
+            <th>Sub-category</th>
+            <th>Gender Assignment for Category</th>
+            <th>
+              <Button variant="outline" color="cyan" onClick={openAddModal}>
+                Add a New Fashion Category
+              </Button>
+            </th>
+          </tr>
+        </thead>
+        <tbody>{renderFashionCatItem()}</tbody>
+
+        <Modal opened={isAdding} onClose={closeAddModal} style={modalStyle}>
+          <div style={titleStyle}>Add New Category</div>
+
+          <TextInput
+            style={inputStyle}
+            placeholder="Category"
+            name="category"
+            value={newCategory.category}
+            onChange={handleInputChange}
+          />
+          <TextInput
+            style={inputStyle}
+            placeholder="Sub Category"
+            name="sub_category"
+            value={newCategory.sub_category}
+            onChange={handleInputChange}
+          />
+          <Select
+            style={inputStyle}
+            placeholder="Category's Gender"
+            data={["men", "women", "unisex"]}
+            value={newCategory.category_gender}
+            onChange={(value) =>
+              handleInputChange({ target: { name: "category_gender", value } })
+            }
+          />
+          <Button style={buttonStyle} onClick={addCategory}>
+            Add Record
+          </Button>
+        </Modal>
+      </Table>
+    </>
   );
 }
 

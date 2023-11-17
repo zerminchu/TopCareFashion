@@ -3,6 +3,7 @@ import { Button, Text, Table } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import ILLNullImageListing from "../../assets/illustrations/il_null_image_clothes.svg";
 import IconLocation from "../../assets/icons/ic_location.svg";
+import { MdOutlineChat } from "react-icons/md";
 
 import classes from "./OrderStatusItem.module.css";
 
@@ -29,7 +30,9 @@ function OrderStatusItem(props) {
         <Text fw={500} size="lg">
           {props.storeName}
         </Text>
-        <Button onClick={chatOnClick}>Chat with seller</Button>
+        <Button leftIcon={<MdOutlineChat size={25} />} onClick={chatOnClick}>
+          Chat with seller
+        </Button>
       </div>
 
       <div>

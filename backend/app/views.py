@@ -194,7 +194,7 @@ def signIn(request):
                 raise Exception("User not found")
 
             if (authUser.disabled):
-                raise Exception("User has been suspended/disabled")
+                raise Exception("User has been deleted")
 
             if (not authUser.email_verified):
                 raise Exception("Please verify your email")
@@ -578,8 +578,7 @@ def getListingDetailByItemId(request, item_id):
                 buyerData = buyerRef.get()
 
                 if (not buyerData.exists):
-                    raise Exception(
-                        "Buyer data does not exists in the reviews")
+                    continue
 
                 reviewItem["buyer_name"] = (buyerData.to_dict())[
                     "name"]["first_name"]
@@ -1083,6 +1082,7 @@ def delete_item(request, user_id, item_id):
             return Response({"error": str(e)}, status=500)
 
 
+# model_path = './ML/updated_model.pkl'
 model_path = './ML/stage-1_resnet34.pkl'
 # update pkl file live
 class_labels_path = './ML/class.txt'

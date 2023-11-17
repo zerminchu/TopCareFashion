@@ -1,10 +1,15 @@
-import { Table, Text } from "@mantine/core";
+import { Table, Text, TextInput, Button } from "@mantine/core";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import AdminSellerItem from "../../components/Admin/AdminSellerItem";
 
+import classes from "./AdminSeller.module.css";
+
 function AdminSeller() {
   const [sellerData, setSellerData] = useState();
+  const [search, setSearch] = useState("");
+  const [sellerSearchData, setSellerSearchData] = useState();
+
   useEffect(() => {
     const retrieveAllSellers = async () => {
       try {
@@ -17,6 +22,7 @@ function AdminSeller() {
         const response = await axios.get(`${url}/admin/users/`, { params });
 
         setSellerData(response.data.data);
+        setSellerSearchData(response.data.data);
       } catch (error) {
         console.log(error);
       }
@@ -24,6 +30,20 @@ function AdminSeller() {
 
     retrieveAllSellers();
   }, []);
+
+  const searchOnClick = () => {
+    if (sellerData) {
+      let filteredArray = sellerData.filter((obj) => {
+        return Object.values(obj).some(
+          (value) =>
+            typeof value === "string" &&
+            value.toLowerCase().includes(search.toLowerCase())
+        );
+      });
+
+      setSellerSearchData(filteredArray);
+    }
+  };
 
   const deleteSellerData = (sellerId) => {
     if (sellerData && sellerId) {
@@ -36,9 +56,9 @@ function AdminSeller() {
   };
 
   const renderSellerItem = () => {
-    if (sellerData) {
-      if (sellerData.length > 0) {
-        return sellerData.map((data, index) => {
+    if (sellerSearchData) {
+      if (sellerSearchData.length > 0) {
+        return sellerSearchData.map((data, index) => {
           return (
             <AdminSellerItem
               key={index}
@@ -62,21 +82,34 @@ function AdminSeller() {
   };
 
   return (
-    <Table verticalSpacing="md">
-      <thead>
-        <tr>
-          <th>Profile</th>
-          <th>User ID</th>
-          <th>Email</th>
-          <th>First Name</th>
-          <th>Last Name</th>
-          <th>Gender</th>
-          <th>Business Profile</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>{renderSellerItem()}</tbody>
-    </Table>
+    <>
+      <div className={classes.searchContainer}>
+        <TextInput
+          className={classes.searchBar}
+          placeholder="Search seller"
+          onChange={(event) => setSearch(event.currentTarget.value)}
+        />
+        <Button className={classes.searchButton} onClick={searchOnClick}>
+          Search
+        </Button>
+      </div>
+
+      <Table verticalSpacing="md">
+        <thead>
+          <tr>
+            <th>Profile</th>
+            <th>User ID</th>
+            <th>Email</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Gender</th>
+            <th>Business Profile</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>{renderSellerItem()}</tbody>
+      </Table>
+    </>
   );
 }
 

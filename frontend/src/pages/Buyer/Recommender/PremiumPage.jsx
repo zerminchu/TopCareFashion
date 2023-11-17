@@ -36,7 +36,11 @@ function PremiumPopup() {
     dispatch({ type: "SET_PREMIUM_FEATURE", value: false });
   };
 
-  const getStartedOnClick = async () => {};
+  const getStartedOnClick = async () => {
+    window.open(
+      "https://kfleurosa.wixsite.com/topcarefashion/s-projects-side-by-side"
+    );
+  };
 
   return (
     <div className={classes.popupoverlay}>
@@ -101,7 +105,7 @@ function PremiumPopup() {
               padding: "10px 20px",
               cursor: "pointer",
             }}
-            hoverStyle={{
+            hoverstyle={{
               backgroundColor: "#0056b3",
             }}
           >

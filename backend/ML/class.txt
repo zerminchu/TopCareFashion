@@ -2,6 +2,7 @@ Anorak
 Blazer
 Blouse
 Bomber
+Boot
 Button-Down
 Caftan
 Capris
@@ -33,7 +34,9 @@ Peacoat
 Poncho
 Robe
 Romper
+Sandal
 Sarong
+Shoe
 Shorts
 Skirt
 Sweater
