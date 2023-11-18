@@ -20,7 +20,7 @@ function ProductRating(props) {
   const [comment, setComment] = useState(props.description || "");
 
   const renderReply = () => {
-    if (props.reply > 0) {
+    if (props.reply && props.reply.length > 0) {
       return (
         <div className={classes.sellerRepliedContainer}>
           <Text>Seller replied</Text>
