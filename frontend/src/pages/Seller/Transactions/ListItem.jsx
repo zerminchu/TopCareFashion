@@ -189,7 +189,7 @@ function ListItem() {
     const categoryToSave = correctCategory !== "" ? correctCategory : category;
     setFormSubmitted(true);
 
-    if (isFormValid) {
+    if (!isFormValid) {
       const categoryError = validateCategory(categoryToSave);
       const conditionError = validateCondition(condition);
       const colourError = validateColour(colour);

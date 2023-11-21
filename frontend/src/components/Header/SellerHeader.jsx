@@ -48,7 +48,7 @@ function SellerHeader(props) {
       <div className={classes.rightside}>
         <DropDownMenu currentUser={currentUser} />
         <img src={IconChat} onClick={chatOnClick} width={30} height={30} />
-        <Button onClick={listItem}>List now</Button>
+        <Button onClick={listItem}>List Now</Button>
       </div>
     </div>
   );
