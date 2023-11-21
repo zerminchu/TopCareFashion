@@ -187,10 +187,9 @@ function ListItem() {
     event.preventDefault();
 
     const categoryToSave = correctCategory !== "" ? correctCategory : category;
+    setFormSubmitted(true);
 
     if (isFormValid) {
-      setFormSubmitted(true);
-
       const categoryError = validateCategory(categoryToSave);
       const conditionError = validateCondition(condition);
       const colourError = validateColour(colour);
@@ -204,100 +203,103 @@ function ListItem() {
         validateCollectionAddress(collection_address);
       const availStatusError = validateAvailStatus(avail_status);
 
-      if (
-        categoryError ||
-        conditionError ||
-        colourError ||
-        titleError ||
-        descriptionError ||
-        priceError ||
-        quantityAvailableError ||
-        sizeError ||
-        collectionAddressError ||
-        availStatusError
-      ) {
+      const allErrors = {
+        categoryError,
+        conditionError,
+        colourError,
+        titleError,
+        descriptionError,
+        priceError,
+        quantityAvailableError,
+        sizeError,
+        collectionAddressError,
+        availStatusError,
+      };
+
+      const anyErrors = Object.values(allErrors).some((error) => !!error);
+      if (anyErrors) {
         showNotifications({
           status: "error",
           title: "Form Validation Error",
           message: "Please fix the form validation errors before saving.",
         });
+        return;
       }
-    }
+    } else
+      try {
+        dispatch({ type: "SET_LOADING", value: true });
 
-    try {
-      dispatch({ type: "SET_LOADING", value: true });
-
-      const uploadedFiles = await Promise.all(
-        uploadedImages.map(async (blobUrl) => {
-          const response = await fetch(blobUrl);
-          return new Blob([await response.blob()]);
-        })
-      );
-
-      const additionalImagesFiles = await Promise.all(
-        additionalUploadedImages.flat().map(async (blobUrl) => {
-          if (blobUrl) {
+        const uploadedFiles = await Promise.all(
+          uploadedImages.map(async (blobUrl) => {
             const response = await fetch(blobUrl);
             return new Blob([await response.blob()]);
-          }
-          return null;
-        })
-      );
+          })
+        );
 
-      const formData = new FormData();
+        const additionalImagesFiles = await Promise.all(
+          additionalUploadedImages.flat().map(async (blobUrl) => {
+            if (blobUrl) {
+              const response = await fetch(blobUrl);
+              return new Blob([await response.blob()]);
+            }
+            return null;
+          })
+        );
 
-      uploadedFiles.forEach((file, index) => {
-        formData.append("files", file);
-      });
+        const formData = new FormData();
 
-      additionalImagesFiles.forEach((file, index) => {
-        formData.append("files", file);
-      });
+        uploadedFiles.forEach((file, index) => {
+          formData.append("files", file);
+        });
 
-      formData.append("gender", gender);
-      formData.append("category", categoryToSave);
-      formData.append("sub_category", sub_category);
-      formData.append("condition", condition);
-      formData.append("colour", colour);
-      formData.append("title", title);
-      formData.append("description", description);
-      formData.append("price", price);
-      formData.append("quantity_available", quantity_available);
-      formData.append("collection_address", collection_address);
-      formData.append("user_id", currentUser.user_id);
-      formData.append("avail_status", avail_status);
-      formData.append("size", selectedSizes.join(","));
+        additionalImagesFiles.forEach((file, index) => {
+          formData.append("files", file);
+        });
 
-      const url =
-        import.meta.env.VITE_NODE_ENV == "DEV"
-          ? import.meta.env.VITE_API_DEV
-          : import.meta.env.VITE_API_PROD;
+        formData.append("gender", gender);
+        formData.append("category", categoryToSave);
+        formData.append("sub_category", sub_category);
+        formData.append("condition", condition);
+        formData.append("colour", colour);
+        formData.append("title", title);
+        formData.append("description", description);
+        formData.append("price", price);
+        formData.append("quantity_available", quantity_available);
+        formData.append("collection_address", collection_address);
+        formData.append("user_id", currentUser.user_id);
+        formData.append("avail_status", avail_status);
+        formData.append("size", selectedSizes.join(","));
 
-      await axios.post(`${url}/add-product/`, formData);
+        const url =
+          import.meta.env.VITE_NODE_ENV == "DEV"
+            ? import.meta.env.VITE_API_DEV
+            : import.meta.env.VITE_API_PROD;
 
-      navigate("/", { replace: true });
-      dispatch({ type: "SET_LOADING", value: false });
+        await axios.post(`${url}/add-product/`, formData);
 
-      showNotifications({
-        title: "Success",
-        message: "Your item have been listed onto the marketplace",
-        status: "success",
-      });
+        navigate("/", { replace: true });
+        dispatch({ type: "SET_LOADING", value: false });
 
-      setSubmissionSuccessful(true);
-      localStorage.removeItem("uploadedImages");
+        showNotifications({
+          title: "Success",
+          message: "Your item have been listed onto the marketplace",
+          status: "success",
+        });
 
-      navigate("/");
-    } catch (error) {
-      console.log(error);
-      dispatch({ type: "SET_LOADING", value: false });
+        setSubmissionSuccessful(true);
+        localStorage.removeItem("uploadedImages");
 
-      showNotifications({
-        title: "Error",
-        message: "Oops! There is an error creating a listing!",
-        status: "error",
-      });
-    }
+        navigate("/");
+      } catch (error) {
+        console.log(error);
+        dispatch({ type: "SET_LOADING", value: false });
+
+        showNotifications({
+          title: "Error",
+          message: "Oops! There is an error creating a listing!",
+          status: "error",
+        });
+      }
   };
 
   useEffect(() => {
@@ -771,7 +773,10 @@ function ListItem() {
         <TextInput
           label="Quantity Available"
           value={quantity_available}
-          onChange={(event) => setQuantityAvailable(event.target.value)}
+          onChange={(event) => {
+            setQuantityAvailable(event.target.value);
+            validateQuantityAvailable(event.target.value);
+          }}
           placeholder="Enter Quantity Available (e.g., 10)"
           classNames={classes}
           style={{ width: "50%" }}
@@ -781,7 +786,9 @@ function ListItem() {
         <TextInput
           label="Collection Address including Postal Code"
           value={collection_address}
-          onChange={(event) => setCollectionAddress(event.target.value)}
+          onChange={(event) => {
+            setCollectionAddress(event.target.value);
+          }}
           placeholder="Enter Address (e.g., Address Line 1, 200901)"
           classNames={classes}
           style={{ width: "50%" }}
