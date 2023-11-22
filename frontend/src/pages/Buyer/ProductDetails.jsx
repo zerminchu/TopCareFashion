@@ -83,6 +83,7 @@ function ProductDetails() {
 
         const response = await axios.get(`${url}/listing-detail/${itemId}`);
         setProductDetails(response.data.data);
+        console.log(response.data.data);
       } catch (error) {
         showNotifications({
           status: "error",
@@ -392,7 +393,7 @@ function ProductDetails() {
   const renderReviews = () => {
     if (productDetails && productDetails.reviews.length <= 0) {
       return (
-        <Text size="md" fw={500}>
+        <Text size={"l"} fw={500} style={{ color: "#444" }}>
           This listing does not have any reviews yet!
         </Text>
       );
@@ -570,30 +571,176 @@ function ProductDetails() {
               className={classes.visitShopContainer}
               onClick={visitShopOnClick}
             >
-              <Text size="xl" fw={700}>
-                {productDetails.store_name}
-              </Text>
-              <Button leftIcon={<CiShop size={25} />} variant="outline">
-                View shop
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <Text
+                  size="xl"
+                  fw={700}
+                  style={{ marginRight: "10px", color: "black" }}
+                >
+                  {productDetails.store_name}
+                </Text>
+                <Button
+                  leftIcon={<CiShop size={25} />}
+                  variant="outline"
+                  style={{
+                    margin: "0",
+                    height: "35px",
+                    backgroundColor: "#f0f0f0",
+                    color: "#555",
+                    border: "1px solid #ccc",
+                    borderRadius: "5px",
+                  }}
+                >
+                  View shop
+                </Button>
+              </div>
+              <Button
+                onClick={chatOnClick}
+                variant="outline"
+                style={{
+                  height: "35px",
+                  backgroundColor: "#f0f0f0",
+                  color: "#555",
+                  border: "1px solid #ccc",
+                  borderRadius: "5px",
+                }}
+              >
+                <img
+                  src={IconChat}
+                  width={25}
+                  height={25}
+                  style={{ verticalAlign: "middle" }}
+                />
+                <span style={{ verticalAlign: "middle", marginLeft: "5px" }}>
+                  Chat with seller
+                </span>
               </Button>
             </div>
 
-            <Button onClick={chatOnClick} variant="outline">
-              <img src={IconChat} width={25} height={25} />
-              Chat with seller
-            </Button>
+            <br />
+
+            <div style={{ maxWidth: "600px", textAlign: "left" }}>
+              <h3 style={{ textAlign: "left", color: "black" }}>
+                About The Seller
+              </h3>
+              <div
+                style={{
+                  padding: "15px",
+                  border: "1px solid #ddd",
+                  borderRadius: "5px",
+                  backgroundColor: "#f9f9f9",
+                }}
+              >
+                <Text
+                  size="l"
+                  fw={700}
+                  style={{
+                    textAlign: "justify",
+                    color: "black",
+                    lineHeight: "1.5",
+                  }}
+                >
+                  Get To Know:
+                </Text>
+
+                <Text
+                  size="l"
+                  fw={500}
+                  style={{
+                    textAlign: "justify",
+                    color: "#444",
+                    lineHeight: "1.5",
+                  }}
+                >
+                  {productDetails.store_desc}
+                </Text>
+                <br />
+                <Text
+                  size="l"
+                  fw={700}
+                  style={{
+                    textAlign: "justify",
+                    color: "black",
+                    lineHeight: "1.5",
+                  }}
+                >
+                  Type Of Business:
+                </Text>
+                <Text
+                  size="l"
+                  fw={500}
+                  style={{
+                    textAlign: "justify",
+                    color: "#444",
+                    lineHeight: "1.5",
+                  }}
+                >
+                  {productDetails.biz_type}
+                </Text>
+                <br />
+                <Text
+                  size="l"
+                  fw={700}
+                  style={{
+                    textAlign: "justify",
+                    color: "black",
+                    lineHeight: "1.5",
+                  }}
+                >
+                  Contact Information:
+                </Text>
+                <Text
+                  size="l"
+                  fw={500}
+                  style={{
+                    textAlign: "justify",
+                    color: "#444",
+                    lineHeight: "1.5",
+                  }}
+                >
+                  +65 {productDetails.contact_info}
+                </Text>
+
+                <br />
+                <Text
+                  size="l"
+                  fw={700}
+                  style={{
+                    textAlign: "justify",
+                    color: "black",
+                    lineHeight: "1.5",
+                  }}
+                >
+                  Find Out More At:
+                </Text>
+                <Text
+                  size="l"
+                  fw={500}
+                  style={{
+                    textAlign: "justify",
+                    color: "#444",
+                    lineHeight: "1.5",
+                  }}
+                >
+                  {productDetails.link}
+                </Text>
+              </div>
+            </div>
           </div>
 
           <div className={classes.productDescriptionContainer}>
             <Text size="xl" fw={700}>
               Product Description
             </Text>
-            <Text>{productDetails.description}</Text>
+            <Text size={"l"} fw={500} style={{ color: "#444" }}>
+              {productDetails.description}
+            </Text>
           </div>
           <div className={classes.reviewContainer}>
             <Text size="xl" fw={700}>
               Reviews
             </Text>
+
             {renderReviews()}
           </div>
         </div>
