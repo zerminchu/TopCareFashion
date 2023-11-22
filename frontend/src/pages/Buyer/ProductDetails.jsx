@@ -633,6 +633,18 @@ function ProductDetails() {
               >
                 <Text
                   size="l"
+                  fw={700}
+                  style={{
+                    textAlign: "justify",
+                    color: "black",
+                    lineHeight: "1.5",
+                  }}
+                >
+                  Get To Know:
+                </Text>
+
+                <Text
+                  size="l"
                   fw={500}
                   style={{
                     textAlign: "justify",
@@ -641,6 +653,76 @@ function ProductDetails() {
                   }}
                 >
                   {productDetails.store_desc}
+                </Text>
+                <br />
+                <Text
+                  size="l"
+                  fw={700}
+                  style={{
+                    textAlign: "justify",
+                    color: "black",
+                    lineHeight: "1.5",
+                  }}
+                >
+                  Type Of Business:
+                </Text>
+                <Text
+                  size="l"
+                  fw={500}
+                  style={{
+                    textAlign: "justify",
+                    color: "#444",
+                    lineHeight: "1.5",
+                  }}
+                >
+                  {productDetails.biz_type}
+                </Text>
+                <br />
+                <Text
+                  size="l"
+                  fw={700}
+                  style={{
+                    textAlign: "justify",
+                    color: "black",
+                    lineHeight: "1.5",
+                  }}
+                >
+                  Contact Information:
+                </Text>
+                <Text
+                  size="l"
+                  fw={500}
+                  style={{
+                    textAlign: "justify",
+                    color: "#444",
+                    lineHeight: "1.5",
+                  }}
+                >
+                  +65 {productDetails.contact_info}
+                </Text>
+
+                <br />
+                <Text
+                  size="l"
+                  fw={700}
+                  style={{
+                    textAlign: "justify",
+                    color: "black",
+                    lineHeight: "1.5",
+                  }}
+                >
+                  Find Out More At:
+                </Text>
+                <Text
+                  size="l"
+                  fw={500}
+                  style={{
+                    textAlign: "justify",
+                    color: "#444",
+                    lineHeight: "1.5",
+                  }}
+                >
+                  {productDetails.link}
                 </Text>
               </div>
             </div>
