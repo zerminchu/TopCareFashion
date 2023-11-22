@@ -618,6 +618,7 @@ def getListingDetailByItemId(request, item_id):
                 "total_ratings": len(reviewList),
                 "sold": numberOfSold,
                 "store_name": (sellerData.to_dict())["business_profile"]["business_name"],
+                "store_desc": (sellerData.to_dict())["business_profile"]["business_description"],
                 "description": (itemData.to_dict())["description"],
                 "average_rating": averageRating,
                 "reviews": reviewList

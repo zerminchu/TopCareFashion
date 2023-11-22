@@ -120,22 +120,20 @@
   justify-content: space-between;
 }
 
-
 .storeContainer {
   display: flex;
+  flex-direction: column;
   cursor: pointer;
   width: 100%;
   padding: 20px;
   border: 1px solid rgb(201, 201, 201);
   border-radius: 5px;
-  flex-direction: row;
-  justify-content: space-between;
 }
 
 .visitShopContainer {
   display: flex;
-  flex-direction: row;
-  gap: 10px;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .chatButtonContainer {
