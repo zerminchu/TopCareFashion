@@ -45,7 +45,7 @@ function BuyerHeader(props) {
         </a>
         <a
           className={classes.navBarMenu}
-          href="https://kfleurosa.wixsite.com/topcarefashion/about-1"
+          href="https://kfleurosa.wixsite.com/topcarefashion"
           target="_blank"
         >
           About Us
