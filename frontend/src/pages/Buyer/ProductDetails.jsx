@@ -567,10 +567,7 @@ function ProductDetails() {
           </div>
 
           <div className={classes.storeContainer}>
-            <div
-              className={classes.visitShopContainer}
-              onClick={visitShopOnClick}
-            >
+            <div className={classes.visitShopContainer}>
               <div style={{ display: "flex", alignItems: "center" }}>
                 <Text
                   size="xl"
@@ -580,6 +577,7 @@ function ProductDetails() {
                   {productDetails.store_name}
                 </Text>
                 <Button
+                  onClick={visitShopOnClick}
                   leftIcon={<CiShop size={25} />}
                   variant="outline"
                   style={{
