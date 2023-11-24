@@ -1084,8 +1084,8 @@ def delete_item(request, user_id, item_id):
             return Response({"error": str(e)}, status=500)
 
 
-model_path = './ML/updated_model.pkl'
-# model_path = './ML/stage-1_resnet34.pkl'
+# model_path = './ML/updated_model.pkl'
+model_path = './ML/stage-1_resnet34.pkl'
 # update pkl file live
 class_labels_path = './ML/class.txt'
 
