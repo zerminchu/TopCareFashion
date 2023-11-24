@@ -224,7 +224,9 @@ function BuyerHomeMen(props) {
         uniqueProductsMap.set(product.item_id, product);
       });
 
-      setCombinedProductList(productsWithAvailability);
+      const resultCombined = [...uniqueProductsMap.values()]
+
+      setCombinedProductList(resultCombined);
       setFetchedAlgoliaList(algoliaProduct);
     }
   }, [buyerPreferencesProduct, productsWithAvailability, algoliaProduct]);
